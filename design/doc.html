@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用须知 · 号没了</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- 设计稿提示条：正式站点删除 -->
+<div class="mock-note">设计稿：正式站点拆成 /rules、/privacy、/about 三个页面，文案以这里为准。</div>
+
+<!-- @component SiteHeader  → src/site/components/SiteHeader.astro  props: current（当前路由） -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">号没了</a>
+    <nav class="nav" aria-label="主导航">
+      <a href="index.html">纪念墙</a>
+      <a href="submit.html">立碑</a>
+      <a href="epitaph.html">墓志铭卡片</a>
+      <a href="appeal.html">官方申诉入口</a>
+      <a href="doc.html" aria-current="page">使用须知</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap">
+    <!-- 正式站点拆成三个路由：/rules、/privacy、/about，共用这个 .doc 版式。文案以本页为准。 -->
+    <article class="doc" id="rules">
+      <div class="page-head">
+        <h1>使用须知</h1>
+        <p class="updated">更新于 TODO_DATE</p>
+      </div>
+      <ol>
+        <li><strong>写经过。</strong>写你看到了什么、做了什么。不确定的地方请注明“猜测”。</li>
+        <li><strong>不填隐私。</strong>邮箱、密码、API Key、订单号、手机号、微信或 QQ、链接、证件号码都不要填。系统检测到会直接拦下。</li>
+        <li><strong>保存好凭据。</strong>立碑后会得到一组编号和密钥，用来修改和撤回。它只显示一次，丢了没法找回。</li>
+        <li><strong>这里不谈这些。</strong>买卖账号、拼车合租、中转代理、代充代付、翻墙节点、防封技巧、解封服务。相关内容一律不通过。</li>
+        <li><strong>对事不对人。</strong>不点名攻击任何个人，包括厂商的员工。</li>
+        <li><strong>想申诉，请走官方渠道。</strong>本站没法帮你解封，见“官方申诉入口”。</li>
+      </ol>
+    </article>
+
+    <article class="doc" id="privacy">
+      <div class="page-head" style="margin-top:48px">
+        <h1>数据说明</h1>
+        <p class="updated">更新于 TODO_DATE</p>
+      </div>
+      <h2>会公开的内容</h2>
+      <p>审核通过后，墙上会显示：代号、署名、厂商、事件种类、套餐、注册时间（按你选的精度）、出事日期、经过、墓志铭、申诉状态、碑脚样式、献花数和立碑时间。</p>
+      <h2>不会收集的内容</h2>
+      <p>不需要注册，不要邮箱、手机号或真实姓名。本站不设置 Cookie，不使用第三方统计、广告或追踪脚本。人机验证使用 Cloudflare Turnstile。</p>
+      <h2>IP 地址</h2>
+      <p>为了防刷，服务器会用 IP 计算一个加盐的哈希值做次数限制，哈希每天更换，不保存原始 IP。</p>
+      <h2>凭据</h2>
+      <p>凭据由编号和密钥组成。服务器只保存密钥的哈希，没人能替你找回。你可以选择让浏览器记住它，它只存在你这台设备的这个浏览器里。</p>
+      <h2>审核</h2>
+      <p>所有投稿和修改都由站长人工审核，通过后才公开。审核中的内容不会出现在墙上和统计里。</p>
+      <h2>撤回</h2>
+      <p>撤回后，碑会从墙上和统计中消失，碑文会从数据库里清空。已经被别人看到、截图或转发的内容，本站无法收回。</p>
+      <h2>保存多久</h2>
+      <ul>
+        <li>公开的碑：一直保留，直到你撤回或被隐藏。</li>
+        <li>没通过审核的投稿：30 天后删除。</li>
+        <li>已处理的举报：90 天后删除。</li>
+        <li>防刷记录：2 天后删除。</li>
+      </ul>
+    </article>
+
+    <article class="doc" id="about">
+      <div class="page-head" style="margin-top:48px">
+        <h1>关于</h1>
+      </div>
+      <p>号没了是一个独立的社区项目，与任何 AI 厂商都没有隶属关系。文中提到的产品名称和商标归各自的所有者。</p>
+      <p>墓碑上的内容都是用户自述，本站不核实，也不能据此判断任何账号被封的原因。</p>
+      <p>需要更正内容、投诉或联系我们：<span class="todo">TODO_CONTACT_EMAIL</span></p>
+    </article>
+  </div>
+</main>
+
+<!-- @component SiteFooter  → src/site/components/SiteFooter.astro -->
+<footer class="footer">
+  <div class="wrap">
+    <p>本站为独立社区项目，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。</p>
+    <p>墓碑内容由用户自愿上报，本站未核实，也不能据此判断封号原因。想申诉，请走厂商官方渠道。</p>
+    <nav aria-label="页脚">
+      <a href="doc.html#rules">使用须知</a><a href="doc.html#privacy">数据说明</a><a href="doc.html#about">关于</a><a href="appeal.html">官方申诉入口</a><a href="manage.html">管理我的墓碑</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

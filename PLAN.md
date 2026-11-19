@@ -365,7 +365,7 @@ CREATE TABLE audit_log (
 
 ## 10. 视觉
 
-**以 `design/` 目录为准。** 先读 `design/DESIGN.md`，再在浏览器打开 `design/*.html` 看效果。实现时直接沿用 `design/assets/style.css` 的变量和组件样式，以及 `design/assets/*.svg` 的像素图；`design/epitaph.html` 的绘制逻辑可直接移植。
+**以 `design/` 目录为准。** 先读 `design/DESIGN.md`，它列出了每个页面、组件、脚本对应的目标文件（路由对照、组件对照、脚本移植、表单字段对照、状态清单、单元测试用例）。实现 M2、M4 时按它逐项移植，不要重写：`design/assets/style.css`、`*.svg`、`labels.js`、`format.js`、`components.js`、`epitaphs.js`、`epitaph-card.js` 都是可以直接搬的成品。
 
 - 风格：草坡上的像素墓园。白天是晴天（天蓝、草绿、石灰），深色模式是月夜。唯一强调色是菊花黄。
 - 吉祥物"守墓小猫"：已画好，见 `design/assets/cat.svg`。

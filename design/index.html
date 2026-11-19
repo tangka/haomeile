@@ -10,8 +10,10 @@
 </head>
 <body>
 
+<!-- 设计稿提示条：正式站点删除 -->
 <div class="mock-note">设计稿：页面中的墓碑和数字都是示例，不是真实上报。</div>
 
+<!-- @component SiteHeader  → src/site/components/SiteHeader.astro  props: current（当前路由） -->
 <header class="topbar">
   <div class="wrap">
     <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">号没了</a>
@@ -19,13 +21,14 @@
       <a href="index.html" aria-current="page">纪念墙</a>
       <a href="submit.html">立碑</a>
       <a href="epitaph.html">墓志铭卡片</a>
-      <a href="#appeal">官方申诉入口</a>
-      <a href="#rules">使用须知</a>
+      <a href="appeal.html">官方申诉入口</a>
+      <a href="doc.html">使用须知</a>
     </nav>
   </div>
 </header>
 
 <main>
+  <!-- @component HeroScene → src/site/components/HeroScene.astro（纯静态） -->
   <section class="scene" aria-labelledby="hero-title">
     <div class="scene-clouds" aria-hidden="true">
       <img src="assets/cloud.svg" alt="" width="72" height="32">
@@ -58,38 +61,23 @@
     </div>
   </section>
 
+  <!-- @component Tally → src/site/components/Tally.astro  数据：GET /api/stats 的 today / last7 / total -->
   <section class="ground" aria-label="上报统计">
     <div class="wrap">
-      <p class="tally">今天新立 <strong>3</strong> 块碑，近 7 天 <strong>41</strong> 块，现在园里一共 <strong>1,204</strong> 块。</p>
+      <p class="tally">今天新立 <strong data-stat="today">0</strong> 块碑，近 7 天 <strong data-stat="last7">0</strong> 块，现在园里一共 <strong data-stat="total">0</strong> 块。</p>
       <p class="tally-note">只统计本站当前可见的自愿上报，不代表平台实际封号数量，不能用来推算封号率。</p>
     </div>
   </section>
 
+  <!-- @component Census → src/site/components/Census.astro  数据：GET /api/stats 的 by_vendor / by_event，用 createBars 渲染 -->
   <section class="census" aria-label="分布">
     <div class="wrap">
-      <div>
-        <h3>按厂商</h3>
-        <ul class="bars">
-          <li><span>厂商 A</span><span class="bar" style="width:100%"></span><span class="n">412</span></li>
-          <li><span>厂商 B</span><span class="bar" style="width:71%"></span><span class="n">293</span></li>
-          <li><span>厂商 C</span><span class="bar" style="width:38%"></span><span class="n">157</span></li>
-          <li><span>厂商 D</span><span class="bar" style="width:22%"></span><span class="n">90</span></li>
-          <li><span>其他</span><span class="bar" style="width:13%"></span><span class="n">52</span></li>
-        </ul>
-      </div>
-      <div>
-        <h3>按事件种类</h3>
-        <ul class="bars">
-          <li><span>账号停用</span><span class="bar" style="width:100%"></span><span class="n">531</span></li>
-          <li><span>地区限制</span><span class="bar" style="width:64%"></span><span class="n">340</span></li>
-          <li><span>验证卡住</span><span class="bar" style="width:29%"></span><span class="n">154</span></li>
-          <li><span>扣费异常</span><span class="bar" style="width:18%"></span><span class="n">97</span></li>
-          <li><span>组织暂停</span><span class="bar" style="width:9%"></span><span class="n">48</span></li>
-        </ul>
-      </div>
+      <div><h3>按厂商</h3><div id="bars-vendor"></div></div>
+      <div><h3>按事件种类</h3><div id="bars-event"></div></div>
     </div>
   </section>
 
+  <!-- @component Wall → src/site/pages/index.astro 的纪念墙区块 + src/site/scripts/wall.ts -->
   <section class="yard" aria-labelledby="wall-title">
     <div class="wrap">
       <div class="yard-head">
@@ -97,139 +85,92 @@
         <p>新立的碑在前面。内容都是用户自述，本站没有核实。</p>
       </div>
 
+      <!-- @component Filters：芯片的 data-value 就是 /api/tombstones 的 vendor / event 参数 -->
       <div class="filters">
-        <div class="chips" role="group" aria-label="按厂商筛选">
+        <div class="chips" role="group" aria-label="按厂商筛选" data-param="vendor" id="chips-vendor">
           <span class="filters-label">厂商</span>
-          <button class="chip" aria-pressed="true">全部</button>
-          <button class="chip" aria-pressed="false">Claude</button>
-          <button class="chip" aria-pressed="false">ChatGPT</button>
-          <button class="chip" aria-pressed="false">Gemini</button>
-          <button class="chip" aria-pressed="false">Grok</button>
-          <button class="chip" aria-pressed="false">DeepSeek</button>
-          <button class="chip" aria-pressed="false">Kimi</button>
-          <button class="chip" aria-pressed="false">通义千问</button>
-          <button class="chip" aria-pressed="false">豆包</button>
-          <button class="chip" aria-pressed="false">其他</button>
         </div>
-        <div class="chips" role="group" aria-label="按事件种类筛选">
+        <div class="chips" role="group" aria-label="按事件种类筛选" data-param="event" id="chips-event">
           <span class="filters-label">事件</span>
-          <button class="chip" aria-pressed="true">全部</button>
-          <button class="chip" aria-pressed="false">账号停用</button>
-          <button class="chip" aria-pressed="false">组织暂停</button>
-          <button class="chip" aria-pressed="false">地区限制</button>
-          <button class="chip" aria-pressed="false">验证卡住</button>
-          <button class="chip" aria-pressed="false">扣费异常</button>
-          <button class="chip" aria-pressed="false">其他</button>
         </div>
       </div>
 
-      <div class="rows">
-        <article class="tomb">
-          <img class="tomb-deco l" src="assets/flower.svg" alt="" width="20" height="20">
-          <img class="tomb-deco r" src="assets/flower.svg" alt="" width="20" height="20">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">小橘号</h3></a>
-            <p class="tomb-life">存活 412 天，2025.09 至 2026.11.18</p>
-            <ul class="tags"><li class="tag">厂商 A</li><li class="tag">账号停用</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-epitaph">生前写了三万行代码，走的时候一行也没留下。</p>
-            <p class="tomb-story">早上打开就提示账号已停用，邮件里只说违反了使用政策，没写具体原因。前一天还在正常改论文。已经提交申诉，还没回音。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="false"><img src="assets/flower.svg" alt="" width="14" height="14">献花 28</button></div>
-          </div></div>
-        </article>
-
-        <article class="tomb">
-          <img class="tomb-deco r" src="assets/cloud.svg" alt="" width="24" height="11">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">周五下午</h3></a>
-            <p class="tomb-life">存活天数不详，卒于 2026.11.15</p>
-            <ul class="tags"><li class="tag">厂商 B</li><li class="tag">验证卡住</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-story">换了手机以后一直卡在验证这一步，验证码收不到，客服是机器人。账号没被封，但也进不去，算半死。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="true"><img src="assets/flower.svg" alt="" width="14" height="14">献花 9</button></div>
-          </div></div>
-        </article>
-
-        <article class="tomb">
-          <img class="tomb-deco l" src="assets/star.svg" alt="" width="20" height="14">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">研究生三号机</h3></a>
-            <p class="tomb-life">存活 63 天，2026.09.12 至 2026.11.14</p>
-            <ul class="tags"><li class="tag">厂商 C</li><li class="tag">扣费异常</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-epitaph">它走得很安详，走之前还在思考。</p>
-            <p class="tomb-story">续费那天扣了两次钱，然后账号被暂停。猜测是支付风控，但没有任何说明。退款申请已经提交。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="false"><img src="assets/flower.svg" alt="" width="14" height="14">献花 54</button></div>
-          </div></div>
-        </article>
-
-        <article class="tomb">
-          <img class="tomb-deco l" src="assets/flower.svg" alt="" width="20" height="20">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">工位旁的那位</h3></a>
-            <p class="tomb-life">存活 1,021 天，2024.01 至 2026.11.12</p>
-            <ul class="tags"><li class="tag">厂商 A</li><li class="tag">组织暂停</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-story">整个团队的账号同时不能用了，管理员说组织被暂停，在等审核。已恢复，前后大概一天。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="false"><img src="assets/flower.svg" alt="" width="14" height="14">献花 13</button></div>
-          </div></div>
-        </article>
-
-        <article class="tomb">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">无名氏</h3></a>
-            <p class="tomb-life">存活 7 天，2026.11.03 至 2026.11.10</p>
-            <ul class="tags"><li class="tag">厂商 D</li><li class="tag">地区限制</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-epitaph">来过，看了一眼，走了。</p>
-            <p class="tomb-story">注册完第七天收到通知，说所在地区不在服务范围内。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="false"><img src="assets/flower.svg" alt="" width="14" height="14">献花 4</button></div>
-          </div></div>
-        </article>
-
-        <article class="tomb">
-          <img class="tomb-deco r" src="assets/star.svg" alt="" width="20" height="14">
-          <div class="tomb-body stone-shape"><div class="tomb-face stone-shape">
-            <a class="tomb-link" href="#"><h3 class="tomb-name">写周报专用</h3></a>
-            <p class="tomb-life">存活 238 天，2026.03 至 2026.11.08</p>
-            <ul class="tags"><li class="tag">其他</li><li class="tag">账号停用</li><li class="tag tag-example">示例</li></ul>
-            <p class="tomb-story">我也不知道发生了什么。登录提示账号异常，换浏览器也一样。猜测是同一网络下有别人违规，但只是猜测。</p>
-            <div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span>
-              <button class="flower-btn" aria-pressed="false"><img src="assets/flower.svg" alt="" width="14" height="14">献花 17</button></div>
-          </div></div>
-        </article>
-      </div>
-
-      <div class="more"><button class="btn">再看 20 块</button></div>
+      <div class="rows" id="rows" aria-live="polite"></div>
+      <div class="more"><button class="btn" type="button" id="more">再看 20 块</button></div>
     </div>
   </section>
 </main>
 
+<!-- @component SiteFooter  → src/site/components/SiteFooter.astro -->
 <footer class="footer">
   <div class="wrap">
     <p>本站为独立社区项目，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。</p>
     <p>墓碑内容由用户自愿上报，本站未核实，也不能据此判断封号原因。想申诉，请走厂商官方渠道。</p>
     <nav aria-label="页脚">
-      <a href="#rules">使用须知</a><a href="#privacy">数据说明</a><a href="#about">关于</a><a href="#appeal">官方申诉入口</a>
+      <a href="doc.html#rules">使用须知</a><a href="doc.html#privacy">数据说明</a><a href="doc.html#about">关于</a><a href="appeal.html">官方申诉入口</a><a href="manage.html">管理我的墓碑</a>
     </nav>
   </div>
 </footer>
 
+<script src="assets/labels.js"></script>
+<script src="assets/format.js"></script>
+<script src="assets/components.js"></script>
+<!-- 设计稿专用：示例数据。正式站点改为调用 /api -->
+<script src="assets/sample-data.js"></script>
+
 <script>
-  // 设计稿交互演示：筛选芯片和献花按钮的选中态
-  document.querySelectorAll('.chips').forEach(group => {
-    group.addEventListener('click', e => {
+(() => {
+  const { createTombCard, createBars, el } = window.HML_COMPONENTS;
+  const L = window.HML_LABELS, F = window.HML_FORMAT, S = window.HML_SAMPLE;
+
+  // 统计
+  document.querySelectorAll('[data-stat]').forEach(n => { n.textContent = F.num(S.stats[n.dataset.stat]); });
+  document.getElementById('bars-vendor').append(createBars(S.stats.by_vendor.map(([k, n]) => ({ label: L.vendor[k], n }))));
+  document.getElementById('bars-event').append(createBars(S.stats.by_event.map(([k, n]) => ({ label: L.event_type_short[k], n }))));
+
+  // 筛选芯片：正式站点里厂商只列真实厂商（不含 demo_*）
+  const real = Object.keys(L.vendor).filter(k => !k.startsWith('demo_'));
+  const addChips = (id, keys, labels) => {
+    const box = document.getElementById(id);
+    [['', '全部'], ...keys.map(k => [k, labels[k]])].forEach(([v, text], i) => {
+      const b = el('button', 'chip', text);
+      b.type = 'button'; b.dataset.value = v; b.setAttribute('aria-pressed', String(i === 0));
+      box.append(b);
+    });
+    box.addEventListener('click', e => {
       const b = e.target.closest('.chip'); if (!b) return;
-      group.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+      box.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+      render();
     });
-  });
-  document.querySelectorAll('.flower-btn').forEach(b => {
-    b.addEventListener('click', () => {
-      if (b.getAttribute('aria-pressed') === 'true') return;
-      b.setAttribute('aria-pressed', 'true');
-      b.lastChild.textContent = b.lastChild.textContent.replace(/\d+/, n => String(+n + 1));
-    });
-  });
+  };
+  addChips('chips-vendor', real, L.vendor);
+  addChips('chips-event', Object.keys(L.event_type_short), L.event_type_short);
+
+  // 墙
+  const rows = document.getElementById('rows');
+  function render() {
+    // 设计稿：示例数据里没有真实厂商，所以厂商筛选只演示选中态，不过滤
+    const ev = document.querySelector('#chips-event [aria-pressed="true"]').dataset.value;
+    rows.replaceChildren();
+    const list = S.tombstones.filter(t => !ev || t.event_type === ev);
+    if (!list.length) {
+      const empty = el('div', 'empty');
+      empty.append(el('p', null, '这个分类下还没有碑。'));
+      const b = el('button', 'btn', '看全部'); b.type = 'button';
+      b.onclick = () => { document.querySelector('#chips-event .chip').click(); };
+      empty.append(b);
+      rows.append(empty);
+      return;
+    }
+    list.forEach(t => rows.append(createTombCard(t, {
+      assetBase: 'assets/', href: id => `tomb.html?id=${id}`, demo: true,
+      flowered: t.id === 'P3D8N1ZC6R',
+      onFlower: async () => t.flowers + 1
+    })));
+  }
+  render();
+  document.getElementById('more').addEventListener('click', () => window.HML_TOAST('设计稿：正式站点在这里用 cursor 加载下一页。'));
+})();
 </script>
 </body>
 </html>

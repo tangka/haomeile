@@ -1,105 +1,146 @@
-# 号没了 · UI 设计说明
+# 号没了 · UI 设计与实现对照
 
-本目录是可以直接在浏览器打开的静态设计稿。Codex 实现前端时以这里为准；PLAN.md 负责功能和约束，这里负责长什么样。
+这个目录是可以直接用浏览器打开的设计稿，**前端长什么样、说什么话，以这里为准**。功能和硬性约束以 `PLAN.md` 为准，两者冲突时以 `PLAN.md` 为准。
 
-| 文件 | 内容 |
-|---|---|
-| `index.html` | 首页：天空场景、统计、分布、纪念墙 |
-| `submit.html` | 立碑表单（含一个隐私拦截的错误态）和提交成功后的凭据弹窗 |
-| `epitaph.html` | 墓志铭卡片生成器，**功能完整**，绘制逻辑可直接移植到 `src/site/scripts/epitaph.ts` |
-| `admin.html` | 审核后台：三个队列、灰产标红、修改对比、操作记录 |
-| `assets/style.css` | 全部设计变量和组件样式，实现时直接沿用 |
-| `assets/*.svg` | 原创像素图：守墓小猫、站标、小花、云朵、星星 |
-
-页面顶部的黄色提示条和所有"示例"标签只属于设计稿，正式站点删除。设计稿里的墓碑一律用"厂商 A/B/C"，避免把编出来的经历安在真实产品头上；正式站点显示用户选择的真实厂商名（纯文字）。
+给 Codex 的读法：
+1. 先读本文件的 §1–§4，知道每个页面、组件、脚本要变成哪个文件。
+2. 再看 HTML 里的 `<!-- @component 名称 → 目标文件 ... -->` 注释，它标出了每个组件的边界和数据来源。
+3. 样式、像素图、格式函数、组件构建函数都已经写好，**移植，不要重写**。
 
 ---
 
-## 1. 概念
+## 1. 路由对照
 
-**一块草坡上的像素墓园。** 白天是晴天，深色模式是月夜：同一个场景换个时辰，而不是换一套皮肤。
-
-- 纪念墙就是一排排墓碑，碑的底边落在同一条地平线上（`align-items: end`），高矮随内容变化，像真的墓地。
-- 唯一大胆的地方是首页那块大碑：站名"号没了"用宋体刻在像素碑面上。其他地方都保持克制。
-- 语气温和、带点自嘲，但不嘲讽任何人。
-
-## 2. 颜色
-
-| 变量 | 白天 | 夜里 | 用途 |
+| 正式路由 | 设计稿 | 目标文件 | 数据 |
 |---|---|---|---|
-| `--sky` | `#cde5f0` | `#18213a` | 顶栏、首页场景 |
-| `--grass` | `#5e9b4c` | `#2d4a33` | 草坡、纪念墙底色 |
-| `--grass-deep` | `#3f7434` | `#1f3624` | 碑脚的土、统计区、页脚 |
-| `--stone` | `#dcdfe4` | `#a3a9b4` | 碑面、普通按钮 |
-| `--stone-ink` | `#1d2621` | `#121722` | 碑上的字、像素描边 |
-| `--mum` | `#f2c230` | 同左 | 菊花黄：主按钮、献花、灯笼、统计条 |
-| `--danger` | `#c8402e` | 同左 | 错误、灰产标记、拒绝 |
+| `/` | `index.html` | `src/site/pages/index.astro` | `GET /api/stats`、`GET /api/tombstones` |
+| `/t/:id` | `tomb.html` | `src/site/pages/t/[id].astro` | `GET /api/tombstones/:id`，找不到时渲染 404 |
+| `/submit` | `submit.html` | `src/site/pages/submit.astro` | `POST /api/tombstones` |
+| `/submit?mode=edit` | `submit.html`（同一表单） | 同上 | 预填 `POST /api/manage/status` 的结果，提交到 `POST /api/manage/patch`；标题改为“修改墓碑”，按钮改为“提交修改” |
+| `/manage` | `manage.html` | `src/site/pages/manage.astro` | `POST /api/manage/status`、`POST /api/manage/withdraw` |
+| `/epitaph` | `epitaph.html` | `src/site/pages/epitaph.astro` | 无，纯前端 |
+| `/appeal` | `appeal.html` | `src/site/pages/appeal.astro` | 无，静态 |
+| `/rules` | `doc.html#rules` | `src/site/pages/rules.astro` | 无，静态 |
+| `/privacy` | `doc.html#privacy` | `src/site/pages/privacy.astro` | 无，静态 |
+| `/about` | `doc.html#about` | `src/site/pages/about.astro` | 无，静态 |
+| `/admin` | `admin.html` | `src/site/pages/admin.astro` | `/api/admin/*` |
+| 404 | `states.html` 最后一块 | `src/site/pages/404.astro` | 无 |
 
-菊花黄是唯一的强调色，只用在"要你做点什么"的地方（立碑、献花、下载）。不要再引入第二个强调色。
+`states.html` 是设计稿专用的“状态目录”，不需要做成路由，但里面每个空状态、错误、提示的样式和文案都要在对应页面实现。
 
-深色模式通过 `prefers-color-scheme` 自动切换，也支持 `<html data-theme="dark|light">` 手动覆盖。
+## 2. 组件对照
 
-## 3. 字体
+| 组件 | 设计稿位置 | 目标文件 | 输入 |
+|---|---|---|---|
+| SiteLayout | 每页的 `<head>` + 页头 + 页脚 + toast 容器 | `src/site/layouts/SiteLayout.astro` | `title`、`description`、`current` |
+| SiteHeader | `.topbar` | `src/site/components/SiteHeader.astro` | `current`（当前路由，用于 `aria-current`） |
+| SiteFooter | `.footer` | `src/site/components/SiteFooter.astro` | 无 |
+| HeroScene | `index.html` 的 `.scene` | `src/site/components/HeroScene.astro` | 无 |
+| Tally | `.ground` | `src/site/components/Tally.astro` | `today`、`last7`、`total` |
+| Census | `.census` | `src/site/components/Census.astro` | `by_vendor`、`by_event`（`[key, n][]`） |
+| Bars | `createBars()` 的输出 | `src/site/components/Bars.astro` | `rows: { label, n }[]` |
+| Filters | `.filters` 里两组 `.chips` | `src/site/components/Filters.astro` | 当前 `vendor`、`event` |
+| TombCard | `createTombCard()` 的输出 | `src/site/components/TombCard.astro` + `scripts/wall.ts` | 一条墓碑记录（§5 字段）、`detail?: boolean` |
+| FlowerButton | `.flower-btn` | 包含在 TombCard 内，逻辑在 `scripts/flower.ts` | `id`、`flowers`、今天是否已献 |
+| TombForm | `submit.html` 的 `#tomb-form` | `src/site/components/TombForm.astro` + `scripts/submit.ts` | `mode: 'new' \| 'edit'`、预填值 |
+| CredentialDialog | `submit.html` 的 `#cred` | `src/site/components/CredentialDialog.astro` | `id`、`secret` |
+| ReportDialog | `tomb.html` 的 `#report` | `src/site/components/ReportDialog.astro` | `tombstoneId` |
+| StatusCard | `manage.html` 的 `#status` | `src/site/components/StatusCard.astro` | 墓碑记录 + `status` + 是否有 `pending_patch` |
+| EpitaphMaker | `epitaph.html` 的 `.maker` | `src/site/pages/epitaph.astro` + `scripts/epitaph.ts` | 无 |
+| AdminQueue | `admin.html` 的 `.tabs` + `.queue` | `src/site/pages/admin.astro` + `scripts/admin.ts` | 三个队列的数据 |
+| Toast | `.toast` | 放在 SiteLayout 里，`scripts/toast.ts` 导出 `toast(msg)` | 文本 |
 
-不加载外部字体，只用系统字体栈（见 `--font-ui` 和 `--font-carve`）。
+**TombCard 的 DOM 结构必须和 `createTombCard()` 的输出一模一样**：服务端用 Astro 渲染首屏，“再看 20 块”用客户端同名函数追加，两边结构一致才能共用样式。
 
-- **宋体（`--font-carve`）= 刻在石头上的字**：站名、代号、墓志铭、页面大标题、"享年"。粗细用 900。
-- **黑体（`--font-ui`）= 界面上的字**：说明、表单、按钮、标签、正文。
-- 字号阶梯：13 / 15 / 17 / 22 / 30 / 44 px。正文 17px，行高 1.7。
-- 不用全大写、不用斜体、标题里不单独给某个词换颜色。
+## 3. 脚本移植
 
-## 4. 像素规则
+`design/assets/*.js` 是用全局变量写的普通脚本（为了能双击打开），移植时改成 ES 模块 + TypeScript，逻辑不变。
 
-- 像素单位 `--px: 4px`。描边、硬阴影、台阶都用它的倍数。
-- 所有图形直角，没有圆角，没有模糊阴影。
-- 按钮：2px 描边 + 4px 硬阴影；按下时位移 4px、阴影消失，像"踩实"了。
-- 墓碑外形：`.stone-shape` 用 `clip-path` 画阶梯圆顶。外层描边色、内层石头色，相差 3px 形成像素描边；右侧一道内阴影当作光照。
-- 像素 SVG 一律 `shape-rendering="crispEdges"`，显示时 `image-rendering: pixelated`。
+| 设计稿 | 目标 | 说明 |
+|---|---|---|
+| `labels.js` | `src/site/scripts/labels.ts`（Worker 也引用） | 枚举 → 中文。键名与数据库枚举一致 |
+| `format.js` | `src/site/scripts/format.ts` | `fmtDate`、`daysBetween`、`num`、`lifeLine`、`ago`。**全站所有日期和天数都用它** |
+| `components.js` | `src/site/scripts/wall.ts`、`flower.ts`、`toast.ts` | 只用 DOM API 和 `textContent`，不要改成 `innerHTML` |
+| `epitaphs.js` | `src/site/scripts/epitaphs.ts` | 32 条墓志铭 |
+| `epitaph-card.js` | `src/site/scripts/epitaph-card.ts` | `drawEpitaphCard(canvas, data)`，纯函数 |
+| `sample-data.js` | `seed/dev-seed.sql` 的参考 | **不要移植到正式站点**。里面的 `demo_*` 厂商只在设计稿存在 |
+| `style.css` | `src/site/styles/global.css` | 原样复制，删掉末尾“设计稿专用”的 `.mock-note`、`.state-block`、`.tag-example` |
+| `*.svg` | `public/assets/` | 原样复制 |
 
-## 5. 组件
+移植后 `createTombCard` 的 `assetBase` 改为 `'/assets/'`，`href` 改为 ``id => `/t/${id}` ``，删掉 `demo` 参数。
 
-**墓碑卡片 `.tomb`**（纪念墙）
+## 4. 表单字段对照
 
-从上到下：代号（宋体）→ 存活天数和日期 → 标签（厂商、事件种类）→ 墓志铭（宋体，选填）→ 经过（最多 4 行，超出截断）→ 底栏（"用户自述，未经核实" + 献花按钮）。碑脚可选小花、云朵或星星装饰。整块代号是链接，进入详情页 `/t/:id`。
+`submit.html` 里每个控件的 `name` 和 `value` 就是 `POST /api/tombstones` 的字段名和枚举值，可以直接序列化提交：
 
-- 存活天数：有注册日期时写"存活 412 天，2025.09 至 2026.11.18"；没有时写"存活天数不详，卒于 2026.11.15"。
-- 献花按钮：已献过当天变黄并禁止重复。
+| 控件 | name | 值 |
+|---|---|---|
+| 代号 | `codename` | 文本 |
+| 署名 | `nickname` | 文本 |
+| 厂商 | `vendor` | `claude` `chatgpt` `gemini` `grok` `deepseek` `kimi` `qwen` `doubao` `other` |
+| 套餐 | `plan` | `unknown` `free` `paid_personal` `paid_team` `api` |
+| 发生了什么 | `event` → 提交时映射为 `event_type` | `suspended` `org_suspended` `region` `verification` `billing` `other` |
+| 生于 | `born_at` | `YYYY-MM`；控件为空时 `born_precision = 'none'`，有值时为 `'month'`（正式版可再加“到日”切换） |
+| 卒于 | `died_at` | `YYYY-MM-DD` |
+| 经过 | `story` | 文本 |
+| 墓志铭 | `epitaph` | 文本 |
+| 申诉了吗 | `appeal` → 映射为 `appeal_status` | `none` `pending` `rejected` `restored` |
+| 碑脚放点什么 | `style` → 映射为 `card_style` | `flower` `cloud` `star` |
 
-**详情页 `/t/:id`**（设计稿未单独出图）
+---
 
-复用首页大碑的版式：上半部天空，中间一块大碑完整展示全部字段（经过不截断），下方是献花、举报、"分享这块碑"（复制链接）和"做一张墓志铭卡片"。
+## 5. 视觉规则
 
-**筛选芯片 `.chip`**：横向滚动，选中态反色。厂商和事件两组。
+**概念：一片草坡上的像素墓园。** 白天是晴天，深色模式是月夜，同一个场景换个时辰。纪念墙上的碑高矮不一，但底边落在同一条地平线上（`.rows { align-items: end }`）。首页大碑上用宋体刻着“号没了”，这是全站唯一的视觉重点，其他地方保持克制。
 
-**统计**：用一句话说出三个数字，而不是三张大数字卡片；下面紧跟固定的统计口径说明。分布用菊花黄的分段条（`.bar`）。
+**颜色**：只用 `style.css` 顶部的变量，不新增颜色。菊花黄 `--mum` 是唯一强调色，只用在“要你做点什么”的地方：立碑、献花、下载、主按钮。深色模式靠 `prefers-color-scheme` 自动切换，也支持 `<html data-theme="dark|light">`。
 
-**表单**：标签在上，"必填/选填"跟在标签后面；错误时边框变红，错误文字说清楚哪里不对、怎么改。隐私拦截的提示不回显用户输入的原文。
+**字体**：只用系统字体栈。宋体 `--font-carve` 用于刻在石头上的字：站名、代号、存活天数、墓志铭、页面大标题；黑体 `--font-ui` 用于其他所有界面文字。字号只用 13 / 15 / 17 / 22 / 30 / 44 这六档变量。
 
-**凭据弹窗**：原生 `<dialog>`。勾选"我已经保存好了"之前，"关闭"按钮不可用，按 Esc 也关不掉。
+**像素**：直角，无圆角，无模糊阴影。按钮 2px 描边 + 4px 硬阴影，按下时位移 4px。墓碑外形用 `.stone-shape`。
 
-**审核条目 `.qitem`**：命中规则的整条红框，左侧一道红条，命中的词用 `<mark>` 标出。修改申请并排显示"现在显示"和"改成"。
+**动效**：只有两处，都由用户触发：按钮按下、献花时冒出一朵小花。加载骨架屏的闪烁在 `prefers-reduced-motion: reduce` 时关闭。不要给区块加淡入，不要给卡片加悬停浮起。
+
+**响应式**：375px 无横向滚动，左右留白 16px；窄屏导航横向滚动并在右侧渐隐，不做汉堡菜单。
 
 ## 6. 文案
 
-- 动作写清楚会发生什么："立一块碑""提交并等待审核""下载图片""通过修改"。同一个动作全站同一个名字。
-- 空状态（纪念墙还没有碑时）："这里还很安静。第一块碑，要不要由你来立？" + 按钮"立一块碑"。
-- 筛选后没有结果："这个分类下还没有碑。" + 按钮"看全部"。
-- 网络错误："没连上服务器，碑文还在，稍后再点一次提交。"
-- 限流："今天立碑的次数到上限了，明天再来。"
-- 凭据校验失败："编号或密钥不对。凭据丢了没法找回，可以重新立一块。"
+- 静态页面（使用须知、数据说明、关于、官方申诉入口）的正文以 `doc.html`、`appeal.html` 为准，照抄。
+- 空状态、错误、提示、隐私拦截的每一句话以 `states.html` 为准，照抄。
+- 同一个动作全站同一个名字：“立一块碑”“提交并等待审核”“提交修改”“撤回这块碑”“下载图片”“献花”。
+- 占位符 `TODO_OFFICIAL_URL`、`TODO_DATE`、`TODO_CONTACT_EMAIL` 原样保留，等站长填写。
 
-## 7. 响应式与无障碍
+## 7. 状态清单（每一项都要实现）
 
-- 375px 宽度下无横向滚动（设计稿已用 375 和 1280 两个宽度检查过）。左右留白 16px。
-- 导航在窄屏横向滚动，不折叠成汉堡菜单。
-- 所有可点元素至少 32px 高，主要按钮 44px。
-- 焦点环：3px `--focus` 色描边。
-- 尊重 `prefers-reduced-motion`：全站几乎没有动画，唯一的过渡是按钮按下。
-- 装饰性图片 `alt=""`；小猫有描述性 alt。
+| 页面 | 状态 |
+|---|---|
+| 纪念墙 | 正常、空墙、筛选无结果、加载更多中、加载失败（toast） |
+| 献花 | 未献、已献（当天）、请求失败回滚（toast） |
+| 立碑 | 正常、字段错误（每条隐私规则一句）、限流、人机验证失败、网络错误、成功弹窗 |
+| 凭据弹窗 | 未勾选“已保存”时关闭按钮禁用且 Esc 无效；复制后按钮文字变“已复制” |
+| 管理 | 凭据错误、等待审核、已公开、已公开且修改审核中、未通过、已隐藏、已撤回 |
+| 详情 | 正常、找不到（404） |
+| 审核后台 | 三个队列、命中规则标红、修改对比、空队列（“这个队列是空的。”） |
 
 ## 8. 不要做
 
 - 不使用任何厂商的 Logo、吉祥物、品牌色。
-- 不给每个区块加淡入、上滑动画，不给卡片加悬停浮起。
-- 不加载外部字体、图标库或 UI 框架。
-- 不把统计做成渐变大数字卡片。
+- 不加载外部字体、图标库、UI 框架或图表库。
+- 不把设计稿的黄色提示条、“示例”标签、`demo_*` 厂商、示例墓碑带进正式站点。
+- 不把用户内容拼进 `innerHTML`。
+
+## 9. 需要写的单元测试（`tests/unit/format.test.ts`）
+
+| 输入 | 期望 |
+|---|---|
+| `lifeLine({ born_at: '2026-09-12', born_precision: 'day', died_at: '2026-11-14' })` | `{ days: '存活 63 天', range: '2026.09.12 至 2026.11.14' }` |
+| `lifeLine({ born_at: '2025-09', born_precision: 'month', died_at: '2026-11-18' })` | `{ days: '存活约 443 天', range: '2025.09 至 2026.11.18' }` |
+| `lifeLine({ born_at: null, born_precision: 'none', died_at: '2026-11-15' })` | `{ days: '存活天数不详', range: '卒于 2026.11.15' }` |
+| `lifeLine({ born_at: '2026-12-01', born_precision: 'day', died_at: '2026-11-15' })` | `{ days: '存活天数不详', range: '卒于 2026.11.15' }`（生日晚于卒日） |
+| `num(1204)` | `'1,204'` |
+| `fmtDate('2026-11-18')` | `'2026.11.18'` |
+| `ago(now - 11 分钟)` | `'11 分钟前'` |
+
+## 10. 设计稿自检记录
+
+所有页面已在 375px（浅色）和 1280px（深色）下检查：无横向滚动、无脚本错误、除本地文件外不发出任何网络请求。
