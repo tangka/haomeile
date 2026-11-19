@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>立一块碑 · 号没了</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="mock-note">设计稿：表单不会真的提交。点“提交并等待审核”可以预览成功后的凭据弹窗。</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">号没了</a>
+    <nav class="nav" aria-label="主导航">
+      <a href="index.html">纪念墙</a>
+      <a href="submit.html" aria-current="page">立碑</a>
+      <a href="epitaph.html">墓志铭卡片</a>
+      <a href="#appeal">官方申诉入口</a>
+      <a href="#rules">使用须知</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap">
+    <div class="page-head">
+      <h1>立一块碑</h1>
+      <p>写下账号是怎么没的。审核通过后会出现在纪念墙上，你随时可以修改或撤回。</p>
+    </div>
+
+    <div class="notice" role="note">
+      <strong>这些信息不要填</strong>
+      邮箱、密码、API Key、订单号、手机号、微信或 QQ、链接、证件号码。碑文是公开的，填了会被拦下来。
+    </div>
+
+    <form class="form" id="tomb-form" novalidate>
+      <div class="row-2">
+        <div class="field">
+          <label for="codename">代号<span class="req">必填</span></label>
+          <input class="input" id="codename" maxlength="32" placeholder="比如：小橘号" aria-describedby="codename-hint">
+          <p class="hint" id="codename-hint">会刻在碑上公开显示。别用邮箱或真实用户名。</p>
+        </div>
+        <div class="field">
+          <label for="nickname">署名<span class="req">选填</span></label>
+          <input class="input" id="nickname" maxlength="24" placeholder="不填就显示“匿名”">
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="vendor">哪家的账号<span class="req">必填</span></label>
+          <select class="select" id="vendor">
+            <option value="">请选择</option>
+            <option>Claude</option><option>ChatGPT</option><option>Gemini</option><option>Grok</option>
+            <option>DeepSeek</option><option>Kimi</option><option>通义千问</option><option>豆包</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="plan">套餐<span class="req">选填</span></label>
+          <select class="select" id="plan">
+            <option>不详或不想说</option><option>免费版</option><option>个人付费</option><option>团队或企业</option><option>API</option>
+          </select>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>发生了什么<span class="req">必填</span></legend>
+        <div class="seg">
+          <label><input type="radio" name="event" checked> 账号停用</label>
+          <label><input type="radio" name="event"> 组织暂停</label>
+          <label><input type="radio" name="event"> 地区限制</label>
+          <label><input type="radio" name="event"> 验证卡住</label>
+          <label><input type="radio" name="event"> 扣费或支付异常</label>
+          <label><input type="radio" name="event"> 其他</label>
+        </div>
+      </fieldset>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="born">生于（注册时间）<span class="req">选填</span></label>
+          <input class="input" id="born" type="month">
+          <p class="hint">记不清就空着，存活天数会显示“不详”。</p>
+        </div>
+        <div class="field">
+          <label for="died">卒于（出事那天）<span class="req">必填</span></label>
+          <input class="input" id="died" type="date" value="2026-11-18">
+          <p class="hint">按北京时间填出事的日期，不是今天。</p>
+        </div>
+      </div>
+
+      <div class="field has-error">
+        <label for="story">经过<span class="req">必填，10 到 800 字</span></label>
+        <textarea class="textarea" id="story" maxlength="800" aria-describedby="story-hint story-error">早上打开就提示账号已停用，联系我请打 13800000000</textarea>
+        <p class="hint" id="story-hint">写你看到了什么、做了什么。猜测请注明“猜测”。</p>
+        <p class="error" id="story-error">这段文字里像是有手机号，删掉后再提交。</p>
+        <p class="count" aria-live="polite">27 / 800</p>
+      </div>
+
+      <div class="field">
+        <label for="epitaph">墓志铭<span class="req">选填，最多 120 字</span></label>
+        <input class="input" id="epitaph" maxlength="120" placeholder="比如：它走得很安详，走之前还在思考。">
+      </div>
+
+      <div class="row-2">
+        <fieldset class="field">
+          <legend>申诉了吗</legend>
+          <div class="seg">
+            <label><input type="radio" name="appeal" checked> 还没</label>
+            <label><input type="radio" name="appeal"> 申诉中</label>
+            <label><input type="radio" name="appeal"> 被驳回</label>
+            <label><input type="radio" name="appeal"> 已恢复</label>
+          </div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>碑脚放点什么</legend>
+          <div class="seg">
+            <label><input type="radio" name="style" checked> <img src="assets/flower.svg" alt="" width="16" height="16"> 小花</label>
+            <label><input type="radio" name="style"> <img src="assets/cloud.svg" alt="" width="18" height="8"> 云朵</label>
+            <label><input type="radio" name="style"> <img src="assets/star.svg" alt="" width="16" height="12"> 星星</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <label class="check"><input type="checkbox" id="agree"> 我同意审核通过后公开以上内容，确认没有填写隐私信息。公开后会一直显示，直到我撤回。</label>
+
+      <div class="turnstile-slot" aria-label="人机验证位置">Cloudflare Turnstile 放在这里</div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">提交并等待审核</button>
+        <a class="btn btn-quiet" href="index.html">先不立了</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<dialog class="sheet" id="cred" aria-labelledby="cred-title">
+  <div class="sheet-in">
+    <h2 id="cred-title">碑立好了，正在等审核</h2>
+    <p>下面是这块碑的凭据，用来查看审核结果、修改或撤回。只显示这一次，丢了没法找回。</p>
+    <dl class="cred">
+      <div><dt>编号</dt><dd>K7Q2M9XW4T</dd></div>
+      <div><dt>密钥</dt><dd>q8Jd0r6V_wZ-3hLx9TnA1bYc7EuGfP2s5KmRoQiN4tU</dd></div>
+    </dl>
+    <div class="actions">
+      <button class="btn" type="button">复制凭据</button>
+      <button class="btn" type="button">下载凭据文件</button>
+    </div>
+    <label class="check"><input type="checkbox" id="saved"> 我已经保存好了</label>
+    <label class="check"><input type="checkbox"> 也在这个浏览器里记住它</label>
+    <div class="sheet-close"><button class="btn btn-primary" id="close-cred" type="button" disabled>关闭</button></div>
+  </div>
+</dialog>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>本站为独立社区项目，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。</p>
+    <nav aria-label="页脚"><a href="#rules">使用须知</a><a href="#privacy">数据说明</a><a href="#about">关于</a><a href="#appeal">官方申诉入口</a></nav>
+  </div>
+</footer>
+
+<script>
+  const dlg = document.getElementById('cred');
+  document.getElementById('tomb-form').addEventListener('submit', e => { e.preventDefault(); dlg.showModal(); });
+  dlg.addEventListener('cancel', e => { if (!document.getElementById('saved').checked) e.preventDefault(); });
+  document.getElementById('saved').addEventListener('change', e => { document.getElementById('close-cred').disabled = !e.target.checked; });
+  document.getElementById('close-cred').addEventListener('click', () => dlg.close());
+</script>
+</body>
+</html>
