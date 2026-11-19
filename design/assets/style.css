@@ -104,7 +104,10 @@ a { color: inherit; }
 .topbar { background: var(--sky); color: var(--sky-ink); }
 .topbar .wrap { display: flex; align-items: center; gap: 20px; min-height: 60px; }
 .brand { display: flex; flex: none; white-space: nowrap; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-carve); font-weight: 700; font-size: var(--fs-l); letter-spacing: 0.08em; }
-.brand img { width: 28px; height: 28px; }
+.brand img { width: 32px; height: 32px; }
+/* 深色模式下给页头图形标垫一块天空色，猫耳和描边才不会消失 */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand img { background: #cde5f0; } }
+:root[data-theme="dark"] .brand img { background: #cde5f0; }
 .nav { display: flex; gap: 4px; overflow-x: auto; margin-left: auto; scrollbar-width: none; }
 @media (max-width: 640px) { .nav { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; } }
 .nav::-webkit-scrollbar { display: none; }

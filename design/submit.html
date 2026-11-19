@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>立一块碑 · 号没了</title>
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="icon" href="brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="brand/site.webmanifest">
+<meta name="theme-color" content="#cde5f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18213a" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -15,7 +20,7 @@
 <!-- @component SiteHeader  → src/site/components/SiteHeader.astro  props: current（当前路由） -->
 <header class="topbar">
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">号没了</a>
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="32" height="32">号没了</a>
     <nav class="nav" aria-label="主导航">
       <a href="index.html">纪念墙</a>
       <a href="submit.html" aria-current="page">立碑</a>
@@ -128,7 +133,7 @@
         </fieldset>
       </div>
 
-      <label class="check"><input type="checkbox" id="agree"> 我同意审核通过后公开以上内容，确认没有填写隐私信息。公开后会一直显示，直到我撤回。</label>
+      <label class="check"><input type="checkbox" id="agree"> 我同意审核通过后公开以上内容，确认没有填写隐私信息。我知道公开后搜索引擎和 AI 服务可能抓取这些内容，撤回后本站无法删除第三方已保存的副本。</label>
 
       <div class="turnstile-slot" aria-label="人机验证位置">Cloudflare Turnstile 放在这里</div>
 

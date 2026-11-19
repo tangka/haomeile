@@ -2,6 +2,8 @@
 
 这个目录是可以直接用浏览器打开的设计稿，**前端长什么样、说什么话，以这里为准**。功能和硬性约束以 `PLAN.md` 为准，两者冲突时以 `PLAN.md` 为准。
 
+SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
+
 给 Codex 的读法：
 1. 先读本文件的 §1–§4，知道每个页面、组件、脚本要变成哪个文件。
 2. 再看 HTML 里的 `<!-- @component 名称 → 目标文件 ... -->` 注释，它标出了每个组件的边界和数据来源。
@@ -14,6 +16,7 @@
 | 正式路由 | 设计稿 | 目标文件 | 数据 |
 |---|---|---|---|
 | `/` | `index.html` | `src/site/pages/index.astro` | `GET /api/stats`、`GET /api/tombstones` |
+| `/v/:vendor` | `index.html` 去掉天空场景 | `src/site/pages/v/[vendor].astro` | `GET /api/stats?vendor=`、`GET /api/tombstones?vendor=`，规则见 `SEO.md` §3 |
 | `/t/:id` | `tomb.html` | `src/site/pages/t/[id].astro` | `GET /api/tombstones/:id`，找不到时渲染 404 |
 | `/submit` | `submit.html` | `src/site/pages/submit.astro` | `POST /api/tombstones` |
 | `/submit?mode=edit` | `submit.html`（同一表单） | 同上 | 预填 `POST /api/manage/status` 的结果，提交到 `POST /api/manage/patch`；标题改为“修改墓碑”，按钮改为“提交修改” |
@@ -144,3 +147,24 @@
 ## 10. 设计稿自检记录
 
 所有页面已在 375px（浅色）和 1280px（深色）下检查：无横向滚动、无脚本错误、除本地文件外不发出任何网络请求。
+
+## 11. 品牌
+
+**图形标：猫耳墓碑。** 一块拱顶像素墓碑，肩上冒出两只猫耳（守墓小猫躲在碑后面），碑面是一张 x_x 的脸，脚下一行草。意思很直接：账号没了，但不悲伤。
+
+| 文件 | 用途 |
+|---|---|
+| `brand/mark.svg` | 16×16 主图形。网站图标（SVG）、页头站名左侧。**只按整数倍显示**：16、32、48、64 px |
+| `brand/mark-32.svg` | 32×32 细节版（耳朵里有粉色、碑面有高光、脚边一朵花）。用于 64 px 以上的大尺寸 |
+| `brand/favicon.svg`、`brand/favicon.ico` | 网站图标，带天空色方底，深色标签栏里猫耳也看得见。ico 含 16 / 32 / 48 三帧，像素未经平滑 |
+| `brand/apple-touch-icon.png` | 180×180，天空底 + 草地 |
+| `brand/icon-192.png`、`icon-512.png` | 网页应用图标 |
+| `brand/icon-maskable-512.png` | 可裁切版本，图形缩在安全区内 |
+| `brand/site.webmanifest` | 网页应用清单 |
+| `brand/og-default.png` | 1200×630 社交分享图；源文件 `brand/og-default.html`，改文案后用 1200×630 视口截图重新导出 |
+
+**组合方式**：页头是“图形标 + 宋体站名‘号没了’”，站名用 HTML 文字，不做成图片。图形标和站名间距 10px。深色模式下图形标垫一块天空色方底（`style.css` 已处理）。
+
+**不要**：拉伸或非整数倍缩放图形标（像素会糊）；给它加描边、阴影、渐变；换成厂商的颜色；把 x_x 的脸改成哭脸或其他表情。
+
+**分享图**：所有页面暂时共用 `og-default.png`。每块碑单独生成分享图不在 MVP 范围内（PLAN.md §13）。

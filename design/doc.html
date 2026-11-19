@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>使用须知 · 号没了</title>
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="icon" href="brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="brand/site.webmanifest">
+<meta name="theme-color" content="#cde5f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18213a" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -15,7 +20,7 @@
 <!-- @component SiteHeader  → src/site/components/SiteHeader.astro  props: current（当前路由） -->
 <header class="topbar">
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">号没了</a>
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="32" height="32">号没了</a>
     <nav class="nav" aria-label="主导航">
       <a href="index.html">纪念墙</a>
       <a href="submit.html">立碑</a>
@@ -53,6 +58,10 @@
       <p>审核通过后，墙上会显示：代号、署名、厂商、事件种类、套餐、注册时间（按你选的精度）、出事日期、经过、墓志铭、申诉状态、碑脚样式、献花数和立碑时间。</p>
       <h2>不会收集的内容</h2>
       <p>不需要注册，不要邮箱、手机号或真实姓名。本站不设置 Cookie，不使用第三方统计、广告或追踪脚本。人机验证使用 Cloudflare Turnstile。</p>
+      <h2>搜索引擎和 AI 服务</h2>
+      <p>公开的碑任何人都能看到，也欢迎搜索引擎和 AI 服务抓取。这意味着碑文可能出现在搜索结果里，可能被 AI 助手引用，也可能被用于训练 AI 模型。你撤回后，本站会立即下架并通知搜索引擎重新抓取，但无法删除第三方已经保存的副本。</p>
+      <h2 id="stats">统计口径</h2>
+      <p>本站所有数字都只统计当前公开、审核通过的自愿上报。它们不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同厂商。等待审核、未通过、已隐藏和已撤回的碑都不计入。“今天”和“近 7 天”按北京时间计算。</p>
       <h2>IP 地址</h2>
       <p>为了防刷，服务器会用 IP 计算一个加盐的哈希值做次数限制，哈希每天更换，不保存原始 IP。</p>
       <h2>凭据</h2>

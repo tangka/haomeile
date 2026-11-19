@@ -69,6 +69,8 @@
 | `/privacy` | 数据说明 |
 | `/about` | 关于 & 免责声明 |
 | `/admin` | 审核后台（受 Cloudflare Access 保护） |
+| `/v/:vendor` | 厂商落地页：只看某一家厂商的墓碑和统计（见 §16） |
+| `/sitemap.xml`、`/robots.txt`、`/llms.txt` | 抓取相关文件（见 §16） |
 
 ### 3.1 立碑表单字段
 
@@ -414,6 +416,12 @@ CREATE TABLE audit_log (
 - 隐私检测端到端：填写邮箱/手机号时被拦截。
 - 375px 移动端截图检查无横向滚动。
 
+**M5.5 SEO、GEO 与品牌文件**
+- 按 `design/SEO.md` 实现：SiteLayout 的 head、每个路由的标题和描述模板、`/v/:vendor` 落地页、动态 `sitemap.xml`、墓碑页 410/404 状态码与缓存头、`X-Robots-Tag`、JSON-LD、可抓取的分页链接。
+- 把 `design/brand/` 和 `design/seo/` 的文件放到 SEO.md §8 指定的位置。
+- 测试：sitemap 只含已公开的碑；撤回后墓碑页返回 410 且从 sitemap 消失；JSON-LD 中用户文字的 `<` 被转义；`/manage`、`/submit` 输出 noindex。
+- 用 Lighthouse 跑首页和一个墓碑页，结果记入 `DECISIONS.md`。
+
 **M6 部署文档**
 - 编写 `DEPLOY.md`：创建 D1、执行迁移、配置 secrets、配置 Turnstile、配置 Access、绑定自定义域名、首次发布、回滚方法。
 - 编写 `README.md`：本地开发、测试、目录说明。
@@ -436,6 +444,11 @@ CREATE TABLE audit_log (
 - [ ] `/appeal` 中所有链接都是 `TODO_OFFICIAL_URL` 占位，未编造任何网址。
 - [ ] 生产环境数据库无示例数据。
 - [ ] 移动端 375px 宽度显示正常。
+- [ ] 每个公开页面都有 canonical、description、OG 图；标题和描述符合 `design/SEO.md` §2。
+- [ ] `robots.txt` 允许所有爬虫，只屏蔽 `/admin` 和 `/api/`；`/submit`、`/manage` 为 noindex。
+- [ ] `sitemap.xml` 只包含已公开的墓碑；撤回的墓碑返回 410 并立即从 sitemap 移除。
+- [ ] 首屏和分页内容都在服务端渲染的 HTML 里，“再看 20 块”是真实链接。
+- [ ] 数据说明页和立碑同意勾选里写明“公开内容会被搜索引擎和 AI 服务抓取，撤回后无法删除第三方副本”。
 
 ---
 
@@ -458,6 +471,7 @@ CREATE TABLE audit_log (
 5. 人工核对并填写 `/appeal` 的官方链接、`TODO_CONTACT_EMAIL`、`TODO_DATE`。
 6. 上线前请律师看一下使用须知、数据说明和免责声明。
 7. 上线后每天审核投稿和举报。
+8. 按 `design/SEO.md` §9 提交 Google Search Console 和 Bing 网站管理员工具，并在 Cloudflare 开启 Crawler Hints。
 
 ---
 
@@ -468,3 +482,15 @@ CREATE TABLE audit_log (
 3. 不得违反 §2 的任何硬性约束；如果某个需求与 §2 冲突，以 §2 为准并记录在 `DECISIONS.md`。
 4. 不引入本方案未列出的大型依赖；确需引入时在 `DECISIONS.md` 说明理由。
 5. 不编造任何外部网址、数据或用户内容。
+6. 依次阅读 `PLAN.md` → `design/DESIGN.md` → `design/SEO.md`，三者冲突时以 `PLAN.md` 为准。
+
+---
+
+## 16. SEO 与 GEO
+
+**以 `design/SEO.md` 为准。** 要点：
+
+- **抓取策略**：欢迎所有搜索引擎和 AI 爬虫（含训练用爬虫），`robots.txt` 只屏蔽 `/admin` 和 `/api/`。这一点必须在数据说明页和立碑同意勾选里写明（文案见 `design/doc.html`、`design/submit.html`）。
+- **收录与撤回**：sitemap 只列已公开的碑；撤回返回 410，隐藏、待审、未通过返回 404；墓碑页带 `noarchive`，缓存不超过 5 分钟。
+- **GEO**：统计写成带日期和口径的完整句子；提供 `llms.txt`；结构化数据只用 WebSite、DiscussionForumPosting、BreadcrumbList，不用评价、评分类类型。
+- **不做**：厂商对比、封号率排名、任何诱导性标题。
