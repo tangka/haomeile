@@ -47,6 +47,7 @@ test('English pagination appends a sourced community summary without treating it
   expect(first!.status()).toBe(200);
   expect(await first!.text()).not.toContain(`data-id="${communityId}"`);
   await expect(page.locator('#rows article.tomb')).toHaveCount(20);
+  await expect(page.locator('#rows .tomb-number')).toHaveCount(20);
   await expect(page.locator('#more')).toBeVisible();
   await expect(page.locator('[data-ssr="tally"]')).toContainText(
     '21 records, including 1 community summary and 20 public user submissions',
@@ -64,18 +65,22 @@ test('English pagination appends a sourced community summary without treating it
   await page.locator('#more').click();
   const response = await nextPage;
   expect(response.status()).toBe(200);
-  expect((await response.json()).data.items).toEqual([
+  const { items } = (await response.json()).data;
+  expect(items).toEqual([
     expect.objectContaining({
       id: communityId,
       origin: 'community',
       codename_en: communityEnglishTitle,
       story_en: communityEnglishStory,
       died_at: '',
+      memorial_number: expect.any(Number),
     }),
   ]);
 
   const curated = page.locator(`#rows article.tomb[data-id="${communityId}"]`);
+  const number = '#' + String(items[0].memorial_number).padStart(4, '0');
   await expect(page.locator('#rows article.tomb')).toHaveCount(21);
+  await expect(curated.locator('.tomb-number')).toHaveText(number);
   await expect(curated.locator('.tomb-name')).toHaveText(communityEnglishTitle);
   await expect(curated.locator('.tomb-story')).toHaveText(
     communityEnglishStory,
@@ -152,4 +157,5 @@ test('English pagination appends a sourced community summary without treating it
   expect(await detail!.text()).toContain(
     `<h1 class="tomb-name">${communityTitle}</h1>`,
   );
+  await expect(page.locator('.tomb-number')).toHaveText(number);
 });

@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { openDatabase, type LocalDatabase } from '../../src/server/database';
+import { findPublicTombstone } from '../../src/worker/lib/store';
 
 const opened: LocalDatabase[] = [];
 const directories: string[] = [];
@@ -203,6 +204,7 @@ describe('Bun SQLite D1 binding', () => {
       '0001_initial.sql',
       '0002_three_products.sql',
       '0003_community.sql',
+      '0004_memorial_numbers.sql',
     ]);
     expect(
       await db.binding
@@ -257,6 +259,76 @@ describe('Bun SQLite D1 binding', () => {
     ).toEqual({
       vendor: 'antigravity',
       pending_patch: '{"vendor":"codex","story":"Original user content"}',
+    });
+  });
+
+  test('backfills public memorial numbers and preserves them when visibility changes', async () => {
+    const directory = await temporary();
+    for (const file of [
+      '0001_initial.sql',
+      '0002_three_products.sql',
+      '0003_community.sql',
+    ]) {
+      await writeFile(
+        join(directory, file),
+        await readFile(join(migrations, file)),
+      );
+    }
+    const db = database();
+    await db.migrate(directory);
+    await tomb(db, 'NUMBERAAAC');
+    await tomb(db, 'NUMBERAAAB');
+    await tomb(db, 'NUMBERAAAA');
+    await db.binding
+      .prepare(
+        "UPDATE tombstones SET status='hidden',approved_at='2026-11-19T00:00:00Z' WHERE id='NUMBERAAAC'",
+      )
+      .run();
+    await db.binding
+      .prepare(
+        "UPDATE tombstones SET status='pending',approved_at=NULL WHERE id='NUMBERAAAB'",
+      )
+      .run();
+    const migration = '0004_memorial_numbers.sql';
+    await writeFile(
+      join(directory, migration),
+      await readFile(join(migrations, migration)),
+    );
+    expect(await db.migrate(directory)).toEqual([migration]);
+
+    const publicRecord = (id: string) => findPublicTombstone(db.binding, id);
+    const setStatus = (id: string, status: string) =>
+      db.binding
+        .prepare('UPDATE tombstones SET status=? WHERE id=?')
+        .bind(status, id)
+        .run();
+    expect(await publicRecord('NUMBERAAAA')).toMatchObject({
+      memorial_number: 2,
+    });
+    expect(await publicRecord('NUMBERAAAB')).toBeNull();
+    expect(await publicRecord('NUMBERAAAC')).toBeNull();
+
+    await setStatus('NUMBERAAAB', 'approved');
+    await setStatus('NUMBERAAAC', 'approved');
+    expect(await publicRecord('NUMBERAAAB')).toMatchObject({
+      memorial_number: 3,
+    });
+    expect(await publicRecord('NUMBERAAAC')).toMatchObject({
+      memorial_number: 1,
+    });
+
+    await setStatus('NUMBERAAAC', 'withdrawn');
+    expect(await publicRecord('NUMBERAAAC')).toBeNull();
+    await tomb(db, 'NUMBERAAAD');
+    expect(await publicRecord('NUMBERAAAD')).toMatchObject({
+      memorial_number: 4,
+    });
+    await db.binding
+      .prepare("DELETE FROM tombstones WHERE id='NUMBERAAAD'")
+      .run();
+    await tomb(db, 'NUMBERAAAE');
+    expect(await publicRecord('NUMBERAAAE')).toMatchObject({
+      memorial_number: 5,
     });
   });
 

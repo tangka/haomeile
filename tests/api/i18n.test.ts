@@ -190,7 +190,9 @@ describe('Chinese and English pages', () => {
     expect(html).toContain('<h3 class="tomb-name">使用须知</h3>');
     expect(html).toContain('<p class="tomb-story">这里什么也没有。</p>');
     expect(html).toContain('<p class="tomb-epitaph">账号停用</p>');
-    expect(html).toContain('public user submission.');
+    expect(html).toContain(
+      'data-ssr="tally">The memorial wall has <strong>1</strong> public user submission.',
+    );
     const detail = await (
       await app.request('https://haomeile.rip/en/t/I2NAAAAAAA', {}, bindings)
     ).text();

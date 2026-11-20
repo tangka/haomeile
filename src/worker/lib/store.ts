@@ -22,7 +22,7 @@ export const INPUT_FIELDS = [
   'card_style',
 ] as const;
 export const PUBLIC_FIELDS =
-  'id,codename,nickname,vendor,event_type,plan,born_at,born_precision,died_at,story,epitaph,appeal_status,card_style,status,flowers,created_at,updated_at,approved_at,origin,source_url,source_platform,source_published_at,codename_en,story_en';
+  'id,codename,nickname,vendor,event_type,plan,born_at,born_precision,died_at,story,epitaph,appeal_status,card_style,status,flowers,created_at,updated_at,approved_at,origin,source_url,source_platform,source_published_at,codename_en,story_en,(SELECT memorial_number FROM memorial_numbers WHERE tombstone_id=tombstones.id) AS memorial_number';
 // Values come only from the fixed product enum, never from request parameters.
 export const SUPPORTED_VENDOR_FILTER = `vendor IN (${VENDORS.map((value) => `'${value}'`).join(',')})`;
 export function validId(id: string): boolean {

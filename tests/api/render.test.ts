@@ -157,7 +157,9 @@ describe('Worker renders Astro templates on the server', () => {
     const response = await app.request('https://haomeile.rip/', {}, bindings);
     const html = await response.text();
     expect((html.match(/class="tomb" /g) || []).length).toBe(20);
-    expect(html).toContain('<strong>21</strong> 份用户投稿');
+    expect(html).toContain(
+      'data-ssr="tally">已收录 <strong>21</strong> 份用户投稿。',
+    );
     expect(html).toContain('<section data-ssr="timeline-section">');
     expect(html).toMatch(/href="\/[?]cursor=/);
     expect(html).not.toContain('private-hash');

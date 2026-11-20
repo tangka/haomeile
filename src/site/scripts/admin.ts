@@ -13,7 +13,7 @@ interface Report {
   note: string | null;
   created_at: string;
 }
-interface QueueItem extends PublicTombstone {
+interface QueueItem extends Omit<PublicTombstone, 'memorial_number'> {
   flags: string[];
   pending_patch: TombInput | null;
   reports: Report[];

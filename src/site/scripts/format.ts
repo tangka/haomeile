@@ -25,6 +25,9 @@ export function daysBetween(from: string, to: string): number | null {
 export function num(value: number, locale: Locale = 'zh'): string {
   return Number(value).toLocaleString(locale === 'en' ? 'en-US' : 'zh-CN');
 }
+export function fmtMemorialNumber(value: number): string {
+  return '#' + String(value).padStart(4, '0');
+}
 export function flowerPresentation(
   count: number,
   locale: Locale,

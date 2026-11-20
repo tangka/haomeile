@@ -2,7 +2,13 @@ import { currentLocale, localePath, tr } from '../../shared/i18n';
 import type { PublicTombstone } from '../../worker/types';
 import { element } from './browser';
 import { getLabels } from './labels';
-import { flowerPresentation, lifeLine, fmtDate, num } from './format';
+import {
+  flowerPresentation,
+  lifeLine,
+  fmtDate,
+  fmtMemorialNumber,
+  num,
+} from './format';
 import { tombPresentation } from '../../shared/tomb-presentation';
 const labels = getLabels();
 const DECORATIONS: Record<string, [string, string, number, number][]> = {
@@ -46,6 +52,10 @@ export function createTombCard(
   const face = element('div', 'tomb-face stone-shape');
   body.append(face);
   card.append(body);
+  if (tomb.memorial_number)
+    face.append(
+      element('p', 'tomb-number', fmtMemorialNumber(tomb.memorial_number)),
+    );
   const name = element(
     detail ? 'h1' : 'h3',
     'tomb-name',

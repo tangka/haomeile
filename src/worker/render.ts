@@ -7,6 +7,7 @@ import {
   lifeLine,
   num,
   fmtDate,
+  fmtMemorialNumber,
 } from '../site/scripts/format';
 import {
   basePath,
@@ -50,6 +51,9 @@ export function renderTomb(
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const e = escapeHtml;
   const view = tombPresentation(t, locale);
+  const number = t.memorial_number
+    ? `<p class="tomb-number">${e(fmtMemorialNumber(t.memorial_number))}</p>`
+    : '';
   const name = detail
     ? `<h1 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h1>`
     : `<a class="tomb-link" href="${localePath(`/t/${e(t.id)}`, locale)}"><h3 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h3></a>`;
@@ -87,7 +91,7 @@ export function renderTomb(
     ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
     : '';
   const flower = flowerPresentation(t.flowers, locale);
-  return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
+  return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${number}${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
 }
 export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
@@ -102,7 +106,7 @@ export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
   return `<figure style="margin:0;padding-top:20px;padding-bottom:20px"><figcaption>${text('近 30 天 · 上报日期与事件日期', 'Last 30 days · reported and event dates')}</figcaption><svg viewBox="0 0 760 170" role="img" aria-label="${text('近30天按上报日期与事件发生日期统计', 'Reports and events over the last 30 days.')}" style="width:100%;height:auto"><path d="M20 20V130H740" fill="none" stroke="currentColor"/><polyline points="${line('reported')}" fill="none" stroke="var(--mum)" stroke-width="3"/><polyline points="${line('occurred')}" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><text x="20" y="158" fill="currentColor" font-size="13">${escapeHtml(stats.timeline[0]?.date)}</text><text x="740" y="158" text-anchor="end" fill="currentColor" font-size="13">${escapeHtml(stats.date)}</text></svg><p class="hint">${text('实线：上报数；虚线：事件发生数。', 'Solid line: reports. Dashed line: events.')}</p></figure>`;
 }
 function renderTally(stats: Stats, vendor: string, locale: Locale): string {
-  const { total: submitted, community_total: curated = 0, date } = stats;
+  const { total: submitted, community_total: curated = 0 } = stats;
   const total = submitted + curated;
   if (!total) return '';
 
@@ -110,10 +114,6 @@ function renderTally(stats: Stats, vendor: string, locale: Locale): string {
   const mixed = submitted > 0 && curated > 0;
   const product = vendor ? `${escapeHtml(vendor)} ` : '';
   if (locale === 'en') {
-    const dateLabel = new Intl.DateTimeFormat('en-US', {
-      dateStyle: 'long',
-      timeZone: 'UTC',
-    }).format(new Date(date + 'T00:00:00Z'));
     const submissions = `${count(submitted)} public user submission${submitted === 1 ? '' : 's'}`;
     const summaries = `${count(curated)} community summar${curated === 1 ? 'y' : 'ies'}`;
     const records = mixed
@@ -121,7 +121,7 @@ function renderTally(stats: Stats, vendor: string, locale: Locale): string {
       : curated
         ? summaries
         : submissions;
-    return `As of <time datetime="${date}">${dateLabel}</time>, the ${product}memorial wall has ${records}.`;
+    return `The ${product}memorial wall has ${records}.`;
   }
 
   const submissions = `${count(submitted)} 份用户投稿`;
@@ -132,7 +132,7 @@ function renderTally(stats: Stats, vendor: string, locale: Locale): string {
       ? summaries
       : submissions;
   const wall = vendor ? `${product}纪念墙` : '已';
-  return `截至 <time datetime="${date}">${date}</time>，${wall}收录 ${records}。`;
+  return `${wall}收录 ${records}。`;
 }
 
 function metadata(

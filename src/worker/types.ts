@@ -78,7 +78,7 @@ export interface TombstoneRow
 export type PublicTombstone = Omit<
   TombstoneRow,
   'secret_hash' | 'pending_patch' | 'flags'
->;
+> & { memorial_number: number };
 export interface TombstonePage {
   items: PublicTombstone[];
   next_cursor: string | null;

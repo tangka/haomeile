@@ -650,6 +650,14 @@ a {
   letter-spacing: 0.04em;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+.tomb-number {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  color: var(--stone-soft);
+}
 .tomb-life {
   margin: 4px 0 10px;
   text-align: center;
