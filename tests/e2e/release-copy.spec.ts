@@ -57,6 +57,11 @@ test('public release information has no configuration placeholders', async ({
         );
     }
     await page.goto(prefix + '/');
+    const appealLink = `a[href="${prefix}/appeal"]`;
+    await expect(page.getByRole('banner').locator(appealLink)).toHaveCount(0);
+    await expect(
+      page.getByRole('contentinfo').locator(appealLink),
+    ).toBeVisible();
     await expect(page.locator('[data-ssr="community-tally"]')).toContainText(
       prefix ? 'Community summaries' : '社区整理',
     );
