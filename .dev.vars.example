@@ -1,0 +1,8 @@
+# Local development only: official always-pass Turnstile test keys.
+ENVIRONMENT="development"
+SITE_ORIGIN="http://127.0.0.1:8787"
+TURNSTILE_SITE_KEY="1x00000000000000000000AA"
+TURNSTILE_SECRET="1x0000000000000000000000000000000AA"
+PEPPER="local-development-only-replace-before-deployment"
+ACCESS_AUD=""
+ACCESS_TEAM_DOMAIN=""
