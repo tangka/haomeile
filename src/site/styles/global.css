@@ -478,3 +478,22 @@ dialog.sheet::backdrop { background: rgba(10, 20, 15, 0.55); }
 @media (max-width: 759px) {
   .scene-main { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Retain the design palette while meeting AA contrast in both day and night. */
+.ground, .yard, .detail, .preview p,
+.status-pill[data-status="approved"] { color: var(--ink); }
+.tally-note, .census .hint { opacity: 1; }
+.yard .chip { color: var(--ink); border-color: var(--ink); }
+.yard .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.error, .flag, .todo,
+.status-pill[data-status="rejected"],
+.status-pill[data-status="hidden"],
+.admin .facts { color: var(--ink); }
+
+/* Valid unbroken account aliases and stories must fit narrow cards as well. */
+.rows > *, .qitem, .qhead > *, .diff > *, .status-card { min-width: 0; }
+.tomb-name, .tomb-epitaph, .tomb-story, .facts dd,
+.qhead h3, .qstory, .diff div, .status-card p {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}

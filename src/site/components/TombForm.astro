@@ -90,10 +90,25 @@
 
   <div class="row-2">
     <div class="field">
-      <label for="born">
+      <label for="born-precision">
         生于（注册时间）<span class="req">选填</span>
       </label>
-      <input class="input" id="born" name="born_at" type="month" />
+      <select class="select" id="born-precision" name="born_precision">
+        <option value="none">不记得</option>
+        <option value="month">记得到月</option>
+        <option value="day">记得到日</option>
+      </select>
+      <label class="visually-hidden" for="born">
+        注册日期
+      </label>
+      <input
+        class="input"
+        id="born"
+        name="born_at"
+        type="month"
+        hidden
+        disabled
+      />
       <p class="hint">记不清就空着，存活天数会显示“不详”。</p>
     </div>
     <div class="field">

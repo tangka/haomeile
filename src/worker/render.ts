@@ -137,11 +137,26 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       },
     });
   let assetPath = url.pathname;
+  // Fetch directory assets internally so their canonical redirects cannot drop form query parameters.
+  if (
+    [
+      '/submit',
+      '/manage',
+      '/epitaph',
+      '/appeal',
+      '/rules',
+      '/privacy',
+      '/about',
+      '/admin',
+    ].includes(path)
+  )
+    assetPath = path + '/';
   if (path === '/' || path.startsWith('/v/')) {
     const vendor = path.startsWith('/v/')
       ? path.slice(3)
       : url.searchParams.get('vendor') || undefined;
-    if (vendor && !Object.hasOwn(LABELS.vendor, vendor)) return serveMissing(c, 404);
+    if (vendor && !Object.hasOwn(LABELS.vendor, vendor))
+      return serveMissing(c, 404);
     const [page, stats] = await Promise.all([
       listTombstones(c.env.DB, {
         vendor,

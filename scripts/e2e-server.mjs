@@ -6,6 +6,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const configDir = path.join(root, '.wrangler/e2e-config');
 const config = path.join(configDir, 'wrangler.toml');
 const persist = path.join(root, '.wrangler/e2e-state');
+const output = path.join(root, '.wrangler/e2e-dist');
 await mkdir(configDir, { recursive: true });
 await writeFile(
   config,
@@ -14,7 +15,7 @@ main = ${JSON.stringify(path.join(root, 'src/worker/index.ts'))}
 compatibility_date = "2026-11-20"
 compatibility_flags = ["nodejs_compat"]
 [assets]
-directory = ${JSON.stringify(path.join(root, 'dist'))}
+directory = ${JSON.stringify(output)}
 binding = "ASSETS"
 run_worker_first = true
 [[d1_databases]]
@@ -45,7 +46,7 @@ const run = (args) =>
       code === 0 ? resolve() : reject(new Error(args.join(' ') + ' failed')),
     );
   });
-await run(['build']);
+await run(['exec', 'astro', 'build', '--outDir', output]);
 await run([
   'exec',
   'wrangler',

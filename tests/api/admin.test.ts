@@ -12,7 +12,7 @@ import {
 } from 'vitest';
 import { adminRoutes } from '../../src/worker/routes/admin';
 import { publicRoutes } from '../../src/worker/routes/public';
-import worker from '../../src/worker';
+import { app as worker } from '../../src/worker';
 import { hashSecret } from '../../src/worker/lib/crypto';
 import { createAccessVerifier } from '../../src/worker/lib/access';
 import { ApiError } from '../../src/worker/lib/errors';

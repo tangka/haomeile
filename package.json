@@ -10,9 +10,9 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "astro build",
-    "check": "astro check && tsc -p tsconfig.worker.json --noEmit",
+    "check": "astro check && tsc -p tsconfig.worker.json --noEmit && tsc -p tsconfig.e2e.json --noEmit",
     "lint": "eslint .",
-    "format": "prettier --write src tests scripts *.json *.mjs *.ts *.toml *.md",
+    "format": "prettier --write src tests scripts *.json *.mjs *.ts README.md DEPLOY.md DECISIONS.md",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "wrangler d1 migrations apply haomeile --local",

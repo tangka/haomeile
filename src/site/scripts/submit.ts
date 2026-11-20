@@ -22,6 +22,29 @@ const errorBox = document.querySelector<HTMLElement>('#submit-error')!;
 const submit = document.querySelector<HTMLButtonElement>('#submit-button')!;
 const challengeContainer = document.querySelector<HTMLElement>('#turnstile')!;
 const died = document.querySelector<HTMLInputElement>('#died')!;
+const born = document.querySelector<HTMLInputElement>('#born')!;
+const bornPrecision =
+  document.querySelector<HTMLSelectElement>('#born-precision')!;
+type BornPrecision = TombInput['born_precision'];
+function setBornPrecision(precision: BornPrecision): void {
+  const previous = born.value;
+  bornPrecision.value = precision;
+  born.type = precision === 'day' ? 'date' : 'month';
+  born.hidden = precision === 'none';
+  born.disabled = precision === 'none';
+  born.required = precision !== 'none';
+  born.max = precision === 'day' ? shanghaiDate() : shanghaiDate().slice(0, 7);
+  // Keeping a known month never invents a registration day.
+  if (precision === 'none' || (precision === 'day' && previous.length === 7))
+    born.value = '';
+  else born.value = precision === 'month' ? previous.slice(0, 7) : previous;
+}
+bornPrecision.addEventListener('change', () =>
+  setBornPrecision(bornPrecision.value as BornPrecision),
+);
+form.addEventListener('reset', () =>
+  queueMicrotask(() => setBornPrecision(bornPrecision.value as BornPrecision)),
+);
 died.max = shanghaiDate();
 died.value = shanghaiDate();
 let credential: Credential | undefined;
@@ -70,6 +93,8 @@ function showFields(fields: Record<string, string>): void {
 }
 function fill(tomb: OwnerTomb): void {
   const values = tomb.pending_patch || tomb;
+  // Set the input type before assigning a precise date; month inputs clear day values.
+  setBornPrecision(values.born_precision);
   for (const [field, value] of Object.entries(values)) {
     const name = names[field] || field;
     const controls = form.querySelectorAll<
@@ -86,8 +111,6 @@ function fill(tomb: OwnerTomb): void {
       else control.value = value == null ? '' : String(value);
     });
   }
-  document.querySelector<HTMLInputElement>('#born')!.type =
-    values.born_precision === 'day' ? 'date' : 'month';
   updateCount();
 }
 function updateCount(): void {
@@ -223,11 +246,7 @@ form.addEventListener('submit', async (event) => {
     event_type: data.get('event'),
     plan: data.get('plan'),
     born_at: born || null,
-    born_precision: born
-      ? document.querySelector<HTMLInputElement>('#born')!.type === 'date'
-        ? 'day'
-        : 'month'
-      : 'none',
+    born_precision: bornPrecision.value,
     died_at: data.get('died_at'),
     story: data.get('story'),
     epitaph: data.get('epitaph'),

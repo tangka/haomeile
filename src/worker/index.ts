@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
-import type { AppEnv } from './types';
+import type { AppEnv, Bindings } from './types';
 import { publicRoutes } from './routes/public';
 import { security, handleError } from './security';
 import { servePage } from './render';
 import { verifyAccess } from './lib/access';
 import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
+import { cleanup } from './cleanup';
 
 const app = new Hono<AppEnv>();
 app.use('*', security);
@@ -38,4 +39,9 @@ app.all('/api/*', (c) =>
   ),
 );
 app.get('*', servePage);
-export default app;
+export { app };
+export default {
+  fetch: app.fetch,
+  scheduled: async (controller, env) =>
+    cleanup(env, new Date(controller.scheduledTime)),
+} satisfies ExportedHandler<Bindings>;

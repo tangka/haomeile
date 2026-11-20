@@ -1,10 +1,15 @@
 import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
-import app from '../../src/worker';
+import { app } from '../../src/worker';
 import type { Bindings } from '../../src/worker/types';
 const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><p data-ssr="tally"></p><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><div data-ssr="filters-vendor"></div><div data-ssr="filters-event"></div><div data-ssr="timeline"></div></body></html>`;
 const assets = {
   async fetch(request: Request) {
+    if (new URL(request.url).pathname === '/submit')
+      return new Response(null, {
+        status: 307,
+        headers: { location: '/submit/' },
+      });
     if (new URL(request.url).pathname === '/image.png')
       return new Response(new Uint8Array([137, 80, 78, 71]), {
         headers: { 'content-type': 'image/png' },
@@ -28,6 +33,15 @@ async function seed(
     .run();
 }
 describe('Worker renders Astro templates on the server', () => {
+  it('serves the edit form without a redirect that loses its query string', async () => {
+    const response = await app.request(
+      'https://haomeile.rip/submit?mode=edit',
+      {},
+      bindings,
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.has('location')).toBe(false);
+  });
   it('starts with an empty wall and injects the configured challenge key', async () => {
     const response = await app.request('https://haomeile.rip/', {}, bindings);
     const html = await response.text();
