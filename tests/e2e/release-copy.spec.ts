@@ -14,7 +14,28 @@ test('public release information has no configuration placeholders', async ({
           'Codex',
           'Antigravity',
         ]);
-        await expect(page.locator('.vendor a')).toHaveCount(0);
+        const links = page.locator('.vendor a.btn-primary');
+        await expect(links).toHaveText(
+          prefix
+            ? [
+                'Appeal a Claude restriction',
+                'OpenAI appeal form',
+                'Antigravity appeal form',
+              ]
+            : ['Claude 账号申诉', 'OpenAI 申诉表单', 'Antigravity 申诉表单'],
+        );
+        await expect(links.nth(0)).toHaveAttribute(
+          'href',
+          'https://claude.ai/restricted',
+        );
+        await expect(links.nth(1)).toHaveAttribute(
+          'href',
+          'https://openai.com/form/appeal/',
+        );
+        await expect(links.nth(2)).toHaveAttribute(
+          'href',
+          'https://forms.gle/hGzM9MEUv2azZsrb9',
+        );
       }
       if (route === '/about' || route === '/privacy') {
         await expect(page.locator('body')).toContainText(

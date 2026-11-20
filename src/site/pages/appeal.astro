@@ -1,11 +1,39 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { LABELS } from '../scripts/labels';
+
+const channels = [
+  {
+    name: 'Claude',
+    guidance: '用受限的 Claude 账号登录，在账号限制页提交申诉。',
+    appeal: 'https://claude.ai/restricted',
+    action: 'Claude 账号申诉',
+    help: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
+    helpLabel: 'Claude 申诉说明',
+  },
+  {
+    name: 'Codex',
+    guidance:
+      '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。',
+    appeal: 'https://openai.com/form/appeal/',
+    action: 'OpenAI 申诉表单',
+    help: 'https://help.openai.com/',
+    helpLabel: 'OpenAI 帮助中心',
+  },
+  {
+    name: 'Antigravity',
+    guidance:
+      '个人账号遇到 Antigravity 服务停用时，用受影响的 Google 账号登录并提交申诉。',
+    appeal: 'https://forms.gle/hGzM9MEUv2azZsrb9',
+    action: 'Antigravity 申诉表单',
+    help: 'https://support.google.com/accounts/answer/40695',
+    helpLabel: 'Google 账号停用说明',
+  },
+];
 ---
 
 <SiteLayout
   title="Claude、Codex、Antigravity 官方申诉入口 · 号没了"
-  description="Claude、Codex、Antigravity 账号申诉的准备建议。请通过产品内的官方支持渠道联系厂商，本站无法帮你解封。"
+  description="Claude、Codex 和 Antigravity 的官方账号申诉入口和填写建议。"
   path="/appeal"
   current="/appeal"
 >
@@ -13,25 +41,26 @@ import { LABELS } from '../scripts/labels';
     <div class="wrap">
       <div class="page-head">
         <h1>官方申诉入口</h1>
-        <p>
-          这里只收录 Claude、Codex 和
-          Antigravity。本站没法帮你解封，请走产品所属厂商的官方渠道。
-        </p>
       </div>
 
-      <div class="notice" role="note">
-        <strong>请使用产品内的官方支持渠道</strong>
-        页面更新于：<time datetime="2026-11-20">2026-11-20</time>
-        。本站不提供代申诉或解封服务。
-      </div>
-
-      <!-- 未核对的官网链接不对外展示。 -->
       <div class="vendor-list">
-        {Object.values(LABELS.vendor).map((name) => (
+        {channels.map(({ name, guidance, appeal, action, help, helpLabel }) => (
           <article class="vendor">
             <h2>{name}</h2>
-            <p>直接入口正在整理。</p>
-            <p>请通过产品内的帮助与支持渠道联系官方，提交账号问题。</p>
+            <p>{guidance}</p>
+            <div class="appeal-links">
+              <a
+                class="btn btn-primary"
+                href={appeal}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {action}
+              </a>
+              <a href={help} target="_blank" rel="noopener noreferrer">
+                {helpLabel}
+              </a>
+            </div>
           </article>
         ))}
       </div>
@@ -43,10 +72,24 @@ import { LABELS } from '../scripts/labels';
           <li>你平时用它做什么，比如写代码、写论文、处理工作文档。</li>
           <li>收到的通知原文。</li>
         </ul>
-        <p>
-          账号邮箱、订单号这类信息只填在厂商的官方表单里，不要贴在本站。也不要相信任何声称能“代申诉”“包解封”的人。
-        </p>
       </div>
     </div>
   </main>
 </SiteLayout>
+
+<style>
+  .vendor {
+    grid-template-rows: auto 1fr auto;
+  }
+  .appeal-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-block-start: 8px;
+  }
+  .appeal-links a {
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+</style>

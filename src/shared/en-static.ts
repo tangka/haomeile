@@ -127,18 +127,20 @@ export const EN_STATIC: Record<string, string> = {
 
   'Claude、Codex、Antigravity 官方申诉入口 · 号没了':
     'Official appeals for Claude, Codex and Antigravity · 号没了',
-  'Claude、Codex、Antigravity 账号申诉的准备建议。请通过产品内的官方支持渠道联系厂商，本站无法帮你解封。':
-    'How to prepare an account appeal for Claude, Codex or Antigravity. Contact the provider through its in-product official support channels. We cannot restore your account.',
-  '这里只收录 Claude、Codex 和 Antigravity。本站没法帮你解封，请走产品所属厂商的官方渠道。':
-    'This page covers Claude, Codex and Antigravity only. We cannot restore your account; please use the provider’s official channels.',
-  请使用产品内的官方支持渠道:
-    'Use the official support channels within the product',
-  '页面更新于：': 'Page updated: ',
-  '。本站不提供代申诉或解封服务。':
-    '. We do not offer appeal handling or account restoration services.',
-  '直接入口正在整理。': 'Direct links are being prepared.',
-  '请通过产品内的帮助与支持渠道联系官方，提交账号问题。':
-    'Use the help and support channels within the product to contact its official support team about your account.',
+  'Claude、Codex 和 Antigravity 的官方账号申诉入口和填写建议。':
+    'Official account appeal links and guidance for Claude, Codex and Antigravity.',
+  '用受限的 Claude 账号登录，在账号限制页提交申诉。':
+    'Sign in with the affected Claude account to submit an appeal on the account restriction page.',
+  'Claude 账号申诉': 'Appeal a Claude restriction',
+  'Claude 申诉说明': 'Claude appeal guidance',
+  '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。':
+    'Start with the appeal link in your OpenAI notification email. For a permanent account closure, use the form below if you cannot access that email. If you received no notification, contact support through the Help Center.',
+  'OpenAI 申诉表单': 'OpenAI appeal form',
+  'OpenAI 帮助中心': 'OpenAI Help Center',
+  '个人账号遇到 Antigravity 服务停用时，用受影响的 Google 账号登录并提交申诉。':
+    'If Antigravity access was suspended on a personal account, sign in with the affected Google Account and submit an appeal.',
+  'Antigravity 申诉表单': 'Antigravity appeal form',
+  'Google 账号停用说明': 'Disabled Google Account help',
   Antigravity: 'Antigravity',
   申诉时可以写什么: 'What to include in an appeal',
   '出事的时间，以及你当时在做什么。':
@@ -146,8 +148,6 @@ export const EN_STATIC: Record<string, string> = {
   '你平时用它做什么，比如写代码、写论文、处理工作文档。':
     'What you normally use the product for, such as coding, academic writing or work documents.',
   '收到的通知原文。': 'The exact wording of any notice you received.',
-  '账号邮箱、订单号这类信息只填在厂商的官方表单里，不要贴在本站。也不要相信任何声称能“代申诉”“包解封”的人。':
-    'Enter account email addresses, order numbers and similar information only in the provider’s official forms. Do not post them here. Be wary of anyone offering to appeal on your behalf or guaranteeing account restoration.',
 
   '墓志铭卡片生成器 · 号没了': 'Epitaph card maker · 号没了',
   '为 Claude、Codex 或 Antigravity的账号生成像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。':
