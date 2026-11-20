@@ -240,27 +240,22 @@ export const EN_STATIC: Record<string, string> = {
   '已处理的举报：90 天后删除。': 'Resolved reports: deleted after 90 days.',
   '防刷记录：2 天后删除。': 'Abuse-prevention records: deleted after 2 days.',
 
-  '使用须知 · 号没了': 'Rules · 号没了',
-  '在号没了立碑前需要知道的规则：写经过、不填隐私、保存凭据、不谈买卖账号和规避风控。':
-    'Before adding a memorial: describe what happened, leave out private information, save your credentials, and avoid account trading or evading platform controls.',
+  返回填写: 'Back to the form',
   '写经过。': 'Describe what happened.',
   '写你看到了什么、做了什么。不确定的地方请注明“猜测”。':
     'Describe what you saw and did. Label anything uncertain as “speculation”.',
   '不填隐私。': 'Leave out private information.',
-  '邮箱、密码、API Key、订单号、手机号、微信或 QQ、链接、证件号码都不要填。系统检测到会直接拦下。':
-    'Do not include email addresses, passwords, API keys, order numbers, phone numbers, WeChat or QQ details, links or identity document numbers. Submissions containing detected private information will be blocked.',
+  '邮箱、密码、API Key、订单号、手机号、微信或 QQ、链接、证件号码都不要填。':
+    'Leave out email addresses, passwords, API keys, order numbers, phone numbers, WeChat or QQ details, links and identity document numbers.',
   '保存好凭据。': 'Save your credentials.',
   '立碑后会得到一组编号和密钥，用来修改和撤回。它只显示一次，丢了没法找回。':
     'You will receive an ID and a secret key to edit or withdraw your memorial. They are shown only once and cannot be recovered if lost.',
   '这里不谈这些。': 'Keep these topics off the site.',
-  '买卖账号、拼车合租、中转代理、代充代付、翻墙节点、防封技巧、解封服务。相关内容一律不通过。':
-    'Account trading or sharing, API relay services, third-party top-ups or payments, proxy nodes for bypassing internet restrictions, ban-evasion tips and account restoration services. Content promoting these will not be approved.',
+  '买卖账号、拼车合租、中转代理、代充代付、翻墙节点、防封技巧、解封服务。':
+    'Account trading or sharing, relay services, third-party payments, proxy nodes, ban-evasion tips and account restoration services.',
   '对事不对人。': 'Discuss events, not individuals.',
   '不点名攻击任何个人，包括厂商的员工。':
     'Do not name and attack individuals, including the providers’ employees.',
-  '想申诉，请走官方渠道。': 'Use official channels to appeal.',
-  '本站没法帮你解封，见“官方申诉入口”。':
-    'We cannot restore your account. See “Official appeals”.',
 
   '立一块碑 · 号没了': 'Add a memorial · 号没了',
   '匿名记录你的 Claude、Codex 或 Antigravity 账号是怎么没的。':

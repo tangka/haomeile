@@ -2,6 +2,7 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import TombForm from '../components/TombForm.astro';
 import CredentialDialog from '../components/CredentialDialog.astro';
+import PostingRulesDialog from '../components/PostingRulesDialog.astro';
 ---
 
 <SiteLayout
@@ -14,7 +15,18 @@ import CredentialDialog from '../components/CredentialDialog.astro';
   <main class="page">
     <div class="wrap">
       <div class="page-head">
-        <h1 id="submit-title">立一块碑</h1>
+        <div class="submit-heading">
+          <h1 id="submit-title">立一块碑</h1>
+          <button
+            class="btn btn-quiet"
+            type="button"
+            id="open-posting-rules"
+            aria-haspopup="dialog"
+            aria-controls="posting-rules"
+          >
+            使用须知
+          </button>
+        </div>
         <p id="submit-description">
           写下账号是怎么没的。审核通过后会出现在纪念墙上，你随时可以修改或撤回。
         </p>
@@ -62,8 +74,18 @@ import CredentialDialog from '../components/CredentialDialog.astro';
       <TombForm />
     </div>
   </main>
+  <PostingRulesDialog />
   <CredentialDialog />
   <script>
     import '../scripts/submit';
   </script>
 </SiteLayout>
+
+<style>
+  .submit-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 16px;
+  }
+</style>

@@ -33,6 +33,23 @@ const died = document.querySelector<HTMLInputElement>('#died')!;
 const product = document.querySelector<HTMLSelectElement>('#vendor')!;
 const plan = document.querySelector<HTMLSelectElement>('#plan')!;
 const planHint = document.querySelector<HTMLElement>('#plan-hint')!;
+const rules = document.querySelector<HTMLDialogElement>('#posting-rules')!;
+function openPostingRules(): void {
+  if (!rules.open) rules.showModal();
+}
+document
+  .querySelector('#open-posting-rules')!
+  .addEventListener('click', openPostingRules);
+if (location.hash === '#posting-rules') openPostingRules();
+rules.addEventListener('close', () => {
+  if (location.hash === '#posting-rules')
+    history.replaceState(
+      history.state,
+      '',
+      location.pathname + location.search,
+    );
+});
+
 function syncPlans(preferred = plan.value): void {
   const choices: readonly string[] = Object.hasOwn(PRODUCT_PLANS, product.value)
     ? PRODUCT_PLANS[product.value as Vendor]

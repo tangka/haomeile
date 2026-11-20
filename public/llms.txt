@@ -14,7 +14,6 @@
 - [纪念墙](https://haomeile.rip/): 最新收录的账号经历、投稿统计与近 30 天曲线
 - [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的申诉准备建议与产品内官方支持渠道说明
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
-- [使用须知](https://haomeile.rip/rules): 投稿说明
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
 
 ## 可选

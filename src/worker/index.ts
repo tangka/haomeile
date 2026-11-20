@@ -72,7 +72,16 @@ export function createApp(options: AppOptions = {}) {
       ['GET', 'HEAD'].includes(c.req.method) &&
       !/^\/(?:api|assets|_astro|_templates|sitemaps)(?:\/|$)/.test(path) &&
       (!/\.[^/]+\/?$/.test(path) || /\.html\/?$/.test(path));
-    if (!documentRequest || routeLocale(path) === 'en') return next();
+    if (!documentRequest) return next();
+    if (/^\/rules(?:\/index\.html|\.html)?\/?$/.test(basePath(path))) {
+      c.header('Vary', 'Accept-Language');
+      c.header('Cache-Control', 'private, no-store');
+      return c.redirect(
+        localePath('/submit', requestLocale(c.req.raw)) + '#posting-rules',
+        302,
+      );
+    }
+    if (routeLocale(path) === 'en') return next();
     c.header('Vary', 'Accept-Language');
     if (requestLocale(c.req.raw) === 'en') {
       c.header('Cache-Control', 'private, no-store');

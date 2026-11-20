@@ -78,30 +78,23 @@ describe('dynamic sitemap', () => {
     expect(xml).toContain('/t/SUPPORTEDA');
     expect(xml).not.toContain('/t/LEGACY');
     expectLanguagePair(xml, '/t/SUPPORTEDA');
-    expect(xml.match(/<url>/g)).toHaveLength(14);
+    expect(xml.match(/<url>/g)).toHaveLength(12);
     expect(
       await env.DB.prepare('SELECT count(*) n FROM tombstones').first('n'),
     ).toBe(9);
   });
-  it('lists both languages of the six public static routes with reciprocal alternates and build timestamps', async () => {
+  it('lists both languages of the five public static routes with reciprocal alternates and build timestamps', async () => {
     const response = (await map('/sitemap.xml', deployedAt))!;
     expect(response.headers.get('content-type')).toBe(
       'application/xml; charset=utf-8',
     );
     expect(response.headers.get('cache-control')).toBe('public, max-age=300');
     const xml = await response.text();
-    for (const path of [
-      '/',
-      '/epitaph',
-      '/appeal',
-      '/rules',
-      '/privacy',
-      '/about',
-    ])
+    for (const path of ['/', '/epitaph', '/appeal', '/privacy', '/about'])
       expectLanguagePair(xml, path);
     expect(xml).toContain('xmlns:xhtml="http://www.w3.org/1999/xhtml"');
-    expect(xml.match(/<url>/g)).toHaveLength(12);
-    expect(xml.match(/<xhtml:link /g)).toHaveLength(36);
+    expect(xml.match(/<url>/g)).toHaveLength(10);
+    expect(xml.match(/<xhtml:link /g)).toHaveLength(30);
     expect(
       xml.match(
         new RegExp(
@@ -109,9 +102,9 @@ describe('dynamic sitemap', () => {
           'g',
         ),
       ),
-    ).toHaveLength(12);
+    ).toHaveLength(10);
     expect(xml).not.toMatch(
-      /\/submit|\/manage|\/admin|\/api\/|untrusted-request-host|priority|changefreq/,
+      /\/submit|\/rules|\/manage|\/admin|\/api\/|untrusted-request-host|priority|changefreq/,
     );
     expect(await (await map())!.text()).not.toContain('<lastmod>');
     expect(await map('/not-a-sitemap')).toBeNull();
@@ -150,7 +143,7 @@ describe('dynamic sitemap', () => {
     expect(xml).not.toMatch(
       /secret_hash|站点地图测试示例|这段示例自述|not-a-usable-credential/,
     );
-    expect(xml.match(/<url>/g)).toHaveLength(32);
+    expect(xml.match(/<url>/g)).toHaveLength(30);
   });
   it('removes a withdrawn address immediately from the next generated sitemap', async () => {
     const credential = await createCredentials(env.PEPPER);
@@ -212,7 +205,7 @@ describe('dynamic sitemap', () => {
     const boundaryMap = (path = '/sitemap.xml') =>
       sitemapResponse(db, new URL(path, 'https://haomeile.rip'), deployedAt);
     expect(SITEMAP_PAGE_SIZE).toBe(22_500);
-    expect(SITEMAP_PAGE_SIZE * 2 + 18).toBeLessThan(50_000);
+    expect(SITEMAP_PAGE_SIZE * 2 + 16).toBeLessThan(50_000);
     const root = await (await boundaryMap())!.text();
     expect(root).toContain('<sitemapindex');
     expect(root).toContain('/sitemaps/static.xml');
@@ -238,7 +231,7 @@ describe('dynamic sitemap', () => {
     expect(first).not.toContain('/v/codex');
     const staticXml = await (await boundaryMap('/sitemaps/static.xml'))!.text();
     expectLanguagePair(staticXml, '/v/codex');
-    expect(staticXml.match(/<url>/g)).toHaveLength(18);
+    expect(staticXml.match(/<url>/g)).toHaveLength(16);
     expect(staticXml).not.toContain('/t/S');
     expect(await boundaryMap('/sitemaps/tombstones-3.xml')).toBeNull();
     expect(await boundaryMap('/sitemaps/tombstones-0.xml')).toBeNull();

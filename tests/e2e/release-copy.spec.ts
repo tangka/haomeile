@@ -4,7 +4,7 @@ test('public release information has no configuration placeholders', async ({
   page,
 }) => {
   for (const prefix of ['', '/en']) {
-    for (const route of ['/about', '/appeal', '/privacy', '/rules']) {
+    for (const route of ['/about', '/appeal', '/privacy']) {
       const response = await page.goto(prefix + route);
       expect(response!.status()).toBe(200);
       await expect(page.locator('body')).not.toContainText(/TODO(?:_[A-Z]+)*/);
@@ -28,7 +28,7 @@ test('public release information has no configuration placeholders', async ({
         await expect(page.locator('#stats + p')).toContainText(
           prefix ? 'Beijing time' : '北京时间',
         );
-      if (route === '/privacy' || route === '/rules')
+      if (route === '/privacy')
         await expect(page.locator('.updated time')).toHaveAttribute(
           'datetime',
           '2026-11-20',

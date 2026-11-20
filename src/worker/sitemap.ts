@@ -7,14 +7,7 @@ const NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 // Each tombstone produces two localized URLs, with room for static/product pages.
 export const SITEMAP_PAGE_SIZE = 22_500;
-const STATIC_PATHS = [
-  '/',
-  '/epitaph',
-  '/appeal',
-  '/rules',
-  '/privacy',
-  '/about',
-];
+const STATIC_PATHS = ['/', '/epitaph', '/appeal', '/privacy', '/about'];
 interface SitemapEntry {
   path: string;
   modified?: string | null;

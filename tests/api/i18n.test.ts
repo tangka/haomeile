@@ -102,6 +102,27 @@ describe('Chinese and English pages', () => {
       ).status,
     ).toBe(403);
   });
+  it.each([
+    ['GET', '/rules', 'zh-CN', '/submit#posting-rules'],
+    ['GET', '/rules/', 'en-US', '/en/submit#posting-rules'],
+    ['GET', '/rules.html', 'en-US', '/en/submit#posting-rules'],
+    ['GET', '/rules/index.html', 'zh-CN', '/submit#posting-rules'],
+    ['GET', '/en/rules', 'zh-CN', '/en/submit#posting-rules'],
+    ['HEAD', '/en/rules/index.html', 'zh-CN', '/en/submit#posting-rules'],
+  ])(
+    'redirects %s %s to the posting rules dialog',
+    async (method, path, language, location) => {
+      const response = await app.request(
+        'https://haomeile.rip' + path,
+        { method, headers: { 'Accept-Language': language } },
+        bindings,
+      );
+      expect(response.status).toBe(302);
+      expect(response.headers.get('location')).toBe(location);
+      expect(response.headers.get('vary')).toBe('Accept-Language');
+      expect(response.headers.get('cache-control')).toBe('private, no-store');
+    },
+  );
   it('translates template text and attributes without changing enums, scripts or valid JSON', () => {
     const html = localizeTemplate(
       `<h1>使用须知</h1><input value="账号停用" aria-label="使用须知"><script>const x="使用须知";</script><script type="application/ld+json">{"@type":"WebSite","inLanguage":"zh-CN","description":"使用须知","url":"https://haomeile.rip/"}</script>`,
