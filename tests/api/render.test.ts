@@ -51,7 +51,7 @@ describe('Worker renders Astro templates on the server', () => {
     expect(english).toContain('An editorial title');
     expect(english).toContain('An editor summary with &lt;untrusted&gt;');
     expect(english).not.toContain('公开原帖的中文编辑摘要。');
-    expect(english).toContain('Community summary, unverified');
+    expect(english).not.toContain('class="tomb-origin"');
     expect(english).toContain('Incident date not stated');
     expect(english).toContain('Read original post · GitHub');
     expect(english).toContain('rel="noopener noreferrer nofollow"');
@@ -74,7 +74,7 @@ describe('Worker renders Astro templates on the server', () => {
       await app.request('https://haomeile.rip/t/COMMUNITYA', {}, bindings)
     ).text();
     expect(chinese).toContain('公开原帖的中文编辑摘要。');
-    expect(chinese).toContain('社区整理，未经独立核实');
+    expect(chinese).toContain('查看原帖');
 
     await seed('USERSTORYA', 'approved', '这段用户自述不应自动翻译。');
     await env.DB.prepare(
@@ -85,7 +85,7 @@ describe('Worker renders Astro templates on the server', () => {
     ).text();
     expect(original).toContain('这段用户自述不应自动翻译。');
     expect(original).not.toContain('Must not be shown');
-    expect(original).toContain('User-submitted, unverified');
+    expect(original).toContain('class="flower-btn"');
   });
   it.each([
     ['codex', 'Codex'],

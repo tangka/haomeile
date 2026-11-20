@@ -12,8 +12,8 @@
     "source_title": "Account disabled on June 7 — This organization has been disabled — requesting manual review",
     "codename": "Max 账号显示组织停用",
     "codename_en": "Max account: organization disabled",
-    "story": "作者称 Max 5x 账号在 6 月 7 日被停用，官方 Claude Code CLI 提示组织停用，申诉表单又跳回聊天页。维护者说明此仓库无法恢复账号。停用原因和恢复结果未证实，议题关闭不等于恢复。",
-    "story_en": "A Max 5x subscriber reported disabled access on June 7, an organization-disabled error in the official Claude Code CLI, and an appeal form redirecting to chat. A maintainer said this tracker could not restore accounts. The cause and outcome remain unverified; issue closure did not establish restoration.",
+    "story": "一名 Max 5x 用户在 6 月 7 日失去账号访问权限，官方 Claude Code CLI 随后提示组织已停用。尝试申诉时，表单又跳回聊天页面，作者因此在代码仓库发帖寻求协助。",
+    "story_en": "A Max 5x subscriber lost account access on June 7. The official Claude Code CLI showed an organization-disabled message. Attempts to appeal led back to the chat page, so the author opened an issue seeking help.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original issue body and dated maintainer reply were visible. Account identifiers and the author's unverified cause speculation were omitted."
   },
@@ -30,8 +30,8 @@
     "source_title": "My Claude Pro account got banned & appeal got rejected",
     "codename": "用过几天 Claude Code，申诉被拒",
     "codename_en": "Claude Code access lost; appeal denied",
-    "story": "原帖作者称，订阅 Pro 后在 8 月 3 日至 7 日使用 Claude Code，8 月 8 日收到账号被封的邮件。提交申诉后又收到无法解封的回复。作者表示不清楚具体原因；本站未核实平台认定或停用缘由。",
-    "story_en": "The author said they subscribed to Pro, used Claude Code from August 3 to 7, and received a ban email on August 8. Their subsequent appeal was denied. They did not know the specific reason; this summary does not independently verify the provider's decision or its cause.",
+    "story": "原帖作者订阅 Pro 后，在 8 月 3 日至 7 日使用了 Claude Code，8 月 8 日收到账号被封的邮件。随后提交申诉，又收到无法解封的回复。作者表示不清楚具体原因。",
+    "story_en": "After subscribing to Pro, the author used Claude Code from August 3 to 7 and received a ban email on August 8. They appealed, but received a reply that the account would not be reinstated. They said they did not know the specific reason.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original Reddit post and the author's clarification were visible. Indexed post date was August 27, 2026; the incident date is explicit in the original body."
   }

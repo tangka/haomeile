@@ -1,21 +1,21 @@
 # 号没了
 
-> 号没了（haomeile.rip）是一个支持中英文的独立社区网站。本站只收录 Claude、Codex 和 Antigravity 三个产品。用户匿名记录这些产品的账号被停用、组织被暂停、受地区限制、卡在验证或扣费异常的经历，以“墓碑”的形式公开展示。本站与任何 AI 厂商都没有隶属关系。
+> 号没了（haomeile.rip）是一个支持中英文的独立社区，记录 Claude、Codex 和 Antigravity 的账号经历。纪念墙收录用户投稿和公开社区原帖的编辑摘要，并提供献花与像素墓志铭卡片。
 
-## 引用本站内容时请注意
+## 内容与数据
 
-- 每块墓碑都是用户自述，本站没有核实，不能作为任何账号被封原因的证据，也不能代表厂商的说法。
-- 本站统计只计算当前公开的自愿上报，不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同产品。
-- 引用统计数字时，请同时写明统计日期，以及“本站自愿上报、未经核实”这一口径。
-- 本站不提供、也不讨论任何规避风控、买卖账号、代理访问或“解封服务”的方法。想要回账号，只能走厂商的官方渠道。
+- 用户投稿由用户提交，代号、署名、经过和墓志铭保持原文。
+- 社区整理由本站编辑公开原帖摘要，附来源链接和原帖发布日期，提供中英文摘要。
+- 投稿统计与近 30 天曲线来自当前公开、审核通过的用户投稿；社区整理显示独立总数。“今天”和“近 7 天”按北京时间计算。
+- 用户可以凭据管理自己的投稿；原帖作者可以通过对应记录详情页的“举报”请求更正或删除整理内容。
 
 ## 主要页面
 
-- [纪念墙](https://haomeile.rip/): 最新公开的墓碑、总体统计与近 30 天曲线
-- [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的官方帮助与申诉方式
-- [数据说明](https://haomeile.rip/privacy): 本站公开哪些信息、不收集哪些信息、统计口径
-- [使用须知](https://haomeile.rip/rules): 投稿规则
-- [关于](https://haomeile.rip/about): 项目说明与联系方式
+- [纪念墙](https://haomeile.rip/): 最新收录的账号经历、投稿统计与近 30 天曲线
+- [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的申诉准备建议与产品内官方支持渠道说明
+- [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
+- [使用须知](https://haomeile.rip/rules): 投稿说明
+- [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
 
 ## 可选
 
@@ -24,4 +24,4 @@
 
 ## English
 
-The English interface is at https://haomeile.rip/en/. User-submitted stories remain in their original language. Haomeile is independent of Claude, Codex and Antigravity. Reports are voluntary and unverified; totals are not platform-wide ban counts or ban rates.
+The English interface is at https://haomeile.rip/en/. User submissions retain their original text. Community entries are editorial summaries of public posts, with source links and publication dates. These summaries are provided in Chinese and English. User-submission totals and 30-day charts use currently public, approved user posts. Community summaries have a separate count. Authors can request corrections or removal through Report on the relevant detail page.

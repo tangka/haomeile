@@ -23,8 +23,8 @@
       "plan_explicit": true,
       "plan_source_label": "Google AI Pro",
       "appeal_status": "pending",
-      "summary_zh": "帖主称约半年后重新使用 Antigravity 时发现权限被停用，持有 Google AI Pro，但不知道何时开始及具体原因。10月29日回帖称，申诉、更新及重新登录后仍受限。",
-      "summary_en": "An AI Pro subscriber reported discovering disabled Antigravity access after roughly six months away. The restriction date and cause were unknown. An October 29 follow-up said access remained disabled after an appeal, an app update and another sign-in.",
+      "summary_zh": "帖主持有 Google AI Pro，约半年后重新打开 Antigravity 时，发现访问权限已经停用。作者不知道限制从何时开始，也不清楚具体原因。10 月 29 日回帖说，提交申诉、更新应用并重新登录后，仍然无法使用。",
+      "summary_en": "A Google AI Pro subscriber reopened Antigravity after roughly six months and found access disabled. They did not know when the restriction began or why. In an October 29 follow-up, they said they still could not use it after appealing, updating the app and signing in again.",
       "uncertainty_zh": "原帖不是独立核实，不能推断10月29日之后的结果。",
       "uncertainty_en": "The account decision and any outcome after October 29 remain unverified.",
       "source_visibility": "Original post and author follow-ups were readable; no private records were checked."
@@ -48,8 +48,8 @@
       "plan_explicit": false,
       "plan_source_label": null,
       "appeal_status": "pending",
-      "summary_zh": "作者称11月14日开发时，官方 Antigravity 客户端提示服务因违反条款被禁用，工作中断。已提交申诉，11月15日回复仍无法使用；套餐及具体触发原因未得到确认。",
-      "summary_en": "The author reported that Antigravity’s official client disabled service during development on November 14. They had appealed and said on November 15 that it still failed. No subscription tier or independently confirmed enforcement trigger was provided.",
+      "summary_zh": "11 月 14 日，作者在开发过程中遇到官方 Antigravity 客户端服务停用，界面提示违反服务条款，工作因此中断。作者随后提交申诉，并在 11 月 15 日回帖说，官方应用仍然无法使用。",
+      "summary_en": "On November 14, the author’s development work was interrupted when the official Antigravity client displayed a service-disabled notice citing a Terms of Service violation. They appealed and, on November 15, said the official app still did not work.",
       "uncertainty_zh": "作者所述第三方使用经历不等于官方确认原因；不摘录方法或操作链接。",
       "uncertainty_en": "Reported third-party use does not prove causation. No methods or operational links are reproduced.",
       "source_visibility": "Original issue and author follow-up were readable; repository labels do not verify the account decision."
@@ -71,8 +71,8 @@
       "plan_explicit": false,
       "plan_source_label": null,
       "appeal_status": "pending",
-      "summary_zh": "帖主称 Antigravity 此前无法登录，申诉后能登录了，但模型调用仍提示服务被禁用，连简单消息也失败。原帖未给套餐、停用开始日期或完整恢复结果。",
-      "summary_en": "The author reported being able to sign in after appealing an Antigravity restriction, but model requests still failed, including a simple message. No subscription tier, initial incident date or confirmed full restoration was provided.",
+      "summary_zh": "帖主此前无法登录 Antigravity，提交申诉后可以重新登录了，但模型调用仍然提示服务停用，连一条简单消息也发不出去。11 月 10 日发帖时，作者正在寻求继续处理这个问题的方法。",
+      "summary_en": "After appealing an Antigravity restriction, the author could sign in again, but model requests still returned a service-disabled notice, even for a simple message. Their November 10 post asked how to resolve the remaining access problem.",
       "uncertainty_zh": "登录恢复不等于模型权限恢复；通用论坛答复不能确认具体处置原因。",
       "uncertainty_en": "Restored sign-in does not establish restored model access; the general forum response does not verify causation.",
       "source_visibility": "Original post and a November 11 general response were readable."

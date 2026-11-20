@@ -11,8 +11,8 @@
     "source_published_at": "2026-06-10",
     "codename": "Max 账号显示组织停用",
     "codename_en": "Max account: organization disabled",
-    "story": "作者称 Max 5x 账号在 6 月 7 日被停用，官方 Claude Code CLI 提示组织停用，申诉表单又跳回聊天页。维护者说明此仓库无法恢复账号。停用原因和恢复结果未证实，议题关闭不等于恢复。",
-    "story_en": "A Max 5x subscriber reported disabled access on June 7, an organization-disabled error in the official Claude Code CLI, and an appeal form redirecting to chat. A maintainer said this tracker could not restore accounts. The cause and outcome remain unverified; issue closure did not establish restoration.",
+    "story": "一名 Max 5x 用户在 6 月 7 日失去账号访问权限，官方 Claude Code CLI 随后提示组织已停用。尝试申诉时，表单又跳回聊天页面，作者因此在代码仓库发帖寻求协助。",
+    "story_en": "A Max 5x subscriber lost account access on June 7. The official Claude Code CLI showed an organization-disabled message. Attempts to appeal led back to the chat page, so the author opened an issue seeking help.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original issue body and dated maintainer reply were visible. Account identifiers and the author's unverified cause speculation were omitted."
   },
@@ -28,8 +28,8 @@
     "source_published_at": "2026-08-27",
     "codename": "用过几天 Claude Code，申诉被拒",
     "codename_en": "Claude Code access lost; appeal denied",
-    "story": "原帖作者称，订阅 Pro 后在 8 月 3 日至 7 日使用 Claude Code，8 月 8 日收到账号被封的邮件。提交申诉后又收到无法解封的回复。作者表示不清楚具体原因；本站未核实平台认定或停用缘由。",
-    "story_en": "The author said they subscribed to Pro, used Claude Code from August 3 to 7, and received a ban email on August 8. Their subsequent appeal was denied. They did not know the specific reason; this summary does not independently verify the provider's decision or its cause.",
+    "story": "原帖作者订阅 Pro 后，在 8 月 3 日至 7 日使用了 Claude Code，8 月 8 日收到账号被封的邮件。随后提交申诉，又收到无法解封的回复。作者表示不清楚具体原因。",
+    "story_en": "After subscribing to Pro, the author used Claude Code from August 3 to 7 and received a ban email on August 8. They appealed, but received a reply that the account would not be reinstated. They said they did not know the specific reason.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original Reddit post and the author's clarification were visible. Indexed post date was August 27, 2026; the incident date is explicit in the original body."
   },
@@ -45,8 +45,8 @@
     "source_published_at": "2026-06-15",
     "codename": "Codex 401，支持端却显示活跃",
     "codename_en": "Codex 401; support sees active",
-    "story": "作者称 Pro 账号从 6 月 7 日起网页登录空白，Codex CLI 报 401，支持端却显示账号活跃。已申诉，6 月 16 日支持回复将查看工单；原帖未确认恢复或具体原因。",
-    "story_en": "A Pro user reported blank web access and Codex CLI authentication failures from June 7, although support reportedly saw an active account. They had appealed. Support offered to inspect the case on June 16; restoration and cause were not established.",
+    "story": "这名 Pro 用户从 6 月 7 日起遇到网页登录空白、Codex CLI 返回 401 的问题，但联系支持时，对方看到的账号仍是活跃状态。作者已提交申诉；6 月 16 日，论坛支持回复会进一步查看工单。",
+    "story_en": "From June 7, a Pro user encountered a blank web sign-in page and 401 errors from Codex CLI, while support’s records showed the account as active. The author submitted an appeal. On June 16, forum support offered to inspect the case.",
     "reviewed_at": "2026-11-20",
     "evidence": "Complete first-person post and support reply visible; private identifiers omitted.",
     "status_as_of": "2026-06-16"
@@ -63,8 +63,8 @@
     "source_published_at": "2026-06-09",
     "codename": "Pro 账号在夜间任务中停用",
     "codename_en": "Pro account lost during a task",
-    "story": "作者称 Pro 账号在 6 月 9 日运行 Codex 夜间任务时被停用，并已申诉。6 月 14 日论坛支持称存在审核标记，申诉待专门团队处理；具体原因未说明，帖子关闭不代表账号恢复。",
-    "story_en": "A Pro user reported a June 9 deactivation during an overnight Codex task. Forum support later cited a moderation flag and a pending appeal. Neither the specific reason nor a later restoration was established.",
+    "story": "作者的 Pro 账号在 6 月 9 日运行 Codex 夜间任务时被停用，随后提交了申诉。6 月 14 日，论坛支持回复账号带有审核标记，申诉正等待专门团队处理。",
+    "story_en": "The author’s Pro account was deactivated during an overnight Codex task on June 9. They submitted an appeal. On June 14, forum support said the account had a moderation flag and the appeal was awaiting the specialist team.",
     "reviewed_at": "2026-11-20",
     "evidence": "Complete original timeline and dated support reply visible; private identifiers omitted.",
     "status_as_of": "2026-06-14"
@@ -81,8 +81,8 @@
     "source_published_at": "2026-06-26",
     "codename": "Pro 20x 恢复后套餐成免费版",
     "codename_en": "Pro 20x restored as Free",
-    "story": "作者称 Pro 20x 在 6 月 25 日失去访问，平时使用 Codex CLI、app-server 和应用。7 月 3 日更新称账号已恢复，但套餐成了 Free；通知和恢复均为作者自述，不应写成至今仍封禁。",
-    "story_en": "A Pro 20x Codex user reported losing access on June 25. On July 3, they reported restoration after an email acknowledging an incorrect deactivation, but the subscription showed Free. This is a reported restoration, not an established ongoing ban.",
+    "story": "这名 Pro 20x 用户平时使用 Codex CLI、app-server 和应用，6 月 25 日失去了账号访问权限。7 月 3 日更新中，作者说账号已经恢复，但原本的付费套餐变成了 Free。",
+    "story_en": "A Pro 20x subscriber who used Codex CLI, app-server and the app lost account access on June 25. In a July 3 update, the author said access had been restored, but their subscription now showed Free.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original post and direct author follow-up visible; private email authenticity not independently verified.",
     "status_as_of": "2026-07-03"
@@ -99,8 +99,8 @@
     "source_published_at": "2026-10-26",
     "codename": "回归时发现停用",
     "codename_en": "Access disabled on return",
-    "story": "帖主称约半年后重新使用 Antigravity 时发现权限被停用，持有 Google AI Pro，但不知道何时开始及具体原因。10月29日回帖称，申诉、更新及重新登录后仍受限。",
-    "story_en": "An AI Pro subscriber reported discovering disabled Antigravity access after roughly six months away. The restriction date and cause were unknown. An October 29 follow-up said access remained disabled after an appeal, an app update and another sign-in.",
+    "story": "帖主持有 Google AI Pro，约半年后重新打开 Antigravity 时，发现访问权限已经停用。作者不知道限制从何时开始，也不清楚具体原因。10 月 29 日回帖说，提交申诉、更新应用并重新登录后，仍然无法使用。",
+    "story_en": "A Google AI Pro subscriber reopened Antigravity after roughly six months and found access disabled. They did not know when the restriction began or why. In an October 29 follow-up, they said they still could not use it after appealing, updating the app and signing in again.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original post and author follow-ups were readable; no private records were checked."
   },
@@ -116,8 +116,8 @@
     "source_published_at": "2026-11-14",
     "codename": "开发中途服务停用",
     "codename_en": "Service disabled during development",
-    "story": "作者称11月14日开发时，官方 Antigravity 客户端提示服务因违反条款被禁用，工作中断。已提交申诉，11月15日回复仍无法使用；套餐及具体触发原因未得到确认。",
-    "story_en": "The author reported that Antigravity’s official client disabled service during development on November 14. They had appealed and said on November 15 that it still failed. No subscription tier or independently confirmed enforcement trigger was provided.",
+    "story": "11 月 14 日，作者在开发过程中遇到官方 Antigravity 客户端服务停用，界面提示违反服务条款，工作因此中断。作者随后提交申诉，并在 11 月 15 日回帖说，官方应用仍然无法使用。",
+    "story_en": "On November 14, the author’s development work was interrupted when the official Antigravity client displayed a service-disabled notice citing a Terms of Service violation. They appealed and, on November 15, said the official app still did not work.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original issue and author follow-up were readable; repository labels do not verify the account decision."
   },
@@ -133,8 +133,8 @@
     "source_published_at": "2026-11-10",
     "codename": "能登录但模型仍不可用",
     "codename_en": "Signed in, models still disabled",
-    "story": "帖主称 Antigravity 此前无法登录，申诉后能登录了，但模型调用仍提示服务被禁用，连简单消息也失败。原帖未给套餐、停用开始日期或完整恢复结果。",
-    "story_en": "The author reported being able to sign in after appealing an Antigravity restriction, but model requests still failed, including a simple message. No subscription tier, initial incident date or confirmed full restoration was provided.",
+    "story": "帖主此前无法登录 Antigravity，提交申诉后可以重新登录了，但模型调用仍然提示服务停用，连一条简单消息也发不出去。11 月 10 日发帖时，作者正在寻求继续处理这个问题的方法。",
+    "story_en": "After appealing an Antigravity restriction, the author could sign in again, but model requests still returned a service-disabled notice, even for a simple message. Their November 10 post asked how to resolve the remaining access problem.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original post and a November 11 general response were readable."
   }

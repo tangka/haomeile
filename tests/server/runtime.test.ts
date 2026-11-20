@@ -257,7 +257,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(originalPage).toContain('<h1 class="tomb-name">使用须知</h1>');
     expect(originalPage).toContain(originalStory);
     expect(originalPage).toContain('Verification blocked');
-    expect(originalPage).toContain('User-submitted, unverified');
+    expect(originalPage).toContain('class="flower-btn"');
     expect(originalPage).toContain(
       'https://haomeile.rip/en/t/' + credential.id,
     );

@@ -1,5 +1,33 @@
 /** Static, first-party interface copy. User-written memorials are never translated. */
 export const EN_STATIC: Record<string, string> = {
+  '条。': 'entries.',
+  '新收录的记录在前面。': 'Newest additions first.',
+  '号没了，一个记录 AI 账号经历的独立社区。':
+    '号没了 is an independent community for AI account stories.',
+  '号没了记录 Claude、Codex 和 Antigravity 账号经历，提供用户投稿、社区整理和像素墓志铭卡片。':
+    '号没了 records Claude, Codex and Antigravity account stories, with user submissions, community summaries and pixel epitaph cards.',
+  '号没了是一个记录 AI 账号经历的独立社区。':
+    '号没了 is an independent community for AI account stories.',
+  '内容来自本站用户投稿和公开社区原帖。社区整理附原帖链接，摘要由本站编辑。':
+    'Content comes from user submissions and public community posts. Community summaries link to the originals and are edited by this site.',
+  '了解号没了展示的内容、数据保存方式、统计定义与撤回流程。':
+    'Learn about the content shown on 号没了, data retention, count definitions and the withdrawal process.',
+  统计定义: 'How counts are defined',
+  '投稿统计与近 30 天曲线来自当前公开、审核通过的用户投稿；社区整理显示独立总数。“今天”和“近 7 天”按北京时间计算。':
+    'User-submission figures and the 30-day chart use currently public, approved user submissions. Community summaries have a separate total. “Today” and “past 7 days” use Beijing time (UTC+8).',
+  '号没了投稿说明：记录经过、保护隐私、保存凭据，并通过官方渠道申诉。':
+    'Posting on 号没了: describe events, protect privacy, save your credentials and use official appeal channels.',
+  '记录 Claude、Codex 和 Antigravity 账号经历，收录用户投稿与公开社区整理。':
+    'Account stories about Claude, Codex and Antigravity, collected from user submissions and public community posts.',
+  '记录 Claude、Codex、Antigravity 账号经历。查看社区整理、匿名立碑、献花或制作墓志铭卡片。':
+    'Explore Claude, Codex and Antigravity account stories. Read community summaries, add an anonymous memorial, leave flowers or make epitaph cards.',
+  'Claude、Codex 和 Antigravity 的账号经历、用户投稿与社区整理。':
+    'Account stories, user submissions and community summaries about Claude, Codex and Antigravity.',
+  '这里收录账号经历的用户投稿和社区整理。':
+    'User submissions and community summaries about account experiences are collected here.',
+  '查看账号经历、内容来源与申诉状态。':
+    'View an account story, its source and appeal status.',
+
   号没了: '号没了',
   '这里什么也没有 · 号没了': 'Nothing here · 号没了',
   '可能地址写错了，也可能这块碑已经被撤回。':
@@ -15,10 +43,6 @@ export const EN_STATIC: Record<string, string> = {
   提着灯笼的守墓小猫: 'A cemetery cat carrying a lantern',
   这里什么也没有: 'Nothing here',
   回到纪念墙: 'Back to the memorial wall',
-  '本站为独立社区项目，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。':
-    'This is an independent community project with no affiliation to any AI provider. Product names and trademarks belong to their respective owners.',
-  '墓碑内容由用户自愿上报，本站未核实，也不能据此判断封号原因。想申诉，请走厂商官方渠道。':
-    'Memorials are voluntary user reports. We have not verified them, and they do not establish why an account was banned. To appeal, use the provider’s official channels.',
   页脚: 'Footer navigation',
   数据说明: 'Data & privacy',
   关于: 'About',
@@ -27,8 +51,6 @@ export const EN_STATIC: Record<string, string> = {
   中文: '中文',
 
   '墓碑详情 · 号没了': 'Memorial details · 号没了',
-  '用户自述的 AI 账号经历，本站未经核实。':
-    'A user-reported AI account experience. This report has not been verified.',
   复制这块碑的链接: 'Copy memorial link',
   做一张墓志铭卡片: 'Make an epitaph card',
   举报: 'Report',
@@ -47,48 +69,27 @@ export const EN_STATIC: Record<string, string> = {
   算了: 'Cancel',
 
   '账号停用、封号经历 · 号没了': 'Account suspensions and bans · 号没了',
-  '号没了仅记录 Claude、Codex 和 Antigravity的用户自述经历，内容未经核实。':
-    '号没了 records user-reported experiences with Claude, Codex and Antigravity only. These reports have not been verified.',
   账号的墓碑: 'Account memorials',
-  '这里记录用户自愿上报的产品账号经历。内容未经核实，与产品所属厂商无关。':
-    'These are voluntary reports about product accounts. They have not been verified, and this site is not affiliated with the providers.',
-  上报统计: 'Report statistics',
+  投稿统计: 'Submission statistics',
   截至: 'As of',
   '，园里一共有': ', the cemetery has',
   '块公开墓碑。今天新立': 'public memorials. Added today:',
   '块，近 7 天': '; in the past 7 days:',
   '块。': '.',
-  '这些都是用户自愿上报，未经核实，不代表任何平台的实际封号数量，不能用来推算封号率。':
-    'These are voluntary, unverified user reports. They do not represent any platform’s actual ban count and cannot be used to estimate ban rates.',
   统计口径: 'How we count',
   '，本站共有': ', this site has',
-  '份公开的自愿上报。今天上报': 'public voluntary reports. Submitted today:',
+  '份用户投稿。今天新增': 'public user submissions. Added today:',
   '份，近 7 天': '; in the past 7 days:',
   '份。': '.',
-  '自愿上报数字只统计当前公开内容，未经核实，不代表平台实际封号数量，也不能用于推算封号率。':
-    'Voluntary-report figures count only currently public submissions. They are unverified, do not represent platform-wide ban counts and cannot be used to estimate ban rates.',
   社区整理: 'Community summaries',
-  '条，单独计数，不计入本站自愿上报统计。':
-    'entries, counted separately from voluntary reports submitted here.',
-  '新收录的记录在前面。社区整理标有原帖链接，内容均未经本站核实。':
-    'Newest additions first. Community summaries link to the original posts. We have not verified the reported events.',
-  '内容包括用户自愿上报和公开社区原帖的编辑摘要，均未经本站核实，不能据此判断封号原因。想申诉，请走厂商官方渠道。':
-    'Content includes voluntary submissions and editorial summaries of public community posts. Reports are unverified and do not establish why an account was restricted. To appeal, use the provider’s official channels.',
-  '内容包括本站用户自愿上报，以及公开社区原帖的整理摘要。社区整理会注明原帖链接，并不代表原作者向本站投稿；我们没有核实其中的账号经历或停用原因。':
-    'Content includes voluntary submissions and summaries of public community posts. Community summaries link to the original posts and are not submissions to this site by the original authors. We have not verified the reported experiences or restriction reasons.',
   '社区整理提供中英文编辑摘要，原文请看原帖。本站不会自动翻译用户提交的代号、署名、经过或墓志铭。':
     'Community summaries are edited in Chinese and English; read the original posts for the source text. We do not automatically translate aliases, display names, stories or epitaphs submitted by users.',
   '如果你是原帖作者，希望更正或移除整理内容，请打开对应记录的详情页，使用“举报”说明情况。':
     'Original authors can request corrections or removal through Report on the relevant entry’s detail page.',
   '社区整理另显示来源链接、原帖发布日期和编辑摘要。未注明的套餐或发生日期不会补写。原帖作者可通过对应详情页的“举报”请求更正或删除。':
     'Community summaries also show a source link, post date and editorial summary. Unknown plans or incident dates are not filled in. Original authors can request corrections or deletion through Report on the relevant detail page.',
-  '本站自愿上报数字和近 30 天曲线只统计当前公开、审核通过的本站用户投稿。社区整理单独计数，不计入这些数字或曲线。统计不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同产品。等待审核、未通过、已隐藏和已撤回的碑都不计入。“今天”和“近 7 天”按北京时间计算。':
-    'Voluntary-report figures and the 30-day chart count only currently public, approved submissions to this site. Community summaries are counted separately and are not included in these figures or charts. These statistics do not represent any platform’s actual ban count, cannot estimate ban rates and should not be used to compare products. Pending, rejected, hidden and withdrawn entries are excluded. “Today” and “past 7 days” use Beijing time (UTC+8).',
   '用户投稿和修改都由站长人工审核，通过后才公开。审核中的内容不会出现在墙上和统计里。':
     'The site owner manually reviews user submissions and edits before publication. Submissions awaiting review do not appear on the wall or in statistics.',
-
-  '新立的碑在前面。内容都是用户自述，本站没有核实。':
-    'Newest memorials first. All stories are user reports and have not been verified.',
   '这里还很安静。第一块碑，要不要由你来立？':
     'It’s quiet here. Will you add the first memorial?',
   立一块碑: 'Add a memorial',
@@ -97,14 +98,8 @@ export const EN_STATIC: Record<string, string> = {
     'Reports and incident dates over the past 30 days',
 
   '关于 · 号没了': 'About · 号没了',
-  '号没了是与任何 AI 厂商都无关的独立社区项目，只记录 Claude、Codex 和 Antigravity的用户自述经历。':
-    '号没了 is an independent community project with no affiliation to any AI provider. It records user-reported experiences with Claude, Codex and Antigravity only.',
-  '号没了是一个独立的社区项目，与任何 AI 厂商都没有隶属关系。文中提到的产品名称和商标归各自的所有者。':
-    '号没了 is an independent community project with no affiliation to any AI provider. Product names and trademarks belong to their respective owners.',
   '这里只记录 Claude、Codex 和 Antigravity 三个产品的账号经历。':
     'This site records account experiences with three products: Claude, Codex and Antigravity.',
-  '墓碑上的内容都是用户自述，本站不核实，也不能据此判断任何账号被封的原因。':
-    'Memorials contain users’ own accounts of events. We do not verify them, and they do not establish why any account was banned.',
   '需要更正内容、投诉或联系我们：':
     'For corrections, complaints or other enquiries:',
   '更正或撤回自己的碑文：': 'To correct or withdraw your memorial: ',
@@ -188,10 +183,6 @@ export const EN_STATIC: Record<string, string> = {
   小橘号: 'Little Orange',
 
   '号没了 · AI 账号赛博公墓': '号没了 · An AI account cemetery',
-  '用户匿名记录 Claude、Codex 和 Antigravity 账号被停用、受限或异常经历的独立社区网站，与产品所属厂商无关。':
-    'An independent community where users anonymously report account suspensions, restrictions and other issues with Claude, Codex and Antigravity. This site is not affiliated with the providers.',
-  '记录 Claude、Codex、Antigravity的账号停用、验证受阻和异常经历。匿名立碑、献花或制作墓志铭卡片，内容为用户自述，未经核实；本站与产品所属厂商无关。':
-    'User-reported account suspensions, verification blocks and other issues with Claude, Codex and Antigravity. Add an anonymous memorial, leave a flower or make an epitaph card. Reports are unverified. This site is independent of the providers.',
   'AI 账号赛博公墓': 'An AI account cemetery',
   '被封了、被停了、卡在验证了？': 'Banned, suspended or stuck in verification?',
   'Claude、Codex、Antigravity，账号没了就来立一块碑。':
@@ -231,8 +222,6 @@ export const EN_STATIC: Record<string, string> = {
   '搜索引擎和 AI 服务': 'Search engines and AI services',
   '公开的碑任何人都能看到，也欢迎搜索引擎和 AI 服务抓取。这意味着碑文可能出现在搜索结果里，可能被 AI 助手引用，也可能被用于训练 AI 模型。你撤回后，本站会立即下架，但无法删除第三方已经保存的副本。':
     'Anyone can view public memorials, and search engines and AI services are welcome to crawl them. Their text may appear in search results, be quoted by AI assistants or be used to train AI models. If you withdraw a memorial, we remove it immediately, but we cannot delete copies already saved by third parties.',
-  '本站所有数字都只统计当前公开、审核通过的自愿上报。它们不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同产品。等待审核、未通过、已隐藏和已撤回的碑都不计入。“今天”和“近 7 天”按北京时间计算。':
-    'All figures count only voluntary reports that are currently public and approved. They do not represent any platform’s actual ban count, cannot be used to estimate ban rates and should not be used to compare products. Pending, rejected, hidden and withdrawn memorials are excluded. “Today” and “past 7 days” use Beijing time (UTC+8).',
   'IP 地址': 'IP addresses',
   '为了防刷，服务器会用 IP 计算一个加盐的哈希值做次数限制，哈希每天更换，不保存原始 IP。':
     'To prevent abuse, the server derives a salted hash from your IP address for rate limiting. The hash changes daily. Raw IP addresses are not stored.',

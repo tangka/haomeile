@@ -9,8 +9,11 @@ import {
 const communityId = 'COMMUNITY2';
 const communityTitle = '本地社区分页示例';
 const communityEnglishTitle = 'Local curated pagination fixture';
-const communityEnglishStory =
-  'Local end-to-end fixture: the author reported unavailable account access. The exact incident date was not stated. This is an editorial summary.';
+const communityEnglishStory = [
+  'Local end-to-end fixture: the author reported unavailable account access. The exact incident date was not stated. This is an editorial summary.',
+  'This paragraph is intentionally long so a narrow screen needs more than four lines. The wall must show every sentence directly, along with paragraph breaks and the original source link below the complete story.',
+  'The final sentence must remain visible in the wall: COMPLETE_STORY_END.',
+].join('\n\n');
 const source = 'https://discuss.ai.google.dev/t/199388';
 
 test.beforeEach(({ baseURL }) => {
@@ -18,7 +21,10 @@ test.beforeEach(({ baseURL }) => {
   resetIsolatedDatabase();
   const submissions = Array.from({ length: 20 }, (_, index) => {
     const id = 'PAGINGAAA' + String.fromCharCode(65 + index);
-    return `INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at,origin) VALUES ('${id}','non-usable-local-pagination-fixture','本地投稿分页示例','claude','verification','2026-11-18','这是一段仅用于隔离端到端分页测试的本地示例。','approved','2026-11-20T03:00:00.000Z','2026-11-20T03:00:00.000Z','2026-11-20T03:00:00.000Z','submission');`;
+    const story = '这是一段仅用于隔离端到端分页测试的本地示例。'.repeat(
+      index % 3 === 0 ? 7 : 1,
+    );
+    return `INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at,origin) VALUES ('${id}','non-usable-local-pagination-fixture','本地投稿分页示例','claude','verification','2026-11-18','${story}','approved','2026-11-20T03:00:00.000Z','2026-11-20T03:00:00.000Z','2026-11-20T03:00:00.000Z','submission');`;
   });
   // The curated fixture is older than every submission, so it must be appended
   // through the real pagination API and browser card renderer, not initial SSR.
@@ -43,7 +49,7 @@ test('English pagination appends a sourced community summary without treating it
   await expect(page.locator('#rows article.tomb')).toHaveCount(20);
   await expect(page.locator('#more')).toBeVisible();
   await expect(page.locator('[data-ssr="tally"]')).toContainText(
-    '20 public voluntary reports',
+    '20 public user submissions',
   );
 
   const nextPage = page.waitForResponse((response) => {
@@ -92,10 +98,8 @@ test('English pagination appends a sourced community summary without treating it
     'datetime',
     '2026-11-10',
   );
-  await expect(curated.locator('.tomb-unverified')).toHaveText(
-    'Community summary, unverified',
-  );
-  await expect(curated).not.toContainText('User-submitted, unverified');
+  await expect(curated.locator('.tomb-foot')).toHaveText('Flowers 0');
+  await expect(curated.locator('.tomb-origin,.tomb-unverified')).toHaveCount(0);
   await expect(page.locator('[data-ssr="community-tally"]')).toContainText(
     /\b1\b/,
   );
@@ -108,6 +112,42 @@ test('English pagination appends a sourced community summary without treating it
   }));
   expect(widths.document).toBeLessThanOrEqual(widths.viewport);
   expect(widths.body).toBeLessThanOrEqual(widths.viewport);
+
+  const fullStory = await curated
+    .locator('.tomb-story')
+    .evaluate((element) => ({
+      height: element.getBoundingClientRect().height,
+      lineHeight: parseFloat(getComputedStyle(element).lineHeight),
+      clipped: element.scrollHeight > element.clientHeight + 1,
+      whiteSpace: getComputedStyle(element).whiteSpace,
+    }));
+  expect(fullStory.height).toBeGreaterThan(fullStory.lineHeight * 4);
+  expect(fullStory.clipped).toBe(false);
+  expect(fullStory.whiteSpace).toBe('pre-wrap');
+
+  await page.setViewportSize({ width: 1100, height: 900 });
+  const layout = await page.locator('#rows article.tomb').evaluateAll((cards) =>
+    cards.map((card) => {
+      const rect = card.getBoundingClientRect();
+      return {
+        left: Math.round(rect.left),
+        top: rect.top,
+        bottom: rect.bottom,
+      };
+    }),
+  );
+  const columns = [...new Set(layout.map((card) => card.left))];
+  expect(columns.length).toBeGreaterThan(1);
+  for (const left of columns) {
+    const column = layout
+      .filter((card) => card.left === left)
+      .sort((a, b) => a.top - b.top);
+    for (let i = 1; i < column.length; i++)
+      expect(column[i].top).toBeGreaterThan(column[i - 1].bottom);
+  }
+  await expect(curated.locator('.tomb-story')).toHaveText(
+    communityEnglishStory,
+  );
 
   const detail = await page.goto(`/t/${communityId}`);
   expect(await detail!.text()).toContain(

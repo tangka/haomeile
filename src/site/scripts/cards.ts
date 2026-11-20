@@ -140,17 +140,6 @@ export function createTombCard(
         fmtDate(tomb.approved_at.slice(0, 10), currentLocale()),
       );
     face.append(facts);
-    if (view.community)
-      face.append(
-        element(
-          'p',
-          'hint',
-          text(
-            '按原帖可见更新整理，不代表账号当前状态。',
-            'Based on visible source updates; this may not reflect the account’s current state.',
-          ),
-        ),
-      );
   }
   const foot = element('div', 'tomb-foot');
   const flower = element('button', 'flower-btn');
@@ -166,16 +155,7 @@ export function createTombCard(
     image('flower.svg', '', 14, 14),
     element('span', undefined, tr(`献花 ${num(tomb.flowers)}`)),
   );
-  foot.append(
-    element(
-      'span',
-      'tomb-unverified',
-      view.community
-        ? text('社区整理，未经独立核实', 'Community summary, unverified')
-        : tr('用户自述，未经核实'),
-    ),
-    flower,
-  );
+  foot.append(flower);
   face.append(foot);
   return card;
 }

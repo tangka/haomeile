@@ -26,9 +26,7 @@ test('public release information has no configuration placeholders', async ({
       }
       if (route === '/privacy')
         await expect(page.locator('#stats + p')).toContainText(
-          prefix
-            ? 'not included in these figures or charts'
-            : '不计入这些数字或曲线',
+          prefix ? 'Beijing time' : '北京时间',
         );
       if (route === '/privacy' || route === '/rules')
         await expect(page.locator('.updated time')).toHaveAttribute(

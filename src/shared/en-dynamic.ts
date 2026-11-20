@@ -37,7 +37,6 @@ export const EN_DYNAMIC: Record<string, string> = {
   申诉: 'Appeal',
   立碑: 'Add a memorial',
   不详: 'Unknown',
-  '用户自述，未经核实': 'User-submitted, unverified',
   '献花 {count}，为这块碑献一朵花':
     'Flowers {count}. Leave a flower for this memorial',
   '献花 {count}，今天已献过花':

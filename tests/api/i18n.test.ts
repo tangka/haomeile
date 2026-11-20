@@ -164,12 +164,12 @@ describe('Chinese and English pages', () => {
     );
     const html = await response.text();
     expect(html).toContain('href="/en/t/I2NAAAAAAA"');
-    expect(html).toContain('User-submitted, unverified');
+    expect(html).toContain('class="flower-btn"');
     expect(html).toContain('Verification blocked');
     expect(html).toContain('<h3 class="tomb-name">使用须知</h3>');
     expect(html).toContain('<p class="tomb-story">这里什么也没有。</p>');
     expect(html).toContain('<p class="tomb-epitaph">账号停用</p>');
-    expect(html).toContain('public voluntary reports');
+    expect(html).toContain('public user submissions');
     const detail = await (
       await app.request('https://haomeile.rip/en/t/I2NAAAAAAA', {}, bindings)
     ).text();

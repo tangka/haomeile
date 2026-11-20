@@ -16,8 +16,8 @@
     "nickname": "",
     "codename": "Codex 401，支持端却显示活跃",
     "codename_en": "Codex 401; support sees active",
-    "story": "作者称 Pro 账号从 6 月 7 日起网页登录空白，Codex CLI 报 401，支持端却显示账号活跃。已申诉，6 月 16 日支持回复将查看工单；原帖未确认恢复或具体原因。",
-    "story_en": "A Pro user reported blank web access and Codex CLI authentication failures from June 7, although support reportedly saw an active account. They had appealed. Support offered to inspect the case on June 16; restoration and cause were not established.",
+    "story": "这名 Pro 用户从 6 月 7 日起遇到网页登录空白、Codex CLI 返回 401 的问题，但联系支持时，对方看到的账号仍是活跃状态。作者已提交申诉；6 月 16 日，论坛支持回复会进一步查看工单。",
+    "story_en": "From June 7, a Pro user encountered a blank web sign-in page and 401 errors from Codex CLI, while support’s records showed the account as active. The author submitted an appeal. On June 16, forum support offered to inspect the case.",
     "reviewed_at": "2026-11-20",
     "evidence": "Complete first-person post and support reply visible; private identifiers omitted.",
     "uncertainty": "Access failure, not a verified permanent ban; status reflects the visible June follow-up."
@@ -40,8 +40,8 @@
     "nickname": "",
     "codename": "Pro 账号在夜间任务中停用",
     "codename_en": "Pro account lost during a task",
-    "story": "作者称 Pro 账号在 6 月 9 日运行 Codex 夜间任务时被停用，并已申诉。6 月 14 日论坛支持称存在审核标记，申诉待专门团队处理；具体原因未说明，帖子关闭不代表账号恢复。",
-    "story_en": "A Pro user reported a June 9 deactivation during an overnight Codex task. Forum support later cited a moderation flag and a pending appeal. Neither the specific reason nor a later restoration was established.",
+    "story": "作者的 Pro 账号在 6 月 9 日运行 Codex 夜间任务时被停用，随后提交了申诉。6 月 14 日，论坛支持回复账号带有审核标记，申诉正等待专门团队处理。",
+    "story_en": "The author’s Pro account was deactivated during an overnight Codex task on June 9. They submitted an appeal. On June 14, forum support said the account had a moderation flag and the appeal was awaiting the specialist team.",
     "reviewed_at": "2026-11-20",
     "evidence": "Complete original timeline and dated support reply visible; private identifiers omitted.",
     "uncertainty": "A moderation flag does not establish which activity caused it; current status remains unknown."
@@ -64,8 +64,8 @@
     "nickname": "",
     "codename": "Pro 20x 恢复后套餐成免费版",
     "codename_en": "Pro 20x restored as Free",
-    "story": "作者称 Pro 20x 在 6 月 25 日失去访问，平时使用 Codex CLI、app-server 和应用。7 月 3 日更新称账号已恢复，但套餐成了 Free；通知和恢复均为作者自述，不应写成至今仍封禁。",
-    "story_en": "A Pro 20x Codex user reported losing access on June 25. On July 3, they reported restoration after an email acknowledging an incorrect deactivation, but the subscription showed Free. This is a reported restoration, not an established ongoing ban.",
+    "story": "这名 Pro 20x 用户平时使用 Codex CLI、app-server 和应用，6 月 25 日失去了账号访问权限。7 月 3 日更新中，作者说账号已经恢复，但原本的付费套餐变成了 Free。",
+    "story_en": "A Pro 20x subscriber who used Codex CLI, app-server and the app lost account access on June 25. In a July 3 update, the author said access had been restored, but their subscription now showed Free.",
     "reviewed_at": "2026-11-20",
     "evidence": "Original post and direct author follow-up visible; private email authenticity not independently verified.",
     "uncertainty": "Pro is the incident-time plan; later subscription corrections and root cause remain unverified."
