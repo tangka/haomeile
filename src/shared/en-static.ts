@@ -48,8 +48,8 @@ export const EN_STATIC: Record<string, string> = {
   操作步骤: 'What to do',
   收录时浏览量: 'Views when selected',
   '使用小技巧 · 号没了': 'Tips · 号没了',
-  '精选 X 上的实操长文，收录 AI 账号登录、分号和项目记录找回的操作经验。':
-    'Hands-on articles from X about AI account sign-in, keeping accounts separate and recovering project history.',
+  '面向中国用户的账号开通长文，覆盖 Claude、ChatGPT 与 Google AI 的注册、付款和订阅确认。':
+    'Account setup guides for Chinese users, covering sign-up, payment and subscription confirmation for Claude, ChatGPT and Google AI.',
   ...TIP_TRANSLATIONS,
   使用须知: 'Rules',
   提着灯笼的守墓小猫: 'A cemetery cat carrying a lantern',

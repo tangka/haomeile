@@ -36,20 +36,18 @@ const { tip } = Astro.props;
         <p>{tip.experience.zh}</p>
         <h2>操作步骤</h2>
         <ol>
-          {tip.steps.map(({ text, code }) => (
+          {tip.steps.map(({ text, link }) => (
             <li>
               {text.zh}
-              {code && <pre><code>{code}</code></pre>}
+              {link && (
+                <>
+                  {' '}
+                  <a href={link.href}>{link.label.zh}</a>
+                </>
+              )}
             </li>
           ))}
         </ol>
-        {tip.action && (
-          <p>
-            <a class="btn btn-primary" href={tip.action.href}>
-              {tip.action.label.zh}
-            </a>
-          </p>
-        )}
         <p class="tip-source">
           <a href={tip.source} target="_blank" rel="noopener noreferrer">
             阅读 X 长文
@@ -79,13 +77,6 @@ const { tip } = Astro.props;
   }
   .tip-article li + li {
     margin-block-start: 12px;
-  }
-  .tip-article pre {
-    margin: 8px 0 0;
-    overflow-x: auto;
-    padding: 10px 12px;
-    background: var(--stone);
-    color: var(--stone-ink);
   }
   .tip-article .tip-source {
     margin-block-start: 28px;

@@ -98,18 +98,20 @@ test('the tips directory lists articles by date in one column and links to detai
     expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom);
   }
 
-  const title = 'Claude 账号停用后，从本机找回项目记录并导入 Codex';
+  const title = 'Claude Pro 网页开通，从注册到银行卡付款';
   await main.getByRole('link', { name: title, exact: true }).click();
-  await expect(page).toHaveURL(/\/tips\/claude-code-local-history$/);
+  await expect(page).toHaveURL(/\/tips\/claude-pro-web-subscription$/);
   await expect(
     page.getByRole('heading', { name: title, level: 1 }),
   ).toBeVisible();
   await expect(page.locator('article ol li')).toHaveCount(4);
-  await expect(page.locator('article pre code')).toHaveText('~/.claude');
-  await expect(page.locator('article')).toContainText('@leaf_sanren');
+  await expect(
+    page.getByRole('link', { name: '打开 Claude 升级页' }),
+  ).toHaveAttribute('href', 'https://claude.ai/upgrade');
+  await expect(page.locator('article')).toContainText('@alin_zone');
   await expect(page.getByRole('link', { name: '阅读 X 长文' })).toHaveAttribute(
     'href',
-    'https://x.com/i/article/2107394164908310528',
+    'https://x.com/i/article/2117217865128636416',
   );
   await page.getByRole('link', { name: '返回技巧目录' }).click();
   await expect(page).toHaveURL(/\/tips$/);

@@ -169,7 +169,7 @@ for (const path of [
   '/en/epitaph',
   '/en/appeal',
   '/en/tips',
-  '/en/tips/claude-code-windows-first-login',
+  '/en/tips/claude-pro-web-subscription',
   '/en/privacy',
   '/en/about',
   '/en/v/claude',
