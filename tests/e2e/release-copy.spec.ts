@@ -78,7 +78,7 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(main.getByRole('heading')).toHaveText(['使用小技巧']);
   const titles = [...TIP_ARTICLES]
     .sort((a, b) => b.sourceDate.localeCompare(a.sourceDate))
-    .map((tip) => tip.title.zh);
+    .map((tip) => tip.title);
   const list = main.locator('.tips');
   await expect(list).toHaveCount(1);
   await expect(list.locator(':scope > li')).toHaveText(titles);
@@ -98,7 +98,8 @@ test('the tips directory lists articles by date in one column and links to detai
     expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom);
   }
 
-  const title = 'Claude Pro 网页开通，从注册到银行卡付款';
+  const title =
+    '拒绝代充！没有 iPhone 也能自己开通 Claude Pro，一张 Mastercard 亲测跑通';
   await main.getByRole('link', { name: title, exact: true }).click();
   await expect(page).toHaveURL(/\/tips\/claude-pro-web-subscription$/);
   await expect(
@@ -115,4 +116,9 @@ test('the tips directory lists articles by date in one column and links to detai
   );
   await page.getByRole('link', { name: '返回技巧目录' }).click();
   await expect(page).toHaveURL(/\/tips$/);
+
+  await page.goto('/en/tips');
+  await expect(page.locator('.tips > li > a')).toHaveText(titles);
+  await page.getByRole('link', { name: title, exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
 });

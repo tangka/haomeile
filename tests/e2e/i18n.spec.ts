@@ -40,7 +40,7 @@ async function expectEnglishSystemCopy(page: Page): Promise<void> {
     // Hidden first-party dialog text is checked too.
     clone
       .querySelectorAll(
-        'script, style, .brand, #hero-title, .tomb-name, .tomb-epitaph, .tomb-story, .facts dd',
+        'script, style, .brand, #hero-title, .tomb-name, .tomb-epitaph, .tomb-story, .facts dd, [lang="zh-CN"][translate="no"]',
       )
       .forEach((node) => node.remove());
     return clone.textContent?.replaceAll('号没了', '') || '';

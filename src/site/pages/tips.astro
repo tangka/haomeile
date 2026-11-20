@@ -20,8 +20,13 @@ const tips = [...TIP_ARTICLES].sort((a, b) =>
       <ul class="tips">
         {tips.map((tip) => (
           <li>
-            <a class="tip-preview" href={'/tips/' + tip.slug}>
-              {tip.title.zh}
+            <a
+              class="tip-preview"
+              href={'/tips/' + tip.slug}
+              lang="zh-CN"
+              translate="no"
+            >
+              {tip.title}
             </a>
           </li>
         ))}

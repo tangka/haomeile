@@ -5,7 +5,8 @@ interface TipCopy {
 
 interface TipArticle {
   slug: string;
-  title: TipCopy;
+  title: string;
+  englishTitle: string;
   summary: TipCopy;
   experience: TipCopy;
   steps: { text: TipCopy; link?: { href: string; label: TipCopy } }[];
@@ -17,11 +18,179 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
-    slug: 'google-ai-ultra-iphone-subscription',
-    title: {
-      zh: '用 iPhone 开通 Google AI Ultra，怎么确认 Antigravity 到账',
-      en: 'Subscribe to Google AI Ultra on iPhone and check Antigravity access',
+    slug: 'google-ai-claim-cloud-credits',
+    title:
+      '万字干货｜Gemini 4 + Antigravity，从 0 到 1 跑通全自动出片（附 Agent 指令）',
+    englishTitle:
+      'Gemini 4 and Antigravity: a full walkthrough for automated video production',
+    summary: {
+      zh: '看原文第三节。开通 Google AI Pro 或 Ultra 后，到 AI Studio 领取赠金，再到 Cloud Billing 核对到账。',
+      en: 'Section three shows how to claim the credit in AI Studio after subscribing to Google AI Pro or Ultra, then verify it in Cloud Billing.',
     },
+    experience: {
+      zh: 'Leaf Yeah! 用自己的 Pro 账号领了 Google Cloud 赠金。他在账单里查到赠金已生效，之后用它抵扣了 Gemini API 的调用费用。原文也记录了他用预付费账单账户时遇到的余额提示。',
+      en: 'Leaf Yeah! claimed Google Cloud credits with his own Pro account. He verified them in Billing and used them against Gemini API charges. He also documented the balance notice he saw on his prepaid billing account.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '先在 Google One 核对当前套餐和登录邮箱。打开 AI Studio，用同一个账号登录，在左下角找 API 赠金入口。也可以从 Google Developer Program 的福利页查看领取资格。',
+          en: 'Check the active plan and email in Google One. Open AI Studio with the same account and look for the API credit entry in the lower left. You can also check eligibility on the Google Developer Program benefits page.',
+        },
+        link: {
+          href: 'https://aistudio.google.com/',
+          label: { zh: '打开 AI Studio', en: 'Open AI Studio' },
+        },
+      },
+      {
+        text: {
+          zh: '在领取窗口选你实际用来给项目付费的 Cloud Billing 账户，再点「兑换并继续」。如果手上有个人和公司两个结算账户，先核对项目绑定的是哪一个。',
+          en: 'Choose the Cloud Billing account that pays for your project, then select Redeem and Continue. If you have both a personal and a work billing account, first check which one is linked to the project.',
+        },
+        link: {
+          href: 'https://developers.google.com/profile/help/benefits',
+          label: {
+            zh: '查看赠金与自动到账设置',
+            en: 'Check credit and automatic application settings',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '打开 Google Cloud 的「结算 → 赠金」，选同一个结算账户，再找 Google Developer Program 的赠金条目，查看状态、金额和到期日。作者的预付费账户当时还提示余额要大于零，他在自己的结算账户充值后才恢复调用。遇到同样提示时，先核对自己的结算模式。',
+          en: 'In Google Cloud, open Billing → Credits for the same billing account and check the Google Developer Program credit status, amount and expiration. The author’s prepaid account required a positive balance before API calls resumed. If you see that notice, check your own billing mode.',
+        },
+        link: {
+          href: 'https://console.cloud.google.com/billing',
+          label: { zh: '打开 Cloud Billing', en: 'Open Cloud Billing' },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122671457008500736',
+    sourceAuthor: '@leaf_sanren',
+    sourceDate: '2026-11-17',
+    sourceViews: 334881,
+  },
+  {
+    slug: 'claude-sign-up-identity-verification',
+    title: '封了20多个号换来的全网Claude防封分流保姆级教程全网整合版',
+    englishTitle:
+      'What I learned about Claude sign-up and network setup after more than 20 suspensions',
+    summary: {
+      zh: '看原文注册和付款部分。开 Pro 时弹出身份验证，先确认现在是在验证、付款，还是核对订阅。',
+      en: 'See the sign-up and payment sections. If a verification prompt appears while buying Pro, identify whether you are at identity verification, checkout or subscription confirmation.',
+    },
+    experience: {
+      zh: '起风了记录了自己遇到两次身份验证的经过。第一个账号走到订阅时弹窗，第二个刚注册就看到了提示。他没继续这两次验证。以下步骤结合他的场景和 Claude 当前的验证、账单入口整理。',
+      en: 'Qifeng documented two identity prompts. One appeared during subscription checkout and another immediately after sign-up. He did not complete those checks. The steps below pair his scenario with Claude’s current verification and billing instructions.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在实际所在地符合 Claude 地区要求时，打开原来的 Claude 账号，确认登录邮箱和屏幕上的提示。提示要求验证身份时，从 Claude 账号内进入身份验证流程。',
+          en: 'If Claude supports your actual location, open your existing account and check the signed-in email and the exact prompt. If it asks for identity verification, start that flow from inside your Claude account.',
+        },
+        link: {
+          href: 'https://www.anthropic.com/legal/supported-regions',
+          label: { zh: '查 Claude 支持地区', en: 'Check Claude availability' },
+        },
+      },
+      {
+        text: {
+          zh: '按验证页面显示的签发国家和证件类型，选自己持有的有效带照片实体证件。准备一部可拍照的手机，按页面提示拍摄证件和完成需要的自拍。提示图片模糊时，在光线好的地方重拍。',
+          en: 'Use an original, valid photo ID in one of the issuing countries and document types offered on the screen. Keep a phone with a camera ready and follow the prompts for document photos and any required live selfie. Retake blurry photos in good light.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/14328960-identity-verification-on-claude',
+          label: {
+            zh: '查证件要求和验证失败处理',
+            en: 'Check document requirements and verification help',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '回原账号看订阅状态。网页付款去「设置 → 账单」查方案和发票，App 内购回 Apple 或 Google Play 查订单。先确认有没有成交，再决定是否重新结账。',
+          en: 'Return to the original account to check the subscription. For a web purchase, check the plan and invoice in Settings → Billing. For in-app purchases, check the Apple or Google Play order. Confirm the first payment status before starting another checkout.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/8325618-paid-plan-billing-faqs',
+          label: {
+            zh: '查付款和到账记录',
+            en: 'Check billing and subscription status',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122282102905307136',
+    sourceAuthor: '@qifenglelelelel',
+    sourceDate: '2026-11-16',
+    sourceViews: 95444,
+  },
+  {
+    slug: 'google-ai-ultra-plan-evaluation',
+    title: '为什么不建议大家去开通 Google AI Ultra',
+    englishTitle:
+      'Why I don’t recommend subscribing to Google AI Ultra for everyone',
+    summary: {
+      zh: '下单前看目标模型、当前用量和账单。适合正在比较 Google AI Pro 和 Ultra 的 Antigravity 用户。',
+      en: 'Compare the models, your current usage and the checkout price before paying. This is for Antigravity users deciding between Google AI Pro and Ultra.',
+    },
+    experience: {
+      zh: '刘老板说自己订阅了 Ultra 5X，在 Antigravity 上用 Carbon 跑过编码任务。这篇是对一篇 Linux.do 文章的复测补充，重点是他在多 Agent 和重构任务中感受到的用量消耗，以及云盘、Colab 等权益对购买决策的影响。',
+      en: 'Leo says he subscribed to Ultra 5X and ran coding tasks with Carbon in Antigravity. His article revisits a Linux.do post with his own tests, focusing on consumption during parallel and refactoring work and the value of benefits such as storage and Colab.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '先打开 Antigravity，找到你想用的那个模型，再对照模型表里你当前套餐的那一列。特别核对 Pro 试用与正式付费 Pro 的差别。',
+          en: 'Open Antigravity and identify the model you want. Compare it with the model table for your current plan, paying attention to the distinction between a Pro trial and paid Pro.',
+        },
+        link: {
+          href: 'https://antigravity.google/docs/models',
+          label: {
+            zh: '查各套餐可用模型',
+            en: 'Compare model availability by plan',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在现有套餐用实际项目跑一轮典型任务，记录开始和结束时用量页显示的数值。还想用 Colab、Drive 或 Flow 的话，分开列出自己会用到的权益，再一起算月预算。',
+          en: 'Run a typical task on your current plan and record the usage displayed before and after. If you also want Colab, Drive or Flow, list the specific benefits you would use and include them in your monthly budget.',
+        },
+        link: {
+          href: 'https://antigravity.google/docs/plans',
+          label: {
+            zh: '看用量和套餐规则',
+            en: 'Review Antigravity plans and quotas',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '登录准备付费的同一个 Google 账号打开 Google One，确认地区、方案名称、本次价格和续费金额。决定升级后，再从当前订阅的渠道付款。',
+          en: 'Open Google One in the Google Account you plan to pay with. Verify the region, plan name, amount due and renewal amount. If you decide to upgrade, pay through the channel managing your current subscription.',
+        },
+        link: {
+          href: 'https://one.google.com/about/google-ai-plans/',
+          label: {
+            zh: '查看自己账号的报价',
+            en: 'See plan pricing for your account',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2121983690859520000',
+    sourceAuthor: '@leo_xiaolei',
+    sourceDate: '2026-11-15',
+    sourceViews: 60998,
+  },
+  {
+    slug: 'google-ai-ultra-iphone-subscription',
+    title: '410元开通谷歌 Ultra 20×：爽用用96GB云端显卡，跑通了开源生图和视频',
+    englishTitle:
+      'I paid 410 yuan for Google Ultra 20× and ran open-source image and video models on a 96 GB cloud GPU',
     summary: {
       zh: '先核对地区，再确认两个账号：Apple 账户付钱，个人 Google 账号收会员权益。',
       en: 'Check availability first. Your Apple Account pays and your personal Google Account receives the membership.',
@@ -84,10 +253,10 @@ export const TIP_ARTICLES: TipArticle[] = [
   },
   {
     slug: 'claude-pro-web-subscription',
-    title: {
-      zh: 'Claude Pro 网页开通，从注册到银行卡付款',
-      en: 'Sign up for Claude Pro and pay by card on the web',
-    },
+    title:
+      '拒绝代充！没有 iPhone 也能自己开通 Claude Pro，一张 Mastercard 亲测跑通',
+    englishTitle:
+      'How I subscribed to Claude Pro myself without an iPhone, using a Mastercard',
     summary: {
       zh: '人在支持地区时，用自己的邮箱和手机号注册。结账前核对发卡地区、账单地址和含税总价。',
       en: 'Sign up with your own email and phone number in a supported location. Check the card’s issuing country, billing address and total with tax before paying.',
@@ -151,10 +320,9 @@ export const TIP_ARTICLES: TipArticle[] = [
   },
   {
     slug: 'chatgpt-plus-iphone-subscription',
-    title: {
-      zh: 'iPhone 上开通 ChatGPT Plus，再用同一个号进 Codex',
-      en: 'Buy ChatGPT Plus on iPhone and use the same account for Codex',
-    },
+    title: '支付宝购买美区 Apple 礼品卡并订阅 ChatGPT：保姆级20张图文教程',
+    englishTitle:
+      'Buy a U.S. Apple gift card with Alipay and subscribe to ChatGPT: a guide with 20 screenshots',
     summary: {
       zh: '先看自己的 App Store 能不能内购，结账前核对价格，付完分别查 Apple 订单和 ChatGPT 套餐。',
       en: 'Check whether your App Store offers in-app purchase, review the price, then verify both the Apple order and the ChatGPT plan.',
@@ -222,6 +390,65 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceDate: '2026-10-31',
     sourceViews: 13859,
   },
+  {
+    slug: 'android-subscriptions-google-play',
+    title: '别再找代充了！ChatGPT / Claude 官方订阅，其实比你想象中简单',
+    englishTitle:
+      'How to subscribe to ChatGPT and Claude yourself through official checkout',
+    summary: {
+      zh: '原文整理了多个自助付款渠道。这里把安卓的 Google Play 结账、到账和续费入口列清楚。',
+      en: 'The original covers several self-service payment channels. These steps focus on Android checkout, subscription verification and renewal through Google Play.',
+    },
+    experience: {
+      zh: '苏码玩家在 9 月的长文里写了自己常用的 Safari 网页付款方式，也整理了安卓从官方 App 发起、交给 Google Play 结账的路径。下面按目前的商店和应用入口核对。',
+      en: 'In his September article, Suversal described his own Safari checkout method and documented the Android path from the official app to Google Play. The steps below reflect the current store and app controls.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '人在服务支持的地区时，用自己的 Google Play 账号安装官方 App。Claude 的发布方是 Anthropic，ChatGPT 的发布方是 OpenAI。打开 App 后，先确认准备开通会员的业务账号邮箱。',
+          en: 'While in a supported location, install the official app using your own Google Play account. Look for Claude by Anthropic or ChatGPT by OpenAI. In the app, confirm the email of the account you want to upgrade.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9612887-install-claude-for-android',
+          label: {
+            zh: '查 Claude 安卓下载入口',
+            en: 'Find the official Claude Android app',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在 Claude 点右上角头像，进设置选「Upgrade to Pro」。ChatGPT 则查看账号菜单的升级入口。出现 Google Play 购买页后，看清付款用的 Google 账号、套餐、币种、税费和续费周期，再用该商店支持的付款方式确认。',
+          en: 'In Claude, open Settings from the profile button and choose Upgrade to Pro. In ChatGPT, look for the upgrade option in the account menu. On the Google Play purchase sheet, check the paying Google Account, plan, currency, tax and renewal interval before using a payment method supported by your store.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9612892-how-do-i-sign-up-for-claude-pro-on-claude-for-android',
+          label: {
+            zh: '查 Claude 安卓内购步骤',
+            en: 'Check Claude’s in-app upgrade steps',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '回 App 确认目标账号显示 Pro 或 Plus。再去「Google Play → 头像 → 付款和订阅 → 订阅」查订单和下次扣款日期。要换到网页续费时，先在原渠道核对当前订阅的结束时间，避免两个渠道同时扣款。',
+          en: 'Check that Pro or Plus appears in the intended app account. Then open Google Play → profile → Payments & subscriptions → Subscriptions to check the order and next charge date. If switching to web billing, check when the original plan ends to avoid overlapping charges.',
+        },
+        link: {
+          href: 'https://support.google.com/googleplay/answer/7018481?hl=zh-Hans',
+          label: {
+            zh: '管理 Google Play 订阅',
+            en: 'Manage Google Play subscriptions',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2096991393403301888',
+    sourceAuthor: '@suversal',
+    sourceDate: '2026-09-08',
+    sourceViews: 125907,
+  },
 ];
 
 export function tipPageTitle(title: string, locale: 'zh' | 'en'): string {
@@ -233,12 +460,14 @@ export function tipPageTitle(title: string, locale: 'zh' | 'en'): string {
 export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
 
 export const TIP_TRANSLATIONS = Object.fromEntries(
-  TIP_ARTICLES.flatMap(({ title, summary, experience, steps }) => [
-    ...[title, summary, experience].map(({ zh, en }) => [zh, en]),
-    ...steps.flatMap(({ text, link }) => [
-      [text.zh, text.en],
-      ...(link ? [[link.label.zh, link.label.en]] : []),
-    ]),
-    [tipPageTitle(title.zh, 'zh'), tipPageTitle(title.en, 'en')],
-  ]),
+  TIP_ARTICLES.flatMap(
+    ({ title, englishTitle, summary, experience, steps }) => [
+      ...[summary, experience].map(({ zh, en }) => [zh, en]),
+      ...steps.flatMap(({ text, link }) => [
+        [text.zh, text.en],
+        ...(link ? [[link.label.zh, link.label.en]] : []),
+      ]),
+      [tipPageTitle(title, 'zh'), tipPageTitle(englishTitle, 'en')],
+    ],
+  ),
 );

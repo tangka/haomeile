@@ -17,7 +17,7 @@ const { tip } = Astro.props;
 ---
 
 <SiteLayout
-  title={tipPageTitle(tip.title.zh, 'zh')}
+  title={tipPageTitle(tip.title, 'zh')}
   description={tip.summary.zh}
   current="/tips"
   path={'/tips/' + tip.slug}
@@ -30,7 +30,9 @@ const { tip } = Astro.props;
           <a href="/tips">返回技巧目录</a>
         </nav>
         <div class="page-head">
-          <h1>{tip.title.zh}</h1>
+          <h1 lang="zh-CN" translate="no">
+            {tip.title}
+          </h1>
           <p>{tip.summary.zh}</p>
         </div>
         <p>{tip.experience.zh}</p>
