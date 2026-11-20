@@ -472,6 +472,7 @@ dialog.sheet::backdrop { background: rgba(10, 20, 15, 0.55); }
 .skip-link { position: fixed; left: 16px; top: -80px; z-index: 100; padding: 10px 16px; background: var(--mum); color: var(--mum-ink); border: 2px solid var(--ink); }
 .skip-link:focus { top: 12px; }
 .chip { text-decoration: none; }
+.rows > .empty { grid-column: 1 / -1; }
 
 /* Keep the hero's intrinsic image widths from clipping copy on narrow screens. */
 .scene-main > * { min-width: 0; }

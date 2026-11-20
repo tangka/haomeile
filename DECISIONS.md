@@ -61,3 +61,10 @@
 - 保留 canonical、OG、robots、llms、JSON-LD、410/404 与缓存限制；分页在服务端输出真实链接。筛选链接使用适用于链接的 aria-current，献花按钮可访问名称包含可见文字及格式化数字。
 - Lighthouse 13.6.0，在本地 Wrangler 上按默认模拟移动端运行：首页 Performance / Accessibility / Best Practices / SEO 均 100，LCP 775ms，CLS 0；公开墓碑详情四项均 100，LCP 766ms，CLS 0。无运行警告。原始结果在本地 artifacts/lighthouse/，可移植摘要在 docs/verification/lighthouse-summary.json；这是本地实验数据，不代表生产网络或真实用户表现。
 - 生产 Worker dry-run 打包通过，gzip 34.44 KiB；仅验证构建产物和配置，未创建远程资源、发布 Worker 或绑定域名。
+
+## M6 · 运行与部署交付
+
+- 已编写 README.md 与 DEPLOY.md：本地运行、测试与目录说明，以及 D1、真实 Turnstile、Access、域名、生产密钥、首次发布、备份和回滚步骤。
+- 最终桌面空状态目视检查补齐了空墙横跨全部网格列的样式；已在实际浏览器确认空状态宽度与纪念墙一致，375px 仍使用单列。
+- 重新执行构建、类型检查、ESLint、100 项单元/接口测试和 34 项浏览器测试通过。本地验收墓碑已通过真实撤回接口清除，公开总数为 0，原地址返回 410，sitemap 不再包含它。
+- 所有实现仅在本地分支提交。未推送远程分支、未执行生产迁移、未发布 Worker、未绑定域名；生产仍需站长按 DEPLOY.md 填写数据库 UUID、真实密钥、Access 策略及人工核对的文案与链接。
