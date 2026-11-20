@@ -97,14 +97,18 @@ def configure_caddy(client, sftp, phase):
         baseline = re.sub(rb'\n?' + re.escape(BEGIN.encode()) + rb'[\s\S]*?' + re.escape(END.encode()) + rb'\n?', b'', previous)
     if phase == 'http':
         block = '''http://haomeile.rip {
-    log { output discard }
+    log {
+        output discard
+    }
     handle /api/health {
         reverse_proxy 127.0.0.1:8788 {
             header_up -CF-Connecting-IP
             header_up X-Haomeile-Client-IP {remote_host}
         }
     }
-    handle { respond "HTTPS deployment in progress" 503 }
+    handle {
+        respond "HTTPS deployment in progress" 503
+    }
 }'''
     else:
         block = (ROOT / 'ops/Caddyfile.haomeile').read_text().split('\n', 1)[1].strip()

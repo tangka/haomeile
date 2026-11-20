@@ -34,7 +34,7 @@ pnpm exec wrangler d1 migrations apply haomeile --remote
 
 ## 3. 配置 Turnstile 与密钥
 
-应用已接入真实 Turnstile SDK，并由 Worker 调用 Siteverify 校验 token。普通开发与生产均要求正式密钥，默认拒绝官方测试密钥和 dummy token，并严格核对本站 hostname。Cloudflare 的 [免费方案](https://developers.cloudflare.com/turnstile/plans/)允许不限次数的验证请求，提供最多 20 个 widget、每个 widget 最多 10 个主机名；本项目可使用该方案，当前已创建 `haomeile` 免费 Managed widget，公开 site key 已填入 `wrangler.toml`，本地私钥已保存在忽略文件中；尚未向生产 Worker 写入 secret 或发布站点。
+应用已接入真实 Turnstile SDK，并由 Worker 调用 Siteverify 校验 token。普通开发与生产均要求正式密钥，默认拒绝官方测试密钥和 dummy token，并严格核对本站 hostname。Cloudflare 的 [免费方案](https://developers.cloudflare.com/turnstile/plans/)允许不限次数的验证请求，提供最多 20 个 widget、每个 widget 最多 10 个主机名；本项目可使用该方案，当前已创建 `haomeile` 免费 Managed widget，公开 site key 已填入 `wrangler.toml`，本地私钥已保存在忽略文件中；当前服务器版本已上线，但未向生产 Worker 写入 secret 或发布 Worker。
 
 在 Cloudflare 创建免费 Managed Turnstile 站点，将 `haomeile.rip` 加入允许的主机名。本地验收时也可允许 `localhost` 和 `127.0.0.1`；每个后端只接受其 `SITE_ORIGIN` 的精确 hostname，本地 token 不能用于生产提交。把真实 **site key** 填入 `wrangler.toml` 的 `[vars].TURNSTILE_SITE_KEY`；site key 是公开配置。保留 `ENVIRONMENT = "production"` 和 `SITE_ORIGIN = "https://haomeile.rip"`。
 

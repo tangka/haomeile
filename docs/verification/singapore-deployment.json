@@ -1,0 +1,92 @@
+{
+  "site": "https://haomeile.rip",
+  "region": "Singapore",
+  "applicationRelease": "20261120055440-ffc88d0",
+  "archiveSha256": "d7b58bff4a0504bc5516e81bf31a5d71d3d78cd4b6c7d5af7b5e8845cb2aa019",
+  "https": {
+    "hostnameVerified": true,
+    "expires": "Feb 18 04:59:37 2027 GMT",
+    "protocol": "TLSv1.2"
+  },
+  "publicDns": {
+    "Cloudflare": ["188.239.17.169"],
+    "Google": ["188.239.17.169"]
+  },
+  "httpChecks": [
+    {
+      "path": "/",
+      "language": "zh-CN",
+      "authenticated": false,
+      "status": 200,
+      "location": null,
+      "cache": "public, max-age=60, s-maxage=300"
+    },
+    {
+      "path": "/",
+      "language": "en-US",
+      "authenticated": false,
+      "status": 302,
+      "location": "/en/",
+      "cache": "private, no-store"
+    },
+    {
+      "path": "/en/",
+      "language": "zh-CN",
+      "authenticated": false,
+      "status": 200,
+      "location": null,
+      "cache": "public, max-age=60, s-maxage=300"
+    },
+    {
+      "path": "/admin",
+      "language": "zh-CN",
+      "authenticated": false,
+      "status": 401,
+      "location": null,
+      "cache": "no-store"
+    },
+    {
+      "path": "/admin",
+      "language": "zh-CN",
+      "authenticated": true,
+      "status": 200,
+      "location": null,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/admin/queue",
+      "language": "zh-CN",
+      "authenticated": true,
+      "status": 200,
+      "location": null,
+      "cache": "no-store"
+    },
+    {
+      "path": "/_templates/tomb/",
+      "language": "zh-CN",
+      "authenticated": false,
+      "status": 404,
+      "location": null,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.env",
+      "language": "zh-CN",
+      "authenticated": false,
+      "status": 404,
+      "location": null,
+      "cache": "no-store"
+    }
+  ],
+  "turnstile": {
+    "verified": true,
+    "hostname": "haomeile.rip",
+    "testingMode": false,
+    "verifiedAt": "2026-11-20T06:00:49.576Z",
+    "productionContentCreated": false
+  },
+  "productionSeedDataImported": false,
+  "productionTombstones": 0,
+  "existingCaddySitesPreserved": true,
+  "dailyBackupsEnabled": true
+}

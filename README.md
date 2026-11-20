@@ -4,7 +4,7 @@
 
 首页保留总体数字、纪念墙和近 30 天曲线；产品与事件筛选、按产品与事件种类的分布区已移除。投稿表单仍填写产品与事件。
 
-当前上线方式为新加坡服务器，域名 `haomeile.rip` 在 Porkbun 管理；生产部署见 [DEPLOY-SERVER.md](DEPLOY-SERVER.md)。Cloudflare 提供免费正式 Turnstile，原 Workers 部署方案保留在 [DEPLOY.md](DEPLOY.md)。本地开发与测试命令不发布生产服务。
+网站已上线：<https://haomeile.rip>。应用运行在新加坡服务器，域名 `haomeile.rip` 在 Porkbun 管理；生产部署见 [DEPLOY-SERVER.md](DEPLOY-SERVER.md)。Cloudflare 提供免费正式 Turnstile，原 Workers 部署方案保留在 [DEPLOY.md](DEPLOY.md)。本地开发与测试命令不发布生产服务。
 
 ## 本地运行
 
@@ -19,7 +19,7 @@ pnpm dev
 
 首次运行会在 `.dev.vars` 不存在时从 `.dev.vars.example` 复制本地配置模板。模板不包含 Turnstile 密钥；请填入免费正式 widget 的 site key 与 secret，并允许 `127.0.0.1` 和 `localhost`。首次本地数据库为空，不导入设计稿的示例内容；已有本地数据库会保留。`.dev.vars`、`.wrangler/` 均已忽略，不能提交真实密钥。本地状态存于 `.wrangler/`，与生产 D1 分离。
 
-人机验证已接入前端 Turnstile SDK 和后端 Siteverify。普通开发与生产都拒绝官方测试密钥和 dummy token，并核对 Siteverify 返回的 hostname；正式密钥尚未配置时不能投稿。当前 `haomeile` 免费正式 widget 已创建，公开 site key 已写入生产配置，本地 secret 位于忽略的 `.dev.vars`；线上 secret 随正式部署写入。只有隔离测试环境显式设置 `TURNSTILE_TEST_MODE=true` 并提供成对官方测试密钥时才允许测试验证；生产环境不能开启该模式。Turnstile [免费方案](https://developers.cloudflare.com/turnstile/plans/)不限制验证请求次数，账户最多 20 个 widget，每个 widget 最多 10 个主机名。
+人机验证已接入前端 Turnstile SDK 和后端 Siteverify。普通开发与生产都拒绝官方测试密钥和 dummy token，并核对 Siteverify 返回的 hostname；正式密钥尚未配置时不能投稿。当前 `haomeile` 免费正式 widget 已创建，公开 site key 已写入生产配置，本地 secret 位于忽略的 `.dev.vars`；生产 secret 已写入新加坡服务器的受限环境文件。只有隔离测试环境显式设置 `TURNSTILE_TEST_MODE=true` 并提供成对官方测试密钥时才允许测试验证；生产环境不能开启该模式。Turnstile [免费方案](https://developers.cloudflare.com/turnstile/plans/)不限制验证请求次数，账户最多 20 个 widget，每个 widget 最多 10 个主机名。
 
 单独应用本地迁移：
 
