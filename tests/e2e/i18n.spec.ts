@@ -169,6 +169,7 @@ for (const path of [
   '/en/epitaph',
   '/en/appeal',
   '/en/tips',
+  '/en/tips/codex-personal-work-accounts',
   '/en/privacy',
   '/en/about',
   '/en/v/claude',

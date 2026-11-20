@@ -1,0 +1,91 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { TIP_ARTICLES, tipPageTitle } from '../../../shared/tips';
+import { LABELS } from '../../scripts/labels';
+
+export function getStaticPaths() {
+  return TIP_ARTICLES.map((tip) => ({
+    params: { slug: tip.slug },
+    props: { tip },
+  }));
+}
+
+interface Props {
+  tip: (typeof TIP_ARTICLES)[number];
+}
+
+const { tip } = Astro.props;
+const productName = LABELS.vendor[tip.product];
+---
+
+<SiteLayout
+  title={tipPageTitle(tip.title.zh, 'zh')}
+  description={tip.summary.zh}
+  current="/tips"
+  path={'/tips/' + tip.slug}
+  ogType="article"
+>
+  <main class="page">
+    <div class="wrap">
+      <article class="doc tip-article">
+        <nav class="tip-crumbs" aria-label="文章导航">
+          <a href="/tips">返回技巧目录</a>
+          <a href={'/tips#' + tip.product}>{productName}</a>
+        </nav>
+        <div class="page-head">
+          <span class="tip-topic">{tip.topic.zh}</span>
+          <h1>{tip.title.zh}</h1>
+          <p>{tip.summary.zh}</p>
+        </div>
+        <h2>操作步骤</h2>
+        <ol>
+          {tip.steps.map((step) => (
+            <li>{step.zh}</li>
+          ))}
+        </ol>
+        {tip.action && (
+          <p>
+            <a class="btn btn-primary" href={tip.action.href}>
+              {tip.action.label.zh}
+            </a>
+          </p>
+        )}
+        <p class="tip-source">
+          <a href={tip.source} target="_blank" rel="noopener noreferrer">
+            查看 X 原帖
+          </a>
+          <time datetime={tip.sourceDate}>{tip.sourceDate}</time>
+        </p>
+      </article>
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .tip-crumbs,
+  .tip-source {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: baseline;
+  }
+  .tip-crumbs {
+    margin-block-end: 22px;
+    font-size: var(--fs-s);
+  }
+  .tip-topic {
+    color: var(--stone-ink);
+    background: var(--stone);
+    padding: 2px 7px;
+    font-size: var(--fs-xs);
+  }
+  .tip-article li + li {
+    margin-block-start: 12px;
+  }
+  .tip-article .tip-source {
+    margin-block-start: 28px;
+    border-block-start: 1px solid var(--stone-shade);
+    padding-block-start: 14px;
+    font-size: var(--fs-s);
+  }
+</style>

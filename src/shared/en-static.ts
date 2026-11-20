@@ -1,3 +1,5 @@
+import { TIP_TRANSLATIONS } from './tips';
+
 /** Static, first-party interface copy. User-written memorials are never translated. */
 export const EN_STATIC: Record<string, string> = {
   '条。': 'entries.',
@@ -41,28 +43,15 @@ export const EN_STATIC: Record<string, string> = {
   官方申诉入口: 'Official appeals',
   使用小技巧: 'Tips',
   按产品查看: 'Browse by product',
-  官方文档: 'Official documentation',
+  查看文章: 'Read article',
+  '查看 X 原帖': 'Read the original post on X',
+  返回技巧目录: 'Back to tips',
+  文章导航: 'Article navigation',
+  操作步骤: 'What to do',
   '使用小技巧 · 号没了': 'Tips · 号没了',
-  'Claude、Codex 和 Antigravity 的项目设置、代码审查和页面验收技巧。':
-    'Practical tips for project setup, code review and browser testing in Claude, Codex and Antigravity.',
-  把常用要求存进项目: 'Save recurring instructions in a project',
-  '打开 Claude 项目，选择 Set project instructions，保存常用格式、术语和要求。同一项目里的新对话会沿用这些指令。':
-    'Open a Claude project and select Set project instructions. Save your usual formats, terminology and requirements for future chats in that project.',
-  改代码前先看方案: 'Review the plan before editing',
-  '在项目目录用下面的命令启动 Claude Code。先核对它列出的改动范围和验证步骤，再批准实施。':
-    'Run the command below from your project directory to start Claude Code. Check the plan’s scope and verification steps before approving it.',
-  '用 Worktree 并行开发': 'Run parallel tasks in worktrees',
-  '在本地 Git 项目里新建 Codex 任务时，选择 Worktree。比如一个任务修登录，另一个改页面，各自在独立工作树里修改。':
-    'Choose Worktree when starting a Codex task in a local Git project. A sign-in fix and a page redesign can then run in separate working trees.',
-  提交前审查当前改动: 'Review changes before committing',
-  '在仓库目录运行下面的命令，让 Codex 审查待提交、未暂存和未跟踪的改动。先处理报告里的问题，再提交。':
-    'Run the command below from the repository to review staged, unstaged and untracked changes. Fix the reported issues before committing.',
-  '把项目约定写进 AGENTS.md': 'Keep project conventions in AGENTS.md',
-  '在项目根目录的 AGENTS.md 写下测试命令、目录约定和代码风格。Antigravity 会自动读取这些项目指令。':
-    'Put test commands, directory conventions and style guidelines in AGENTS.md at the project root. Antigravity loads these project instructions automatically.',
-  '用 /browser 验收手机布局': 'Test a mobile layout with /browser',
-  '启动本地开发站点，在 Antigravity App 里用 /browser 打开它。请它切到 390 像素宽，分别截下导航菜单展开和收起的样子。':
-    'Start your local dev site and open it with /browser in the Antigravity App. Ask it to use a 390-pixel viewport and take screenshots with the navigation menu open and closed.',
+  '从 X 整理的 Claude、Codex 和 Antigravity 账号技巧，覆盖注册、验证和停用申诉。':
+    'Account tips from X for Claude, Codex and Antigravity, covering sign-up, verification and suspension appeals.',
+  ...TIP_TRANSLATIONS,
   使用须知: 'Rules',
   提着灯笼的守墓小猫: 'A cemetery cat carrying a lantern',
   这里什么也没有: 'Nothing here',

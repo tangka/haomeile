@@ -1,63 +1,19 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 
-const groups = [
-  {
-    id: 'claude',
-    name: 'Claude',
-    tips: [
-      {
-        title: '把常用要求存进项目',
-        body: '打开 Claude 项目，选择 Set project instructions，保存常用格式、术语和要求。同一项目里的新对话会沿用这些指令。',
-        url: 'https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects',
-      },
-      {
-        title: '改代码前先看方案',
-        body: '在项目目录用下面的命令启动 Claude Code。先核对它列出的改动范围和验证步骤，再批准实施。',
-        command: 'claude --permission-mode plan',
-        url: 'https://code.claude.com/docs/en/common-workflows#plan-before-editing',
-      },
-    ],
-  },
-  {
-    id: 'codex',
-    name: 'Codex',
-    tips: [
-      {
-        title: '用 Worktree 并行开发',
-        body: '在本地 Git 项目里新建 Codex 任务时，选择 Worktree。比如一个任务修登录，另一个改页面，各自在独立工作树里修改。',
-        url: 'https://learn.chatgpt.com/docs/environments/git-worktrees',
-      },
-      {
-        title: '提交前审查当前改动',
-        body: '在仓库目录运行下面的命令，让 Codex 审查待提交、未暂存和未跟踪的改动。先处理报告里的问题，再提交。',
-        command: 'codex review --uncommitted',
-        url: 'https://learn.chatgpt.com/docs/developer-commands#codex-review',
-      },
-    ],
-  },
-  {
-    id: 'antigravity',
-    name: 'Antigravity',
-    tips: [
-      {
-        title: '把项目约定写进 AGENTS.md',
-        body: '在项目根目录的 AGENTS.md 写下测试命令、目录约定和代码风格。Antigravity 会自动读取这些项目指令。',
-        url: 'https://antigravity.google/docs/rules/',
-      },
-      {
-        title: '用 /browser 验收手机布局',
-        body: '启动本地开发站点，在 Antigravity App 里用 /browser 打开它。请它切到 390 像素宽，分别截下导航菜单展开和收起的样子。',
-        url: 'https://antigravity.google/docs/commands/browser/',
-      },
-    ],
-  },
-];
+import { TIP_ARTICLES } from '../../shared/tips';
+import { LABELS } from '../scripts/labels';
+
+const groups = Object.entries(LABELS.vendor).map(([id, name]) => ({
+  id,
+  name,
+  tips: TIP_ARTICLES.filter((tip) => tip.product === id),
+}));
 ---
 
 <SiteLayout
   title="使用小技巧 · 号没了"
-  description="Claude、Codex 和 Antigravity 的项目设置、代码审查和页面验收技巧。"
+  description="从 X 整理的 Claude、Codex 和 Antigravity 账号技巧，覆盖注册、验证和停用申诉。"
   path="/tips"
 >
   <main class="page">
@@ -78,11 +34,11 @@ const groups = [
           <ul class="tips">
             {tips.map((tip) => (
               <li>
-                <h3>{tip.title}</h3>
-                <p>{tip.body}</p>
-                {'command' in tip && <code>{tip.command}</code>}
-                <a href={tip.url} target="_blank" rel="noopener noreferrer">
-                  官方文档
+                <a class="tip-preview" href={'/tips/' + tip.slug}>
+                  <span class="tip-topic">{tip.topic.zh}</span>
+                  <h3>{tip.title.zh}</h3>
+                  <p>{tip.summary.zh}</p>
+                  <span class="tip-read">查看文章</span>
                 </a>
               </li>
             ))}
@@ -116,7 +72,7 @@ const groups = [
     padding: 0;
     list-style: none;
   }
-  .tips li {
+  .tip-preview {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -124,6 +80,8 @@ const groups = [
     padding: 16px;
     border: 2px solid var(--ink);
     font-size: var(--fs-s);
+    height: 100%;
+    text-decoration: none;
   }
   .tips h3,
   .tips p {
@@ -132,14 +90,19 @@ const groups = [
   .tips h3 {
     font-size: var(--fs-m);
   }
-  .tips code {
-    max-width: 100%;
-    padding: 4px 8px;
-    background: var(--stone);
-    color: var(--stone-ink);
-    overflow-wrap: anywhere;
+  .tip-preview:hover h3,
+  .tip-read {
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
-  .tips li > a {
+  .tip-read {
     margin-block-start: auto;
+    font-weight: 600;
+  }
+  .tip-topic {
+    font-size: var(--fs-xs);
+    color: var(--stone-ink);
+    background: var(--stone);
+    padding: 2px 7px;
   }
 </style>

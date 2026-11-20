@@ -81,8 +81,18 @@ test('the main menu opens the tips directory and its product shortcuts', async (
     .getByRole('link', { name: 'Codex' })
     .click();
   await expect(page).toHaveURL(/\/tips#codex$/);
-  await expect(page.locator('#codex + ul code')).toHaveText(
-    'codex review --uncommitted',
+  await page.getByRole('link', { name: /个人号和工作号怎么切换/ }).click();
+  await expect(page).toHaveURL(/\/tips\/codex-personal-work-accounts$/);
+  await expect(
+    page.getByRole('heading', { name: '个人号和工作号怎么切换', level: 1 }),
+  ).toBeVisible();
+  await expect(page.locator('article ol li').first()).toContainText(
+    'Add account',
   );
-  await expect(page.getByRole('link', { name: '官方文档' })).toHaveCount(6);
+  await expect(page.getByRole('link', { name: '查看 X 原帖' })).toHaveAttribute(
+    'href',
+    'https://x.com/adamhfry/status/2120244738880401697',
+  );
+  await page.getByRole('link', { name: '返回技巧目录' }).click();
+  await expect(page).toHaveURL(/\/tips$/);
 });

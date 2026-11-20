@@ -74,7 +74,8 @@
 | `/submit`                                  | 立碑表单                                                                                                                                            |
 | `/manage`                                  | 输入凭据 → 查看审核状态 / 修改 / 撤回                                                                                                               |
 | `/epitaph`                                 | 墓志铭生成器（纯前端，不向服务器发送任何数据）                                                                                                      |
-| `/tips`                                    | 使用小技巧，按 Claude、Codex、Antigravity 分组并链接官方文档 |
+| `/tips`                                    | 使用小技巧目录，按 Claude、Codex、Antigravity 分组 |
+| `/tips/:slug`                              | 账号技巧全文、操作步骤和 X 原帖 |
 | `/appeal`                                  | Claude、Codex、Antigravity 的官方帮助与申诉入口汇总                                                                                 |
 | `/rules`                                   | 旧链接，跳转到立碑表单的使用须知弹窗                                                                                                                                            |
 | `/privacy`                                 | 数据说明                                                                                                                                            |

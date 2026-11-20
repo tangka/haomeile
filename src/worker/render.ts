@@ -156,7 +156,8 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       '/privacy',
       '/about',
       '/admin',
-    ].includes(path)
+    ].includes(path) ||
+    /^\/tips\/[a-z0-9-]+$/.test(path)
   )
     assetPath = path + '/';
   if (path === '/' || path.startsWith('/v/')) {
