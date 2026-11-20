@@ -1,0 +1,389 @@
+import { api } from './api';
+import { toast } from './toast';
+import { LABELS } from './labels';
+import { ago, num } from './format';
+import type { PublicTombstone, TombInput } from '../../worker/types';
+
+type QueueType = 'new' | 'patch' | 'reported';
+interface Report {
+  id: string;
+  reason: keyof typeof LABELS.report_reason;
+  note: string | null;
+  created_at: string;
+}
+interface QueueItem extends PublicTombstone {
+  flags: string[];
+  pending_patch: TombInput | null;
+  reports: Report[];
+}
+interface Audit {
+  id: string;
+  tombstone_id: string | null;
+  action: string;
+  actor: string;
+  detail: string | null;
+  created_at: string;
+}
+interface QueueResponse {
+  items: QueueItem[];
+  counts: Record<QueueType, number>;
+  audit_log: Audit[];
+}
+
+const fieldLabels: Record<string, string> = {
+  codename: '代号',
+  nickname: '署名',
+  vendor: '厂商',
+  event_type: '事件种类',
+  plan: '套餐',
+  born_at: '生于',
+  born_precision: '日期精度',
+  died_at: '卒于',
+  story: '经过',
+  epitaph: '墓志铭',
+  appeal_status: '申诉',
+  card_style: '碑脚装饰',
+  status: '状态',
+};
+const actionLabels: Record<string, string> = {
+  approve: '通过',
+  reject: '拒绝',
+  hide: '隐藏',
+  restore: '恢复显示',
+  patch_approve: '通过修改',
+  patch_reject: '保留旧版',
+  withdraw: '用户撤回',
+  resolve_report: '处理举报',
+  auto_hide: '自动隐藏：3 人举报',
+};
+const queue = document.querySelector<HTMLDivElement>('#queue')!;
+const log = document.querySelector<HTMLTableSectionElement>('#audit-log')!;
+const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-queue]')];
+let current: QueueType = 'new';
+let loadVersion = 0;
+
+function element<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className = '',
+  text?: string,
+) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function fieldValue(key: string, value: unknown) {
+  const groups: Record<string, Record<string, string>> = {
+    vendor: LABELS.vendor,
+    event_type: LABELS.event_type,
+    plan: LABELS.plan,
+    appeal_status: LABELS.appeal_status,
+    card_style: LABELS.card_style,
+    status: LABELS.status,
+  };
+  const text = value == null || value === '' ? '未填写' : String(value);
+  return groups[key]?.[text] ?? text;
+}
+
+function highlighted(text: string, words: string[]) {
+  const fragment = document.createDocumentFragment();
+  const rules = [...new Set(words.filter(Boolean))].sort(
+    (a, b) => b.length - a.length,
+  );
+  let offset = 0;
+  while (offset < text.length) {
+    let first = -1;
+    let term = '';
+    for (const word of rules) {
+      const at = text
+        .toLocaleLowerCase()
+        .indexOf(word.toLocaleLowerCase(), offset);
+      if (at >= 0 && (first === -1 || at < first)) {
+        first = at;
+        term = word;
+      }
+    }
+    if (first === -1) {
+      fragment.append(document.createTextNode(text.slice(offset)));
+      break;
+    }
+    fragment.append(document.createTextNode(text.slice(offset, first)));
+    fragment.append(
+      element('mark', '', text.slice(first, first + term.length)),
+    );
+    offset = first + term.length;
+  }
+  return fragment;
+}
+
+function details(item: QueueItem) {
+  const disclosure = element('details');
+  disclosure.append(element('summary', '', '展开全部字段'));
+  const fields = element('dl', 'facts');
+  for (const key of Object.keys(fieldLabels)) {
+    fields.append(
+      element('dt', '', fieldLabels[key]),
+      element('dd', '', fieldValue(key, item[key as keyof QueueItem])),
+    );
+  }
+  disclosure.append(fields);
+  return disclosure;
+}
+
+function actionButton(
+  label: string,
+  path: string,
+  className: string,
+  getBody: () => object = () => ({}),
+) {
+  const button = element('button', `btn ${className}`, label);
+  button.type = 'button';
+  button.addEventListener('click', async () => {
+    const article = button.closest('article')!;
+    const controls = [...article.querySelectorAll<HTMLButtonElement>('button')];
+    controls.forEach((control) => {
+      control.disabled = true;
+    });
+    try {
+      await api(path, getBody());
+      toast(`已${label}。`);
+      await load();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : '操作没有完成，请重试。');
+      controls.forEach((control) => {
+        control.disabled = false;
+      });
+    }
+  });
+  return button;
+}
+
+function renderItem(item: QueueItem) {
+  const flags = item.flags.filter(
+    (flag): flag is string => typeof flag === 'string',
+  );
+  const article = element(
+    'article',
+    `qitem${flags.length || current === 'reported' ? ' flagged' : ''}`,
+  );
+  const head = element('div', 'qhead');
+  head.append(
+    element(
+      'h3',
+      '',
+      item.pending_patch?.codename || item.codename || '无名氏',
+    ),
+  );
+  head.append(
+    element(
+      'span',
+      'qmeta',
+      `${LABELS.vendor[item.vendor]}，${LABELS.event_type[item.event_type]}，${ago(item.updated_at)}提交`,
+    ),
+  );
+  article.append(head);
+  if (flags.length)
+    article.append(element('span', 'flag', `命中灰产词：${flags.join('、')}`));
+  const story = element('p', 'qstory');
+  story.append(highlighted(item.story || '', flags));
+  article.append(story);
+
+  if (current === 'patch' && item.pending_patch) {
+    const diff = element('div', 'diff');
+    for (const key of Object.keys(fieldLabels)) {
+      if (!(key in item.pending_patch)) continue;
+      const before = fieldValue(key, item[key as keyof QueueItem]);
+      const after = fieldValue(key, item.pending_patch[key as keyof TombInput]);
+      if (before === after) continue;
+      for (const [label, value] of [
+        ['现在显示', before],
+        ['改成', after],
+      ]) {
+        const part = element('div');
+        part.append(
+          element('b', '', `${fieldLabels[key]} · ${label}`),
+          document.createTextNode(value),
+        );
+        diff.append(part);
+      }
+    }
+    if (!diff.childElementCount)
+      diff.append(element('p', '', '提交的内容和当前版本相同。'));
+    article.append(diff);
+  }
+
+  const actions = element('div', 'actions');
+  const base = `/api/admin/tombstones/${encodeURIComponent(item.id)}`;
+  if (current === 'new') {
+    const reasonId = `reason-${item.id}`;
+    const field = element('div', 'field');
+    const label = element('label', '', '拒绝原因（选填）');
+    label.htmlFor = reasonId;
+    const reason = element('input');
+    reason.id = reasonId;
+    reason.maxLength = 200;
+    field.append(label, reason);
+    article.append(field);
+    actions.append(
+      actionButton(
+        '通过',
+        `${base}/approve`,
+        flags.length ? '' : 'btn-primary',
+      ),
+      actionButton(
+        '拒绝',
+        `${base}/reject`,
+        flags.length ? 'btn-danger' : '',
+        () => ({ reason: reason.value }),
+      ),
+    );
+  } else if (current === 'patch') {
+    actions.append(
+      actionButton('通过修改', `${base}/patch/approve`, 'btn-primary'),
+      actionButton('保留旧版', `${base}/patch/reject`, ''),
+    );
+    if (item.status === 'hidden')
+      article.append(
+        element(
+          'p',
+          'hint',
+          '这块碑已隐藏。通过修改后仍保持隐藏，需要复核举报后恢复显示。',
+        ),
+      );
+  } else {
+    article.append(
+      element('span', 'flag', `${item.reports.length} 条待处理举报`),
+    );
+    for (const report of item.reports) {
+      const note = element('div', 'notice');
+      note.append(
+        element(
+          'p',
+          '',
+          `${LABELS.report_reason[report.reason] || '其他'} · ${ago(report.created_at)}`,
+        ),
+      );
+      if (report.note) note.append(element('p', '', report.note));
+      note.append(
+        actionButton(
+          '标记已处理',
+          `/api/admin/reports/${encodeURIComponent(report.id)}/resolve`,
+          'btn-quiet',
+        ),
+      );
+      article.append(note);
+    }
+    if (item.status === 'approved')
+      actions.append(actionButton('隐藏', `${base}/hide`, 'btn-danger'));
+    if (item.status === 'hidden')
+      actions.append(
+        actionButton('恢复显示', `${base}/restore`, 'btn-primary'),
+      );
+  }
+  article.append(actions, details(item));
+  return article;
+}
+
+function renderLog(audits: Audit[]) {
+  log.replaceChildren();
+  for (const audit of audits) {
+    const row = element('tr');
+    let action =
+      audit.actor === 'system' && audit.action === 'hide'
+        ? '自动隐藏：3 人举报'
+        : actionLabels[audit.action] || audit.action;
+    if (audit.action === 'reject' && audit.detail) {
+      try {
+        const detail: unknown = JSON.parse(audit.detail);
+        if (
+          detail &&
+          typeof detail === 'object' &&
+          'reason' in detail &&
+          typeof detail.reason === 'string'
+        )
+          action += `：${detail.reason}`;
+      } catch {
+        /* Legacy log data has no reason to show. */
+      }
+    }
+    const actor =
+      audit.actor === 'system'
+        ? '系统'
+        : audit.actor === 'owner'
+          ? '投稿人'
+          : audit.actor;
+    row.append(
+      element('td', '', ago(audit.created_at)),
+      element('td', '', audit.tombstone_id || '—'),
+      element('td', '', action),
+      element('td', '', actor),
+    );
+    log.append(row);
+  }
+  if (!audits.length) {
+    const row = element('tr');
+    const cell = element('td', '', '还没有操作记录。');
+    cell.colSpan = 4;
+    row.append(cell);
+    log.append(row);
+  }
+}
+
+async function load() {
+  const version = ++loadVersion;
+  queue.setAttribute('aria-busy', 'true');
+  try {
+    const data = await api<QueueResponse>(`/api/admin/queue?type=${current}`);
+    if (version !== loadVersion) return;
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((badge) => {
+      badge.textContent = num(data.counts[badge.dataset.count as QueueType]);
+    });
+    queue.replaceChildren(...data.items.map(renderItem));
+    if (!data.items.length)
+      queue.append(element('p', 'empty', '这个队列是空的。'));
+    renderLog(data.audit_log);
+  } catch (error) {
+    if (version !== loadVersion) return;
+    queue.replaceChildren(
+      element(
+        'p',
+        'notice',
+        error instanceof Error
+          ? error.message
+          : '审核队列没有加载出来，请重试。',
+      ),
+    );
+    const retry = element('button', 'btn', '重试');
+    retry.addEventListener('click', () => void load());
+    queue.append(retry);
+  } finally {
+    if (version === loadVersion) queue.setAttribute('aria-busy', 'false');
+  }
+}
+
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => {
+    current = tab.dataset.queue as QueueType;
+    tabs.forEach((item) => {
+      const active = item === tab;
+      item.setAttribute('aria-selected', String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
+    queue.setAttribute('aria-labelledby', tab.id);
+    void load();
+  });
+  tab.addEventListener('keydown', (event) => {
+    let next: number;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft')
+      next = (index - 1 + tabs.length) % tabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    tabs[next].focus();
+    tabs[next].click();
+  });
+});
+void load();

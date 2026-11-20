@@ -3,13 +3,19 @@ interface Props {
   current: string;
 }
 const { current } = Astro.props;
-const links = [
-  ['/', '纪念墙'],
-  ['/submit', '立碑'],
-  ['/epitaph', '墓志铭卡片'],
-  ['/appeal', '官方申诉入口'],
-  ['/rules', '使用须知'],
-];
+const admin = current === '/admin';
+const links = admin
+  ? [
+      ['/admin', '审核'],
+      ['/', '回到纪念墙'],
+    ]
+  : [
+      ['/', '纪念墙'],
+      ['/submit', '立碑'],
+      ['/epitaph', '墓志铭卡片'],
+      ['/appeal', '官方申诉入口'],
+      ['/rules', '使用须知'],
+    ];
 ---
 
 <header class="topbar">
@@ -18,7 +24,7 @@ const links = [
       <img src="/assets/logo.svg" alt="" width="32" height="32" />
       号没了
     </a>
-    <nav class="nav" aria-label="主导航">
+    <nav class="nav" aria-label={admin ? '后台导航' : '主导航'}>
       {links.map(([href, text]) => (
         <a href={href} aria-current={current === href ? 'page' : undefined}>
           {text}

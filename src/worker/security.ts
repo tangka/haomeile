@@ -13,11 +13,14 @@ export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (
     c.req.path.startsWith('/api/') ||
     c.req.path === '/admin' ||
+    c.req.path === '/admin.html' ||
     c.req.path.startsWith('/admin/')
   ) {
     c.header('X-Robots-Tag', 'noindex, nofollow');
     c.header('Cache-Control', 'no-store');
   }
+  if (new URL(c.req.url).pathname.includes('%'))
+    throw new ApiError('NOT_FOUND', '这里什么也没有。', 404);
   if (!['GET', 'HEAD', 'OPTIONS'].includes(c.req.method)) {
     const expected =
       c.env.ENVIRONMENT === 'development'
