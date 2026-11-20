@@ -1,0 +1,138 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="墓志铭卡片生成器 · 号没了"
+  description="给没了的 AI 账号做一张像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。"
+  path="/epitaph"
+  current="/epitaph"
+>
+  <main class="page">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>墓志铭卡片</h1>
+        <p>
+          给没了的账号做一张墓碑图，发给同样遭遇的朋友。图片只在你的浏览器里生成，不会上传。
+        </p>
+      </div>
+
+      <div class="maker">
+        <!-- @component EpitaphMaker → src/site/pages/epitaph.astro + scripts/epitaph.ts（调用 epitaph-card.ts 的 drawEpitaphCard） -->
+        <form class="form" id="maker">
+          <div class="row-2">
+            <div class="field">
+              <label for="m-name">代号</label>
+              <input class="input" id="m-name" maxlength="16" value="小橘号" />
+            </div>
+            <div class="field">
+              <label for="m-vendor">哪家的账号</label>
+              <input
+                class="input"
+                id="m-vendor"
+                maxlength="12"
+                value="某 AI"
+                list="vendors"
+              />
+              <datalist id="vendors">
+                <option>Claude</option>
+                <option>ChatGPT</option>
+                <option>Gemini</option>
+                <option>Grok</option>
+                <option>DeepSeek</option>
+                <option>Kimi</option>
+                <option>通义千问</option>
+                <option>豆包</option>
+              </datalist>
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="m-born">生于</label>
+              <input class="input" id="m-born" type="date" />
+            </div>
+            <div class="field">
+              <label for="m-died">卒于</label>
+              <input class="input" id="m-died" type="date" />
+            </div>
+          </div>
+          <fieldset class="field">
+            <legend>死因</legend>
+            <div class="seg" id="m-cause">
+              <label>
+                <input type="radio" name="cause" value="账号停用" checked />{' '}
+                账号停用
+              </label>
+              <label>
+                <input type="radio" name="cause" value="组织暂停" /> 组织暂停
+              </label>
+              <label>
+                <input type="radio" name="cause" value="地区限制" /> 地区限制
+              </label>
+              <label>
+                <input type="radio" name="cause" value="验证卡住" /> 验证卡住
+              </label>
+              <label>
+                <input type="radio" name="cause" value="扣费异常" /> 扣费异常
+              </label>
+              <label>
+                <input type="radio" name="cause" value="原因不明" /> 原因不明
+              </label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label for="m-epitaph">墓志铭</label>
+            <div class="epitaph-row">
+              <input class="input" id="m-epitaph" maxlength="40" />
+              <button class="btn" type="button" id="m-shuffle">
+                换一句
+              </button>
+            </div>
+            <p class="hint">最多 40 字，太长刻不下。</p>
+          </div>
+          <fieldset class="field">
+            <legend>碑脚放点什么</legend>
+            <div class="seg" id="m-style">
+              <label>
+                <input type="radio" name="mstyle" value="flower" checked /> 小花
+              </label>
+              <label>
+                <input type="radio" name="mstyle" value="cloud" /> 云朵
+              </label>
+              <label>
+                <input type="radio" name="mstyle" value="star" /> 星星
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="field">
+            <legend>时辰</legend>
+            <div class="seg" id="m-time">
+              <label>
+                <input type="radio" name="mtime" value="day" checked /> 白天
+              </label>
+              <label>
+                <input type="radio" name="mtime" value="night" /> 夜里
+              </label>
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="preview">
+          <canvas
+            id="card"
+            width="760"
+            height="960"
+            aria-label="墓碑卡片预览"
+          ></canvas>
+          <button class="btn btn-primary" type="button" id="m-download">
+            下载图片
+          </button>
+          <p>图片右下角会带上 haomeile.rip。</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    import '../scripts/epitaph';
+  </script>
+</SiteLayout>
