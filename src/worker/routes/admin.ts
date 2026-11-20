@@ -208,6 +208,12 @@ for (const action of ['approve', 'reject'] as const) {
     await readJson(c.req.raw);
     const id = c.req.param('id');
     const row = await rowOrFail(c.env.DB, id);
+    if (row.origin === 'community')
+      throw new ApiError(
+        'READ_ONLY_SOURCE',
+        '社区整理案例请通过受控导入维护，不接受用户修改。',
+        409,
+      );
     if (!row.pending_patch)
       throw new ApiError('NO_PATCH', '这块碑没有等待审核的修改。', 409);
     const now = new Date().toISOString();

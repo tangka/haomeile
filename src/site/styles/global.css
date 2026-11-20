@@ -689,6 +689,12 @@ a {
   padding-top: 10px;
   border-top: 2px dotted var(--stone-shade);
 }
+.tomb-source {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
 .tomb-unverified {
   font-size: 12px;
   color: var(--stone-soft);

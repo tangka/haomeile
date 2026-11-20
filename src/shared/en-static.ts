@@ -61,6 +61,32 @@ export const EN_STATIC: Record<string, string> = {
   '这些都是用户自愿上报，未经核实，不代表任何平台的实际封号数量，不能用来推算封号率。':
     'These are voluntary, unverified user reports. They do not represent any platform’s actual ban count and cannot be used to estimate ban rates.',
   统计口径: 'How we count',
+  '，本站共有': ', this site has',
+  '份公开的自愿上报。今天上报': 'public voluntary reports. Submitted today:',
+  '份，近 7 天': '; in the past 7 days:',
+  '份。': '.',
+  '自愿上报数字只统计当前公开内容，未经核实，不代表平台实际封号数量，也不能用于推算封号率。':
+    'Voluntary-report figures count only currently public submissions. They are unverified, do not represent platform-wide ban counts and cannot be used to estimate ban rates.',
+  社区整理: 'Community summaries',
+  '条，单独计数，不计入本站自愿上报统计。':
+    'entries, counted separately from voluntary reports submitted here.',
+  '新收录的记录在前面。社区整理标有原帖链接，内容均未经本站核实。':
+    'Newest additions first. Community summaries link to the original posts. We have not verified the reported events.',
+  '内容包括用户自愿上报和公开社区原帖的编辑摘要，均未经本站核实，不能据此判断封号原因。想申诉，请走厂商官方渠道。':
+    'Content includes voluntary submissions and editorial summaries of public community posts. Reports are unverified and do not establish why an account was restricted. To appeal, use the provider’s official channels.',
+  '内容包括本站用户自愿上报，以及公开社区原帖的整理摘要。社区整理会注明原帖链接，并不代表原作者向本站投稿；我们没有核实其中的账号经历或停用原因。':
+    'Content includes voluntary submissions and summaries of public community posts. Community summaries link to the original posts and are not submissions to this site by the original authors. We have not verified the reported experiences or restriction reasons.',
+  '社区整理提供中英文编辑摘要，原文请看原帖。本站不会自动翻译用户提交的代号、署名、经过或墓志铭。':
+    'Community summaries are edited in Chinese and English; read the original posts for the source text. We do not automatically translate aliases, display names, stories or epitaphs submitted by users.',
+  '如果你是原帖作者，希望更正或移除整理内容，请打开对应记录的详情页，使用“举报”说明情况。':
+    'Original authors can request corrections or removal through Report on the relevant entry’s detail page.',
+  '社区整理另显示来源链接、原帖发布日期和编辑摘要。未注明的套餐或发生日期不会补写。原帖作者可通过对应详情页的“举报”请求更正或删除。':
+    'Community summaries also show a source link, post date and editorial summary. Unknown plans or incident dates are not filled in. Original authors can request corrections or deletion through Report on the relevant detail page.',
+  '本站自愿上报数字和近 30 天曲线只统计当前公开、审核通过的本站用户投稿。社区整理单独计数，不计入这些数字或曲线。统计不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同产品。等待审核、未通过、已隐藏和已撤回的碑都不计入。“今天”和“近 7 天”按北京时间计算。':
+    'Voluntary-report figures and the 30-day chart count only currently public, approved submissions to this site. Community summaries are counted separately and are not included in these figures or charts. These statistics do not represent any platform’s actual ban count, cannot estimate ban rates and should not be used to compare products. Pending, rejected, hidden and withdrawn entries are excluded. “Today” and “past 7 days” use Beijing time (UTC+8).',
+  '用户投稿和修改都由站长人工审核，通过后才公开。审核中的内容不会出现在墙上和统计里。':
+    'The site owner manually reviews user submissions and edits before publication. Submissions awaiting review do not appear on the wall or in statistics.',
+
   '新立的碑在前面。内容都是用户自述，本站没有核实。':
     'Newest memorials first. All stories are user reports and have not been verified.',
   '这里还很安静。第一块碑，要不要由你来立？':

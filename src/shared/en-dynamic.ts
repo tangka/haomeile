@@ -1,5 +1,7 @@
 /** English system messages. Submitted names, stories and epitaphs are never translated. */
 export const EN_DYNAMIC: Record<string, string> = {
+  '社区整理案例请通过受控导入维护，不接受用户修改。':
+    'Curated community cases must be maintained through the controlled import, not owner edits.',
   '个人付费（旧分类）': 'Personal paid plan (legacy)',
   '团队或企业（旧分类）': 'Team or enterprise (legacy)',
   'API（旧分类）': 'API (legacy)',

@@ -31,7 +31,7 @@ pnpm exec bun build src/server/index.ts --compile --target=bun-linux-x64-baselin
 node scripts/prepare-server-release.mjs
 ```
 
-打包前提交本次源码，使发布信息中的 Git 版本对应已检查代码。`prepare-server-release.mjs` 仅打包静态资源、迁移、独立程序及运维配置；真实 `.dev.vars`、生产环境文件和管理密码不会进入发布归档。首次准备生成新的生产 PEPPER 与管理凭据，复用已有本机生产配置时不轮换。已有远程配置在更新时保持不变。
+打包前提交本次源码，使发布信息中的 Git 版本对应已检查代码。`prepare-server-release.mjs` 仅打包静态资源、迁移、独立程序及运维配置；真实 `.dev.vars`、生产环境文件和管理密码不会进入发布归档。首次准备生成新的生产 PEPPER 与管理凭据，复用已有本机生产配置时不轮换。已有远程配置在更新时只更新发布版本和构建时间，密钥、PEPPER、管理员凭据及其余配置保持不变。
 
 `SITE_ORIGIN` 必须为 HTTPS 纯 origin；静态资源构建支持 `PUBLIC_SITE_ORIGIN`。本项目正式值是 `https://haomeile.rip`。Turnstile widget 已允许此域名，普通开发与生产拒绝测试密钥，后端核对精确 hostname。
 
@@ -61,3 +61,15 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 脚本在应用健康失败且存在上一发布时自动恢复旧 `current` 链接。手动回退也应先检查旧代码与当前数据库结构兼容，再原子切换 `current` 并重启本项目服务；不要自动回退或覆盖数据库。
 
 日常查看 `systemctl status haomeile`、`systemctl list-timers haomeile-maintenance.timer`，备份存放在受限目录。不得公开数据库、环境文件、后台密码或服务器 SSH 私钥。
+
+## 社区资料导入
+
+首批经复核的公开来源摘要位于 `docs/research/community-cases.json`，来源和证据边界见同目录 README。它们不是原作者向本站提交的投稿，按 `origin=community` 单独计数，不进入自愿上报及曲线。用户投稿仍不接受来源链接或自行提供的翻译字段。
+
+新程序启动并应用迁移后，以 `haomeile` 用户和现有私有服务环境运行：
+
+```sh
+/opt/haomeile/current/haomeile-server import-community /var/lib/haomeile/import/community-cases.json
+```
+
+命令会先生成一致性备份，再校验并以单次事务写入，只输出插入/跳过数量，不执行迁移。按稳定原帖身份去重，不覆盖已有记录，也不恢复隐藏或撤回记录。原作者请求删除时，运营人员应下架对应记录并从维护中的导入清单移除；既有备份、研究提交和外站原帖不应声称已同步删除。

@@ -61,6 +61,18 @@ def install_app(client, sftp, archive):
         initialized = False
     if not initialized:
         upload(sftp, PRIVATE / 'haomeile.env', env_path, 0o600)
+    else:
+        # Update release labels only; preserve every existing production secret.
+        with sftp.open(env_path, 'r') as source:
+            existing_env = source.read().decode()
+        release_metadata = json.loads((archive.parent / version / 'release.json').read_text())
+        updated_env = re.sub(r'^(?:APP_VERSION|BUILD_TIMESTAMP)=.*\n?', '', existing_env, flags=re.MULTILINE)
+        updated_env = updated_env.rstrip('\n') + '\nAPP_VERSION=' + json.dumps(version) + '\nBUILD_TIMESTAMP=' + json.dumps(release_metadata['builtAt']) + '\n'
+        pending_env = env_path + '.metadata-pending'
+        with sftp.open(pending_env, 'w') as target:
+            target.write(updated_env)
+        sftp.chmod(pending_env, 0o600)
+        sftp.posix_rename(pending_env, env_path)
     for name in ['haomeile.service', 'haomeile-maintenance.service', 'haomeile-maintenance.timer']:
         upload(sftp, ROOT / 'ops/systemd' / name, '/etc/systemd/system/' + name)
     previous = execute(client, 'readlink -f /opt/haomeile/current 2>/dev/null || true').strip()
@@ -78,6 +90,11 @@ def install_app(client, sftp, archive):
                 break
         time.sleep(1)
     if not healthy:
+        if initialized:
+            with sftp.open(env_path + '.metadata-rollback', 'w') as target:
+                target.write(existing_env)
+            sftp.chmod(env_path + '.metadata-rollback', 0o600)
+            sftp.posix_rename(env_path + '.metadata-rollback', env_path)
         if previous and previous != '/opt/haomeile/current':
             execute(client, 'ln -s ' + shlex.quote(previous) + ' /opt/haomeile/current.rollback; mv -Tf /opt/haomeile/current.rollback /opt/haomeile/current; systemctl restart haomeile.service')
         raise RuntimeError('Application health check failed; previous release restored when available')

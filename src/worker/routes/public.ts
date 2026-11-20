@@ -96,7 +96,7 @@ async function authenticate(
     .bind(id)
     .first<TombstoneRow>();
   const equal = constantTimeEqual(computed, row?.secret_hash || '0'.repeat(64));
-  if (!row || !equal)
+  if (!row || !equal || row.origin === 'community')
     throw new ApiError(
       'INVALID_CREDENTIALS',
       '编号或密钥不对，再检查一下。',
@@ -195,7 +195,7 @@ publicRoutes.post('/manage/withdraw', async (c) => {
   const now = new Date().toISOString();
   await c.env.DB.batch([
     c.env.DB.prepare(
-      "UPDATE tombstones SET secret_hash='',codename=NULL,nickname=NULL,vendor='other',event_type='other',plan='unknown',born_at=NULL,born_precision='none',died_at='',story=NULL,epitaph=NULL,appeal_status='none',card_style='flower',status='withdrawn',pending_patch=NULL,flags=NULL,flowers=0,updated_at=?,approved_at=NULL WHERE id=?",
+      "UPDATE tombstones SET secret_hash='',codename=NULL,nickname=NULL,vendor='other',event_type='other',plan='unknown',born_at=NULL,born_precision='none',died_at='',story=NULL,epitaph=NULL,appeal_status='none',card_style='flower',status='withdrawn',pending_patch=NULL,flags=NULL,flowers=0,updated_at=?,approved_at=NULL,source_url=NULL,source_platform=NULL,source_published_at=NULL,codename_en=NULL,story_en=NULL WHERE id=?",
     ).bind(now, row.id),
     c.env.DB.prepare('DELETE FROM reports WHERE tombstone_id=?').bind(row.id),
     c.env.DB.prepare('DELETE FROM flowers WHERE tombstone_id=?').bind(row.id),

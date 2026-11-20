@@ -12,6 +12,7 @@ import {
 } from '../shared/i18n';
 import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
+import { tombPresentation } from '../shared/tomb-presentation';
 export const escapeHtml = (value: unknown): string =>
   String(value ?? '').replace(
     /[&<>"']/g,
@@ -43,14 +44,25 @@ export function renderTomb(
   const labels = getLabels(locale);
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const e = escapeHtml;
-  const life = lifeLine(t, locale);
+  const view = tombPresentation(t, locale);
+  const life = view.community
+    ? {
+        days: text('社区公开记录', 'Public community record'),
+        range: t.died_at
+          ? text('事件日期 ', 'Incident date ') + fmtDate(t.died_at, locale)
+          : text('事件日期未说明', 'Incident date not stated'),
+      }
+    : lifeLine(t, locale);
   const name = detail
-    ? `<h1 class="tomb-name">${e(t.codename || text('无名氏', 'Unnamed'))}</h1>`
-    : `<a class="tomb-link" href="${localePath(`/t/${e(t.id)}`, locale)}"><h3 class="tomb-name">${e(t.codename || text('无名氏', 'Unnamed'))}</h3></a>`;
-  const facts = detail
-    ? `<dl class="facts"><dt>${text('署名', 'Posted by')}</dt><dd>${e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${e(label(labels.plan, t.plan))}</dd><dt>${text('申诉', 'Appeal')}</dt><dd>${e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
+    ? `<h1 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h1>`
+    : `<a class="tomb-link" href="${localePath(`/t/${e(t.id)}`, locale)}"><h3 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h3></a>`;
+  const provenance = view.source
+    ? `<p class="tomb-source"><a href="${e(view.source)}" target="_blank" rel="noopener noreferrer nofollow">${text('查看原帖', 'Read original post')} · ${e(t.source_platform)}</a>${t.source_published_at ? ` · <time datetime="${e(t.source_published_at)}">${e(fmtDate(t.source_published_at, locale))}</time>` : ''}</p>`
     : '';
-  return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(labels.vendor, t.vendor))}</li><li class="tag">${e(label(labels.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(t.story)}</p>${facts}<div class="tomb-foot"><span class="tomb-unverified">${text('用户自述，未经核实', 'User-submitted, unverified')}</span><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="${text(`献花 ${num(t.flowers)}，为这块碑献一朵花`, `Flowers ${num(t.flowers, locale)}. Leave a flower for this memorial`)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${text('献花', 'Flowers')} ${num(t.flowers, locale)}</span></button></div></div></div></article>`;
+  const facts = detail
+    ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
+    : '';
+  return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(labels.vendor, t.vendor))}</li><li class="tag">${e(label(labels.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}${detail && view.community ? `<p class="hint">${text('按原帖可见更新整理，不代表账号当前状态。', 'Based on visible source updates; this may not reflect the account’s current state.')}</p>` : ''}<div class="tomb-foot"><span class="tomb-unverified">${view.community ? text('社区整理，未经独立核实', 'Community summary, unverified') : text('用户自述，未经核实', 'User-submitted, unverified')}</span><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="${text(`献花 ${num(t.flowers)}，为这块碑献一朵花`, `Flowers ${num(t.flowers, locale)}. Leave a flower for this memorial`)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${text('献花', 'Flowers')} ${num(t.flowers, locale)}</span></button></div></div></div></article>`;
 }
 export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
@@ -62,7 +74,7 @@ export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
     stats.timeline
       .map((day, i) => `${20 + (i * 720) / 29},${130 - (day[key] * 110) / max}`)
       .join(' ');
-  return `<figure style="margin:0;padding-top:20px;padding-bottom:20px"><figcaption>${text('近 30 天 · 上报日期与事件日期', 'Last 30 days · reported and event dates')}</figcaption><svg viewBox="0 0 760 170" role="img" aria-label="${text('近30天按上报日期与事件发生日期统计，具体数值见下方表格', 'Reports and events over the last 30 days. Daily figures are in the table below.')}" style="width:100%;height:auto"><path d="M20 20V130H740" fill="none" stroke="currentColor"/><polyline points="${line('reported')}" fill="none" stroke="var(--mum)" stroke-width="3"/><polyline points="${line('occurred')}" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><text x="20" y="158" fill="currentColor" font-size="13">${escapeHtml(stats.timeline[0]?.date)}</text><text x="740" y="158" text-anchor="end" fill="currentColor" font-size="13">${escapeHtml(stats.date)}</text></svg><p class="hint">${text('实线：上报数；虚线：事件发生数。只统计当前公开墓碑。', 'Solid line: reports. Dashed line: events. Only currently public memorials are counted.')}</p><details><summary>${text('查看每日数据', 'View daily data')}</summary><div style="overflow:auto"><table><thead><tr><th>${text('日期', 'Date')}</th><th>${text('上报数', 'Reports')}</th><th>${text('事件发生数', 'Events')}</th></tr></thead><tbody>${stats.timeline.map((d) => `<tr><th scope="row">${escapeHtml(d.date)}</th><td>${d.reported}</td><td>${d.occurred}</td></tr>`).join('')}</tbody></table></div></details></figure>`;
+  return `<figure style="margin:0;padding-top:20px;padding-bottom:20px"><figcaption>${text('近 30 天 · 上报日期与事件日期', 'Last 30 days · reported and event dates')}</figcaption><svg viewBox="0 0 760 170" role="img" aria-label="${text('近30天按上报日期与事件发生日期统计', 'Reports and events over the last 30 days.')}" style="width:100%;height:auto"><path d="M20 20V130H740" fill="none" stroke="currentColor"/><polyline points="${line('reported')}" fill="none" stroke="var(--mum)" stroke-width="3"/><polyline points="${line('occurred')}" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><text x="20" y="158" fill="currentColor" font-size="13">${escapeHtml(stats.timeline[0]?.date)}</text><text x="740" y="158" text-anchor="end" fill="currentColor" font-size="13">${escapeHtml(stats.date)}</text></svg><p class="hint">${text('实线：上报数；虚线：事件发生数。只统计当前公开的本站自愿上报，不含社区整理。', 'Solid line: reports. Dashed line: events. Only public voluntary submissions to this site are counted; community summaries are excluded.')}</p></figure>`;
 }
 function metadata(
   rewriter: HTMLRewriter,
@@ -168,14 +180,25 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       dateStyle: 'long',
       timeZone: 'UTC',
     }).format(new Date(stats.date + 'T00:00:00Z'));
-    const tally = `截至 <time datetime="${stats.date}">${year} 年 ${month} 月 ${day} 日</time>，号没了共有 <strong>${num(stats.total)}</strong> 块${escapeHtml(scope)}公开墓碑。今天新立 <strong>${num(stats.today)}</strong> 块，近 7 天 <strong>${num(stats.last7)}</strong> 块。`;
+    const tally = `截至 <time datetime="${stats.date}">${year} 年 ${month} 月 ${day} 日</time>，本站共有 <strong>${num(stats.total)}</strong> 份${escapeHtml(scope)}公开自愿上报。今天上报 <strong>${num(stats.today)}</strong> 份，近 7 天 <strong>${num(stats.last7)}</strong> 份。`;
     const localizedTally =
       locale === 'en'
-        ? `As of <time datetime="${stats.date}">${englishDate}</time>, Haomeile has <strong>${num(stats.total, locale)}</strong> public ${vendor ? escapeHtml(label(labels.vendor, vendor)) + ' ' : ''}memorials. <strong>${num(stats.today, locale)}</strong> added today; <strong>${num(stats.last7, locale)}</strong> in the last 7 days.`
+        ? `As of <time datetime="${stats.date}">${englishDate}</time>, Haomeile has <strong>${num(stats.total, locale)}</strong> public voluntary ${vendor ? escapeHtml(label(labels.vendor, vendor)) + ' ' : ''}reports. <strong>${num(stats.today, locale)}</strong> submitted today; <strong>${num(stats.last7, locale)}</strong> in the last 7 days.`
         : tally;
     rewriter.on('[data-ssr="tally"]', {
       element: (el) => {
         el.setInnerContent(localizedTally, { html: true });
+      },
+    });
+    rewriter.on('[data-ssr="community-tally"]', {
+      element: (el) => {
+        el.setInnerContent(
+          text(
+            `社区整理 <strong>${num(stats.community_total || 0)}</strong> 条，单独计数，不计入本站自愿投稿统计。`,
+            `Community summaries: <strong>${num(stats.community_total || 0, locale)}</strong>. Counted separately and excluded from voluntary submission statistics.`,
+          ),
+          { html: true },
+        );
       },
     });
     rewriter.on('[data-ssr="timeline"]', {
@@ -225,11 +248,13 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
           `${name} account suspensions · Haomeile`,
         ),
         text(
-          `号没了上用户自述的 ${name} 账号停用、地区限制、验证卡住等经历，共 ${stats.total} 块公开墓碑，截至 ${stats.date}。内容未经核实，与 ${name} 官方无关。`,
-          `User-submitted experiences with ${name} account suspensions, regional restrictions and verification problems. ${stats.total} public memorials as of ${stats.date}. Unverified and independent of ${name}.`,
+          `${name} 账号停用、地区限制、验证卡住等经历：${stats.total} 份本站自愿上报，${stats.community_total || 0} 条社区公开案例整理，截至 ${stats.date}。内容未经核实，与 ${name} 官方无关。`,
+          `${name} account suspensions, regional restrictions and verification problems: ${stats.total} voluntary reports and ${stats.community_total || 0} public community case summaries as of ${stats.date}. Unverified and independent of ${name}.`,
         ),
         localePath(`/v/${vendor}`, locale),
-        stats.total >= 5 ? undefined : 'noindex,follow',
+        stats.total + (stats.community_total || 0) >= 5
+          ? undefined
+          : 'noindex,follow',
         [
           {
             '@context': 'https://schema.org',
@@ -269,6 +294,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         }>();
       return serveMissing(c, row?.status === 'withdrawn' ? 410 : 404);
     }
+    const view = tombPresentation(tomb, locale);
     assetPath = '/_templates/tomb/';
     rewriter.on('[data-ssr="detail"]', {
       element: (el) => {
@@ -281,22 +307,27 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       },
     });
     const title = text(
-      `${tomb.codename}：${label(labels.vendor, tomb.vendor)} 账号${label(labels.event_type_short, tomb.event_type)} · 号没了`,
-      `${tomb.codename}: ${label(labels.vendor, tomb.vendor)} — ${label(labels.event_type_short, tomb.event_type)} · Haomeile`,
+      `${view.codename}：${label(labels.vendor, tomb.vendor)} 账号${label(labels.event_type_short, tomb.event_type)} · 号没了`,
+      `${view.codename}: ${label(labels.vendor, tomb.vendor)} — ${label(labels.event_type_short, tomb.event_type)} · Haomeile`,
     );
     const jsonLd = [
       {
         '@context': 'https://schema.org',
-        '@type': 'DiscussionForumPosting',
+        '@type': view.community ? 'Article' : 'DiscussionForumPosting',
         headline: title.replace(/ · (?:号没了|Haomeile)$/, ''),
-        text: tomb.story,
+        text: view.story,
         url: site + localePath(path, locale),
         datePublished: tomb.approved_at,
         dateModified: tomb.updated_at,
         author: {
-          '@type': 'Person',
-          name: tomb.nickname || text('匿名用户', 'Anonymous user'),
+          '@type': view.community ? 'Organization' : 'Person',
+          name: view.community
+            ? 'Haomeile'
+            : tomb.nickname || text('匿名用户', 'Anonymous user'),
         },
+        ...(view.source
+          ? { citation: view.source, isBasedOn: view.source }
+          : {}),
         interactionStatistic: {
           '@type': 'InteractionCounter',
           interactionType: 'https://schema.org/LikeAction',
@@ -319,7 +350,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
             name: label(labels.vendor, tomb.vendor),
             item: site + localePath(`/v/${tomb.vendor}`, locale),
           },
-          { '@type': 'ListItem', position: 3, name: tomb.codename },
+          { '@type': 'ListItem', position: 3, name: view.codename },
         ],
       },
     ];
@@ -327,10 +358,14 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       rewriter,
       title,
       text(
-        `用户自述：${Array.from(tomb.story || '')
+        `${view.community ? '社区公开案例整理' : '用户自述'}：${Array.from(
+          view.story || '',
+        )
           .slice(0, 60)
           .join('')}…… 本站未核实。`,
-        `User-submitted, unverified: ${Array.from(tomb.story || '')
+        `${view.community ? 'Community summary' : 'User-submitted'}, unverified: ${Array.from(
+          view.story || '',
+        )
           .slice(0, 120)
           .join('')}…`,
       ),

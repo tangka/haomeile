@@ -1,4 +1,4 @@
-import { mkdir, readdir, stat, unlink } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, unlink } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { serve } from 'bun';
 import { createApp } from '../worker';
@@ -9,6 +9,7 @@ import { siteOrigin } from '../shared/site';
 import { createAssets } from './assets';
 import { openDatabase } from './database';
 import { createAdminVerifier, prepareRequest } from './auth';
+import { importCommunityCases } from './community';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -95,7 +96,11 @@ export async function openRuntime(
 
 async function main() {
   const command = process.argv[2] || 'serve';
-  if (!['serve', 'migrate', 'cleanup', 'backup'].includes(command))
+  if (
+    !['serve', 'migrate', 'cleanup', 'backup', 'import-community'].includes(
+      command,
+    )
+  )
     throw new Error('Unknown server command');
   const runtime = await openRuntime(process.env, {
     migrate: command === 'serve' || command === 'migrate',
@@ -103,6 +108,28 @@ async function main() {
   const { config, database, app, env } = runtime;
   if (command !== 'serve') {
     try {
+      if (command === 'import-community') {
+        const source = process.argv[3];
+        if (
+          !source ||
+          process.argv.length > 4 ||
+          (await stat(source)).size > 2_000_000
+        )
+          throw new Error('A bounded community import file is required');
+        const input: unknown = JSON.parse(await readFile(source, 'utf8'));
+        await mkdir(config.backups, { recursive: true, mode: 0o700 });
+        await database.backup(
+          join(
+            config.backups,
+            'haomeile-' +
+              new Date().toISOString().replace(/[:.]/g, '-') +
+              '.sqlite',
+          ),
+        );
+        const counts = await importCommunityCases(env.DB, input);
+        console.log(JSON.stringify(counts));
+        return;
+      }
       if (command === 'cleanup') await cleanup(env);
       if (command === 'backup') {
         await mkdir(config.backups, { recursive: true, mode: 0o700 });

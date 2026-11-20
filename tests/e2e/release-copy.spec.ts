@@ -16,11 +16,29 @@ test('public release information has no configuration placeholders', async ({
         ]);
         await expect(page.locator('.vendor a')).toHaveCount(0);
       }
+      if (route === '/about' || route === '/privacy') {
+        await expect(page.locator('body')).toContainText(
+          prefix ? 'Community summaries' : '社区整理',
+        );
+        await expect(page.locator('body')).toContainText(
+          prefix ? 'do not automatically translate' : '不会自动翻译用户提交',
+        );
+      }
+      if (route === '/privacy')
+        await expect(page.locator('#stats + p')).toContainText(
+          prefix
+            ? 'not included in these figures or charts'
+            : '不计入这些数字或曲线',
+        );
       if (route === '/privacy' || route === '/rules')
         await expect(page.locator('.updated time')).toHaveAttribute(
           'datetime',
           '2026-11-20',
         );
     }
+    await page.goto(prefix + '/');
+    await expect(page.locator('[data-ssr="community-tally"]')).toContainText(
+      prefix ? 'Community summaries' : '社区整理',
+    );
   }
 });

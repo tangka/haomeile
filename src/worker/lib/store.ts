@@ -22,7 +22,7 @@ export const INPUT_FIELDS = [
   'card_style',
 ] as const;
 export const PUBLIC_FIELDS =
-  'id,codename,nickname,vendor,event_type,plan,born_at,born_precision,died_at,story,epitaph,appeal_status,card_style,status,flowers,created_at,updated_at,approved_at';
+  'id,codename,nickname,vendor,event_type,plan,born_at,born_precision,died_at,story,epitaph,appeal_status,card_style,status,flowers,created_at,updated_at,approved_at,origin,source_url,source_platform,source_published_at,codename_en,story_en';
 // Values come only from the fixed product enum, never from request parameters.
 export const SUPPORTED_VENDOR_FILTER = `vendor IN (${VENDORS.map((value) => `'${value}'`).join(',')})`;
 export function validId(id: string): boolean {
@@ -124,33 +124,34 @@ export async function getStats(
 ): Promise<Stats> {
   const date = beijingDay(now);
   const where = filters(vendor);
+  const submissions = { ...where, sql: where.sql + " AND origin='submission'" };
   const start = beijingMidnight(date),
     last7 = beijingMidnight(shiftDay(date, -6)),
     last30 = shiftDay(date, -29);
   const rows = await db.batch<Record<string, unknown>>([
     db
       .prepare(
-        `SELECT COUNT(*) total,COALESCE(SUM(created_at>=?),0) today,COALESCE(SUM(created_at>=?),0) last7 FROM tombstones WHERE ${where.sql}`,
+        `SELECT COALESCE(SUM(origin='submission'),0) total,COALESCE(SUM(origin='community'),0) community_total,COALESCE(SUM(origin='submission' AND created_at>=?),0) today,COALESCE(SUM(origin='submission' AND created_at>=?),0) last7 FROM tombstones WHERE ${where.sql}`,
       )
       .bind(start, last7, ...where.values),
     db
       .prepare(
-        `SELECT vendor key,COUNT(*) n FROM tombstones WHERE ${where.sql} GROUP BY vendor`,
+        `SELECT vendor key,COUNT(*) n FROM tombstones WHERE ${submissions.sql} GROUP BY vendor`,
       )
       .bind(...where.values),
     db
       .prepare(
-        `SELECT event_type key,COUNT(*) n FROM tombstones WHERE ${where.sql} GROUP BY event_type`,
+        `SELECT event_type key,COUNT(*) n FROM tombstones WHERE ${submissions.sql} GROUP BY event_type`,
       )
       .bind(...where.values),
     db
       .prepare(
-        `SELECT substr(datetime(created_at,'+8 hours'),1,10) day,COUNT(*) n FROM tombstones WHERE ${where.sql} AND created_at>=? GROUP BY day`,
+        `SELECT substr(datetime(created_at,'+8 hours'),1,10) day,COUNT(*) n FROM tombstones WHERE ${submissions.sql} AND created_at>=? GROUP BY day`,
       )
       .bind(...where.values, beijingMidnight(last30)),
     db
       .prepare(
-        `SELECT died_at day,COUNT(*) n FROM tombstones WHERE ${where.sql} AND died_at>=? GROUP BY died_at`,
+        `SELECT died_at day,COUNT(*) n FROM tombstones WHERE ${submissions.sql} AND died_at>=? GROUP BY died_at`,
       )
       .bind(...where.values, last30),
   ]);
@@ -171,6 +172,7 @@ export async function getStats(
   return {
     date,
     total: counts(rows[0]!, 'total'),
+    community_total: counts(rows[0]!, 'community_total'),
     today: counts(rows[0]!, 'today'),
     last7: counts(rows[0]!, 'last7'),
     by_vendor: VENDORS.filter((key) => vendors.has(key)).map((key) => [

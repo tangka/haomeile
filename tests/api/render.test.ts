@@ -34,6 +34,59 @@ async function seed(
     .run();
 }
 describe('Worker renders Astro templates on the server', () => {
+  it('attributes bilingual community summaries without translating user submissions', async () => {
+    await seed('COMMUNITYA', 'approved', '公开原帖的中文编辑摘要。');
+    await env.DB.prepare(
+      `UPDATE tombstones SET origin='community',source_url=?,source_platform='GitHub',source_published_at='2026-06-10',codename_en=?,story_en=?,died_at='',appeal_status='restored' WHERE id='COMMUNITYA'`,
+    )
+      .bind(
+        'https://github.com/anthropics/claude-code/issues/67069',
+        'An editorial title',
+        'An editor summary with <untrusted> source text.',
+      )
+      .run();
+    const english = await (
+      await app.request('https://haomeile.rip/en/t/COMMUNITYA', {}, bindings)
+    ).text();
+    expect(english).toContain('An editorial title');
+    expect(english).toContain('An editor summary with &lt;untrusted&gt;');
+    expect(english).not.toContain('公开原帖的中文编辑摘要。');
+    expect(english).toContain('Community summary, unverified');
+    expect(english).toContain('Incident date not stated');
+    expect(english).toContain('Read original post · GitHub');
+    expect(english).toContain('rel="noopener noreferrer nofollow"');
+    expect(english).toContain('2026-06-10');
+    expect(english).toContain('Restored');
+    const structured = JSON.parse(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+        english,
+      )![1],
+    )[0];
+    expect(structured['@type']).toBe('Article');
+    expect(structured.author).toEqual({
+      '@type': 'Organization',
+      name: 'Haomeile',
+    });
+    expect(structured.citation).toBe(
+      'https://github.com/anthropics/claude-code/issues/67069',
+    );
+    const chinese = await (
+      await app.request('https://haomeile.rip/t/COMMUNITYA', {}, bindings)
+    ).text();
+    expect(chinese).toContain('公开原帖的中文编辑摘要。');
+    expect(chinese).toContain('社区整理，未经独立核实');
+
+    await seed('USERSTORYA', 'approved', '这段用户自述不应自动翻译。');
+    await env.DB.prepare(
+      "UPDATE tombstones SET story_en='Must not be shown' WHERE id='USERSTORYA'",
+    ).run();
+    const original = await (
+      await app.request('https://haomeile.rip/en/t/USERSTORYA', {}, bindings)
+    ).text();
+    expect(original).toContain('这段用户自述不应自动翻译。');
+    expect(original).not.toContain('Must not be shown');
+    expect(original).toContain('User-submitted, unverified');
+  });
   it.each([
     ['codex', 'Codex'],
     ['antigravity', 'Antigravity'],

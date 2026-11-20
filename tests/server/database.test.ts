@@ -202,6 +202,7 @@ describe('Bun SQLite D1 binding', () => {
     expect(await db.migrate(migrations)).toEqual([
       '0001_initial.sql',
       '0002_three_products.sql',
+      '0003_community.sql',
     ]);
     expect(
       await db.binding

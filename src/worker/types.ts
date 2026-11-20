@@ -55,7 +55,16 @@ export interface TombInput {
 export interface StoredTombInput extends Omit<TombInput, 'plan'> {
   plan: Plan | LegacyPlan;
 }
-export interface TombstoneRow extends Omit<StoredTombInput, 'consent'> {
+export interface CommunityMetadata {
+  origin?: 'submission' | 'community';
+  source_url?: string | null;
+  source_platform?: string | null;
+  source_published_at?: string | null;
+  codename_en?: string | null;
+  story_en?: string | null;
+}
+export interface TombstoneRow
+  extends Omit<StoredTombInput, 'consent'>, CommunityMetadata {
   id: string;
   secret_hash: string;
   status: TombStatus;
@@ -79,6 +88,7 @@ export interface Stats {
   today: number;
   last7: number;
   total: number;
+  community_total?: number;
   by_vendor: [string, number][];
   by_event: [string, number][];
   timeline: { date: string; reported: number; occurred: number }[];
