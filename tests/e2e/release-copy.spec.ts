@@ -62,7 +62,7 @@ test('public release information has no configuration placeholders', async ({
   }
 });
 
-test('the main menu opens the tips directory and its product shortcuts', async ({
+test('the tips directory shows one article per row and links to details', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
@@ -76,22 +76,42 @@ test('the main menu opens the tips directory and its product shortcuts', async (
   await expect(
     page.getByRole('heading', { name: '使用小技巧', level: 1 }),
   ).toBeVisible();
-  await page
-    .getByRole('navigation', { name: '按产品查看' })
-    .getByRole('link', { name: 'Codex' })
-    .click();
-  await expect(page).toHaveURL(/\/tips#codex$/);
-  await page.getByRole('link', { name: /个人号和工作号怎么切换/ }).click();
-  await expect(page).toHaveURL(/\/tips\/codex-personal-work-accounts$/);
   await expect(
-    page.getByRole('heading', { name: '个人号和工作号怎么切换', level: 1 }),
+    page.getByRole('navigation', { name: '按产品查看' }),
+  ).toHaveCount(0);
+  await expect(page.locator('.tip-group h2')).toHaveText([
+    'Claude',
+    'Codex',
+    'Antigravity',
+  ]);
+  await page.setViewportSize({ width: 1100, height: 812 });
+  const rows = await page
+    .locator('#claude + ul .tip-preview')
+    .evaluateAll((links) =>
+      links.map((link) => {
+        const { left, top, bottom } = link.getBoundingClientRect();
+        return { left, top, bottom };
+      }),
+    );
+  expect(rows.length).toBeGreaterThan(1);
+  for (let i = 1; i < rows.length; i++) {
+    expect(rows[i].left).toBe(rows[0].left);
+    expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom);
+  }
+
+  const title = 'Codex 被停用，申诉时怎么交代任务背景';
+  await page.getByRole('link', { name: new RegExp(title) }).click();
+  await expect(page).toHaveURL(/\/tips\/codex-appeal-task-context$/);
+  await expect(
+    page.getByRole('heading', { name: title, level: 1 }),
   ).toBeVisible();
-  await expect(page.locator('article ol li').first()).toContainText(
-    'Add account',
-  );
+  await expect(
+    page.getByRole('heading', { name: '当事人的经历' }),
+  ).toBeVisible();
+  await expect(page.locator('article')).toContainText('749,441');
   await expect(page.getByRole('link', { name: '查看 X 原帖' })).toHaveAttribute(
     'href',
-    'https://x.com/adamhfry/status/2120244738880401697',
+    'https://x.com/endpointarena/status/2075245286339846145',
   );
   await page.getByRole('link', { name: '返回技巧目录' }).click();
   await expect(page).toHaveURL(/\/tips$/);

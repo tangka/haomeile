@@ -37,6 +37,8 @@ const productName = LABELS.vendor[tip.product];
           <h1>{tip.title.zh}</h1>
           <p>{tip.summary.zh}</p>
         </div>
+        <h2>当事人的经历</h2>
+        <p>{tip.experience.zh}</p>
         <h2>操作步骤</h2>
         <ol>
           {tip.steps.map((step) => (
@@ -54,7 +56,16 @@ const productName = LABELS.vendor[tip.product];
           <a href={tip.source} target="_blank" rel="noopener noreferrer">
             查看 X 原帖
           </a>
+          {tip.followUp && (
+            <a href={tip.followUp} target="_blank" rel="noopener noreferrer">
+              后续更新
+            </a>
+          )}
           <time datetime={tip.sourceDate}>{tip.sourceDate}</time>
+          <span>
+            收录时浏览量{' '}
+            <strong>{tip.sourceViews.toLocaleString('en-US')}</strong>
+          </span>
         </p>
       </article>
     </div>
