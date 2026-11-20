@@ -1,0 +1,72 @@
+{
+  "verifiedAt": "2026-11-20T07:46:23.513Z",
+  "release": "20261120074410-aa5ff54",
+  "routes": {
+    "/": 200,
+    "/en/": 200,
+    "/api/tombstones": 200,
+    "/api/stats": 200,
+    "/api/health": 200,
+    "/admin": 401,
+    "/_templates/tomb/": 404
+  },
+  "communityCases": 8,
+  "byProduct": {
+    "claude": 2,
+    "codex": 3,
+    "antigravity": 3
+  },
+  "voluntaryReports": {
+    "total": 0,
+    "today": 0,
+    "last7": 0
+  },
+  "unknownIncidentDates": 3,
+  "restoredCases": 1,
+  "dailyDataEntryRemoved": true,
+  "automaticEnglish": true,
+  "bilingualEditorialSummaries": true,
+  "protectedAdmin": true,
+  "sources": [
+    {
+      "id": "RKGCKXZNNC",
+      "vendor": "codex",
+      "url": "https://community.openai.com/t/1384852"
+    },
+    {
+      "id": "QIHNTNKEUR",
+      "vendor": "codex",
+      "url": "https://community.openai.com/t/1383773"
+    },
+    {
+      "id": "Q4PFJTSTPR",
+      "vendor": "antigravity",
+      "url": "https://discuss.ai.google.dev/t/199388"
+    },
+    {
+      "id": "PQV2SRUJHV",
+      "vendor": "antigravity",
+      "url": "https://github.com/can1357/oh-my-pi/issues/19303"
+    },
+    {
+      "id": "KTZWSKMBHO",
+      "vendor": "codex",
+      "url": "https://community.openai.com/t/1383153"
+    },
+    {
+      "id": "IMDY5K44LT",
+      "vendor": "claude",
+      "url": "https://github.com/anthropics/claude-code/issues/67069"
+    },
+    {
+      "id": "HJVMF7CLAS",
+      "vendor": "antigravity",
+      "url": "https://discuss.ai.google.dev/t/195031"
+    },
+    {
+      "id": "5BQGWCCPA2",
+      "vendor": "claude",
+      "url": "https://www.reddit.com/comments/1vznu5c/"
+    }
+  ]
+}
