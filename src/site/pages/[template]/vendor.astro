@@ -1,0 +1,31 @@
+---
+export function getStaticPaths() {
+  return [{ params: { template: '_templates' } }];
+}
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Tally from '../../components/Tally.astro';
+import Census from '../../components/Census.astro';
+import Wall from '../../components/Wall.astro';
+import Timeline from '../../components/Timeline.astro';
+---
+
+<SiteLayout
+  title="账号停用、封号经历 · 号没了"
+  description="号没了上用户自愿上报的 AI 账号经历，内容未经核实。"
+  path="/"
+  current="/"
+  robots="noindex,follow"
+>
+  <main>
+    <div class="page">
+      <div class="wrap page-head">
+        <h1 data-ssr="page-title">账号的墓碑</h1>
+        <p>这里记录用户自愿上报的账号经历。内容未经核实，与厂商官方无关。</p>
+      </div>
+    </div>
+    <Tally />
+    <Census />
+    <Wall />
+    <Timeline />
+  </main>
+</SiteLayout>

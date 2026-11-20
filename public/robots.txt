@@ -1,0 +1,10 @@
+# 号没了 · haomeile.rip
+# 欢迎所有搜索引擎和 AI 爬虫抓取本站公开页面。
+# 立碑页、管理页通过 noindex 不进入索引（这里不屏蔽，好让爬虫看到 noindex）。
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://haomeile.rip/sitemap.xml

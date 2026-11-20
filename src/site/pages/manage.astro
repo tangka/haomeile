@@ -1,0 +1,83 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import StatusCard from '../components/StatusCard.astro';
+---
+
+<SiteLayout
+  title="管理我的墓碑 · 号没了"
+  description="用凭据查看审核结果、修改或撤回。"
+  path="/manage"
+  robots="noindex,nofollow"
+>
+  <main class="page">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>管理我的墓碑</h1>
+        <p>输入立碑时拿到的凭据，可以查看审核结果、修改或撤回。</p>
+      </div>
+
+      <div class="stack">
+        <!-- 第一步：输入凭据 → POST /api/manage/status -->
+        <form class="form" id="cred-form" novalidate>
+          <div class="row-2">
+            <div class="field">
+              <label for="c-id">编号</label>
+              <input
+                class="input"
+                id="c-id"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="10 位字母和数字"
+              />
+            </div>
+            <div class="field">
+              <label for="c-secret">密钥</label>
+              <input
+                class="input"
+                id="c-secret"
+                type="password"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">
+              查看
+            </button>
+            <!-- 只有 localStorage 里存过凭据时才显示这个按钮 -->
+            <button class="btn" type="button" id="use-saved" hidden>
+              用这个浏览器记住的凭据
+            </button>
+          </div>
+          <div class="banner banner-error" id="cred-error" hidden>
+            <strong>编号或密钥不对</strong>
+            检查一下有没有多复制空格。凭据丢了没法找回，可以重新立一块。
+          </div>
+        </form>
+
+        <!-- 第二步：状态卡。data-status 取 pending / approved / rejected / hidden / withdrawn -->
+        <StatusCard />
+      </div>
+    </div>
+  </main>
+  <dialog class="sheet" id="withdraw" aria-labelledby="w-title">
+    <form class="sheet-in" method="dialog">
+      <h2 id="w-title">撤回这块碑？</h2>
+      <p>
+        撤回后，它会从纪念墙和统计里消失，碑文会被清空，没法恢复。已经被别人看到或截图的内容收不回来。
+      </p>
+      <div class="actions">
+        <button class="btn btn-danger" value="yes">
+          撤回这块碑
+        </button>
+        <button class="btn" value="no">
+          先不撤
+        </button>
+      </div>
+    </form>
+  </dialog>
+  <script>
+    import '../scripts/manage';
+  </script>
+</SiteLayout>

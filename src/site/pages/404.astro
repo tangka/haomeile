@@ -1,0 +1,26 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="这里什么也没有 · 号没了"
+  description="可能地址写错了，也可能这块碑已经被撤回。"
+  path="/404"
+  robots="noindex"
+>
+  <main class="lost">
+    <div class="wrap">
+      <img
+        src="/assets/cat.svg"
+        alt="提着灯笼的守墓小猫"
+        width="96"
+        height="74"
+      />
+      <h1 data-ssr="not-found-title">这里什么也没有</h1>
+      <p>可能地址写错了，也可能这块碑已经被撤回。</p>
+      <a class="btn btn-primary" href="/">
+        回到纪念墙
+      </a>
+    </div>
+  </main>
+</SiteLayout>

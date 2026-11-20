@@ -1,0 +1,207 @@
+<form class="form" id="tomb-form" novalidate>
+  <div class="row-2">
+    <div class="field">
+      <label for="codename">
+        代号<span class="req">必填</span>
+      </label>
+      <input
+        class="input"
+        id="codename"
+        name="codename"
+        maxlength="32"
+        placeholder="比如：小橘号"
+        aria-describedby="codename-hint"
+      />
+      <p class="hint" id="codename-hint">
+        会刻在碑上公开显示。别用邮箱或真实用户名。
+      </p>
+    </div>
+    <div class="field">
+      <label for="nickname">
+        署名<span class="req">选填</span>
+      </label>
+      <input
+        class="input"
+        id="nickname"
+        name="nickname"
+        maxlength="24"
+        placeholder="不填就显示“匿名”"
+      />
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label for="vendor">
+        哪家的账号<span class="req">必填</span>
+      </label>
+      <select class="select" id="vendor" name="vendor">
+        <option value="">请选择</option>
+        <option value="claude">Claude</option>
+        <option value="chatgpt">ChatGPT</option>
+        <option value="gemini">Gemini</option>
+        <option value="grok">Grok</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="kimi">Kimi</option>
+        <option value="qwen">通义千问</option>
+        <option value="doubao">豆包</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="plan">
+        套餐<span class="req">选填</span>
+      </label>
+      <select class="select" id="plan" name="plan">
+        <option value="unknown">不详或不想说</option>
+        <option value="free">免费版</option>
+        <option value="paid_personal">个人付费</option>
+        <option value="paid_team">团队或企业</option>
+        <option value="api">API</option>
+      </select>
+    </div>
+  </div>
+
+  <fieldset class="field">
+    <legend>
+      发生了什么<span class="req">必填</span>
+    </legend>
+    <div class="seg">
+      <label>
+        <input type="radio" name="event" value="suspended" checked /> 账号停用
+      </label>
+      <label>
+        <input type="radio" name="event" value="org_suspended" /> 组织暂停
+      </label>
+      <label>
+        <input type="radio" name="event" value="region" /> 地区限制
+      </label>
+      <label>
+        <input type="radio" name="event" value="verification" /> 验证卡住
+      </label>
+      <label>
+        <input type="radio" name="event" value="billing" /> 扣费或支付异常
+      </label>
+      <label>
+        <input type="radio" name="event" value="other" /> 其他
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="row-2">
+    <div class="field">
+      <label for="born">
+        生于（注册时间）<span class="req">选填</span>
+      </label>
+      <input class="input" id="born" name="born_at" type="month" />
+      <p class="hint">记不清就空着，存活天数会显示“不详”。</p>
+    </div>
+    <div class="field">
+      <label for="died">
+        卒于（出事那天）<span class="req">必填</span>
+      </label>
+      <input class="input" id="died" name="died_at" type="date" />
+      <p class="hint">按北京时间填出事的日期，不是今天。</p>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="story">
+      经过<span class="req">必填，10 到 800 字</span>
+    </label>
+    <textarea
+      class="textarea"
+      id="story"
+      name="story"
+      maxlength="800"
+      aria-describedby="story-hint story-error"
+    ></textarea>
+    <p class="hint" id="story-hint">
+      写你看到了什么、做了什么。猜测请注明“猜测”。
+    </p>
+    <p class="error" id="story-error" hidden></p>
+    <p class="count" aria-live="polite">
+      0 / 800
+    </p>
+  </div>
+
+  <div class="field">
+    <label for="epitaph">
+      墓志铭<span class="req">选填，最多 120 字</span>
+    </label>
+    <input
+      class="input"
+      id="epitaph"
+      name="epitaph"
+      maxlength="120"
+      placeholder="比如：它走得很安详，走之前还在思考。"
+    />
+  </div>
+
+  <div class="row-2">
+    <fieldset class="field">
+      <legend>申诉了吗</legend>
+      <div class="seg">
+        <label>
+          <input type="radio" name="appeal" value="none" checked /> 还没
+        </label>
+        <label>
+          <input type="radio" name="appeal" value="pending" /> 申诉中
+        </label>
+        <label>
+          <input type="radio" name="appeal" value="rejected" /> 被驳回
+        </label>
+        <label>
+          <input type="radio" name="appeal" value="restored" /> 已恢复
+        </label>
+      </div>
+    </fieldset>
+    <fieldset class="field">
+      <legend>碑脚放点什么</legend>
+      <div class="seg">
+        <label>
+          <input type="radio" name="style" value="flower" checked />{' '}
+          <img src="/assets/flower.svg" alt="" width="16" height="16" /> 小花
+        </label>
+        <label>
+          <input type="radio" name="style" value="cloud" />{' '}
+          <img
+            class="ico-cloud"
+            src="/assets/cloud.svg"
+            alt=""
+            width="18"
+            height="8"
+          />{' '}
+          云朵
+        </label>
+        <label>
+          <input type="radio" name="style" value="star" />{' '}
+          <img src="/assets/star.svg" alt="" width="16" height="12" /> 星星
+        </label>
+      </div>
+    </fieldset>
+  </div>
+
+  <label class="check">
+    <input type="checkbox" id="agree" name="consent" />{' '}
+    我同意审核通过后公开以上内容，确认没有填写隐私信息。我知道公开后搜索引擎和
+    AI 服务可能抓取这些内容，撤回后本站无法删除第三方已保存的副本。
+  </label>
+
+  <div
+    class="turnstile-slot"
+    id="turnstile"
+    data-turnstile-sitekey=""
+    aria-label="人机验证"
+  ></div>
+  <div class="banner banner-error" id="submit-error" role="alert" hidden></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="submit-button" type="submit">
+      提交并等待审核
+    </button>
+    <a class="btn btn-quiet" href="/">
+      先不立了
+    </a>
+  </div>
+</form>

@@ -1,2 +1,36 @@
-<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><title>号没了</title></head><body><main><h1>号没了</h1><p>AI 账号赛博公墓</p></main></body></html>
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import HeroScene from '../components/HeroScene.astro';
+import Tally from '../components/Tally.astro';
+import Census from '../components/Census.astro';
+import Wall from '../components/Wall.astro';
+import Timeline from '../components/Timeline.astro';
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '号没了',
+    alternateName: 'AI 账号赛博公墓',
+    url: 'https://haomeile.rip/',
+    inLanguage: 'zh-CN',
+    description:
+      '用户匿名记录 AI 产品账号被停用、受限或异常经历的独立社区网站，与任何 AI 厂商无关。',
+  },
+];
+---
+
+<SiteLayout
+  title="号没了 · AI 账号赛博公墓"
+  description="被封了、被停了、卡在验证了？在号没了匿名立一块碑，看看别人的 AI 账号是怎么没的。内容为用户自述，本站与任何 AI 厂商无关。"
+  path="/"
+  current="/"
+  jsonLd={jsonLd}
+>
+  <main>
+    <HeroScene />
+    <Tally />
+    <Census />
+    <Wall />
+    <Timeline />
+  </main>
+</SiteLayout>

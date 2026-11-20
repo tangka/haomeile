@@ -1,0 +1,40 @@
+---
+export function getStaticPaths() {
+  return [{ params: { template: '_templates' } }];
+}
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ReportDialog from '../../components/ReportDialog.astro';
+---
+
+<SiteLayout
+  title="墓碑详情 · 号没了"
+  description="用户自述的 AI 账号经历，本站未经核实。"
+  path="/"
+  ogType="article"
+  robots="index,follow,noarchive,max-image-preview:large"
+>
+  <main class="detail">
+    <div class="wrap">
+      <a class="back" href="/">
+        回到纪念墙
+      </a>
+      <!-- 详情卡由 createTombCard(t, { detail: true }) 渲染；正式站点数据来自 GET /api/tombstones/:id -->
+      <div id="slot" data-ssr="detail" data-tomb-id=""></div>
+      <div class="detail-actions">
+        <button class="btn" type="button" id="copy-link">
+          复制这块碑的链接
+        </button>
+        <a class="btn" href="/epitaph">
+          做一张墓志铭卡片
+        </a>
+        <button class="btn btn-quiet" type="button" id="open-report">
+          举报
+        </button>
+      </div>
+    </div>
+  </main>
+  <ReportDialog />
+  <script>
+    import '../../scripts/detail';
+  </script>
+</SiteLayout>

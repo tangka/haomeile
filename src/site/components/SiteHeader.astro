@@ -1,0 +1,29 @@
+---
+interface Props {
+  current: string;
+}
+const { current } = Astro.props;
+const links = [
+  ['/', '纪念墙'],
+  ['/submit', '立碑'],
+  ['/epitaph', '墓志铭卡片'],
+  ['/appeal', '官方申诉入口'],
+  ['/rules', '使用须知'],
+];
+---
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <img src="/assets/logo.svg" alt="" width="32" height="32" />
+      号没了
+    </a>
+    <nav class="nav" aria-label="主导航">
+      {links.map(([href, text]) => (
+        <a href={href} aria-current={current === href ? 'page' : undefined}>
+          {text}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

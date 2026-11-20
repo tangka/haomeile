@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  current?: string;
+  robots?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  jsonLd?: object[];
+}
+const {
+  title,
+  description,
+  path,
+  current = path,
+  robots = 'index,follow,max-image-preview:large',
+  ogType = 'website',
+  ogImage = '/og/default.png',
+  publishedTime,
+  modifiedTime,
+  jsonLd = [],
+} = Astro.props;
+const SITE = 'https://haomeile.rip';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={SITE + path} />
+    <meta name="robots" content={robots} />
+    <meta name="turnstile-site-key" content="" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta
+      name="theme-color"
+      content="#cde5f0"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#18213a"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta property="og:site_name" content="号没了" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={SITE + path} />
+    <meta property="og:image" content={SITE + ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="号没了：AI 账号赛博公墓" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime} />
+    )}
+    {jsonLd.map((value) => (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(value).replace(/</g, '\\u003c')}
+      />
+    ))}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">
+      跳到正文
+    </a>
+    <SiteHeader current={current} />
+    <div id="main-content" tabindex="-1">
+      <slot />
+    </div>
+    <SiteFooter />
+    <div class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

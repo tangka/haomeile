@@ -1,0 +1,21 @@
+---
+import { num } from '../scripts/format';
+interface Props {
+  rows: { label: string; n: number }[];
+}
+const { rows } = Astro.props;
+const max = Math.max(1, ...rows.map((row) => row.n));
+---
+
+<ul class="bars">
+  {rows.map((row) => (
+    <li>
+      <span>{row.label}</span>
+      <span
+        class="bar"
+        style={`width:${row.n === 0 ? 0 : Math.max(2, Math.round((row.n / max) * 100))}%`}
+      ></span>
+      <span class="n">{num(row.n)}</span>
+    </li>
+  ))}
+</ul>

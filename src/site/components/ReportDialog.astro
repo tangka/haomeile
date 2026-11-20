@@ -1,0 +1,59 @@
+<dialog class="sheet" id="report" aria-labelledby="report-title">
+  <form class="sheet-in" novalidate id="report-form" data-tomb-id="">
+    <h2 id="report-title">举报这块碑</h2>
+    <p>
+      举报需要审核，不会立刻隐藏。如果这是你自己的碑，去“管理我的墓碑”撤回会更快。
+    </p>
+    <fieldset class="field">
+      <legend>原因</legend>
+      <div class="seg">
+        <label>
+          <input type="radio" name="reason" value="privacy" checked />{' '}
+          含隐私信息
+        </label>
+        <label>
+          <input type="radio" name="reason" value="abuse" />{' '}
+          辱骂、骚扰或恶意内容
+        </label>
+        <label>
+          <input type="radio" name="reason" value="gray_market" /> 灰产广告
+        </label>
+        <label>
+          <input type="radio" name="reason" value="other" /> 其他
+        </label>
+      </div>
+    </fieldset>
+    <div class="field" style="margin-top:14px">
+      <label for="report-note">
+        补充说明<span class="req">选填，最多 200 字</span>
+      </label>
+      <textarea
+        class="textarea"
+        id="report-note"
+        maxlength="200"
+        style="min-height:90px"
+      ></textarea>
+    </div>
+    <div
+      class="turnstile-slot"
+      id="report-turnstile"
+      data-turnstile-sitekey=""
+      style="margin:14px 0"
+      aria-label="人机验证"
+    ></div>
+    <div
+      class="banner banner-error"
+      id="report-error"
+      role="alert"
+      hidden
+    ></div>
+    <div class="actions">
+      <button class="btn btn-primary" type="submit">
+        提交举报
+      </button>
+      <button class="btn btn-quiet" id="cancel-report" type="button">
+        算了
+      </button>
+    </div>
+  </form>
+</dialog>

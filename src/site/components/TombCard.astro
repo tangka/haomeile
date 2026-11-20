@@ -1,0 +1,84 @@
+---
+import type { PublicTombstone } from '../../worker/types';
+import { LABELS } from '../scripts/labels';
+import { lifeLine, num, fmtDate } from '../scripts/format';
+interface Props {
+  tomb: PublicTombstone;
+  detail?: boolean;
+}
+const { tomb: t, detail = false } = Astro.props;
+const life = lifeLine(t);
+const decor: Record<string, [string, string, number, number][]> = {
+  flower: [
+    ['flower.svg', 'l', 20, 20],
+    ['flower.svg', 'r', 20, 20],
+  ],
+  cloud: [['cloud.svg', 'r', 24, 11]],
+  star: [
+    ['star.svg', 'l', 20, 14],
+    ['star.svg', 'r', 20, 14],
+  ],
+};
+---
+
+<article class="tomb" data-id={t.id}>
+  {(decor[t.card_style] || decor.flower).map(([file, side, width, height]) => (
+    <img
+      class={`tomb-deco ${side}`}
+      src={`/assets/${file}`}
+      width={width}
+      height={height}
+      alt=""
+    />
+  ))}
+  <div class="tomb-body stone-shape">
+    <div class="tomb-face stone-shape">
+      {detail ? (
+        <h1 class="tomb-name">{t.codename || '无名氏'}</h1>
+      ) : (
+        <a class="tomb-link" href={`/t/${t.id}`}>
+          <h3 class="tomb-name">{t.codename || '无名氏'}</h3>
+        </a>
+      )}
+      <p class="tomb-life">
+        <span class="tomb-days">{life.days}</span>
+        <span class="tomb-range">{life.range}</span>
+      </p>
+      <ul class="tags">
+        <li class="tag">{LABELS.vendor[t.vendor]}</li>
+        <li class="tag">{LABELS.event_type_short[t.event_type]}</li>
+      </ul>
+      {t.epitaph && <p class="tomb-epitaph">{t.epitaph}</p>}
+      <p class="tomb-story">{t.story}</p>
+      {detail && (
+        <dl class="facts">
+          <dt>署名</dt>
+          <dd>{t.nickname || '匿名'}</dd>
+          <dt>套餐</dt>
+          <dd>{LABELS.plan[t.plan]}</dd>
+          <dt>申诉</dt>
+          <dd>{LABELS.appeal_status[t.appeal_status]}</dd>
+          {t.approved_at && (
+            <>
+              <dt>立碑</dt>
+              <dd>{fmtDate(t.approved_at.slice(0, 10))}</dd>
+            </>
+          )}
+        </dl>
+      )}
+      <div class="tomb-foot">
+        <span class="tomb-unverified">用户自述，未经核实</span>
+        <button
+          type="button"
+          class="flower-btn"
+          data-flower-id={t.id}
+          aria-pressed="false"
+          aria-label={`献一朵花，现在有 ${t.flowers} 朵`}
+        >
+          <img src="/assets/flower.svg" width="14" height="14" alt="" />
+          <span>献花 {num(t.flowers)}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</article>
