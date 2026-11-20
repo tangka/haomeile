@@ -125,16 +125,8 @@ export function languageRewriter(request: Request): HTMLRewriter {
     })
     .on('a[href]', {
       element: (el) => {
-        const target = el.getAttribute('data-locale-switch');
-        if (target === 'en' || target === 'zh') {
-          el.setAttribute('href', localePath(path, target) + url.search);
-          el.setAttribute('hreflang', target === 'en' ? 'en' : 'zh-CN');
-          if (target === locale) el.setAttribute('aria-current', 'page');
-          else el.removeAttribute('aria-current');
-        } else {
-          const href = el.getAttribute('href') || '';
-          el.setAttribute('href', localePath(href, locale));
-        }
+        const href = el.getAttribute('href') || '';
+        el.setAttribute('href', localePath(href, locale));
       },
     })
     .on('link[rel="canonical"],meta[property="og:url"]', {

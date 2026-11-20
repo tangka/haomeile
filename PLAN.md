@@ -522,4 +522,4 @@ CREATE TABLE audit_log (
 
 ## 15. 中英文适配（用户追加）
 
-默认中文 `/`，英文 `/en/`；导航、表单、错误、日期、人机验证与分享卡片随页面语言显示。切换保留当前路由和查询参数，不使用 Cookie、不自动改写用户内容。canonical/hreflang 和 sitemap 覆盖两种语言，英文后台别名同样经过 Access。公开产品名称统一使用 Claude、Codex、Antigravity，不加中文括注。
+根据浏览器 `Accept-Language` 自动适配：中文偏好显示中文，其他语言偏好显示英文；没有语言偏好时默认中文。未带语言前缀的 HTML 页面按英文偏好自动跳转到对应 `/en/` 地址，保留原路由和查询参数；`/en/` 保留为稳定英文地址。页头不提供手动语言选择。导航、表单、错误、日期、人机验证与分享卡片随页面语言显示，不使用 Cookie、不自动改写用户内容。canonical/hreflang 和 sitemap 覆盖两种语言，英文后台别名同样经过 Access。公开产品名称统一使用 Claude、Codex、Antigravity，不加中文括注。

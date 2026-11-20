@@ -8,7 +8,13 @@ import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
-import { basePath, requestLocale, tr } from '../shared/i18n';
+import {
+  basePath,
+  localePath,
+  requestLocale,
+  routeLocale,
+  tr,
+} from '../shared/i18n';
 
 const app = new Hono<AppEnv>();
 app.use('*', security);
@@ -30,6 +36,25 @@ app.use('*', async (c, next) => {
   await next();
   c.header('Cache-Control', 'no-store');
   c.header('X-Robots-Tag', 'noindex, nofollow');
+});
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url);
+  const path = url.pathname;
+  // API, assets and internal templates are never language redirect targets.
+  const documentRequest =
+    ['GET', 'HEAD'].includes(c.req.method) &&
+    !/^\/(?:api|assets|_astro|_templates|sitemaps)(?:\/|$)/.test(path) &&
+    (!/\.[^/]+\/?$/.test(path) || /\.html\/?$/.test(path));
+  if (!documentRequest || routeLocale(path) === 'en') return next();
+  c.header('Vary', 'Accept-Language');
+  if (requestLocale(c.req.raw) === 'en') {
+    c.header('Cache-Control', 'private, no-store');
+    return c.redirect(localePath(path, 'en') + url.search, 302);
+  }
+  await next();
+  // The unprefixed URL negotiates language; caches must not reuse its Chinese
+  // response for visitors whose browsers request another language.
+  c.header('Vary', 'Accept-Language');
 });
 app.get('/api/health', (c) => c.json({ ok: true, data: { status: 'ok' } }));
 app.route('/api', publicRoutes);

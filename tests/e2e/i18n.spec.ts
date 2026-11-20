@@ -36,11 +36,11 @@ async function expectEnglishSystemCopy(page: Page): Promise<void> {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   const copy = await page.locator('body').evaluate((body) => {
     const clone = body.cloneNode(true) as HTMLElement;
-    // User content, the Chinese brand and the native-language switch are
-    // intentionally unchanged. Hidden first-party dialog text is checked too.
+    // User content and the Chinese brand intentionally remain unchanged.
+    // Hidden first-party dialog text is checked too.
     clone
       .querySelectorAll(
-        'script, style, .brand, #hero-title, [data-locale-switch="zh"], .tomb-name, .tomb-epitaph, .tomb-story, .facts dd',
+        'script, style, .brand, #hero-title, .tomb-name, .tomb-epitaph, .tomb-story, .facts dd',
       )
       .forEach((node) => node.remove());
     return clone.textContent?.replaceAll('号没了', '') || '';
@@ -74,27 +74,91 @@ test.afterAll(() => {
 });
 test.beforeEach(async ({ page }) => languageSdk(page));
 
-test('Chinese is the default and language switches preserve the page and edit query', async ({
+test('Chinese browsers stay on the Chinese page without a language selector', async ({
   page,
 }) => {
   await page.goto('/submit?mode=edit');
+  await expect(page).toHaveURL(/\/submit\?mode=edit$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(page.locator('#submit-title')).toHaveText('修改墓碑');
-  await expect(page.locator('[data-locale-switch="en"]')).toHaveAttribute(
-    'href',
-    '/en/submit?mode=edit',
-  );
-  await page.getByRole('link', { name: 'English', exact: true }).click();
-  await expect(page).toHaveURL(/\/en\/submit\?mode=edit$/);
-  await expect(page.locator('#submit-title')).toHaveText('Edit memorial');
-  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('[data-locale-switch="zh"]')).toHaveAttribute(
-    'href',
-    '/submit?mode=edit',
-  );
-  await page.locator('[data-locale-switch="zh"]').click();
-  await expect(page).toHaveURL(/\/submit\?mode=edit$/);
-  await expect(page.locator('#submit-title')).toHaveText('修改墓碑');
+  await expect(
+    page.locator('[data-locale-switch], .locale-switch'),
+  ).toHaveCount(0);
+});
+
+for (const locale of ['en-US', 'fr-FR']) {
+  test(`${locale} browsers automatically receive English and preserve edit queries`, async ({
+    browser,
+    baseURL,
+  }) => {
+    const context = await browser.newContext({ locale, baseURL });
+    try {
+      const page = await context.newPage();
+      await languageSdk(page);
+      const response = await page.goto('/submit?mode=edit');
+      const redirect = await response!.request().redirectedFrom()!.response();
+      expect(redirect!.status()).toBe(302);
+      expect(redirect!.headers()['cache-control']).toContain('no-store');
+      expect(redirect!.headers().vary).toMatch(/Accept-Language/i);
+      await expect(page).toHaveURL(/\/en\/submit\?mode=edit$/);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      await expect(page.locator('#submit-title')).toHaveText('Edit memorial');
+      await expect(
+        page.locator('[data-locale-switch], .locale-switch'),
+      ).toHaveCount(0);
+    } finally {
+      await context.close();
+    }
+  });
+}
+
+test('Traditional Chinese browsers receive Chinese automatically', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ locale: 'zh-HK', baseURL });
+  try {
+    const page = await context.newPage();
+    await languageSdk(page);
+    const response = await page.goto('/submit');
+    expect(response!.request().redirectedFrom()).toBeNull();
+    await expect(page).toHaveURL(/\/submit$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+    await expect(page.locator('#turnstile')).toHaveAttribute(
+      'data-e2e-language',
+      'zh-cn',
+    );
+  } finally {
+    await context.close();
+  }
+});
+
+test('English browsers open shared memorial links automatically without translating user text', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ locale: 'en-US', baseURL });
+  try {
+    const page = await context.newPage();
+    await languageSdk(page);
+    await page.goto(`/t/${fixtureId}?source=shared`);
+    await expect(page).toHaveURL(
+      new RegExp(`/en/t/${fixtureId}\\?source=shared$`),
+    );
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    const memorial = page.locator(`article.tomb[data-id="${fixtureId}"]`);
+    await expect(memorial.locator('.tomb-name')).toHaveText(userText.codename);
+    await expect(memorial.locator('.tomb-story')).toHaveText(userText.story);
+    await expect(memorial.locator('.facts dd').first()).toHaveText(
+      userText.nickname,
+    );
+    await expect(memorial.locator('.tag')).toHaveText([
+      'Claude',
+      'Verification blocked',
+    ]);
+  } finally {
+    await context.close();
+  }
 });
 
 for (const path of [
@@ -290,8 +354,9 @@ for (const width of [375, 1440]) {
       }));
       expect(geometry.document, path).toBeLessThanOrEqual(geometry.viewport);
       expect(geometry.body, path).toBeLessThanOrEqual(geometry.viewport);
-      await expect(page.locator('[data-locale-switch="en"]')).toBeVisible();
-      await expect(page.locator('[data-locale-switch="zh"]')).toBeVisible();
+      await expect(
+        page.locator('[data-locale-switch], .locale-switch'),
+      ).toHaveCount(0);
     }
     await page.screenshot({
       path: testInfo.outputPath('english-layout.png'),

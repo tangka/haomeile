@@ -9,6 +9,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:8790',
     ...devices['Desktop Chrome'],
+    locale: 'zh-CN',
     channel: 'chrome',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

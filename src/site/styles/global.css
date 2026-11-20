@@ -197,31 +197,9 @@ a {
   text-decoration: none;
 }
 
-/* Keep language choices visible while the main navigation scrolls on small screens. */
+/* Keep longer English navigation within the viewport. */
 .nav {
   min-width: 0;
-}
-.locale-switch {
-  display: flex;
-  flex: none;
-  gap: 2px;
-  padding: 2px;
-  border: 2px solid var(--sky-ink);
-}
-.locale-switch a {
-  padding: 5px 8px;
-  font-size: var(--fs-xs);
-  white-space: nowrap;
-  text-decoration: none;
-}
-.locale-switch a[aria-current='page'] {
-  background: var(--sky-ink);
-  color: var(--sky);
-  font-weight: 600;
-}
-.locale-switch a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 @media (max-width: 900px) {
   .topbar .wrap {

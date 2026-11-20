@@ -13,6 +13,26 @@ export function currentLocale(): Locale {
 export function routeLocale(path: string): Locale {
   return /^\/en(?:\/|$)/.test(path) ? 'en' : 'zh';
 }
+/** Match the browser's first preferred language, including regional Chinese. */
+export function browserLocale(acceptLanguage: string | null): Locale {
+  const preferred = (acceptLanguage || '')
+    .split(',')
+    .map((entry, index) => {
+      const [tag, ...parameters] = entry.trim().toLowerCase().split(';');
+      const quality = parameters.find((part) => part.trim().startsWith('q='));
+      const weight =
+        quality === undefined ? 1 : Number(quality.trim().slice(2));
+      return { tag, weight, index };
+    })
+    .filter(
+      ({ tag, weight }) =>
+        /^[a-z]{1,8}(?:-[a-z0-9]{1,8})*$/.test(tag) &&
+        weight > 0 &&
+        weight <= 1,
+    )
+    .sort((a, b) => b.weight - a.weight || a.index - b.index)[0];
+  return !preferred || /^zh(?:-|$)/.test(preferred.tag) ? 'zh' : 'en';
+}
 export function basePath(path: string): string {
   return routeLocale(path) === 'en' ? path.slice(3) || '/' : path;
 }
@@ -33,11 +53,9 @@ export function localePath(
 }
 export function requestLocale(request: Request): Locale {
   const path = new URL(request.url).pathname;
-  if (path.startsWith('/api/'))
-    return /^en(?:\b|-)/i.test(request.headers.get('Accept-Language') || '')
-      ? 'en'
-      : 'zh';
-  return routeLocale(path);
+  return routeLocale(path) === 'en'
+    ? 'en'
+    : browserLocale(request.headers.get('Accept-Language'));
 }
 export function normalizeText(source: string): string {
   return source.replace(/\s+/g, ' ').trim();
