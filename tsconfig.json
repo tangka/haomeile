@@ -3,11 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
-    "types": ["@cloudflare/workers-types", "node"],
+    "types": ["node"],
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true
   },
-  "include": [".astro/types.d.ts", "src/**/*", "tests/**/*", "*.ts"],
+  "include": [".astro/types.d.ts", "src/site/**/*", "*.ts"],
   "exclude": ["dist", "node_modules"]
 }

@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "astro build",
-    "check": "astro check && tsc --noEmit",
+    "check": "astro check && tsc -p tsconfig.worker.json --noEmit",
     "lint": "eslint .",
     "format": "prettier --write src tests scripts *.json *.mjs *.ts *.toml *.md",
     "test": "vitest run",
