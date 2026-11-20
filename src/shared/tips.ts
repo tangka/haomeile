@@ -1,5 +1,3 @@
-import type { Vendor } from '../worker/types';
-
 interface TipCopy {
   zh: string;
   en: string;
@@ -7,365 +5,221 @@ interface TipCopy {
 
 interface TipArticle {
   slug: string;
-  product: Vendor;
-  topic: TipCopy;
   title: TipCopy;
   summary: TipCopy;
   experience: TipCopy;
-  steps: TipCopy[];
-  source: string;
+  steps: { text: TipCopy; code?: string }[];
+  source: `https://x.com/i/article/${string}`;
+  sourceAuthor: string;
   sourceDate: string;
   sourceViews: number;
-  followUp?: string;
   action?: { href: string; label: TipCopy };
 }
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
-    slug: 'claude-signup-phone',
-    product: 'claude',
-    topic: { zh: '注册', en: 'Sign-up' },
+    slug: 'claude-code-local-history',
     title: {
-      zh: '新号不到半天被停用，他先看了邮件',
-      en: 'A new Claude account was suspended within half a day',
+      zh: 'Claude 账号停用后，从本机找回项目记录并导入 Codex',
+      en: 'Recover local Claude Code sessions and import them into Codex',
     },
     summary: {
-      zh: '注册后遇到停用提示，可以先从通知邮件确认涉及哪条政策。',
-      en: 'If your account is suspended soon after sign-up, check which policy the notice cites.',
+      zh: '从 Mac 上找到 Claude Code 留下的项目会话，备份原始记录，再用 Codex 接着做。',
+      en: 'Find Claude Code project sessions on a Mac, save the originals and pick up the work in Codex.',
     },
     experience: {
-      zh: '邦法说，他新开的 Claude 账号不到 12 小时就被停用。邮件写的是支持国家和地区政策，没列出具体触发步骤。',
-      en: 'Bangbuilds said his new Claude account was suspended within 12 hours. The email cited the supported countries and regions policy and did not identify a specific action.',
+      zh: 'Leaf Yeah! 在两次 Claude 账号停用之后，查看了原先运行 Claude Code 的那台 Mac。他在本机找到了项目会话，并在 X 长文里展示了 SeeCut 项目的旧对话出现在 Codex 里的结果。',
+      en: 'After losing access to two Claude accounts, Leaf Yeah! inspected the Mac where he had run Claude Code. He found local sessions and showed the previous conversations from his SeeCut project appearing in Codex.',
     },
     steps: [
       {
-        zh: '注册前，先在 Claude 支持地区列表里查实际所在地区。注册页面发送短信后，填写最新收到的验证码。',
-        en: 'Before signing up, check your actual location against Claude’s supported regions. Enter the newest SMS code once the sign-up page sends one.',
+        text: {
+          zh: '回到原先运行 Claude Code 的 Mac。在 Finder 里按 ⌘⇧G，输入下面的路径并回车。如果曾专门设置 CLAUDE_CONFIG_DIR，就打开当时用的配置目录。',
+          en: 'On the Mac where you ran Claude Code, press Command–Shift–G in Finder. Enter the path below and press Return. If you previously set CLAUDE_CONFIG_DIR, open that directory instead.',
+        },
+        code: '~/.claude',
       },
       {
-        zh: '账号刚注册就受限时，先找官方通知。需要复核时，可把通知引用的政策和注册时间填进申诉表。',
-        en: 'If access is restricted soon after sign-up, find the notice. Include the policy it cites and the time you registered if you request a review.',
+        text: {
+          zh: '打开 projects 文件夹，找和原项目路径对应的子目录。会话以 .jsonl 文件保存。先把要保留的项目记录复制到自己的备份文件夹，再回到代码仓库拷出项目里的 CLAUDE.md 和自己编写的 Skills。',
+          en: 'Open projects and locate the subfolder for the original project path. Session files end in .jsonl. Copy the project records you want to keep to a private backup folder, then save the repository’s CLAUDE.md and any skills you wrote.',
+        },
+      },
+      {
+        text: {
+          zh: '在同一台 Mac 打开 ChatGPT 桌面端，进入「设置 → 导入」，在 Claude Code 一行点「导入」。查看扫描到的项目及可导入的内容，先勾选你要接着做的那个项目和近期会话，再确认导入。',
+          en: 'On the same Mac, open the ChatGPT desktop app and go to Settings → Import. Select Import beside Claude Code. Review the projects and available items the app finds, select the project and recent chats you want to continue, and confirm.',
+        },
+      },
+      {
+        text: {
+          zh: '切到 Codex，在项目列表打开导入的项目。找一条认得标题的旧会话，核对最后一条消息和原目录里的任务是否对应。缺的会话可回到备份，在对应的 .jsonl 里查最近几条消息，把任务进度补到新的会话。',
+          en: 'Switch to Codex and open the imported project. Find a session by a title you recognize and check the last message against the original work. If a session is missing, read its last few messages in the .jsonl backup and carry the relevant progress into a new chat.',
+        },
       },
     ],
-    source: 'https://x.com/bangbuilds/status/2106592151534727552',
-    sourceDate: '2026-10-04',
-    sourceViews: 45502,
+    source: 'https://x.com/i/article/2107394164908310528',
+    sourceAuthor: '@leaf_sanren',
+    sourceDate: '2026-10-08',
+    sourceViews: 74375,
     action: {
-      href: 'https://www.anthropic.com/legal/supported-regions',
+      href: 'https://learn.chatgpt.com/docs/import',
       label: {
-        zh: '查 Claude 支持地区',
-        en: 'Check Claude’s supported regions',
+        zh: '查看桌面端导入入口',
+        en: 'Find the desktop import controls',
       },
     },
   },
   {
-    slug: 'claude-identity-verification',
-    product: 'claude',
-    topic: { zh: '身份验证', en: 'Identity verification' },
+    slug: 'antigravity-separate-google-account',
     title: {
-      zh: 'Claude 升级 Max 后遇到身份验证',
-      en: 'Claude asked for an identity check after a Max upgrade',
+      zh: '把 Antigravity 和日常 Gmail 分开用，从建号到首次授权',
+      en: 'Set up a separate Google account for Antigravity',
     },
     summary: {
-      zh: 'KC 升级 Max 20x 后收到了身份验证提示，完成验证后继续使用。',
-      en: 'KC reported completing an identity check and keeping access after upgrading to Max 20x.',
+      zh: '日常 Gmail 留在原浏览器窗口，开发号先核对地区，再走一次完整的 Antigravity 登录。',
+      en: 'Keep daily Gmail in its own browser window, then check the development account’s region and complete Antigravity sign-in.',
     },
     experience: {
-      zh: 'KC 在 X 上写道，他升级 Max 20x 后遇到身份验证，并在同一条帖子里说自己已经通过验证，账号可以正常使用。',
-      en: 'KC wrote on X that he was asked to verify his identity after upgrading to Max 20x. In the same post, he said he passed the check and was using the account normally.',
+      zh: '码农暖爸把重要邮箱留在主号，开发、测试和模型工具用另一个 Google 账号。他在长文里写了自己采用的分号方式，还给出了关联地区和客户端授权这两个可以当场核对的入口。',
+      en: 'Delroy keeps important email on his main account and uses a separate Google account for development, testing and model tools. His article explains that setup and shows where to check the account region and complete Antigravity authorization.',
     },
     steps: [
       {
-        zh: '用升级套餐时的账号登录 Claude，在账号内打开身份验证提示，先看页面接受哪些证件。',
-        en: 'Sign into Claude with the account you upgraded. Open the verification prompt in your account and check which documents the page accepts.',
+        text: {
+          zh: 'Chrome 右上角点浏览器头像，选「添加新的 Chrome 个人资料」，命名为「开发」。在新窗口打开 accounts.google.com，登录已有开发号，或点「创建账号」注册自己的个人 Google 账号。原来的日常邮箱继续留在原窗口。',
+          en: 'Use the Chrome profile menu in the top right to add a profile called Development. Open accounts.google.com in that new window and sign in to your existing development account or create a personal Google Account. Keep daily email in the original window.',
+        },
       },
       {
-        zh: '按页面提示完成验证。回到 Claude 确认能否继续使用；如果界面仍卡在验证，记下提示和提交时间，再联系支持。',
-        en: 'Complete the on-screen steps, then return to Claude and check your access. If you are still stuck, record the prompt and the submission time before contacting support.',
+        text: {
+          zh: '在「开发」窗口打开 policies.google.com/terms，确认 Google 当前用的是开发号，然后在条款页查看适用的国家或地区。遇到账号资格报错时，用这个结果对照 Antigravity FAQ 的支持地区。',
+          en: 'Open policies.google.com/terms in Development, confirm the active Google account and check the country or region shown on the Terms page. If Antigravity reports an eligibility error, compare the result with the supported locations in its FAQ.',
+        },
+      },
+      {
+        text: {
+          zh: '打开 Antigravity 桌面端，选择「使用 Google 账号继续」。如果浏览器打开了主号，先在选账号的页面点「使用其他账号」，明确选开发号邮箱，再确认授权。授权页完成后切回客户端。',
+          en: 'Open the Antigravity desktop app and choose Continue with Google. If the browser offers your main account, choose Use another account, select the development email, and approve access. Return to the app when authorization completes.',
+        },
+      },
+      {
+        text: {
+          zh: '在客户端设置的「账号」页核对邮箱。再建一个空文件夹，用这个号问一句「列出当前目录里的文件，先不修改」。收到回复后，日常的开发项目就从这个账号开始加。',
+          en: 'Check the email in the app’s Account settings. Open an empty folder and ask the assistant to list its contents without changing files. Once you get a reply, you can start adding the projects you want to use with this account.',
+        },
       },
     ],
-    source: 'https://x.com/ScarletKc/status/2106347277946372343',
-    sourceDate: '2026-10-03',
-    sourceViews: 77768,
-  },
-  {
-    slug: 'claude-appeal-what-to-write',
-    product: 'claude',
-    topic: { zh: '申诉', en: 'Appeals' },
-    title: {
-      zh: 'Claude 申诉材料怎么补，先把时间线对上',
-      en: 'Build a timeline before updating a Claude appeal',
-    },
-    summary: {
-      zh: '把出问题前后的记录排成时间线，便于说明当时发生了什么。',
-      en: 'Put the events around the restriction in order so support can see what happened.',
-    },
-    experience: {
-      zh: 'Alex Getman 说，Claude 账号停用后，他翻本地日志，找出最后一次请求和收到停用邮件的时间。随后把两处时间、客户端版本和通知里的参考编号补交给了申诉团队。',
-      en: 'Alex Getman said he used his local logs to find the last request and the time of the suspension email. He sent those times, the client version and the notice reference numbers as an update to his appeal.',
-    },
-    steps: [
-      {
-        zh: '列三项就够用：最后在做什么、什么时候受限、页面或邮件提示了什么。找到日志的话，把对应时间和时区写清楚。',
-        en: 'Write down the last thing you were doing, when access was restricted and what the notice said. Include the time zone if you have a timestamp from logs.',
-      },
-      {
-        zh: '从账号限制页递交申诉。有现成工单时，把补充材料和参考编号放在同一条支持记录里。',
-        en: 'Submit through the account restriction page. If you already have a support case, add the timeline and reference numbers there.',
-      },
-    ],
-    source: 'https://x.com/alexgetmancom/status/2086131953607049275',
-    followUp: 'https://x.com/alexgetmancom/status/2086205949929312358',
-    sourceDate: '2026-08-09',
-    sourceViews: 54618,
+    source: 'https://x.com/i/article/2102061503004434432',
+    sourceAuthor: '@Delroy715',
+    sourceDate: '2026-09-22',
+    sourceViews: 95496,
     action: {
-      href: 'https://claude.ai/restricted',
+      href: 'https://antigravity.google/docs/faq',
       label: {
-        zh: '打开 Claude 账号限制页',
-        en: 'Open Claude’s account restriction page',
+        zh: '查看 Antigravity 登录与地区要求',
+        en: 'Check Antigravity sign-in and region requirements',
       },
     },
   },
   {
-    slug: 'claude-organization-suspension',
-    product: 'claude',
-    topic: { zh: '工作区停用', en: 'Workspace suspension' },
+    slug: 'codex-desktop-first-login',
     title: {
-      zh: '团队突然用不了 Claude，先确认停的是谁',
-      en: 'Check who lost access when a Claude team goes offline',
+      zh: '用已有 ChatGPT 账号登录 Codex 桌面端',
+      en: 'Sign in to Codex desktop with your existing ChatGPT account',
     },
     summary: {
-      zh: '个人账号和团队工作区都可能出问题。从受影响的范围判断该找哪个入口。',
-      en: 'A restriction can affect one member or the whole workspace. Check the scope before choosing a support route.',
+      zh: '从下载安装到切换 Codex，再用一次只读请求验证登录和项目权限。',
+      en: 'Install the app, switch to Codex and verify your sign-in and project access with a read-only request.',
     },
     experience: {
-      zh: 'Belo 的 Pato Molina 在 X 上说，公司一个有 60 多个账号的组织突然失去 Claude 访问权限。后来他更新说，团队已经恢复访问。',
-      en: 'Belo’s Pato Molina reported that a company organization with more than 60 accounts lost Claude access. He later posted that access had been restored.',
+      zh: 'Serena 木瓜用 Codex 做自己的内容项目。在她的图解里，第一张图从下载走到登录和进入 Codex。接下来她用一次只读请求来检查新会话能不能顺利运行。',
+      en: 'Serena uses Codex for her own content projects. The first screenshot in her illustrated guide follows the path from download through sign-in to Codex. She then uses a read-only request to show how to check a new session.',
     },
     steps: [
       {
-        zh: '确认同事是否同时遇到问题，并尝试用自己的账号查看个人区和团队区，区分个人受限与组织暂停。',
-        en: 'Find out whether teammates are affected too. Check both your personal and team spaces to distinguish a personal restriction from an organization hold.',
+        text: {
+          zh: '从 Codex 下载页选你的系统，安装并打开 ChatGPT 桌面端。看到登录页时，用现在那份 ChatGPT 订阅对应的邮箱和登录方式。浏览器同时开着多个账号时，在授权前核对显示的邮箱。',
+          en: 'Choose your operating system on the Codex download page and open the installed ChatGPT desktop app. Sign in with the email and sign-in method for your existing ChatGPT account. If the browser has multiple sessions, confirm the email on the authorization screen.',
+        },
       },
       {
-        zh: '如果只有组织显示暂停，在受影响的组织旁找 Request a review。提交时附上组织名、出问题的时间和界面截图。',
-        en: 'If the organization alone is on hold, look for Request a review beside it. Include the organization name, when access changed and a screenshot.',
+        text: {
+          zh: '回到桌面端，点击左上角的体验选择器，切到「Codex」。从左边打开一个本地项目。第一次验证可以直接选一个空文件夹，方便定位会话到底打开了哪里。',
+          en: 'Return to the desktop app, open the experience selector in the upper left and choose Codex. Open a local project from the sidebar. An empty folder works for the first check and makes it easy to tell which directory the session opened.',
+        },
+      },
+      {
+        text: {
+          zh: '点「新对话」，发一条只读请求，例如「告诉我当前项目的目录名和可见文件。先只检查，别改文件。」确认它能回复，且报告的目录与刚选的项目一致。',
+          en: 'Start a new chat and send a small read-only request. For example, ask for the project folder name and visible files, with no edits. Check that you receive a reply and that the directory matches the project you selected.',
+        },
       },
     ],
-    source: 'https://x.com/patomolina/status/2045254152377323970',
-    followUp: 'https://x.com/patomolina/status/2045319260713390191',
-    sourceDate: '2026-04-18',
-    sourceViews: 1784576,
+    source: 'https://x.com/i/article/2089996874639958017',
+    sourceAuthor: '@369Serena',
+    sourceDate: '2026-08-19',
+    sourceViews: 191573,
     action: {
-      href: 'https://claude.ai/restricted',
+      href: 'https://chatgpt.com/codex/',
+      label: { zh: '打开 Codex 下载页', en: 'Open the Codex download page' },
+    },
+  },
+  {
+    slug: 'claude-code-windows-first-login',
+    title: {
+      zh: 'Windows 装好 Claude Code 后，怎么确认登录的是自己的订阅',
+      en: 'Verify your Claude subscription sign-in on Windows',
+    },
+    summary: {
+      zh: '先让 PowerShell 找到 Claude，再完成浏览器授权并核对 CLI 的账号状态。',
+      en: 'Make sure PowerShell can find Claude, complete browser authorization and check the account in the CLI.',
+    },
+    experience: {
+      zh: '苏乐在自己的 Windows 环境里走了一遍 Claude Code 安装和首次登录。他把检查命令、浏览器授权和「PowerShell 找不到命令」的排查写在同一篇长文里。',
+      en: 'Su Le went through Claude Code installation and sign-in on Windows. His article puts the version check, browser authorization and the fix for a command missing from PowerShell in one walkthrough.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '装完 Claude Code 后，关掉安装时的 PowerShell，再打开一个新窗口刷新 PATH。先用版本命令确认系统已经找到 Claude。',
+          en: 'After installing Claude Code, close the PowerShell window used for installation and open a new one to refresh PATH. Run the version command to check whether Windows can find Claude.',
+        },
+        code: 'claude --version',
+      },
+      {
+        text: {
+          zh: '如果仍提示找不到命令，先查安装和 PATH。用原生安装器的情况下，可在 PowerShell 检查下列路径是否存在。路径存在时，把对应的 .local\\bin 目录加入 Windows 用户 Path，再开一个 PowerShell 验证版本。',
+          en: 'If the command is still missing, check the installation and PATH. For a native install, test whether the path below exists in PowerShell. If it does, add the corresponding .local\\bin directory to your Windows user Path and check the version in a new PowerShell window.',
+        },
+        code: 'Test-Path "$env:USERPROFILE\\.local\\bin\\claude.exe"',
+      },
+      {
+        text: {
+          zh: '版本能显示后，启动 Claude Code。终端打开浏览器时，选择 Claude 订阅的登录方式，用你的 Claude Pro 或 Max 账号授权，再回到 PowerShell。',
+          en: 'Once the version command works, start Claude Code. When it opens a browser, choose the Claude subscription sign-in method and authorize with the account that owns your Claude Pro or Max plan. Return to PowerShell afterward.',
+        },
+        code: 'claude',
+      },
+      {
+        text: {
+          zh: '在 Claude Code 里打开状态页，核对当前登录邮箱和显示的账号信息。然后在自己的项目里发一条只读请求，看会话能否正常回复。',
+          en: 'Open the status panel inside Claude Code and check the signed-in email and account information. Then send a read-only request in one of your own projects and verify that the session replies.',
+        },
+        code: '/status',
+      },
+    ],
+    source: 'https://x.com/i/article/2071422961719078912',
+    sourceAuthor: '@ai_suxiaole',
+    sourceDate: '2026-06-29',
+    sourceViews: 371034,
+    action: {
+      href: 'https://code.claude.com/docs/en/quickstart',
       label: {
-        zh: '打开 Claude 账号限制页',
-        en: 'Open Claude’s account restriction page',
+        zh: '查看 Claude Code 安装入口',
+        en: 'Open the Claude Code quickstart',
       },
     },
-  },
-  {
-    slug: 'codex-appeal-task-context',
-    product: 'codex',
-    topic: { zh: '申诉', en: 'Appeals' },
-    title: {
-      zh: 'Codex 被停用，申诉时怎么交代任务背景',
-      en: 'Explain the task behind a Codex suspension appeal',
-    },
-    summary: {
-      zh: '收到停用通知后，可以先回查任务记录，再说明当时在处理什么。',
-      en: 'After a suspension notice, review your recent tasks and explain the work in context.',
-    },
-    experience: {
-      zh: 'Michael 说，他的 OpenAI 账号被停用后，回查到一条涉及自己服务器的请求。他把这段任务背景写进申诉，随后恢复了访问。',
-      en: 'Michael said he traced his recent activity to a request involving his own server. He included that context in an appeal and later regained access.',
-    },
-    steps: [
-      {
-        zh: '先记下停用通知里的原话，在最近的任务中找相关记录，写上时间、正在做的事，以及涉及的项目是怎么回事。',
-        en: 'Record what the notice said. Find the relevant recent task and describe when it took place, what you were doing and how the project is connected to you.',
-      },
-      {
-        zh: '检查时间和任务描述，再从通知邮件的入口提交。涉及项目日志时，截取说明问题的部分。',
-        en: 'Confirm the timing and task description, then use the appeal link in the email. Excerpt the relevant part of any project log you include.',
-      },
-    ],
-    source: 'https://x.com/endpointarena/status/2075245286339846145',
-    sourceDate: '2026-07-09',
-    sourceViews: 749441,
-    action: {
-      href: '/appeal',
-      label: { zh: '查看 Codex 申诉入口', en: 'Find the Codex appeal route' },
-    },
-  },
-  {
-    slug: 'codex-suspension-status',
-    product: 'codex',
-    topic: { zh: '账号停用', en: 'Account suspension' },
-    title: {
-      zh: 'Codex 申诉暂时没进展，哪些信息先留下',
-      en: 'What to keep when a Codex appeal has stalled',
-    },
-    summary: {
-      zh: '保存原通知、提交时间和工单记录，后续补充信息时都有据可查。',
-      en: 'Keep the original notice, submission time and case record so you can refer to them later.',
-    },
-    experience: {
-      zh: 'Maurice Kleine 说，他在用 Codex 分析自己应用的访问日志后失去了账号访问权限。最初的申诉没有改变结果，他后来更新说账号已恢复。',
-      en: 'Maurice Kleine said he lost access after using Codex to review logs for his own apps. His first appeal did not change the outcome, and he later reported that access had been restored.',
-    },
-    steps: [
-      {
-        zh: '把停用通知和申诉回执保存在本地，记下工单编号和日期。收到回复时把它放进同一份记录。',
-        en: 'Save the suspension notice and appeal confirmation locally. Record the case number and dates, and keep any replies with them.',
-      },
-      {
-        zh: '需要补充说明时，告诉支持团队你用 Codex 做什么、受限前的最后一个任务，以及遇到的具体提示。恢复后，再确认聊天记录和订阅状态。',
-        en: 'If you have more context, tell Support what you were using Codex for, what the last task was and which warning you saw. When access returns, check your chats and subscription.',
-      },
-    ],
-    source: 'https://x.com/mauricekleine/status/2114817529344397582',
-    followUp: 'https://x.com/mauricekleine/status/2115323073553433024',
-    sourceDate: '2026-10-27',
-    sourceViews: 223340,
-    action: {
-      href: '/appeal',
-      label: { zh: '查看 Codex 申诉入口', en: 'Find the Codex appeal route' },
-    },
-  },
-  {
-    slug: 'codex-warning-account-status',
-    product: 'codex',
-    topic: { zh: '账号警告', en: 'Account warning' },
-    title: {
-      zh: '收到 Codex 警告，先确认还能不能登录',
-      en: 'Check your access after receiving a Codex warning',
-    },
-    summary: {
-      zh: '邮件提到未来可能停用时，先看当前账号状态，再选择复核入口。',
-      en: 'If a notice mentions possible deactivation, check your current account status before requesting a review.',
-    },
-    experience: {
-      zh: 'XODUD 说，在用 Codex 检查自己的项目后收到一封活动警告。原帖描述的是警告，他随后更新说申诉被接受。',
-      en: 'XODUD said they received a warning after asking Codex to review their own project. In a follow-up, they said their appeal was accepted.',
-    },
-    steps: [
-      {
-        zh: '看清通知写的是警告、暂时受限还是停用。用原账号确认网页和 Codex 是否还能正常打开。',
-        en: 'Check whether the email says warning, temporary restriction or closure. Use the original account to see whether ChatGPT and Codex still open.',
-      },
-      {
-        zh: '如果需要复核，点通知附的申诉链接，用几句话说明当时在做什么。',
-        en: 'If you want a review, use the appeal link included with the notice and briefly describe what you were doing.',
-      },
-    ],
-    source: 'https://x.com/xodud_rkd/status/2117158524686151822',
-    followUp: 'https://x.com/xodud_rkd/status/2117812043353137331',
-    sourceDate: '2026-11-02',
-    sourceViews: 27558,
-  },
-  {
-    slug: 'antigravity-appeal-service',
-    product: 'antigravity',
-    topic: { zh: '账号停用', en: 'Account suspension' },
-    title: {
-      zh: 'Antigravity 用不了了，如何确定是服务停用',
-      en: 'Check whether Antigravity access was suspended',
-    },
-    summary: {
-      zh: '遇到访问问题时，先在 Antigravity 客户端核对提示，再找对应的申诉入口。',
-      en: 'When access fails, read the notice in the Antigravity app and choose the corresponding appeal route.',
-    },
-    experience: {
-      zh: 'Ziwen Xu 说，他在调试一套开发流程时同时碰到 Google AI Studio 用量耗尽和 Antigravity 访问被停用。两边出现的是不同状态。',
-      en: 'Ziwen Xu said he hit two issues while tuning a development workflow: Google AI Studio ran out of usage and Antigravity access was suspended.',
-    },
-    steps: [
-      {
-        zh: '用原来的 Google 账号打开 Antigravity，确认提示是用量不足、登录出错还是服务停用。把提示和时间记录下来。',
-        en: 'Open Antigravity with the affected Google Account and check whether the message refers to usage, sign-in or a suspension. Save the message and time.',
-      },
-      {
-        zh: '如果客户端明确提示停用，就用受影响的个人 Google 账号打开提示里的申诉链接，按表单填写。',
-        en: 'If the app explicitly says access is suspended, follow the appeal link in the notice and fill it in using the affected personal Google Account.',
-      },
-    ],
-    source: 'https://x.com/ziwenxu_/status/2022190968322101654',
-    sourceDate: '2026-02-13',
-    sourceViews: 28094,
-    action: {
-      href: 'https://forms.gle/hGzM9MEUv2azZsrb9',
-      label: {
-        zh: '打开 Antigravity 申诉表',
-        en: 'Open the Antigravity appeal form',
-      },
-    },
-  },
-  {
-    slug: 'antigravity-google-account-access',
-    product: 'antigravity',
-    topic: { zh: '账号登录', en: 'Account access' },
-    title: {
-      zh: 'Antigravity 停用后，怎么确认 Google 账号还能不能用',
-      en: 'Check Google Account access after an Antigravity suspension',
-    },
-    summary: {
-      zh: 'LUCIAN 一开始以为 Google 账号被封，后来发现失效的只有 Antigravity。',
-      en: 'LUCIAN first thought his Google Account had been banned, then found that only Antigravity was unavailable.',
-    },
-    experience: {
-      zh: 'LUCIAN 发帖说，使用 Antigravity CLI 时失去了访问权限。在后续回复里，他说受影响的只有 Antigravity。',
-      en: 'LUCIAN posted that he lost access while using Antigravity CLI. In a follow-up reply, he said only Antigravity was affected.',
-    },
-    steps: [
-      {
-        zh: '用同一个账号打开 Google 账号页面或 Gmail，确认还能否登录。再到 Antigravity 客户端核对提示。',
-        en: 'Open your Google Account page or Gmail with the same account and confirm you can sign in. Then read the notice in the Antigravity app.',
-      },
-      {
-        zh: '如果其他服务能登录，申诉时写明受影响的服务是 Antigravity。Google 账号本身也登不进去时，先跟随登录页面的恢复提示。',
-        en: 'If other services still work, name Antigravity as the affected service in your appeal. If you cannot sign into the Google Account itself, follow the recovery prompt on the sign-in page.',
-      },
-    ],
-    source: 'https://x.com/lucianlamp/status/2122262850676924606',
-    followUp: 'https://x.com/lucianlamp/status/2122451364076990638',
-    sourceDate: '2026-11-16',
-    sourceViews: 91358,
-    action: {
-      href: 'https://myaccount.google.com/',
-      label: { zh: '打开 Google 账号页面', en: 'Open your Google Account' },
-    },
-  },
-  {
-    slug: 'antigravity-check-suspension-scope',
-    product: 'antigravity',
-    topic: { zh: '账号警告', en: 'Account warning' },
-    title: {
-      zh: '收到 Google 政策邮件，怎么判断是否已停用',
-      en: 'Check whether a Google policy email says access was suspended',
-    },
-    summary: {
-      zh: '先读邮件里的账号状态，再到客户端确认实际访问情况。',
-      en: 'Read the account status in the email, then check whether you can still access the app.',
-    },
-    experience: {
-      zh: 'Artem Russakovskii 收到两封 Google 政策邮件，邮件注明当时尚未限制服务。后来他更新说，邮件和使用 Antigravity 有关，复核后账号上的违规记录被撤销。',
-      en: 'Artem Russakovskii received two Google policy notices saying that access had not been restricted. He later reported that they were related to Antigravity and that the account strikes had been reversed after review.',
-    },
-    steps: [
-      {
-        zh: '先找邮件里描述当前状态的那一句，再用同一 Google 账号测试 Antigravity 是否还能打开。',
-        en: 'Find the sentence describing the current status. Check whether Antigravity still opens using the same Google Account.',
-      },
-      {
-        zh: '保存通知和当时正在做的任务。若随后收到停用通知，再按新通知的入口提交复核。',
-        en: 'Save the notice and the task you were working on. If you later receive a suspension notice, use the review route it provides.',
-      },
-    ],
-    source: 'https://x.com/ArtemR/status/2114514441702420740',
-    followUp: 'https://x.com/ArtemR/status/2115520088178880991',
-    sourceDate: '2026-10-26',
-    sourceViews: 478796,
   },
 ];
 
@@ -378,14 +232,11 @@ export function tipPageTitle(title: string, locale: 'zh' | 'en'): string {
 export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
 
 export const TIP_TRANSLATIONS = Object.fromEntries(
-  TIP_ARTICLES.flatMap(
-    ({ title, summary, experience, topic, steps, action }) => [
-      ...[title, summary, experience, topic, ...steps].map(({ zh, en }) => [
-        zh,
-        en,
-      ]),
-      [tipPageTitle(title.zh, 'zh'), tipPageTitle(title.en, 'en')],
-      ...(action ? [[action.label.zh, action.label.en]] : []),
-    ],
-  ),
+  TIP_ARTICLES.flatMap(({ title, summary, experience, steps, action }) => [
+    ...[title, summary, experience, ...steps.map(({ text }) => text)].map(
+      ({ zh, en }) => [zh, en],
+    ),
+    [tipPageTitle(title.zh, 'zh'), tipPageTitle(title.en, 'en')],
+    ...(action ? [[action.label.zh, action.label.en]] : []),
+  ]),
 );

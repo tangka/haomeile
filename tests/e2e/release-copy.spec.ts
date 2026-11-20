@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { TIP_ARTICLES } from '../../src/shared/tips';
 
 test('public release information has no configuration placeholders', async ({
   page,
@@ -62,7 +63,7 @@ test('public release information has no configuration placeholders', async ({
   }
 });
 
-test('the tips directory shows one article per row and links to details', async ({
+test('the tips directory lists articles by date in one column and links to details', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
@@ -73,45 +74,42 @@ test('the tips directory shows one article per row and links to details', async 
   await link.click();
   await expect(page).toHaveURL(/\/tips$/);
   await expect(link).toHaveAttribute('aria-current', 'page');
-  await expect(
-    page.getByRole('heading', { name: '使用小技巧', level: 1 }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('navigation', { name: '按产品查看' }),
-  ).toHaveCount(0);
-  await expect(page.locator('.tip-group h2')).toHaveText([
-    'Claude',
-    'Codex',
-    'Antigravity',
-  ]);
+  const main = page.getByRole('main');
+  await expect(main.getByRole('heading')).toHaveText(['使用小技巧']);
+  const titles = [...TIP_ARTICLES]
+    .sort((a, b) => b.sourceDate.localeCompare(a.sourceDate))
+    .map((tip) => tip.title.zh);
+  const list = main.locator('.tips');
+  await expect(list).toHaveCount(1);
+  await expect(list.locator(':scope > li')).toHaveText(titles);
+  await expect(main.getByRole('link')).toHaveCount(titles.length);
+
   await page.setViewportSize({ width: 1100, height: 812 });
-  const rows = await page
-    .locator('#claude + ul .tip-preview')
-    .evaluateAll((links) =>
-      links.map((link) => {
-        const { left, top, bottom } = link.getBoundingClientRect();
-        return { left, top, bottom };
-      }),
-    );
-  expect(rows.length).toBeGreaterThan(1);
+  const articleLinks = list.locator(':scope > li > a.tip-preview');
+  await expect(articleLinks).toHaveText(titles);
+  const rows = await articleLinks.evaluateAll((links) =>
+    links.map((link) => {
+      const { left, top, bottom } = link.getBoundingClientRect();
+      return { left, top, bottom };
+    }),
+  );
   for (let i = 1; i < rows.length; i++) {
     expect(rows[i].left).toBe(rows[0].left);
     expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom);
   }
 
-  const title = 'Codex 被停用，申诉时怎么交代任务背景';
-  await page.getByRole('link', { name: new RegExp(title) }).click();
-  await expect(page).toHaveURL(/\/tips\/codex-appeal-task-context$/);
+  const title = 'Claude 账号停用后，从本机找回项目记录并导入 Codex';
+  await main.getByRole('link', { name: title, exact: true }).click();
+  await expect(page).toHaveURL(/\/tips\/claude-code-local-history$/);
   await expect(
     page.getByRole('heading', { name: title, level: 1 }),
   ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: '当事人的经历' }),
-  ).toBeVisible();
-  await expect(page.locator('article')).toContainText('749,441');
-  await expect(page.getByRole('link', { name: '查看 X 原帖' })).toHaveAttribute(
+  await expect(page.locator('article ol li')).toHaveCount(4);
+  await expect(page.locator('article pre code')).toHaveText('~/.claude');
+  await expect(page.locator('article')).toContainText('@leaf_sanren');
+  await expect(page.getByRole('link', { name: '阅读 X 长文' })).toHaveAttribute(
     'href',
-    'https://x.com/endpointarena/status/2075245286339846145',
+    'https://x.com/i/article/2107394164908310528',
   );
   await page.getByRole('link', { name: '返回技巧目录' }).click();
   await expect(page).toHaveURL(/\/tips$/);
