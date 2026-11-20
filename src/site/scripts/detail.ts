@@ -1,3 +1,4 @@
+import { basePath, tr } from '../../shared/i18n';
 import { checkPrivacy } from '../../worker/lib/privacy';
 import { api } from './api';
 import { visitorId } from './browser';
@@ -8,9 +9,9 @@ hydrateFlowers();
 document.querySelector('#copy-link')?.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(location.origin + location.pathname);
-    toast('链接已复制');
+    toast(tr('链接已复制'));
   } catch {
-    toast('没能复制，请手动复制地址栏里的链接。');
+    toast(tr('没能复制，请手动复制地址栏里的链接。'));
   }
 });
 const dialog = document.querySelector<HTMLDialogElement>('#report')!;
@@ -20,7 +21,7 @@ const note = document.querySelector<HTMLTextAreaElement>('#report-note')!;
 let challenge: Challenge | undefined;
 let mounting = false;
 function showError(message: string): void {
-  error.textContent = message;
+  error.textContent = tr(message);
   error.hidden = false;
 }
 document.querySelector('#open-report')?.addEventListener('click', async () => {
@@ -35,7 +36,7 @@ document.querySelector('#open-report')?.addEventListener('click', async () => {
     showError(
       failure instanceof Error
         ? failure.message
-        : '人机验证没能加载，请刷新页面。',
+        : tr('人机验证没能加载，请刷新页面。'),
     );
   } finally {
     mounting = false;
@@ -57,19 +58,20 @@ form.addEventListener('submit', async (event) => {
     return;
   }
   if (Array.from(note.value).length > 200) {
-    showError('补充说明最多 200 个字。');
+    showError(tr('补充说明最多 200 个字。'));
     return;
   }
   const token = challenge?.token();
   if (!token) {
-    showError('人机验证没通过。刷新一下验证框，再点一次提交。');
+    showError(tr('人机验证没通过。刷新一下验证框，再点一次提交。'));
     return;
   }
   const button = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
   button.disabled = true;
   try {
     const id =
-      form.dataset.tombId || location.pathname.split('/').filter(Boolean)[1];
+      form.dataset.tombId ||
+      basePath(location.pathname).split('/').filter(Boolean)[1];
     const data = new FormData(form);
     await api(`/api/tombstones/${encodeURIComponent(id || '')}/report`, {
       visitor_id: visitorId(),
@@ -79,10 +81,12 @@ form.addEventListener('submit', async (event) => {
     });
     dialog.close();
     form.reset();
-    toast('收到了，会尽快处理。');
+    toast(tr('收到了，会尽快处理。'));
   } catch (failure) {
     showError(
-      failure instanceof Error ? failure.message : '举报没成功，请稍后再试。',
+      failure instanceof Error
+        ? failure.message
+        : tr('举报没成功，请稍后再试。'),
     );
   } finally {
     button.disabled = false;

@@ -1,8 +1,11 @@
-# Local development only: official always-pass Turnstile test keys.
+# Use a real free-plan Turnstile widget that allows the hostname below.
+# Put its public site key and private secret in your ignored .dev.vars file.
+# Official dummy credentials are reserved for the isolated test configuration.
 ENVIRONMENT="development"
 SITE_ORIGIN="http://127.0.0.1:8787"
-TURNSTILE_SITE_KEY="1x00000000000000000000AA"
-TURNSTILE_SECRET="1x0000000000000000000000000000000AA"
+TURNSTILE_TEST_MODE="false"
+TURNSTILE_SITE_KEY=""
+TURNSTILE_SECRET=""
 PEPPER="local-development-only-replace-before-deployment"
 ACCESS_AUD=""
 ACCESS_TEAM_DOMAIN=""

@@ -1,7 +1,9 @@
+import { currentLocale, localePath, tr } from '../../shared/i18n';
 import type { PublicTombstone } from '../../worker/types';
 import { element } from './browser';
-import { LABELS } from './labels';
+import { getLabels } from './labels';
 import { lifeLine, fmtDate, num } from './format';
+const labels = getLabels();
 const DECORATIONS: Record<string, [string, string, number, number][]> = {
   flower: [
     ['flower.svg', 'l', 20, 20],
@@ -42,16 +44,16 @@ export function createTombCard(
   const name = element(
     detail ? 'h1' : 'h3',
     'tomb-name',
-    tomb.codename || '无名氏',
+    tomb.codename || tr('无名氏'),
   );
   if (detail) face.append(name);
   else {
     const link = element('a', 'tomb-link');
-    link.href = `/t/${tomb.id}`;
+    link.href = localePath(`/t/${tomb.id}`);
     link.append(name);
     face.append(link);
   }
-  const life = lifeLine(tomb),
+  const life = lifeLine(tomb, currentLocale()),
     lifeP = element('p', 'tomb-life');
   lifeP.append(
     element('span', 'tomb-days', life.days),
@@ -60,8 +62,12 @@ export function createTombCard(
   face.append(lifeP);
   const tags = element('ul', 'tags');
   tags.append(
-    element('li', 'tag', LABELS.vendor[tomb.vendor] || tomb.vendor),
-    element('li', 'tag', LABELS.event_type_short[tomb.event_type] || '其他'),
+    element('li', 'tag', labels.vendor[tomb.vendor] || tomb.vendor),
+    element(
+      'li',
+      'tag',
+      labels.event_type_short[tomb.event_type] || tr('其他'),
+    ),
   );
   face.append(tags);
   if (tomb.epitaph) face.append(element('p', 'tomb-epitaph', tomb.epitaph));
@@ -74,10 +80,14 @@ export function createTombCard(
         element('dd', undefined, text),
       );
     };
-    add('署名', tomb.nickname || '匿名');
-    add('套餐', LABELS.plan[tomb.plan] || '不详');
-    add('申诉', LABELS.appeal_status[tomb.appeal_status] || '还没申诉');
-    if (tomb.approved_at) add('立碑', fmtDate(tomb.approved_at.slice(0, 10)));
+    add(tr('署名'), tomb.nickname || tr('匿名'));
+    add(tr('套餐'), labels.plan[tomb.plan] || tr('不详'));
+    add(tr('申诉'), labels.appeal_status[tomb.appeal_status] || tr('还没申诉'));
+    if (tomb.approved_at)
+      add(
+        tr('立碑', currentLocale(), 'Added'),
+        fmtDate(tomb.approved_at.slice(0, 10), currentLocale()),
+      );
     face.append(facts);
   }
   const foot = element('div', 'tomb-foot');
@@ -88,13 +98,16 @@ export function createTombCard(
   flower.setAttribute('aria-pressed', 'false');
   flower.setAttribute(
     'aria-label',
-    `献花 ${num(tomb.flowers)}，为这块碑献一朵花`,
+    tr(`献花 ${num(tomb.flowers)}，为这块碑献一朵花`),
   );
   flower.append(
     image('flower.svg', '', 14, 14),
-    element('span', undefined, `献花 ${num(tomb.flowers)}`),
+    element('span', undefined, tr(`献花 ${num(tomb.flowers)}`)),
   );
-  foot.append(element('span', 'tomb-unverified', '用户自述，未经核实'), flower);
+  foot.append(
+    element('span', 'tomb-unverified', tr('用户自述，未经核实')),
+    flower,
+  );
   face.append(foot);
   return card;
 }

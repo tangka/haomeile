@@ -5,7 +5,7 @@ import { LABELS } from '../scripts/labels';
 
 <SiteLayout
   title="Claude、Codex、Antigravity 官方申诉入口 · 号没了"
-  description="汇总 Claude、Codex、Antigravity（反重力）三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。"
+  description="汇总 Claude、Codex、Antigravity 三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。"
   path="/appeal"
   current="/appeal"
 >
@@ -15,7 +15,7 @@ import { LABELS } from '../scripts/labels';
         <h1>官方申诉入口</h1>
         <p>
           这里只收录 Claude、Codex 和
-          Antigravity（反重力）。本站没法帮你解封，请走产品所属厂商的官方渠道。
+          Antigravity。本站没法帮你解封，请走产品所属厂商的官方渠道。
         </p>
       </div>
 
@@ -27,9 +27,9 @@ import { LABELS } from '../scripts/labels';
 
       <!-- 链接和申诉方式由站长人工核对后填写，Codex 不得自行填写网址（PLAN.md §2.5） -->
       <div class="vendor-list">
-        {Object.entries(LABELS.vendor).map(([key, name]) => (
+        {Object.values(LABELS.vendor).map((name) => (
           <article class="vendor">
-            <h2>{key === 'antigravity' ? `${name}（反重力）` : name}</h2>
+            <h2>{name}</h2>
             <p>
               官方帮助中心：<span class="todo">TODO_OFFICIAL_URL</span>
             </p>

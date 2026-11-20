@@ -8,12 +8,13 @@ import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
+import { basePath, requestLocale, tr } from '../shared/i18n';
 
 const app = new Hono<AppEnv>();
 app.use('*', security);
 app.onError(handleError);
 app.use('*', async (c, next) => {
-  const path = c.req.path;
+  const path = basePath(c.req.path);
   const protectedRoute =
     path === '/admin' ||
     path === '/admin.html' ||
@@ -53,7 +54,13 @@ app.get(
 );
 app.all('/api/*', (c) =>
   c.json(
-    { ok: false, error: { code: 'NOT_FOUND', message: '没有这个接口。' } },
+    {
+      ok: false,
+      error: {
+        code: 'NOT_FOUND',
+        message: tr('没有这个接口。', requestLocale(c.req.raw)),
+      },
+    },
     404,
   ),
 );

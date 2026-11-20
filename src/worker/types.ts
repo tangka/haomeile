@@ -1,4 +1,5 @@
 import type { D1Database, Fetcher } from '@cloudflare/workers-types/index.ts';
+import type { Locale } from '../shared/i18n';
 export const VENDORS = ['claude', 'codex', 'antigravity'] as const;
 export const EVENTS = [
   'suspended',
@@ -89,6 +90,7 @@ export interface Bindings {
   PEPPER: string;
   TURNSTILE_SECRET: string;
   TURNSTILE_SITE_KEY: string;
+  TURNSTILE_TEST_MODE?: string;
   ACCESS_AUD: string;
   ACCESS_TEAM_DOMAIN: string;
   ENVIRONMENT: string;
@@ -96,5 +98,5 @@ export interface Bindings {
 }
 export interface AppEnv {
   Bindings: Bindings;
-  Variables: { actor: string };
+  Variables: { actor: string; locale: Locale };
 }

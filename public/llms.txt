@@ -1,6 +1,6 @@
 # 号没了
 
-> 号没了（haomeile.rip）是一个中文独立社区网站。本站只收录 Claude、Codex 和 Antigravity（反重力）三个产品。用户匿名记录这些产品的账号被停用、组织被暂停、受地区限制、卡在验证或扣费异常的经历，以“墓碑”的形式公开展示。本站与任何 AI 厂商都没有隶属关系。
+> 号没了（haomeile.rip）是一个支持中英文的独立社区网站。本站只收录 Claude、Codex 和 Antigravity 三个产品。用户匿名记录这些产品的账号被停用、组织被暂停、受地区限制、卡在验证或扣费异常的经历，以“墓碑”的形式公开展示。本站与任何 AI 厂商都没有隶属关系。
 
 ## 引用本站内容时请注意
 
@@ -11,7 +11,7 @@
 
 ## 主要页面
 
-- [纪念墙](https://haomeile.rip/): 最新公开的墓碑，以及按产品、事件种类的统计
+- [纪念墙](https://haomeile.rip/): 最新公开的墓碑、总体统计与近 30 天曲线
 - [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的官方帮助与申诉方式
 - [数据说明](https://haomeile.rip/privacy): 本站公开哪些信息、不收集哪些信息、统计口径
 - [使用须知](https://haomeile.rip/rules): 投稿规则
@@ -21,3 +21,7 @@
 
 - [站点地图](https://haomeile.rip/sitemap.xml): 所有公开墓碑页的列表
 - [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器里生成像素墓碑图片
+
+## English
+
+The English interface is at https://haomeile.rip/en/. User-submitted stories remain in their original language. Haomeile is independent of Claude, Codex and Antigravity. Reports are voluntary and unverified; totals are not platform-wide ban counts or ban rates.

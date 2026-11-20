@@ -24,17 +24,28 @@ import {
 import { beijingDay } from '../lib/time';
 import { verifyTurnstile } from '../lib/turnstile';
 import { validateTombInput, validateVisitor } from '../lib/validate';
+import { requestLocale, tr } from '../../shared/i18n';
 
 export const publicRoutes = new Hono<AppEnv>();
 publicRoutes.onError((error, c) => {
+  const locale = requestLocale(c.req.raw);
   if (error instanceof ApiError)
     return c.json(
       {
         ok: false,
         error: {
           code: error.code,
-          message: error.message,
-          ...(error.fields ? { fields: error.fields } : {}),
+          message: tr(error.message, locale),
+          ...(error.fields
+            ? {
+                fields: Object.fromEntries(
+                  Object.entries(error.fields).map(([key, value]) => [
+                    key,
+                    tr(value, locale),
+                  ]),
+                ),
+              }
+            : {}),
         },
       },
       error.status as ContentfulStatusCode,
@@ -44,7 +55,7 @@ publicRoutes.onError((error, c) => {
       ok: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: '服务器出了点问题。过几分钟再试，碑文不会丢。',
+        message: tr('服务器出了点问题。过几分钟再试，碑文不会丢。', locale),
       },
     },
     500,

@@ -71,7 +71,7 @@
 
 ## 2026-11-20 · 产品范围纠正
 
-- 用户明确只覆盖 Claude、Codex、Antigravity（反重力）。此前把 ChatGPT、Gemini 作为产品入口以及扩展到其他厂商的实现不符合范围，分别纠正为 Codex、Antigravity，并移除其余产品入口。
+- 用户明确只覆盖 Claude、Codex、Antigravity。此前把 ChatGPT、Gemini 作为产品入口以及扩展到其他厂商的实现不符合范围，分别纠正为 Codex、Antigravity，并移除其余产品入口。
 - 对外分类称“产品”，数据库列、API 字段与兼容路由参数继续使用 `vendor`；规范键仅 `claude`、`codex`、`antigravity`。历史 `chatgpt`、`gemini` 键分别迁移到对应新键，其余旧产品记录不删除、不伪造映射，排除在公开墙、详情、统计和 sitemap 之外。
 - 同步修改实施方案和设计说明的产品范围；原静态 HTML、像素图与视觉样式保留，移植时以本次范围纠正及实际应用为准。产品选择、卡片生成器、官方入口与页面说明均限定三种产品；“其他”事件原因和法律厂商归属声明不受影响。
 - 验证：构建、类型检查、ESLint、121 项单元/接口测试和 35 项浏览器测试全部通过；实际浏览器确认三个产品的筛选、投稿与生成器选项以及新路由。`0002_three_products.sql` 仅已应用到本机 D1，未执行远程迁移或部署。
@@ -83,3 +83,20 @@
 - 不把旧 `paid_personal`、`paid_team`、`api` 猜测映射到具体新档位。读取及已有待审内容审核保留旧值；编辑时回到 `unknown` 并提示重新选择，新写入按产品对应的档位校验。
 - Turnstile 是真实 SDK + 后端 Siteverify 调用；当前本地为官方始终通过的测试密钥，生产 site key 仍待配置。官方[方案说明](https://developers.cloudflare.com/turnstile/plans/)显示免费版验证请求不限量，最多 20 个 widget、每个 widget 10 个主机名；免费并不表示正式密钥已配置或线上链路已验收。
 - 验证：构建、前端/Worker/E2E 类型检查、ESLint、146 项单元/接口测试和 38 项浏览器测试通过。实际浏览器确认筛选与分布区均不存在，套餐选项随三个产品联动；不创建新迁移、不改写已有套餐记录，也未配置生产 Turnstile 密钥或执行部署。
+
+## 中英文与正式 Turnstile 配置（2026-11-20）
+
+- 用户追加要求整站中英文适配；默认中文路径保持不变，英文使用 `/en/`，语言切换保留路由与查询参数。模板系统文案先翻译，再注入用户内容，代号、署名、经过和墓志铭均保留原文。
+- 导航、可访问性文案、表单与校验、服务端错误、日期、验证码、管理与审核页、凭据文件、随机墓志铭和 PNG 系统标签支持两种语言。用户要求产品名统一为 Claude、Codex、Antigravity，不加中文括注。
+- canonical/hreflang 与 sitemap 覆盖双语，单片最多 22,500 条墓碑记录、45,018 个 URL（含静态与产品页）；不改变批准公开门槛或统计口径。
+- `/en/admin` 及 HTML 别名使用相同 Access 验证；安全审查发现连续斜线可让资源 URL 被当作网络路径，现请求边界拒绝连续斜线与编码路径，内部读取资源只设置 pathname。
+- 普通开发与生产拒绝官方测试密钥与 dummy token；隔离测试须显式开启测试模式并提供成对官方测试密钥。真实密钥在本地和生产均严格验证 Siteverify hostname。`.dev.vars.example` 密钥留空，实际本地旧测试密钥已移除；正式密钥配置与真实验收单独记录。
+- 按用户指定 Cloudflare 官方 agent-setup 指引安装 22 个 Cloudflare Skills，并注册全局 Cloudflare MCP；原有 Codex 配置已备份，未安装可选 cf CLI（项目使用 Wrangler）。账号 OAuth 与正式 widget 状态以实际验收为准，不把安装完成等同于授权完成。
+
+### 正式 widget 与账号连接验收
+
+- 已在 Cloudflare 创建 `haomeile` Managed widget，允许 `haomeile.rip`、`localhost`、`127.0.0.1`，未启用会设置 clearance Cookie 的 pre-clearance。使用 Turnstile 免费方案，没有升级或购买付费服务。真实 site key 写入 `wrangler.toml`；secret 仅存于忽略的 `.dev.vars`（权限 0600），生产 Worker secret 需随正式部署配置。
+- Cloudflare MCP 已完成 OAuth，限定 Account Read、Account Settings Read/Write（widget 管理所需权限）及服务必要权限。旧 shell Codex 0.143.0 因 OAuth issuer 回调兼容问题失败；使用桌面应用内置 0.169.1 成功授权。重新打开 Codex 加载新 MCP。
+
+- 正式密钥本地验收：真实浏览器 widget 生成非 dummy token，投稿获得凭据，管理读取与撤回均 HTTP 200；验收内容从未公开。英文页面也取得真实 token，产品名无中文括注。记录见 `docs/verification/turnstile-production-key-local.json`。尚未部署站点或配置生产 Worker secret。
+- 最终验证：构建、Astro/前端/Worker/E2E 类型检查、ESLint、184 项单元/接口测试、56 项浏览器测试全部通过。

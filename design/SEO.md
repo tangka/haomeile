@@ -5,7 +5,7 @@
 
 Codex 实现时按 §1–§8 逐项落地，§9 是站长上线后要做的事。
 
-本站只覆盖 Claude、Codex、Antigravity（反重力）。产品键依次为 `claude`、`codex`、`antigravity`；路由和查询参数保留 `vendor` 兼容字段名，页面标题、筛选与统计均按产品表述。
+本站只覆盖 Claude、Codex、Antigravity。产品键依次为 `claude`、`codex`、`antigravity`；路由和查询参数保留 `vendor` 兼容字段名，页面标题、筛选与统计均按产品表述。
 
 ---
 
@@ -65,14 +65,14 @@ const SITE = 'https://haomeile.rip';
 
 | 路由 | title | description | robots |
 |---|---|---|---|
-| `/` | 号没了 · AI 账号赛博公墓 | 记录 Claude、Codex、Antigravity（反重力）的账号停用、验证受阻和异常经历。匿名立碑、献花或制作墓志铭卡片，内容为用户自述，未经核实；本站与产品所属厂商无关。 | 默认 |
+| `/` | 号没了 · AI 账号赛博公墓 | 记录 Claude、Codex、Antigravity的账号停用、验证受阻和异常经历。匿名立碑、献花或制作墓志铭卡片，内容为用户自述，未经核实；本站与产品所属厂商无关。 | 默认 |
 | `/v/:vendor` | {产品} 账号停用、封号经历 · 号没了 | 号没了上用户自述的 {产品} 账号停用、地区限制、验证卡住等经历，共 {n} 块公开墓碑，截至 {日期}。内容未经核实，与 {产品} 官方无关。 | 公开墓碑 ≥ 5 块时默认，否则 `noindex,follow` |
 | `/t/:id` | {代号}：{产品} 账号{事件种类} · 号没了 | 用户自述：{经过的前 60 个字}…… 本站未核实。 | `index,follow,noarchive,max-image-preview:large` |
 | `/epitaph` | 墓志铭卡片生成器 · 号没了 | 给没了的 AI 账号做一张像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。 | 默认 |
-| `/appeal` | Claude、Codex、Antigravity 官方申诉入口 · 号没了 | 汇总 Claude、Codex、Antigravity（反重力）三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。 | 默认 |
+| `/appeal` | Claude、Codex、Antigravity 官方申诉入口 · 号没了 | 汇总 Claude、Codex、Antigravity 三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。 | 默认 |
 | `/rules` | 使用须知 · 号没了 | 在号没了立碑前需要知道的规则：写经过、不填隐私、保存凭据、不谈买卖账号和规避风控。 | 默认 |
 | `/privacy` | 数据说明 · 号没了 | 号没了公开哪些内容、不收集哪些信息、统计口径是什么，以及公开内容会被搜索引擎和 AI 服务抓取。 | 默认 |
-| `/about` | 关于 · 号没了 | 号没了是与任何 AI 厂商都无关的独立社区项目，只记录 Claude、Codex 和 Antigravity（反重力）的用户自述经历。 | 默认 |
+| `/about` | 关于 · 号没了 | 号没了是与任何 AI 厂商都无关的独立社区项目，只记录 Claude、Codex 和 Antigravity的用户自述经历。 | 默认 |
 | `/submit` | 立一块碑 · 号没了 | 匿名记录你的 AI 账号是怎么没的。 | `noindex,follow` |
 | `/manage` | 管理我的墓碑 · 号没了 | 用凭据查看审核结果、修改或撤回。 | `noindex,nofollow` |
 | `/admin`、`/api/*` | — | — | 响应头 `X-Robots-Tag: noindex, nofollow` |
@@ -130,7 +130,7 @@ const SITE = 'https://haomeile.rip';
   "alternateName": "AI 账号赛博公墓",
   "url": "https://haomeile.rip/",
   "inLanguage": "zh-CN",
-  "description": "用户匿名记录 Claude、Codex 和 Antigravity（反重力）账号被停用、受限或异常经历的独立社区网站，与产品所属厂商无关。"
+  "description": "用户匿名记录 Claude、Codex 和 Antigravity 账号被停用、受限或异常经历的独立社区网站，与产品所属厂商无关。"
 }
 ```
 

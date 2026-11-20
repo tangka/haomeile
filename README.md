@@ -1,6 +1,6 @@
 # 号没了
 
-一个只记录 Claude、Codex、Antigravity（反重力）账号停用、受限和异常经历的匿名社区。沿用 `design/` 的像素墓园设计，提供纪念墙、匿名立碑、凭据管理、献花举报、人工审核及纯浏览器墓志铭卡片生成器。所有上报均为用户自述，未经核实。
+一个只记录 Claude、Codex、Antigravity 账号停用、受限和异常经历的匿名社区。沿用 `design/` 的像素墓园设计，提供纪念墙、匿名立碑、凭据管理、献花举报、人工审核及纯浏览器墓志铭卡片生成器。所有上报均为用户自述，未经核实。
 
 首页保留总体数字、纪念墙和近 30 天曲线；产品与事件筛选、按产品与事件种类的分布区已移除。投稿表单仍填写产品与事件。
 
@@ -17,9 +17,9 @@ pnpm dev
 
 访问 <http://127.0.0.1:8787>。`pnpm dev` 会构建 Astro 页面、应用本地 D1 迁移，再启动同一端口上的 Worker 页面与 API；修改页面或公共资源会重新构建，Worker 代码由 Wrangler 监听。
 
-首次运行会在 `.dev.vars` 不存在时从 `.dev.vars.example` 复制**仅用于本地的 Cloudflare 官方 Turnstile 测试配置**。首次本地数据库为空，不导入设计稿的示例内容；已有本地数据库会保留。`.dev.vars`、`.wrangler/` 均已忽略，不能提交真实密钥。本地状态存于 `.wrangler/`，与生产 D1 分离。
+首次运行会在 `.dev.vars` 不存在时从 `.dev.vars.example` 复制本地配置模板。模板不包含 Turnstile 密钥；请填入免费正式 widget 的 site key 与 secret，并允许 `127.0.0.1` 和 `localhost`。首次本地数据库为空，不导入设计稿的示例内容；已有本地数据库会保留。`.dev.vars`、`.wrangler/` 均已忽略，不能提交真实密钥。本地状态存于 `.wrangler/`，与生产 D1 分离。
 
-人机验证已接入前端 Turnstile SDK 和后端 Siteverify。当前本地使用官方始终通过的测试密钥，生产 site key 尚未配置；本地通过不能证明生产配置已就绪。Turnstile [免费方案](https://developers.cloudflare.com/turnstile/plans/)不限制验证请求次数，账户最多 20 个 widget，每个 widget 最多 10 个主机名。
+人机验证已接入前端 Turnstile SDK 和后端 Siteverify。普通开发与生产都拒绝官方测试密钥和 dummy token，并核对 Siteverify 返回的 hostname；正式密钥尚未配置时不能投稿。当前 `haomeile` 免费正式 widget 已创建，公开 site key 已写入生产配置，本地 secret 位于忽略的 `.dev.vars`；线上 secret 随正式部署写入。只有隔离测试环境显式设置 `TURNSTILE_TEST_MODE=true` 并提供成对官方测试密钥时才允许测试验证；生产环境不能开启该模式。Turnstile [免费方案](https://developers.cloudflare.com/turnstile/plans/)不限制验证请求次数，账户最多 20 个 widget，每个 widget 最多 10 个主机名。
 
 单独应用本地迁移：
 
@@ -63,9 +63,15 @@ Astro 采用静态输出。Worker 先处理请求，再用 HTMLRewriter 将 D1 �
 | `scripts/`                                | 本地开发和隔离端到端测试入口                |
 | `wrangler.toml`                           | Worker、静态资源、D1、Cron 的生产配置占位   |
 
+## 中英文
+
+默认中文，英文版使用 `/en/` 路径。页头可切换语言并保留当前页面和查询参数；表单、错误、日期、验证码和分享卡片跟随页面语言。用户填写的代号、署名、经过、墓志铭保持原文。语言不依赖 Cookie，也不按浏览器语言自动跳转。
+
+每个页面提供两种语言的 canonical/hreflang；sitemap 按两种语言输出 URL，每个分片最多 22,500 条墓碑记录。后台英文路径与中文路径使用相同 Access 验证。
+
 ## 内容与数据约束
 
-产品范围固定为 Claude（`claude`）、Codex（`codex`）、Antigravity／反重力（`antigravity`），没有其他产品选项。为保持兼容，数据库及 API 的产品字段仍名为 `vendor`。历史 `chatgpt`、`gemini` 记录分别迁移为 `codex`、`antigravity`；其余旧产品记录保留，但不计入公开页面、统计或 sitemap。
+产品范围固定为 Claude（`claude`）、Codex（`codex`）、Antigravity（`antigravity`），没有其他产品选项。为保持兼容，数据库及 API 的产品字段仍名为 `vendor`。历史 `chatgpt`、`gemini` 记录分别迁移为 `codex`、`antigravity`；其余旧产品记录保留，但不计入公开页面、统计或 sitemap。
 
 投稿套餐按产品联动：Claude 支持未知、免费、Pro、Max、Ultra；Codex 支持未知、免费、Go、Plus、Pro；Antigravity 支持未知、免费、Pro、Ultra。“未知”始终可选。旧 `paid_personal`、`paid_team`、`api` 保留原值供读取与存量审核；编辑时提示重选，不擅自归入具体档位。
 

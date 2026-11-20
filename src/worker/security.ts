@@ -1,8 +1,11 @@
 import type { MiddlewareHandler, ErrorHandler } from 'hono';
 import type { AppEnv } from './types';
 import { ApiError } from './lib/errors';
+import { basePath, requestLocale, tr } from '../shared/i18n';
 
 export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
+  const path = basePath(c.req.path);
+  c.set('locale', requestLocale(c.req.raw));
   c.header(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
@@ -11,16 +14,21 @@ export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
   c.header('X-Content-Type-Options', 'nosniff');
   c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   if (
-    c.req.path.startsWith('/api/') ||
-    c.req.path === '/admin' ||
-    c.req.path === '/admin.html' ||
-    c.req.path.startsWith('/admin/')
+    path.startsWith('/api/') ||
+    path === '/admin' ||
+    path === '/admin.html' ||
+    path.startsWith('/admin/')
   ) {
     c.header('X-Robots-Tag', 'noindex, nofollow');
     c.header('Cache-Control', 'no-store');
   }
-  if (new URL(c.req.url).pathname.includes('%'))
+  const pathname = new URL(c.req.url).pathname;
+  // A double slash could become an authority when passed to the asset URL resolver.
+  if (pathname.includes('%') || pathname.includes('//')) {
+    c.header('X-Robots-Tag', 'noindex, nofollow');
+    c.header('Cache-Control', 'no-store');
     throw new ApiError('NOT_FOUND', '这里什么也没有。', 404);
+  }
   if (!['GET', 'HEAD', 'OPTIONS'].includes(c.req.method)) {
     const expected =
       c.env.ENVIRONMENT === 'development'
@@ -40,14 +48,24 @@ export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
   await next();
 };
 export const handleError: ErrorHandler<AppEnv> = (error, c) => {
+  const locale = requestLocale(c.req.raw);
   if (error instanceof ApiError)
     return c.json(
       {
         ok: false,
         error: {
           code: error.code,
-          message: error.message,
-          ...(error.fields ? { fields: error.fields } : {}),
+          message: tr(error.message, locale),
+          ...(error.fields
+            ? {
+                fields: Object.fromEntries(
+                  Object.entries(error.fields).map(([key, value]) => [
+                    key,
+                    tr(value, locale),
+                  ]),
+                ),
+              }
+            : {}),
         },
       },
       error.status as 400,
@@ -58,7 +76,10 @@ export const handleError: ErrorHandler<AppEnv> = (error, c) => {
       ok: false,
       error: {
         code: 'SERVER',
-        message: '服务器出了点问题。不是你的问题。过几分钟再试，碑文不会丢。',
+        message: tr(
+          '服务器出了点问题。不是你的问题。过几分钟再试，碑文不会丢。',
+          locale,
+        ),
       },
     },
     500,

@@ -1,3 +1,4 @@
+import { currentLocale, tr, type Locale } from '../../shared/i18n';
 // Read-only labels retain the meaning of historical submissions. These are not
 // options for new submissions and must never be guessed into named tiers.
 export const LEGACY_PLAN_LABELS = {
@@ -63,3 +64,23 @@ export const LABELS = {
     other: '其他',
   },
 } as const;
+
+/** Localize system labels without touching submitted content. */
+export function getLabels(locale: Locale = currentLocale()): {
+  [Group in keyof typeof LABELS]: {
+    [Key in keyof (typeof LABELS)[Group]]: string;
+  };
+} {
+  return Object.fromEntries(
+    Object.entries(LABELS).map(([group, values]) => [
+      group,
+      Object.fromEntries(
+        Object.entries(values).map(([key, value]) => [key, tr(value, locale)]),
+      ),
+    ]),
+  ) as {
+    [Group in keyof typeof LABELS]: {
+      [Key in keyof (typeof LABELS)[Group]]: string;
+    };
+  };
+}

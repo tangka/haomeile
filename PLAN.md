@@ -6,18 +6,19 @@
 
 ## 1. 项目概述
 
-**一句话**：一个只记录 Claude、Codex、Antigravity（反重力）三种产品账号经历的"AI 账号赛博公墓"。被封号、被停用、卡验证、扣费异常的用户可以匿名"立碑"，记录经过；访客可以献花；另有一个纯前端的"墓志铭生成器"，生成可分享的搞笑墓碑卡片。
+**一句话**：一个只记录 Claude、Codex、Antigravity三种产品账号经历的"AI 账号赛博公墓"。被封号、被停用、卡验证、扣费异常的用户可以匿名"立碑"，记录经过；访客可以献花；另有一个纯前端的"墓志铭生成器"，生成可分享的搞笑墓碑卡片。
 
 **名称**：号没了
 **域名**：`haomeile.rip`
 **调性**：温和、好玩、带点自嘲；不阴阳怪气，不攻击个人。
 **吉祥物**：原创"守墓小猫"（像素风，提着小灯笼巡墓）。
 
-**目标用户**：中文用户，Claude、Codex、Antigravity 的重度使用者。
+**目标用户**：中英文用户，Claude、Codex、Antigravity 的重度使用者。
 
-**产品范围**：仅 Claude（`claude`）、Codex（`codex`）、Antigravity／反重力（`antigravity`）。页面分类称为“产品”，不设置其他产品选项。数据库及 API 保留原字段名 `vendor`，它表示产品键而非厂商；历史 `chatgpt`、`gemini` 键分别迁移到 `codex`、`antigravity`，其余旧产品记录保留但不出现在公开页面、统计与 sitemap 中。
+**产品范围**：仅 Claude（`claude`）、Codex（`codex`）、Antigravity（`antigravity`）。页面分类称为“产品”，不设置其他产品选项。数据库及 API 保留原字段名 `vendor`，它表示产品键而非厂商；历史 `chatgpt`、`gemini` 键分别迁移到 `codex`、`antigravity`，其余旧产品记录保留但不出现在公开页面、统计与 sitemap 中。
 
 **MVP 范围**：
+
 1. 纪念墙（列表、总体数字、近 30 天曲线；不显示分类筛选或分布区）
 2. 立碑（匿名投稿 + 私密凭据）
 3. 管理我的墓碑（查看审核状态、修改、撤回）
@@ -32,98 +33,109 @@
 ## 2. 硬性约束（任何情况下不得违反）
 
 ### 2.1 品牌与商标
+
 - 站名、Logo、吉祥物、配色**不得**使用或模仿任何 AI 厂商的商标、Logo、吉祥物或品牌形象（包括 Claude、Codex、Antigravity 及其所属厂商的品牌元素）。
 - 产品名称只能作为**纯文字标签**出现（例如投稿产品选项"Claude"），用于如实说明事实。不得使用厂商 Logo 图片或图标。
 - 页脚固定显示：「本站为独立社区项目，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。」
 
 ### 2.2 隐私
+
 - 不收集邮箱、手机号、真实姓名；不需要注册登录。
 - 不存储原始 IP。限流和去重只使用 `SHA-256(IP + PEPPER + 日期)` 这类加盐、按日轮换的哈希。
 - 不使用任何第三方追踪、广告、指纹脚本；不设置 Cookie。
 - 投稿内容中检测到隐私信息（见 §6.3）时，前后端都要拦截，并提示用户删除。
 
 ### 2.3 不碰灰产
+
 - 站点任何位置**不得**提供或引导：买卖账号、拼车/合租、中转 API、代充代付、翻墙节点、规避风控/防封技巧、解封服务。
 - 投稿命中灰产关键词（见 §6.4）的，一律进入人工审核并标红；审核后台提供一键拒绝。
 - 不做"封号概率测算""防封指南"之类功能。
 
 ### 2.4 内容真实性
+
 - 所有投稿标注「用户自述，未经核实」。
 - 统计数据旁固定说明：「只统计本站当前可见的自愿上报，不代表平台实际封号数量，不能用来推算封号率。」
 - **不得生成虚假的上报数据**。开发用的示例数据只能存在于本地开发环境的 seed 文件中，内容明显标注"示例"，生产数据库不得写入。
 
 ### 2.5 外链
+
 - 「官方申诉入口」页的链接**不得由 Codex 编造**。只写占位符 `TODO_OFFICIAL_URL`，由站长人工核对后填入。
 
 ---
 
 ## 3. 页面与功能
 
-| 路径 | 说明 |
-|---|---|
-| `/` | 首页：标题区 + 吉祥物插画 + 统计卡片 + 纪念墙（按审核通过时间倒序，每页 20 条，"加载更多"）+ 近 30 天曲线；不显示产品或事件筛选，也不显示两类分布区 |
-| `/t/:id` | 单块墓碑详情页（可分享），含献花、举报按钮 |
-| `/submit` | 立碑表单 |
-| `/manage` | 输入凭据 → 查看审核状态 / 修改 / 撤回 |
-| `/epitaph` | 墓志铭生成器（纯前端，不向服务器发送任何数据） |
-| `/appeal` | Claude、Codex、Antigravity 的官方帮助与申诉入口汇总（链接为占位符） |
-| `/rules` | 使用须知 |
-| `/privacy` | 数据说明 |
-| `/about` | 关于 & 免责声明 |
-| `/admin` | 审核后台（受 Cloudflare Access 保护） |
-| `/v/:vendor` | 产品落地页：只看 Claude、Codex 或 Antigravity 的墓碑和统计（见 §16） |
-| `/sitemap.xml`、`/robots.txt`、`/llms.txt` | 抓取相关文件（见 §16） |
+| 路径                                       | 说明                                                                                                                                                |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                        | 首页：标题区 + 吉祥物插画 + 统计卡片 + 纪念墙（按审核通过时间倒序，每页 20 条，"加载更多"）+ 近 30 天曲线；不显示产品或事件筛选，也不显示两类分布区 |
+| `/t/:id`                                   | 单块墓碑详情页（可分享），含献花、举报按钮                                                                                                          |
+| `/submit`                                  | 立碑表单                                                                                                                                            |
+| `/manage`                                  | 输入凭据 → 查看审核状态 / 修改 / 撤回                                                                                                               |
+| `/epitaph`                                 | 墓志铭生成器（纯前端，不向服务器发送任何数据）                                                                                                      |
+| `/appeal`                                  | Claude、Codex、Antigravity 的官方帮助与申诉入口汇总（链接为占位符）                                                                                 |
+| `/rules`                                   | 使用须知                                                                                                                                            |
+| `/privacy`                                 | 数据说明                                                                                                                                            |
+| `/about`                                   | 关于 & 免责声明                                                                                                                                     |
+| `/admin`                                   | 审核后台（受 Cloudflare Access 保护）                                                                                                               |
+| `/v/:vendor`                               | 产品落地页：只看 Claude、Codex 或 Antigravity 的墓碑和统计（见 §16）                                                                                |
+| `/sitemap.xml`、`/robots.txt`、`/llms.txt` | 抓取相关文件（见 §16）                                                                                                                              |
 
 ### 3.1 立碑表单字段
 
-| 字段 | 必填 | 规则 |
-|---|---|---|
-| 代号 `codename` | 是 | 1–32 字，公开显示，如"小橘号"。提示不要用邮箱或真实用户名 |
-| 昵称 `nickname` | 否 | ≤24 字 |
-| 产品 `vendor` | 是 | `claude`（Claude）/ `codex`（Codex）/ `antigravity`（Antigravity／反重力） |
-| 事件种类 `event_type` | 是 | `suspended` 账号停用 / `org_suspended` 组织暂停 / `region` 地区限制 / `verification` 验证卡住 / `billing` 扣费或支付异常 / `other` 其他 |
-| 套餐 `plan` | 否 | 按产品联动：Claude 为 `unknown` / `free` / `pro` / `max` / `ultra`；Codex 为 `unknown` / `free` / `go` / `plus` / `pro`；Antigravity 为 `unknown` / `free` / `pro` / `ultra`。`unknown` 始终保留，`free` 显示“免费” |
-| 生于 `born_at` | 否 | 精度可选：不记得 / 到月 / 到日 |
-| 卒于 `died_at` | 是 | 事件发生日期（北京时间），不得晚于今天 |
-| 发生了什么 `story` | 是 | 10–800 字。提示"猜测请注明" |
-| 墓志铭 `epitaph` | 否 | ≤120 字 |
-| 申诉状态 `appeal_status` | 否 | `none` / `pending` / `rejected` / `restored` |
-| 卡片样式 `card_style` | 是 | `flower` 小花 / `cloud` 云朵 / `star` 星星，默认 `flower` |
-| 同意公开 | 是 | 勾选框：「我同意审核通过后公开以上内容，确认没有填写隐私信息。」 |
+| 字段                     | 必填 | 规则                                                                                                                                                                                                                |
+| ------------------------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 代号 `codename`          | 是   | 1–32 字，公开显示，如"小橘号"。提示不要用邮箱或真实用户名                                                                                                                                                           |
+| 昵称 `nickname`          | 否   | ≤24 字                                                                                                                                                                                                              |
+| 产品 `vendor`            | 是   | `claude`（Claude）/ `codex`（Codex）/ `antigravity`（Antigravity）                                                                                                                                                  |
+| 事件种类 `event_type`    | 是   | `suspended` 账号停用 / `org_suspended` 组织暂停 / `region` 地区限制 / `verification` 验证卡住 / `billing` 扣费或支付异常 / `other` 其他                                                                             |
+| 套餐 `plan`              | 否   | 按产品联动：Claude 为 `unknown` / `free` / `pro` / `max` / `ultra`；Codex 为 `unknown` / `free` / `go` / `plus` / `pro`；Antigravity 为 `unknown` / `free` / `pro` / `ultra`。`unknown` 始终保留，`free` 显示“免费” |
+| 生于 `born_at`           | 否   | 精度可选：不记得 / 到月 / 到日                                                                                                                                                                                      |
+| 卒于 `died_at`           | 是   | 事件发生日期（北京时间），不得晚于今天                                                                                                                                                                              |
+| 发生了什么 `story`       | 是   | 10–800 字。提示"猜测请注明"                                                                                                                                                                                         |
+| 墓志铭 `epitaph`         | 否   | ≤120 字                                                                                                                                                                                                             |
+| 申诉状态 `appeal_status` | 否   | `none` / `pending` / `rejected` / `restored`                                                                                                                                                                        |
+| 卡片样式 `card_style`    | 是   | `flower` 小花 / `cloud` 云朵 / `star` 星星，默认 `flower`                                                                                                                                                           |
+| 同意公开                 | 是   | 勾选框：「我同意审核通过后公开以上内容，确认没有填写隐私信息。」                                                                                                                                                    |
 
 表单顶部醒目提示：**不要填写**邮箱、密码、API Key、订单号、手机号、微信/QQ、链接、证件信息。
 
 套餐按本站当前支持的个人档位收录，不填写价格。历史 `paid_personal`、`paid_team`、`api` 仅保留原值用于读取与审核，不自动映射到某个具体档位；用户编辑时改为 `unknown` 并提示重新选择。已有待审投稿可以按旧值审核，新的投稿与修改只接受所选产品对应的新档位。
 
-提交需通过 Cloudflare Turnstile 人机验证。前端加载真实 SDK，Worker 调用 Siteverify 校验 token；当前本地使用官方始终通过的测试密钥，生产 site key 尚未配置，不能据此宣称线上验证已完成。
+提交需通过 Cloudflare Turnstile 人机验证。前端加载真实 SDK，Worker 调用 Siteverify 校验 token；普通开发与生产必须使用免费正式 widget，测试密钥只用于显式开启的隔离测试，后端始终核对精确 hostname；未用真实 token 验收前不能宣称正式接入完成。
 
 ### 3.2 私密凭据
+
 - 提交成功后生成凭据：编号 `id`（10 位 base32）+ 密钥 `secret`（32 字节随机数，base64url）。
 - 弹窗展示凭据，提供"复制"和"下载凭据文件（.txt）"两个按钮，并强调"丢失无法找回"。必须勾选"我已保存"才能关闭弹窗。
 - 浏览器 `localStorage` 可选保存凭据（用户勾选"在本浏览器记住"才保存）。读写都要 try/catch。
 - 服务器只存 `SHA-256(PEPPER + secret)`，比较时用常数时间比较。
 
 ### 3.3 修改与撤回
+
 - **修改**：修改内容存入 `pending_patch`，重新进入审核；审核通过前，墙上继续显示上一个已通过的版本。
 - **撤回**：立即从墙上和统计中移除；同时清空 `story`、`epitaph`、`nickname`、`codename` 等文本字段，只保留 `id`、`status=withdrawn` 和时间戳用于审计。
 
 ### 3.4 献花
+
 - 每个访客对每块墓碑每天最多献花 1 次。
 - 访客编号：首次访问时在 `localStorage` 生成随机 UUID；服务器只存 `SHA-256(visitor_id + PEPPER)`。
 - 不需要人机验证，但按 IP 哈希限流（见 §6.5）。
 
 ### 3.5 举报
+
 - 原因：`privacy` 含隐私信息 / `abuse` 辱骂、骚扰或恶意内容 / `gray_market` 灰产广告 / `other` 其他（可附 ≤200 字说明）。
 - 需要 Turnstile。举报不会立即隐藏墓碑，进入后台待处理。
 - 同一墓碑收到 3 个不同访客的举报时，自动转为 `hidden` 等待复核。
 
 ### 3.6 统计
+
 - 今日上报数（北京时间）、近 7 日上报数、当前可见总数。
 - 不显示按产品或按事件种类的分布区，也不显示两组分类筛选。
 - 每日上报与事件发生数折线（近 30 天）。
 - 统计只计 `status = approved` 且产品键属于 `claude`、`codex`、`antigravity` 的记录。
 
 ### 3.7 墓志铭生成器（`/epitaph`）
+
 - 输入：代号、产品（三选一：Claude / Codex / Antigravity）、存活天数（或注册/卒日期自动计算）、死因（事件种类）、一句墓志铭（可点"随机来一句"）。
 - 内置 30 条以上原创、无攻击性的随机墓志铭模板，例如：「生前写了 3 万行代码，死后一行也没留下」「它走得很安详，走之前还在思考」。模板不得点名嘲讽真实个人或公司员工。
 - 用 `<canvas>` 渲染墓碑卡片（三种样式与纪念墙一致），提供"下载 PNG"。
@@ -134,17 +146,17 @@
 
 ## 4. 技术栈
 
-| 层 | 选择 |
-|---|---|
-| 运行时 | Cloudflare Workers（含 Static Assets） |
-| API 框架 | Hono |
-| 前端 | Astro（静态输出）+ 少量原生 TypeScript；样式用原生 CSS（CSS 变量），不引入 UI 框架 |
-| 数据库 | Cloudflare D1 |
-| 人机验证 | Cloudflare Turnstile |
-| 后台鉴权 | Cloudflare Access（Zero Trust），Worker 内校验 `Cf-Access-Jwt-Assertion` |
-| 测试 | Vitest（单元/接口，使用 `@cloudflare/vitest-pool-workers`）+ Playwright（端到端） |
-| 语言 | TypeScript，`strict: true` |
-| 包管理 | pnpm |
+| 层       | 选择                                                                               |
+| -------- | ---------------------------------------------------------------------------------- |
+| 运行时   | Cloudflare Workers（含 Static Assets）                                             |
+| API 框架 | Hono                                                                               |
+| 前端     | Astro（静态输出）+ 少量原生 TypeScript；样式用原生 CSS（CSS 变量），不引入 UI 框架 |
+| 数据库   | Cloudflare D1                                                                      |
+| 人机验证 | Cloudflare Turnstile                                                               |
+| 后台鉴权 | Cloudflare Access（Zero Trust），Worker 内校验 `Cf-Access-Jwt-Assertion`           |
+| 测试     | Vitest（单元/接口，使用 `@cloudflare/vitest-pool-workers`）+ Playwright（端到端）  |
+| 语言     | TypeScript，`strict: true`                                                         |
+| 包管理   | pnpm                                                                               |
 
 ### 4.1 目录结构
 
@@ -247,36 +259,36 @@ CREATE TABLE audit_log (
 
 ## 6. API 设计
 
-所有接口返回 JSON：`{ ok: true, data }` 或 `{ ok: false, error: { code, message } }`，`message` 为中文、可直接展示给用户。
+所有接口返回 JSON：`{ ok: true, data }` 或 `{ ok: false, error: { code, message } }`，`message` 按请求的 `Accept-Language` 返回中文或英文，可直接展示给用户。
 
 ### 6.1 公开接口
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/tombstones?vendor=&event=&cursor=` | 已通过墓碑列表，每页 20 |
-| GET | `/api/tombstones/:id` | 单条（仅 approved） |
-| GET | `/api/stats` | 统计数据 |
-| POST | `/api/tombstones` | 立碑（需 Turnstile token）→ 返回 `{ id, secret }` |
-| POST | `/api/manage/status` | 凭据 → 返回本人墓碑全部字段和审核状态 |
-| POST | `/api/manage/patch` | 凭据 + 修改内容 → 存入 `pending_patch` |
-| POST | `/api/manage/withdraw` | 凭据 → 撤回 |
-| POST | `/api/tombstones/:id/flower` | 献花（带 visitor_id） |
-| POST | `/api/tombstones/:id/report` | 举报（需 Turnstile） |
+| 方法 | 路径                                     | 说明                                              |
+| ---- | ---------------------------------------- | ------------------------------------------------- |
+| GET  | `/api/tombstones?vendor=&event=&cursor=` | 已通过墓碑列表，每页 20                           |
+| GET  | `/api/tombstones/:id`                    | 单条（仅 approved）                               |
+| GET  | `/api/stats`                             | 统计数据                                          |
+| POST | `/api/tombstones`                        | 立碑（需 Turnstile token）→ 返回 `{ id, secret }` |
+| POST | `/api/manage/status`                     | 凭据 → 返回本人墓碑全部字段和审核状态             |
+| POST | `/api/manage/patch`                      | 凭据 + 修改内容 → 存入 `pending_patch`            |
+| POST | `/api/manage/withdraw`                   | 凭据 → 撤回                                       |
+| POST | `/api/tombstones/:id/flower`             | 献花（带 visitor_id）                             |
+| POST | `/api/tombstones/:id/report`             | 举报（需 Turnstile）                              |
 
 公开列表只返回展示所需字段，**永远不返回** `secret_hash`、`flags`、`pending_patch`。
 
 ### 6.2 后台接口（`/api/admin/*`，必须校验 Access JWT）
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/admin/queue?type=new\|patch\|reported` | 待审核列表，命中规则的排在前面并带标记 |
-| POST | `/api/admin/tombstones/:id/approve` | 通过 |
-| POST | `/api/admin/tombstones/:id/reject` | 拒绝（可选原因） |
-| POST | `/api/admin/tombstones/:id/hide` | 隐藏 |
-| POST | `/api/admin/tombstones/:id/restore` | 恢复显示 |
-| POST | `/api/admin/tombstones/:id/patch/approve` | 通过修改 |
-| POST | `/api/admin/tombstones/:id/patch/reject` | 拒绝修改 |
-| POST | `/api/admin/reports/:id/resolve` | 处理举报 |
+| 方法 | 路径                                         | 说明                                   |
+| ---- | -------------------------------------------- | -------------------------------------- |
+| GET  | `/api/admin/queue?type=new\|patch\|reported` | 待审核列表，命中规则的排在前面并带标记 |
+| POST | `/api/admin/tombstones/:id/approve`          | 通过                                   |
+| POST | `/api/admin/tombstones/:id/reject`           | 拒绝（可选原因）                       |
+| POST | `/api/admin/tombstones/:id/hide`             | 隐藏                                   |
+| POST | `/api/admin/tombstones/:id/restore`          | 恢复显示                               |
+| POST | `/api/admin/tombstones/:id/patch/approve`    | 通过修改                               |
+| POST | `/api/admin/tombstones/:id/patch/reject`     | 拒绝修改                               |
+| POST | `/api/admin/reports/:id/resolve`             | 处理举报                               |
 
 每个后台操作写入 `audit_log`。
 
@@ -304,15 +316,15 @@ CREATE TABLE audit_log (
 
 ### 6.5 限流（按 IP 哈希）
 
-| 动作 | 限制 |
-|---|---|
-| 立碑 | 3 次 / 天 |
-| 修改 | 10 次 / 天 |
-| 举报 | 10 次 / 天 |
-| 献花 | 100 次 / 天 |
+| 动作         | 限制                       |
+| ------------ | -------------------------- |
+| 立碑         | 3 次 / 天                  |
+| 修改         | 10 次 / 天                 |
+| 举报         | 10 次 / 天                 |
+| 献花         | 100 次 / 天                |
 | 凭据校验失败 | 20 次 / 小时（防暴力破解） |
 
-超限返回 429 和中文提示。
+超限返回 429 和当前页面语言的提示。
 
 ---
 
@@ -327,20 +339,20 @@ CREATE TABLE audit_log (
   - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
 - 写操作接口只接受 `Content-Type: application/json`，并校验 `Origin` 等于 `https://haomeile.rip`。
 - 密钥只通过 `wrangler secret` 配置：`TURNSTILE_SECRET`、`PEPPER`、`ACCESS_AUD`、`ACCESS_TEAM_DOMAIN`。代码和仓库中不得出现真实密钥。
-- 本地开发使用 Turnstile 官方测试密钥。
+- 普通本地开发与生产使用真实 Turnstile 密钥；官方测试密钥仅限显式开启的隔离测试。
 
 ---
 
 ## 8. 数据保留
 
-| 数据 | 保留规则 |
-|---|---|
-| 已通过墓碑 | 一直保留，直到用户撤回或被隐藏 |
-| 已撤回 | 立即清空文本字段 |
-| 已拒绝 | 30 天后删除整行 |
-| 已处理举报 | 90 天后删除 |
-| `rate_limits` | 超过 2 天的记录删除 |
-| `flowers` | 只保留计数所需记录；超过 2 天的去重记录可删除（`tombstones.flowers` 计数保留） |
+| 数据          | 保留规则                                                                       |
+| ------------- | ------------------------------------------------------------------------------ |
+| 已通过墓碑    | 一直保留，直到用户撤回或被隐藏                                                 |
+| 已撤回        | 立即清空文本字段                                                               |
+| 已拒绝        | 30 天后删除整行                                                                |
+| 已处理举报    | 90 天后删除                                                                    |
+| `rate_limits` | 超过 2 天的记录删除                                                            |
+| `flowers`     | 只保留计数所需记录；超过 2 天的去重记录可删除（`tombstones.flowers` 计数保留） |
 
 用 Workers Cron Trigger 每天凌晨（北京时间 04:17）执行清理。
 
@@ -349,11 +361,12 @@ CREATE TABLE audit_log (
 ## 9. 文案（Codex 照此落地，可微调措辞）
 
 **首页标题**：号没了 —— AI 账号赛博公墓
-**副标题**：Claude、Codex、Antigravity（反重力），账号没了就来立一块碑。
+**副标题**：Claude、Codex、Antigravity，账号没了就来立一块碑。
 **统计说明**：只统计本站当前可见的自愿上报，不代表平台实际封号数量，不能用来推算封号率。
 **墓碑卡片角标**：用户自述 · 未经核实
 
 **使用须知（/rules）要点**：
+
 1. 写经过，猜测请注明。
 2. 不填隐私：邮箱、密码、API Key、订单号、手机号、微信/QQ、链接、证件信息。
 3. 保存好凭据，丢失无法找回。
@@ -365,7 +378,7 @@ CREATE TABLE audit_log (
 
 **关于（/about）**：独立社区项目，与任何 AI 厂商无隶属关系；产品名称和商标归各自所有者；内容为用户自述，本站不核实，也不据此判断封号原因；联系邮箱 `TODO_CONTACT_EMAIL`（站长填写，用于更正和投诉）。
 
-**官方申诉入口（/appeal）**：仅三张产品卡片：Claude、Codex、Antigravity（反重力）。每张显示产品名（纯文字）、「官方帮助中心」链接和「官方申诉方式」说明，全部为 `TODO_OFFICIAL_URL` 占位，并在页面顶部注明「以下链接均指向厂商官方网站，最后核对日期：TODO_DATE」。
+**官方申诉入口（/appeal）**：仅三张产品卡片：Claude、Codex、Antigravity。每张显示产品名（纯文字）、「官方帮助中心」链接和「官方申诉方式」说明，全部为 `TODO_OFFICIAL_URL` 占位，并在页面顶部注明「以下链接均指向厂商官方网站，最后核对日期：TODO_DATE」。
 
 ---
 
@@ -388,6 +401,7 @@ CREATE TABLE audit_log (
 每个里程碑完成后：运行全部测试 → 通过后提交一次 git commit，提交信息以 `M<n>:` 开头。
 
 **M0 项目初始化**
+
 - pnpm 初始化、TypeScript strict、ESLint + Prettier。
 - `wrangler.toml`：Worker、Static Assets、D1 绑定 `DB`、Cron Trigger、环境变量占位。
 - Astro 项目，构建输出给 Worker 作为静态资源。
@@ -395,25 +409,30 @@ CREATE TABLE audit_log (
 - 创建空的 `DECISIONS.md`。
 
 **M1 数据库与公开 API**
+
 - 迁移 SQL（§5）。
 - `lib/` 下全部工具函数及单元测试：校验、隐私检测、灰产检测、凭据生成与校验、限流、Turnstile 校验、北京时间工具。
 - 实现 §6.1 全部公开接口及接口测试。
 
 **M2 前台页面**
+
 - `/`、`/t/:id`、`/submit`、`/manage`、`/rules`、`/privacy`、`/about`、`/appeal`。
 - 保留总体数字和近 30 天曲线（原生 SVG），不渲染分类筛选及分布区。
 - 凭据弹窗（复制、下载、"我已保存"）。
 
 **M3 审核后台**
+
 - Access JWT 校验中间件（未通过一律 403）。
 - `/admin` 页面：三个队列标签页（新投稿 / 修改 / 被举报），灰产与举报标红，一键通过/拒绝/隐藏/恢复，显示 `audit_log`。
 - §6.2 全部接口及测试。
 
 **M4 墓志铭生成器**
+
 - `/epitaph` 页面，canvas 渲染、PNG 下载、30+ 条随机模板。
 - 用 Playwright 断言该页面不发出任何网络请求（除静态资源外）。
 
 **M5 安全加固与测试**
+
 - §7 全部安全头和 Origin 校验。
 - §8 定时清理任务及测试。
 - Playwright 端到端：立碑 → 拿到凭据 → 后台通过 → 墙上可见 → 献花（同日重复无效）→ 修改 → 后台通过修改 → 撤回 → 墙上与统计中消失。
@@ -421,12 +440,14 @@ CREATE TABLE audit_log (
 - 375px 移动端截图检查无横向滚动。
 
 **M5.5 SEO、GEO 与品牌文件**
+
 - 按 `design/SEO.md` 实现：SiteLayout 的 head、每个路由的标题和描述模板、`/v/:vendor` 落地页、动态 `sitemap.xml`、墓碑页 410/404 状态码与缓存头、`X-Robots-Tag`、JSON-LD、可抓取的分页链接。
 - 把 `design/brand/` 和 `design/seo/` 的文件放到 SEO.md §8 指定的位置。
 - 测试：sitemap 只含已公开的碑；撤回后墓碑页返回 410 且从 sitemap 消失；JSON-LD 中用户文字的 `<` 被转义；`/manage`、`/submit` 输出 noindex。
 - 用 Lighthouse 跑首页和一个墓碑页，结果记入 `DECISIONS.md`。
 
 **M6 部署文档**
+
 - 编写 `DEPLOY.md`：创建 D1、执行迁移、配置 secrets、配置 Turnstile、配置 Access、绑定自定义域名、首次发布、回滚方法。
 - 编写 `README.md`：本地开发、测试、目录说明。
 
@@ -462,14 +483,14 @@ CREATE TABLE audit_log (
 - AI 自动审核（如以后要做，须在数据说明中披露发送了哪些字段、发给了谁、保留多久）。
 - 广告、付费功能、联盟推广链接。
 - 墓碑的动态 OG 分享图（MVP 用统一的静态 OG 图）。
-- 多语言。
+- 中英文以外的语言。
 
 ---
 
 ## 14. 站长需要亲自完成的事（Codex 不做）
 
 1. 在 Cloudflare 添加站点 `haomeile.rip`；如果域名不是在 Cloudflare 买的，到注册商后台把 NS 改成 Cloudflare 提供的地址。
-2. 创建 Turnstile 站点，拿到 site key 和 secret。
+2. Turnstile 已获用户授权由 Codex 协助创建免费正式站点并配置；遇到账号登录、二次验证或人工挑战时交给站长完成。
 3. 在 Cloudflare Zero Trust 创建 Access 应用，保护 `haomeile.rip/admin*` 和 `haomeile.rip/api/admin/*`，只允许你自己的邮箱。
 4. 用 `wrangler secret put` 配置 `TURNSTILE_SECRET`、`PEPPER`（随机 32 字节以上）、`ACCESS_AUD`、`ACCESS_TEAM_DOMAIN`。
 5. 人工核对并填写 `/appeal` 的官方链接、`TODO_CONTACT_EMAIL`、`TODO_DATE`。
@@ -498,3 +519,7 @@ CREATE TABLE audit_log (
 - **收录与撤回**：sitemap 只列已公开的碑；撤回返回 410，隐藏、待审、未通过返回 404；墓碑页带 `noarchive`，缓存不超过 5 分钟。
 - **GEO**：统计写成带日期和口径的完整句子；提供 `llms.txt`；结构化数据只用 WebSite、DiscussionForumPosting、BreadcrumbList，不用评价、评分类类型。
 - **不做**：产品对比、封号率排名、任何诱导性标题。
+
+## 15. 中英文适配（用户追加）
+
+默认中文 `/`，英文 `/en/`；导航、表单、错误、日期、人机验证与分享卡片随页面语言显示。切换保留当前路由和查询参数，不使用 Cookie、不自动改写用户内容。canonical/hreflang 和 sitemap 覆盖两种语言，英文后台别名同样经过 Access。公开产品名称统一使用 Claude、Codex、Antigravity，不加中文括注。

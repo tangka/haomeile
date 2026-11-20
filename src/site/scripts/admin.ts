@@ -1,13 +1,15 @@
+import { currentLocale, tr } from '../../shared/i18n';
 import { api } from './api';
 import { toast } from './toast';
-import { LABELS } from './labels';
+import { getLabels } from './labels';
 import { ago, num } from './format';
 import type { PublicTombstone, TombInput } from '../../worker/types';
+const labels = getLabels();
 
 type QueueType = 'new' | 'patch' | 'reported';
 interface Report {
   id: string;
-  reason: keyof typeof LABELS.report_reason;
+  reason: keyof typeof labels.report_reason;
   note: string | null;
   created_at: string;
 }
@@ -31,30 +33,30 @@ interface QueueResponse {
 }
 
 const fieldLabels: Record<string, string> = {
-  codename: '代号',
-  nickname: '署名',
-  vendor: '产品',
-  event_type: '事件种类',
-  plan: '套餐',
-  born_at: '生于',
-  born_precision: '日期精度',
-  died_at: '卒于',
-  story: '经过',
-  epitaph: '墓志铭',
-  appeal_status: '申诉',
-  card_style: '碑脚装饰',
-  status: '状态',
+  codename: tr('代号'),
+  nickname: tr('署名'),
+  vendor: tr('产品'),
+  event_type: tr('事件种类'),
+  plan: tr('套餐'),
+  born_at: tr('生于'),
+  born_precision: tr('日期精度'),
+  died_at: tr('卒于'),
+  story: tr('经过'),
+  epitaph: tr('墓志铭'),
+  appeal_status: tr('申诉'),
+  card_style: tr('碑脚装饰'),
+  status: tr('状态'),
 };
 const actionLabels: Record<string, string> = {
-  approve: '通过',
-  reject: '拒绝',
-  hide: '隐藏',
-  restore: '恢复显示',
-  patch_approve: '通过修改',
-  patch_reject: '保留旧版',
-  withdraw: '用户撤回',
-  resolve_report: '处理举报',
-  auto_hide: '自动隐藏：3 人举报',
+  approve: tr('通过'),
+  reject: tr('拒绝'),
+  hide: tr('隐藏'),
+  restore: tr('恢复显示'),
+  patch_approve: tr('通过修改'),
+  patch_reject: tr('保留旧版'),
+  withdraw: tr('用户撤回'),
+  resolve_report: tr('处理举报'),
+  auto_hide: tr('自动隐藏：3 人举报'),
 };
 const queue = document.querySelector<HTMLDivElement>('#queue')!;
 const log = document.querySelector<HTMLTableSectionElement>('#audit-log')!;
@@ -75,14 +77,14 @@ function element<K extends keyof HTMLElementTagNameMap>(
 
 function fieldValue(key: string, value: unknown) {
   const groups: Record<string, Record<string, string>> = {
-    vendor: LABELS.vendor,
-    event_type: LABELS.event_type,
-    plan: LABELS.plan,
-    appeal_status: LABELS.appeal_status,
-    card_style: LABELS.card_style,
-    status: LABELS.status,
+    vendor: labels.vendor,
+    event_type: labels.event_type,
+    plan: labels.plan,
+    appeal_status: labels.appeal_status,
+    card_style: labels.card_style,
+    status: labels.status,
   };
-  const text = value == null || value === '' ? '未填写' : String(value);
+  const text = value == null || value === '' ? tr('未填写') : String(value);
   return groups[key]?.[text] ?? text;
 }
 
@@ -119,7 +121,7 @@ function highlighted(text: string, words: string[]) {
 
 function details(item: QueueItem) {
   const disclosure = element('details');
-  disclosure.append(element('summary', '', '展开全部字段'));
+  disclosure.append(element('summary', '', tr('展开全部字段')));
   const fields = element('dl', 'facts');
   for (const key of Object.keys(fieldLabels)) {
     fields.append(
@@ -147,10 +149,12 @@ function actionButton(
     });
     try {
       await api(path, getBody());
-      toast(`已${label}。`);
+      toast(tr(`已${label}。`, currentLocale(), 'Action completed.'));
       await load();
     } catch (error) {
-      toast(error instanceof Error ? error.message : '操作没有完成，请重试。');
+      toast(
+        error instanceof Error ? error.message : tr('操作没有完成，请重试。'),
+      );
       controls.forEach((control) => {
         control.disabled = false;
       });
@@ -172,19 +176,27 @@ function renderItem(item: QueueItem) {
     element(
       'h3',
       '',
-      item.pending_patch?.codename || item.codename || '无名氏',
+      item.pending_patch?.codename || item.codename || tr('无名氏'),
     ),
   );
   head.append(
     element(
       'span',
       'qmeta',
-      `${LABELS.vendor[item.vendor]}，${LABELS.event_type[item.event_type]}，${ago(item.updated_at)}提交`,
+      currentLocale() === 'en'
+        ? `${labels.vendor[item.vendor]} · ${labels.event_type[item.event_type]} · Submitted ${ago(item.updated_at, Date.now(), 'en').toLowerCase()}`
+        : `${labels.vendor[item.vendor]}，${labels.event_type[item.event_type]}，${ago(item.updated_at)}提交`,
     ),
   );
   article.append(head);
   if (flags.length)
-    article.append(element('span', 'flag', `命中灰产词：${flags.join('、')}`));
+    article.append(
+      element(
+        'span',
+        'flag',
+        `${tr('命中灰产词：')}${flags.join(currentLocale() === 'en' ? ', ' : '、')}`,
+      ),
+    );
   const story = element('p', 'qstory');
   story.append(highlighted(item.story || '', flags));
   article.append(story);
@@ -197,8 +209,8 @@ function renderItem(item: QueueItem) {
       const after = fieldValue(key, item.pending_patch[key as keyof TombInput]);
       if (before === after) continue;
       for (const [label, value] of [
-        ['现在显示', before],
-        ['改成', after],
+        [tr('现在显示'), before],
+        [tr('改成'), after],
       ]) {
         const part = element('div');
         part.append(
@@ -209,7 +221,7 @@ function renderItem(item: QueueItem) {
       }
     }
     if (!diff.childElementCount)
-      diff.append(element('p', '', '提交的内容和当前版本相同。'));
+      diff.append(element('p', '', tr('提交的内容和当前版本相同。')));
     article.append(diff);
   }
 
@@ -218,7 +230,7 @@ function renderItem(item: QueueItem) {
   if (current === 'new') {
     const reasonId = `reason-${item.id}`;
     const field = element('div', 'field');
-    const label = element('label', '', '拒绝原因（选填）');
+    const label = element('label', '', tr('拒绝原因（选填）'));
     label.htmlFor = reasonId;
     const reason = element('input');
     reason.id = reasonId;
@@ -227,12 +239,12 @@ function renderItem(item: QueueItem) {
     article.append(field);
     actions.append(
       actionButton(
-        '通过',
+        tr('通过'),
         `${base}/approve`,
         flags.length ? '' : 'btn-primary',
       ),
       actionButton(
-        '拒绝',
+        tr('拒绝'),
         `${base}/reject`,
         flags.length ? 'btn-danger' : '',
         () => ({ reason: reason.value }),
@@ -240,20 +252,20 @@ function renderItem(item: QueueItem) {
     );
   } else if (current === 'patch') {
     actions.append(
-      actionButton('通过修改', `${base}/patch/approve`, 'btn-primary'),
-      actionButton('保留旧版', `${base}/patch/reject`, ''),
+      actionButton(tr('通过修改'), `${base}/patch/approve`, 'btn-primary'),
+      actionButton(tr('保留旧版'), `${base}/patch/reject`, ''),
     );
     if (item.status === 'hidden')
       article.append(
         element(
           'p',
           'hint',
-          '这块碑已隐藏。通过修改后仍保持隐藏，需要复核举报后恢复显示。',
+          tr('这块碑已隐藏。通过修改后仍保持隐藏，需要复核举报后恢复显示。'),
         ),
       );
   } else {
     article.append(
-      element('span', 'flag', `${item.reports.length} 条待处理举报`),
+      element('span', 'flag', tr(`${item.reports.length} 条待处理举报`)),
     );
     for (const report of item.reports) {
       const note = element('div', 'notice');
@@ -261,13 +273,13 @@ function renderItem(item: QueueItem) {
         element(
           'p',
           '',
-          `${LABELS.report_reason[report.reason] || '其他'} · ${ago(report.created_at)}`,
+          `${labels.report_reason[report.reason] || tr('其他')} · ${ago(report.created_at, Date.now(), currentLocale())}`,
         ),
       );
       if (report.note) note.append(element('p', '', report.note));
       note.append(
         actionButton(
-          '标记已处理',
+          tr('标记已处理'),
           `/api/admin/reports/${encodeURIComponent(report.id)}/resolve`,
           'btn-quiet',
         ),
@@ -275,10 +287,10 @@ function renderItem(item: QueueItem) {
       article.append(note);
     }
     if (item.status === 'approved')
-      actions.append(actionButton('隐藏', `${base}/hide`, 'btn-danger'));
+      actions.append(actionButton(tr('隐藏'), `${base}/hide`, 'btn-danger'));
     if (item.status === 'hidden')
       actions.append(
-        actionButton('恢复显示', `${base}/restore`, 'btn-primary'),
+        actionButton(tr('恢复显示'), `${base}/restore`, 'btn-primary'),
       );
   }
   article.append(actions, details(item));
@@ -291,7 +303,7 @@ function renderLog(audits: Audit[]) {
     const row = element('tr');
     let action =
       audit.actor === 'system' && audit.action === 'hide'
-        ? '自动隐藏：3 人举报'
+        ? tr('自动隐藏：3 人举报')
         : actionLabels[audit.action] || audit.action;
     if (audit.action === 'reject' && audit.detail) {
       try {
@@ -302,19 +314,19 @@ function renderLog(audits: Audit[]) {
           'reason' in detail &&
           typeof detail.reason === 'string'
         )
-          action += `：${detail.reason}`;
+          action += `${currentLocale() === 'en' ? ': ' : '：'}${detail.reason}`;
       } catch {
         /* Legacy log data has no reason to show. */
       }
     }
     const actor =
       audit.actor === 'system'
-        ? '系统'
+        ? tr('系统')
         : audit.actor === 'owner'
-          ? '投稿人'
+          ? tr('投稿人')
           : audit.actor;
     row.append(
-      element('td', '', ago(audit.created_at)),
+      element('td', '', ago(audit.created_at, Date.now(), currentLocale())),
       element('td', '', audit.tombstone_id || '—'),
       element('td', '', action),
       element('td', '', actor),
@@ -323,7 +335,7 @@ function renderLog(audits: Audit[]) {
   }
   if (!audits.length) {
     const row = element('tr');
-    const cell = element('td', '', '还没有操作记录。');
+    const cell = element('td', '', tr('还没有操作记录。'));
     cell.colSpan = 4;
     row.append(cell);
     log.append(row);
@@ -341,7 +353,7 @@ async function load() {
     });
     queue.replaceChildren(...data.items.map(renderItem));
     if (!data.items.length)
-      queue.append(element('p', 'empty', '这个队列是空的。'));
+      queue.append(element('p', 'empty', tr('这个队列是空的。')));
     renderLog(data.audit_log);
   } catch (error) {
     if (version !== loadVersion) return;
@@ -351,10 +363,10 @@ async function load() {
         'notice',
         error instanceof Error
           ? error.message
-          : '审核队列没有加载出来，请重试。',
+          : tr('审核队列没有加载出来，请重试。'),
       ),
     );
-    const retry = element('button', 'btn', '重试');
+    const retry = element('button', 'btn', tr('重试'));
     retry.addEventListener('click', () => void load());
     queue.append(retry);
   } finally {

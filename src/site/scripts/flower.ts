@@ -1,3 +1,4 @@
+import { tr } from '../../shared/i18n';
 import { api } from './api';
 import { shanghaiDate, visitorId } from './browser';
 import { num } from './format';
@@ -20,10 +21,14 @@ function render(
   button.setAttribute('aria-pressed', String(pressed));
   button.setAttribute(
     'aria-label',
-    `献花 ${num(count)}${pressed ? '，今天已献过花' : '，为这块碑献一朵花'}`,
+    tr(
+      pressed
+        ? `献花 ${num(count)}，今天已献过花`
+        : `献花 ${num(count)}，为这块碑献一朵花`,
+    ),
   );
   const label = button.querySelector('span');
-  if (label) label.textContent = `献花 ${num(count)}`;
+  if (label) label.textContent = tr(`献花 ${num(count)}`);
   button.dataset.count = String(count);
 }
 export function hydrateFlowers(root: ParentNode = document): void {
@@ -45,7 +50,7 @@ export function hydrateFlowers(root: ParentNode = document): void {
       button.addEventListener('click', async () => {
         if (button.disabled) return;
         if (button.getAttribute('aria-pressed') === 'true') {
-          toast('今天已经给这块碑献过花了');
+          toast(tr('今天已经给这块碑献过花了'));
           return;
         }
         const before = Number(button.dataset.count) || 0;
@@ -73,7 +78,9 @@ export function hydrateFlowers(root: ParentNode = document): void {
         } catch (error) {
           render(button, before, false);
           toast(
-            error instanceof Error ? error.message : '献花没成功，稍后再试。',
+            error instanceof Error
+              ? error.message
+              : tr('献花没成功，稍后再试。'),
           );
         } finally {
           button.disabled = false;

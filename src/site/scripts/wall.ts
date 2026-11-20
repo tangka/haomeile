@@ -1,3 +1,4 @@
+import { basePath, tr } from '../../shared/i18n';
 import type { TombstonePage } from '../../worker/types';
 import { api } from './api';
 import { element } from './browser';
@@ -16,10 +17,10 @@ if (rows && more) {
     event.preventDefault();
     if (more.getAttribute('aria-disabled') === 'true') return;
     const next = new URL(more.href);
-    const vendor = /^\/v\/([^/]+)/.exec(next.pathname)?.[1];
+    const vendor = /^\/v\/([^/]+)/.exec(basePath(next.pathname))?.[1];
     if (vendor) next.searchParams.set('vendor', vendor);
     const before = more.textContent;
-    more.textContent = '正在加载…';
+    more.textContent = tr('正在加载…');
     more.setAttribute('aria-disabled', 'true');
     const skeletons = Array.from({ length: 3 }, () => {
       const article = element('article', 'tomb tomb-skel');
@@ -48,7 +49,7 @@ if (rows && more) {
       } else more.hidden = true;
     } catch (error) {
       toast(
-        error instanceof Error ? error.message : '没能加载更多，稍后再试。',
+        error instanceof Error ? error.message : tr('没能加载更多，稍后再试。'),
       );
     } finally {
       skeletons.forEach((node) => node.remove());

@@ -28,6 +28,7 @@ migrations_dir = ${JSON.stringify(path.join(root, 'migrations'))}
 [vars]
 ENVIRONMENT = "development"
 SITE_ORIGIN = "http://127.0.0.1:8790"
+TURNSTILE_TEST_MODE = "true"
 TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
 PEPPER = "local-e2e-only-never-use-for-production-storage"
@@ -38,7 +39,7 @@ ACCESS_TEAM_DOMAIN = ""
 // A private generated directory keeps local test keys separate from operator credentials.
 await writeFile(
   path.join(configDir, '.dev.vars'),
-  'ENVIRONMENT="development"\nSITE_ORIGIN="http://127.0.0.1:8790"\nTURNSTILE_SITE_KEY="1x00000000000000000000AA"\nTURNSTILE_SECRET="1x0000000000000000000000000000000AA"\nPEPPER="local-e2e-only-never-use-for-production-storage"\nACCESS_AUD=""\nACCESS_TEAM_DOMAIN=""\n',
+  'ENVIRONMENT="development"\nSITE_ORIGIN="http://127.0.0.1:8790"\nTURNSTILE_TEST_MODE="true"\nTURNSTILE_SITE_KEY="1x00000000000000000000AA"\nTURNSTILE_SECRET="1x0000000000000000000000000000000AA"\nPEPPER="local-e2e-only-never-use-for-production-storage"\nACCESS_AUD=""\nACCESS_TEAM_DOMAIN=""\n',
   { mode: 0o600 },
 );
 const run = (args) =>

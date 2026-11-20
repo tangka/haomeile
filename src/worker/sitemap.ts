@@ -1,9 +1,12 @@
 import { VENDORS } from './types';
 import { SUPPORTED_VENDOR_FILTER } from './lib/store';
+import { localePath } from '../shared/i18n';
 
 const SITE = 'https://haomeile.rip';
 const NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-export const SITEMAP_PAGE_SIZE = 45_000;
+const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
+// Each tombstone produces two localized URLs, with room for static/product pages.
+export const SITEMAP_PAGE_SIZE = 22_500;
 const STATIC_PATHS = [
   '/',
   '/epitaph',
@@ -45,7 +48,20 @@ function lastmod(value?: string | null): string {
   return `<lastmod>${escapeXml(value)}</lastmod>`;
 }
 function urlset(entries: SitemapEntry[]): string {
-  return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="${NAMESPACE}">${entries.map((entry) => `<url><loc>${escapeXml(SITE + entry.path)}</loc>${lastmod(entry.modified)}</url>`).join('')}</urlset>`;
+  const urls = entries
+    .map((entry) => {
+      const zh = escapeXml(SITE + localePath(entry.path, 'zh'));
+      const en = escapeXml(SITE + localePath(entry.path, 'en'));
+      const alternates = `<xhtml:link rel="alternate" hreflang="zh-CN" href="${zh}"/><xhtml:link rel="alternate" hreflang="en" href="${en}"/><xhtml:link rel="alternate" hreflang="x-default" href="${zh}"/>`;
+      return [zh, en]
+        .map(
+          (href) =>
+            `<url><loc>${href}</loc>${lastmod(entry.modified)}${alternates}</url>`,
+        )
+        .join('');
+    })
+    .join('');
+  return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="${NAMESPACE}" xmlns:xhtml="${XHTML_NAMESPACE}">${urls}</urlset>`;
 }
 function xmlResponse(body: string): Response {
   return new Response(body, {

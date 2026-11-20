@@ -1,3 +1,4 @@
+import { currentLocale, localePath, tr } from '../../shared/i18n';
 import {
   PRODUCT_PLANS,
   type TombInput,
@@ -17,7 +18,8 @@ import {
 } from './browser';
 import { toast } from './toast';
 import { mountTurnstile, type Challenge } from './turnstile';
-import { LABELS, LEGACY_PLAN_LABELS } from './labels';
+import { getLabels, LEGACY_PLAN_LABELS } from './labels';
+const labels = getLabels();
 type OwnerTomb = Omit<
   TombstoneRow,
   'secret_hash' | 'flags' | 'pending_patch'
@@ -40,7 +42,7 @@ function syncPlans(preferred = plan.value): void {
     ...choices.map(
       (key) =>
         new Option(
-          LABELS.plan[key as keyof typeof LABELS.plan],
+          labels.plan[key as keyof typeof labels.plan],
           key,
           key === 'unknown',
           key === selected,
@@ -48,10 +50,10 @@ function syncPlans(preferred = plan.value): void {
     ),
   );
   planHint.textContent = !product.value
-    ? '先选择产品，再选择对应套餐。'
+    ? tr('先选择产品，再选择对应套餐。')
     : Object.hasOwn(LEGACY_PLAN_LABELS, preferred)
-      ? '旧记录没有注明具体档位，请重新选择；不记得可以保持“不详或不想说”。'
-      : '选填，不记得可以保持“不详或不想说”。';
+      ? tr('旧记录没有注明具体档位，请重新选择；不记得可以保持“不详或不想说”。')
+      : tr('选填，不记得可以保持“不详或不想说”。');
 }
 product.addEventListener('change', () => syncPlans());
 syncPlans();
@@ -86,7 +88,7 @@ died.value = shanghaiDate();
 let credential: Credential | undefined;
 let challenge: Challenge | undefined;
 function banner(message: string, success = false): void {
-  errorBox.textContent = message;
+  errorBox.textContent = tr(message);
   errorBox.className = `banner ${success ? 'banner-ok' : 'banner-error'}`;
   errorBox.hidden = false;
 }
@@ -121,7 +123,7 @@ function showFields(fields: Record<string, string>): void {
     const error = document.createElement('p');
     error.className = 'error field-error';
     error.id = `error-${field}`;
-    error.textContent = message;
+    error.textContent = tr(message);
     input.setAttribute('aria-describedby', `${input.id}-hint ${error.id}`);
     wrapper?.append(error);
   }
@@ -176,11 +178,12 @@ form.addEventListener('input', (event) => {
   if (privacy) showFields({ [target.name]: privacy.message });
 });
 if (editMode) {
-  document.title = '修改墓碑 · 号没了';
-  document.querySelector('#submit-title')!.textContent = '修改墓碑';
-  document.querySelector('#submit-description')!.textContent =
-    '修改后需要重新审核。审核通过前，墙上继续显示旧版本。';
-  submit.textContent = '提交修改';
+  document.title = tr('修改墓碑 · 号没了');
+  document.querySelector('#submit-title')!.textContent = tr('修改墓碑');
+  document.querySelector('#submit-description')!.textContent = tr(
+    '修改后需要重新审核。审核通过前，墙上继续显示旧版本。',
+  );
+  submit.textContent = tr('提交修改');
   challengeContainer.hidden = true;
   form.hidden = true;
   const editForm = document.querySelector<HTMLFormElement>(
@@ -207,14 +210,14 @@ if (editMode) {
       };
       const tomb = await api<OwnerTomb>('/api/manage/status', candidate);
       if (tomb.status === 'withdrawn' || tomb.status === 'hidden')
-        throw new Error('这块碑目前不能修改，请先查看管理页的状态。');
+        throw new Error(tr('这块碑目前不能修改，请先查看管理页的状态。'));
       credential = candidate;
       fill(tomb);
       form.hidden = false;
       editForm.hidden = true;
     } catch (failure) {
       error.textContent =
-        failure instanceof Error ? failure.message : '编号或密钥不对';
+        failure instanceof Error ? failure.message : tr('编号或密钥不对');
       error.hidden = false;
     } finally {
       button.disabled = false;
@@ -229,7 +232,7 @@ if (editMode) {
       banner(
         error instanceof Error
           ? error.message
-          : '人机验证没能加载，请刷新页面。',
+          : tr('人机验证没能加载，请刷新页面。'),
       ),
     );
 }
@@ -239,7 +242,14 @@ const remember = document.querySelector<HTMLInputElement>('#remember')!;
 const closeButton = document.querySelector<HTMLButtonElement>('#close-cred')!;
 let created: Credential | undefined;
 function credentialText(): string {
-  return `号没了 · 墓碑凭据\n编号：${created?.id || ''}\n密钥：${created?.secret || ''}\n管理地址：https://haomeile.rip/manage\n只显示一次，丢了没法找回。`;
+  const separator = currentLocale() === 'en' ? ': ' : '：';
+  return [
+    tr('号没了 · 墓碑凭据'),
+    `${tr('编号')}${separator}${created?.id || ''}`,
+    `${tr('密钥')}${separator}${created?.secret || ''}`,
+    `${tr('管理地址')}${separator}https://haomeile.rip${localePath('/manage')}`,
+    tr('只显示一次，丢了没法找回。'),
+  ].join('\n');
 }
 dialog.addEventListener('cancel', (event) => {
   if (!savedBox.checked) event.preventDefault();
@@ -252,7 +262,7 @@ closeButton.addEventListener('click', () => {
 });
 dialog.addEventListener('close', () => {
   if (remember.checked && created && !rememberCredential(created))
-    toast('这个浏览器没能记住凭据，请保留下载的文件。');
+    toast(tr('这个浏览器没能记住凭据，请保留下载的文件。'));
   created = undefined;
   document.querySelector('#credential-id')!.textContent = '';
   document.querySelector('#credential-secret')!.textContent = '';
@@ -265,14 +275,15 @@ document.querySelector('#copy-cred')!.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(credentialText());
     const button = document.querySelector('#copy-cred')!;
-    button.textContent = '已复制';
-    toast('凭据已复制');
+    button.textContent = tr('已复制');
+    toast(tr('凭据已复制'));
   } catch {
-    toast('没能复制，请手动抄下编号和密钥。');
+    toast(tr('没能复制，请手动抄下编号和密钥。'));
   }
 });
 document.querySelector('#dl-cred')!.addEventListener('click', () => {
-  if (created) downloadText(credentialText(), `号没了-凭据-${created.id}.txt`);
+  if (created)
+    downloadText(credentialText(), `${tr('号没了-凭据')}-${created.id}.txt`);
 });
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -298,13 +309,13 @@ form.addEventListener('submit', async (event) => {
   try {
     const validated = validateTombInput(input);
     if (editMode) {
-      if (!credential) throw new Error('请先读取你的墓碑。');
+      if (!credential) throw new Error(tr('请先读取你的墓碑。'));
       await api('/api/manage/patch', { ...credential, patch: validated });
-      banner('修改已提交。审核通过前，墙上继续显示旧版本。', true);
+      banner(tr('修改已提交。审核通过前，墙上继续显示旧版本。'), true);
     } else {
       const token = challenge?.token();
       if (!token)
-        throw new Error('人机验证没通过。刷新一下验证框，再点一次提交。');
+        throw new Error(tr('人机验证没通过。刷新一下验证框，再点一次提交。'));
       created = await api<Credential>('/api/tombstones', {
         ...validated,
         turnstile_token: token,
@@ -315,7 +326,7 @@ form.addEventListener('submit', async (event) => {
       savedBox.checked = false;
       remember.checked = false;
       closeButton.disabled = true;
-      document.querySelector('#copy-cred')!.textContent = '复制凭据';
+      document.querySelector('#copy-cred')!.textContent = tr('复制凭据');
       dialog.showModal();
     }
   } catch (error) {
@@ -327,7 +338,7 @@ form.addEventListener('submit', async (event) => {
     banner(
       error instanceof Error
         ? error.message
-        : '服务器出了点问题。过几分钟再试，碑文不会丢。',
+        : tr('服务器出了点问题。过几分钟再试，碑文不会丢。'),
     );
   } finally {
     submit.disabled = false;

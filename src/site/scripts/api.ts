@@ -1,3 +1,4 @@
+import { currentLocale, tr } from '../../shared/i18n';
 export class ApiRequestError extends Error {
   constructor(
     public code: string,
@@ -5,7 +6,10 @@ export class ApiRequestError extends Error {
     public status: number,
     public fields: Record<string, string> = {},
   ) {
-    super(message);
+    super(tr(message));
+    this.fields = Object.fromEntries(
+      Object.entries(fields).map(([key, value]) => [key, tr(value)]),
+    );
     this.name = 'ApiRequestError';
   }
 }
@@ -18,11 +22,14 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
     response = await fetch(
       path,
       body === undefined
-        ? { credentials }
+        ? { credentials, headers: { 'Accept-Language': currentLocale() } }
         : {
             method: 'POST',
             credentials,
-            headers: { 'content-type': 'application/json' },
+            headers: {
+              'content-type': 'application/json',
+              'Accept-Language': currentLocale(),
+            },
             body: JSON.stringify(body),
           },
     );

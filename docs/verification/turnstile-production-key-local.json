@@ -1,0 +1,24 @@
+{
+  "verifiedAt": "2026-11-20T05:20:18.531Z",
+  "environment": "local",
+  "origin": "http://127.0.0.1:8787",
+  "widget": "real-managed-free-plan",
+  "testingMode": false,
+  "realBrowserSubmission": true,
+  "credentialReceived": true,
+  "ownerReadStatus": 200,
+  "withdrawStatus": 200,
+  "userContentPublished": false,
+  "englishBrowserWidget": {
+    "language": "en",
+    "realSitekey": true,
+    "realToken": true,
+    "productNames": [
+      "Please select",
+      "Claude",
+      "Codex",
+      "Antigravity"
+    ],
+    "error": ""
+  }
+}

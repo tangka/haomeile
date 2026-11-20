@@ -1,8 +1,10 @@
+import { currentLocale, tr } from '../../shared/i18n';
 interface TurnstileApi {
   render(
     container: HTMLElement,
     options: {
       sitekey: string;
+      language: 'zh-cn' | 'en';
       callback: (token: string) => void;
       'expired-callback': () => void;
       'error-callback': () => void;
@@ -29,11 +31,11 @@ function load(): Promise<TurnstileApi> {
       script.addEventListener('load', () =>
         typeof window.turnstile?.render === 'function'
           ? resolve(window.turnstile)
-          : reject(new Error('人机验证没能加载，请刷新页面。')),
+          : reject(new Error(tr('人机验证没能加载，请刷新页面。'))),
       );
       script.addEventListener('error', () => {
         scriptReady = undefined;
-        reject(new Error('人机验证没能加载，请刷新页面。'));
+        reject(new Error(tr('人机验证没能加载，请刷新页面。')));
       });
       document.head.append(script);
     });
@@ -50,11 +52,12 @@ export async function mountTurnstile(
     container.dataset.turnstileSitekey ||
     document.querySelector<HTMLMetaElement>('meta[name="turnstile-site-key"]')
       ?.content;
-  if (!sitekey) throw new Error('人机验证尚未配置，请稍后再来。');
+  if (!sitekey) throw new Error(tr('人机验证尚未配置，请稍后再来。'));
   const turnstile = await load();
   let token = '';
   const widget = turnstile.render(container, {
     sitekey,
+    language: currentLocale() === 'en' ? 'en' : 'zh-cn',
     callback: (value) => {
       token = value;
     },

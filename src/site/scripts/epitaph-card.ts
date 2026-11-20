@@ -1,3 +1,4 @@
+import { tr, type Locale } from '../../shared/i18n';
 import { lifeLine } from './format';
 export interface EpitaphCardData {
   codename: string;
@@ -10,6 +11,7 @@ export interface EpitaphCardData {
   card_style: 'flower' | 'cloud' | 'star';
   night: boolean;
   watermark?: string;
+  locale?: Locale;
 }
 // Ported from design/assets/epitaph-card.js: browser canvas only, no I/O.
 const P = 8; // 一个像素块 = 8 个画布像素
@@ -73,8 +75,10 @@ export function drawEpitaphCard(
   canvas: HTMLCanvasElement,
   d: EpitaphCardData,
 ): void {
+  const locale = d.locale || 'zh';
   const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('这个浏览器暂时不能生成图片，请换一个浏览器。');
+  if (!ctx)
+    throw new Error(tr('这个浏览器暂时不能生成图片，请换一个浏览器。', locale));
   const W = canvas.width,
     H = canvas.height,
     GW = W / P,
@@ -103,11 +107,22 @@ export function drawEpitaphCard(
   const wrap = (text: string, maxW: number): string[] => {
     const out: string[] = [];
     let line = '';
-    for (const ch of text) {
-      if (ctx.measureText(line + ch).width > maxW && line) {
-        out.push(line);
-        line = ch;
-      } else line += ch;
+    const tokens =
+      locale === 'en' ? text.match(/\S+\s*|\s+/gu) || [] : [...text];
+    for (const token of tokens) {
+      if (locale === 'en' && ctx.measureText(token).width <= maxW) {
+        if (line && ctx.measureText(line + token).width > maxW) {
+          out.push(line.trimEnd());
+          line = token.trimStart();
+        } else line += token;
+        continue;
+      }
+      for (const ch of token) {
+        if (ctx.measureText(line + ch).width > maxW && line) {
+          out.push(line);
+          line = ch;
+        } else line += ch;
+      }
     }
     if (line) out.push(line);
     return out;
@@ -165,7 +180,7 @@ export function drawEpitaphCard(
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 
-  const name = (d.codename || '').trim() || '无名氏';
+  const name = (d.codename || '').trim() || tr('无名氏', locale);
   let size = 72;
   ctx.font = `900 ${size}px ${CARVE}`;
   while (ctx.measureText(name).width > (fw - 10) * P && size > 36) {
@@ -179,9 +194,14 @@ export function drawEpitaphCard(
 
   ctx.font = `600 26px ${UI}`;
   ctx.fillStyle = C.soft;
-  ctx.fillText(`${(d.vendorLabel || '').trim() || '某 AI'} 账号`, cx, 350);
+  const vendor = (d.vendorLabel || '').trim() || tr('某 AI', locale);
+  ctx.fillText(
+    locale === 'en' ? `${vendor} account` : `${vendor} 账号`,
+    cx,
+    350,
+  );
 
-  const life = lifeLine(d);
+  const life = lifeLine(d, locale);
   ctx.font = `400 24px ${UI}`;
   ctx.fillText(life.range, cx, 396);
   ctx.font = `900 34px ${CARVE}`;
@@ -189,13 +209,17 @@ export function drawEpitaphCard(
   ctx.fillText(life.days, cx, 448);
   ctx.font = `600 24px ${UI}`;
   ctx.fillStyle = C.soft;
-  ctx.fillText(`死因：${d.causeLabel || '原因不明'}`, cx, 494);
+  const cause = tr(d.causeLabel || '原因不明', locale);
+  ctx.fillText(locale === 'en' ? `Cause: ${cause}` : `死因：${cause}`, cx, 494);
 
   for (let x = fx + 8; x < fx + fw - 8; x += 3) block(x, 66, 1, 1, C.shade);
 
   ctx.font = `400 34px ${CARVE}`;
   ctx.fillStyle = C.ink;
-  wrap((d.epitaph || '').trim() || '它没留下什么话。', (fw - 12) * P)
+  wrap(
+    (d.epitaph || '').trim() || tr('它没留下什么话。', locale),
+    (fw - 12) * P,
+  )
     .slice(0, 4)
     .forEach((l, i) => ctx.fillText(l, cx, 600 + i * 52));
 

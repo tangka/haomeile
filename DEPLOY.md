@@ -22,7 +22,7 @@ pnpm exec wrangler d1 create haomeile
 
 把输出的真实数据库 UUID 填入 `wrangler.toml` 的 `[[d1_databases]]` → `database_id`，保留 `binding = "DB"`、`database_name = "haomeile"` 和 `migrations_dir = "migrations"`。
 
-首次创建的生产库应为空。产品范围仅 Claude、Codex、Antigravity（反重力），内部键为 `claude`、`codex`、`antigravity`；产品字段名仍保留 `vendor`。已有旧版本数据库时，迁移会把历史 `chatgpt`、`gemini` 键分别改为 `codex`、`antigravity`，其余旧产品记录保留原样，不改写成这三种产品，也不在公开页面、统计与 sitemap 中显示。确认数据库与配置后执行生产迁移：
+首次创建的生产库应为空。产品范围仅 Claude、Codex、Antigravity，内部键为 `claude`、`codex`、`antigravity`；产品字段名仍保留 `vendor`。已有旧版本数据库时，迁移会把历史 `chatgpt`、`gemini` 键分别改为 `codex`、`antigravity`，其余旧产品记录保留原样，不改写成这三种产品，也不在公开页面、统计与 sitemap 中显示。确认数据库与配置后执行生产迁移：
 
 ```sh
 pnpm exec wrangler d1 migrations apply haomeile --remote
@@ -32,9 +32,9 @@ pnpm exec wrangler d1 migrations apply haomeile --remote
 
 ## 3. 配置 Turnstile 与密钥
 
-应用已接入真实 Turnstile SDK，并由 Worker 调用 Siteverify 校验 token。当前本地使用官方始终通过的测试配置，生产 site key 尚未配置。Cloudflare 的 [免费方案](https://developers.cloudflare.com/turnstile/plans/)允许不限次数的验证请求，提供最多 20 个 widget、每个 widget 最多 10 个主机名；本项目可使用该方案，测试密钥仍需替换为正式配置。
+应用已接入真实 Turnstile SDK，并由 Worker 调用 Siteverify 校验 token。普通开发与生产均要求正式密钥，默认拒绝官方测试密钥和 dummy token，并严格核对本站 hostname。Cloudflare 的 [免费方案](https://developers.cloudflare.com/turnstile/plans/)允许不限次数的验证请求，提供最多 20 个 widget、每个 widget 最多 10 个主机名；本项目可使用该方案，当前已创建 `haomeile` 免费 Managed widget，公开 site key 已填入 `wrangler.toml`，本地私钥已保存在忽略文件中；尚未向生产 Worker 写入 secret 或发布站点。
 
-由站长在 Cloudflare 创建 Turnstile 站点，将 `haomeile.rip` 加入允许的主机名。把真实 **site key** 填入 `wrangler.toml` 的 `[vars].TURNSTILE_SITE_KEY`；site key 是公开配置。保留 `ENVIRONMENT = "production"` 和 `SITE_ORIGIN = "https://haomeile.rip"`。
+在 Cloudflare 创建免费 Managed Turnstile 站点，将 `haomeile.rip` 加入允许的主机名。本地验收时也可允许 `localhost` 和 `127.0.0.1`；每个后端只接受其 `SITE_ORIGIN` 的精确 hostname，本地 token 不能用于生产提交。把真实 **site key** 填入 `wrangler.toml` 的 `[vars].TURNSTILE_SITE_KEY`；site key 是公开配置。保留 `ENVIRONMENT = "production"` 和 `SITE_ORIGIN = "https://haomeile.rip"`。
 
 真实密钥通过 Wrangler 写入。除 `PEPPER` 外，下列命令均在提示时输入控制台取得的值，不把值写进命令行、源码或截图：
 
@@ -47,20 +47,21 @@ pnpm exec wrangler secret put ACCESS_TEAM_DOMAIN
 
 `PEPPER` 使用至少 32 字节随机熵；上面的命令直接通过管道写入，不在终端打印随机值。生产运行后不要随意更换它，否则已有凭据、访客去重和限流哈希会失效。Access 的两个值在下一节创建应用后取得；首次尚无 Worker 时，Wrangler 可能提示创建同名 Worker，先核对账号和名称再继续。
 
-`.dev.vars.example` 里的官方测试密钥与固定本地 `PEPPER` 只供开发使用，不得填入生产 secrets。不要将 `.dev.vars` 上传或提交。
+`.dev.vars.example` 的 Turnstile site key 与 secret 留空，真实本地密钥写在忽略的 `.dev.vars`。其中固定本地 `PEPPER` 不得填入生产 secrets。官方测试密钥只存在于隔离测试配置，不能用于普通开发或生产。不要将 `.dev.vars` 上传或提交。
 
 ## 4. 配置审核后台 Access
 
 在 Cloudflare Zero Trust 创建一个自托管 Access 应用，为**同一个应用**添加以下公开主机与路径，确保它们使用同一个 Audience：
 
 - `haomeile.rip/admin*`
+- `haomeile.rip/en/admin*`
 - `haomeile.rip/api/admin/*`
 
 Allow 策略只允许站长自己的邮箱，通过控制台支持的身份提供方登录；不增加 Bypass、所有人可访问或服务令牌代替人工管理员的规则。公开纪念墙不需要登录。
 
 从应用复制 Audience Tag 到 `ACCESS_AUD`；从 Zero Trust 设置复制团队域名到 `ACCESS_TEAM_DOMAIN`。团队域名应为自己的 `团队名.cloudflareaccess.com`，不要附加路径。用上一节的 `wrangler secret put` 命令写入。
 
-Access 在边缘登录后转发 `Cf-Access-Jwt-Assertion`；Worker 继续验证签名、团队签发者、Audience、有效期和管理员邮箱声明。没有有效 JWT、配置不完整或公钥获取失败时均拒绝访问，本地没有绕过开关。`/admin.html`、`/admin/index.html` 等静态别名也由 Worker 在读取资源前保护；不要另行暴露 `dist/` 作为绕过 Worker 的独立静态站点。
+Access 在边缘登录后转发 `Cf-Access-Jwt-Assertion`；Worker 继续验证签名、团队签发者、Audience、有效期和管理员邮箱声明。没有有效 JWT、配置不完整或公钥获取失败时均拒绝访问，本地没有绕过开关。`/admin.html`、`/admin/index.html` 及其 `/en/` 英文别名也由 Worker 在读取资源前保护；不要另行暴露 `dist/` 作为绕过 Worker 的独立静态站点。
 
 操作步骤可对照 [Cloudflare Access 应用文档](https://developers.cloudflare.com/learning-paths/clientless-access/access-application/create-access-app/)；Worker 的校验依据见 [官方 JWT 验证说明](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/)。
 

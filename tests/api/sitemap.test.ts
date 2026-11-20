@@ -11,6 +11,24 @@ import type { Bindings, TombStatus } from '../../src/worker/types';
 
 const deployedAt = '2026-11-19T12:34:56.000Z';
 const updatedAt = '2026-11-20T01:02:03.000Z';
+function expectLanguagePair(xml: string, path: string): void {
+  const zh = `https://haomeile.rip${path}`;
+  const en = `https://haomeile.rip/en${path}`;
+  const entries = xml.match(/<url>[\s\S]*?<\/url>/g) ?? [];
+  for (const href of [zh, en]) {
+    const entry = entries.find((value) => value.includes(`<loc>${href}</loc>`));
+    expect(entry).toBeDefined();
+    expect(entry).toContain(
+      `<xhtml:link rel="alternate" hreflang="zh-CN" href="${zh}"/>`,
+    );
+    expect(entry).toContain(
+      `<xhtml:link rel="alternate" hreflang="en" href="${en}"/>`,
+    );
+    expect(entry).toContain(
+      `<xhtml:link rel="alternate" hreflang="x-default" href="${zh}"/>`,
+    );
+  }
+}
 const map = (path = '/sitemap.xml', build?: string) =>
   sitemapResponse(
     env.DB,
@@ -59,12 +77,13 @@ describe('dynamic sitemap', () => {
     const xml = await (await map())!.text();
     expect(xml).toContain('/t/SUPPORTEDA');
     expect(xml).not.toContain('/t/LEGACY');
-    expect(xml.match(/<url>/g)).toHaveLength(7);
+    expectLanguagePair(xml, '/t/SUPPORTEDA');
+    expect(xml.match(/<url>/g)).toHaveLength(14);
     expect(
       await env.DB.prepare('SELECT count(*) n FROM tombstones').first('n'),
     ).toBe(9);
   });
-  it('lists the six public static routes using an actual supplied build timestamp', async () => {
+  it('lists both languages of the six public static routes with reciprocal alternates and build timestamps', async () => {
     const response = (await map('/sitemap.xml', deployedAt))!;
     expect(response.headers.get('content-type')).toBe(
       'application/xml; charset=utf-8',
@@ -79,8 +98,10 @@ describe('dynamic sitemap', () => {
       '/privacy',
       '/about',
     ])
-      expect(xml).toContain(`<loc>https://haomeile.rip${path}</loc>`);
-    expect(xml.match(/<url>/g)).toHaveLength(6);
+      expectLanguagePair(xml, path);
+    expect(xml).toContain('xmlns:xhtml="http://www.w3.org/1999/xhtml"');
+    expect(xml.match(/<url>/g)).toHaveLength(12);
+    expect(xml.match(/<xhtml:link /g)).toHaveLength(36);
     expect(
       xml.match(
         new RegExp(
@@ -88,7 +109,7 @@ describe('dynamic sitemap', () => {
           'g',
         ),
       ),
-    ).toHaveLength(6);
+    ).toHaveLength(12);
     expect(xml).not.toMatch(
       /\/submit|\/manage|\/admin|\/api\/|untrusted-request-host|priority|changefreq/,
     );
@@ -115,21 +136,26 @@ describe('dynamic sitemap', () => {
       await insert(id, status);
     const xml = await (await map('/sitemap.xml', deployedAt))!.text();
     expect(xml).toContain('<loc>https://haomeile.rip/v/claude</loc>');
+    expectLanguagePair(xml, '/v/claude');
     expect(xml).not.toContain('/v/antigravity');
     expect(xml).toContain(
       `<loc>https://haomeile.rip/t/AAAAAAAAAA</loc><lastmod>${updatedAt}</lastmod>`,
+    );
+    expectLanguagePair(xml, '/t/AAAAAAAAAA');
+    expect(xml).toContain(
+      `<loc>https://haomeile.rip/en/t/AAAAAAAAAA</loc><lastmod>${updatedAt}</lastmod>`,
     );
     for (const id of ['JJJJJJJJJJ', 'KKKKKKKKKK', 'LLLLLLLLLL', 'MMMMMMMMMM'])
       expect(xml).not.toContain(id);
     expect(xml).not.toMatch(
       /secret_hash|站点地图测试示例|这段示例自述|not-a-usable-credential/,
     );
-    expect(xml.match(/<url>/g)).toHaveLength(16);
+    expect(xml.match(/<url>/g)).toHaveLength(32);
   });
   it('removes a withdrawn address immediately from the next generated sitemap', async () => {
     const credential = await createCredentials(env.PEPPER);
     await insert(credential.id, 'approved', 'claude', credential.secret_hash);
-    expect(await (await map())!.text()).toContain('/t/' + credential.id);
+    expectLanguagePair(await (await map())!.text(), '/t/' + credential.id);
     const withdrawn = await publicRoutes.request(
       '/manage/withdraw',
       {
@@ -151,35 +177,75 @@ describe('dynamic sitemap', () => {
     expect(xml).not.toContain('bad');
     expect(xml).not.toContain('<lastmod>');
   });
-  it('splits more than 45000 approved records into bounded deterministic parts', async () => {
-    await env.DB.prepare(
-      "WITH RECURSIVE sequence(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM sequence WHERE n<=?) INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) SELECT printf('S%09d',n),'test-only-hash','分片测试示例','codex','other','2026-11-18','仅供本地站点地图分片测试使用的示例。','approved',?,?,? FROM sequence",
-    )
-      .bind(SITEMAP_PAGE_SIZE, updatedAt, updatedAt, updatedAt)
-      .run();
-    const root = await (await map('/sitemap.xml', deployedAt))!.text();
+  it('splits after 22500 records to keep bilingual URL sets below 50000 entries', async () => {
+    // Simulate the count boundary with sparse page samples, without a huge fixture.
+    let total = SITEMAP_PAGE_SIZE + 1;
+    const pages: number[][] = [];
+    const db = {
+      batch: async () => [
+        { results: [{ total }] },
+        {
+          results: ['claude', 'codex', 'antigravity'].map((vendor) => ({
+            vendor,
+            modified: updatedAt,
+          })),
+        },
+      ],
+      prepare: () => {
+        let offset = 0;
+        const statement = {
+          bind: (limit: number, start: number) => {
+            pages.push([limit, start]);
+            offset = start;
+            return statement;
+          },
+          all: async () => ({
+            results: (offset === 0
+              ? ['S000000001', 'S000022500']
+              : ['S000022501']
+            ).map((id) => ({ id, updated_at: updatedAt })),
+          }),
+        };
+        return statement;
+      },
+    } as unknown as D1Database;
+    const boundaryMap = (path = '/sitemap.xml') =>
+      sitemapResponse(db, new URL(path, 'https://haomeile.rip'), deployedAt);
+    expect(SITEMAP_PAGE_SIZE).toBe(22_500);
+    expect(SITEMAP_PAGE_SIZE * 2 + 18).toBeLessThan(50_000);
+    const root = await (await boundaryMap())!.text();
     expect(root).toContain('<sitemapindex');
     expect(root).toContain('/sitemaps/static.xml');
     expect(root).toContain('/sitemaps/tombstones-1.xml');
     expect(root).toContain('/sitemaps/tombstones-2.xml');
     expect(root).not.toContain('/t/S');
-    const first = await (await map('/sitemaps/tombstones-1.xml'))!.text();
-    const second = await (await map('/sitemaps/tombstones-2.xml'))!.text();
-    expect(first.match(/<url>/g)).toHaveLength(SITEMAP_PAGE_SIZE);
-    expect(second.match(/<url>/g)).toHaveLength(1);
-    expect(first).toContain('/t/S000000001');
-    expect(first).toContain('/t/S000045000');
-    expect(second).toContain('/t/S000045001');
-    expect(first).not.toContain('/v/codex');
-    const staticXml = await (await map(
-      '/sitemaps/static.xml',
-      deployedAt,
+    expect(pages).toHaveLength(0);
+    const first = await (await boundaryMap(
+      '/sitemaps/tombstones-1.xml',
     ))!.text();
-    expect(staticXml).toContain('/v/codex');
+    const second = await (await boundaryMap(
+      '/sitemaps/tombstones-2.xml',
+    ))!.text();
+    expect(pages).toEqual([
+      [SITEMAP_PAGE_SIZE, 0],
+      [SITEMAP_PAGE_SIZE, SITEMAP_PAGE_SIZE],
+    ]);
+    expectLanguagePair(first, '/t/S000000001');
+    expectLanguagePair(first, '/t/S000022500');
+    expectLanguagePair(second, '/t/S000022501');
+    expect(first.match(/<url>/g)).toHaveLength(4);
+    expect(second.match(/<url>/g)).toHaveLength(2);
+    expect(first).not.toContain('/v/codex');
+    const staticXml = await (await boundaryMap('/sitemaps/static.xml'))!.text();
+    expectLanguagePair(staticXml, '/v/codex');
+    expect(staticXml.match(/<url>/g)).toHaveLength(18);
     expect(staticXml).not.toContain('/t/S');
-    expect(await map('/sitemaps/tombstones-3.xml')).toBeNull();
-    expect(await map('/sitemaps/tombstones-0.xml')).toBeNull();
-    await env.DB.prepare("DELETE FROM tombstones WHERE id='S000045001'").run();
-    expect(await (await map())!.text()).toContain('<urlset');
-  }, 20_000);
+    expect(await boundaryMap('/sitemaps/tombstones-3.xml')).toBeNull();
+    expect(await boundaryMap('/sitemaps/tombstones-0.xml')).toBeNull();
+    total = SITEMAP_PAGE_SIZE;
+    const unsplit = await (await boundaryMap())!.text();
+    expect(unsplit).toContain('<urlset');
+    expect(unsplit).not.toContain('<sitemapindex');
+    expectLanguagePair(unsplit, '/t/S000022500');
+  });
 });

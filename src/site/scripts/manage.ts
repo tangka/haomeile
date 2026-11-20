@@ -1,8 +1,10 @@
+import { currentLocale, localePath, tr } from '../../shared/i18n';
 import type { TombInput, TombstoneRow } from '../../worker/types';
 import { api, ApiRequestError } from './api';
 import { readCredential, type Credential } from './browser';
-import { LABELS } from './labels';
+import { getLabels } from './labels';
 import { toast } from './toast';
+const labels = getLabels();
 type OwnerTomb = Omit<
   TombstoneRow,
   'secret_hash' | 'flags' | 'pending_patch'
@@ -18,13 +20,14 @@ const edit = document.querySelector<HTMLAnchorElement>('#s-edit')!,
 let credential: Credential | undefined;
 let current: OwnerTomb | undefined;
 const TEXT = {
-  pending: '正在等审核，通常一天内处理完。审核前你还可以修改。',
-  approved: '已经公开在纪念墙上。',
-  approved_patch: '墙上现在显示的是旧版本，你的修改正在等审核。',
-  rejected:
+  pending: tr('正在等审核，通常一天内处理完。审核前你还可以修改。'),
+  approved: tr('已经公开在纪念墙上。'),
+  approved_patch: tr('墙上现在显示的是旧版本，你的修改正在等审核。'),
+  rejected: tr(
     '没有通过审核。常见原因是含有隐私信息、灰产内容，或者和账号出事无关。可以修改后重新提交。',
-  hidden: '暂时隐藏了，正在复核。通常是因为收到了多人举报。',
-  withdrawn: '已经撤回，碑文已清空。',
+  ),
+  hidden: tr('暂时隐藏了，正在复核。通常是因为收到了多人举报。'),
+  withdrawn: tr('已经撤回，碑文已清空。'),
 };
 function show(tomb: OwnerTomb): void {
   current = tomb;
@@ -36,17 +39,17 @@ function show(tomb: OwnerTomb): void {
   pill.dataset.status = tomb.status;
   pill.textContent =
     state === 'approved_patch'
-      ? '已公开，修改审核中'
-      : LABELS.status[tomb.status];
+      ? tr('已公开，修改审核中')
+      : labels.status[tomb.status];
   document.querySelector('#status-text')!.textContent = TEXT[state];
   document.querySelector('#s-name')!.textContent =
     tomb.status === 'withdrawn'
-      ? `编号 ${tomb.id}`
-      : `${tomb.codename}（编号 ${tomb.id}）`;
+      ? tr(`编号 ${tomb.id}`)
+      : `${tomb.codename}${currentLocale() === 'en' ? ' ' : ''}${tr(`（编号 ${tomb.id}）`)}`;
   edit.hidden = tomb.status === 'withdrawn' || tomb.status === 'hidden';
-  edit.href = '/submit?mode=edit';
+  edit.href = localePath('/submit?mode=edit');
   view.hidden = tomb.status !== 'approved';
-  view.href = `/t/${tomb.id}`;
+  view.href = localePath(`/t/${tomb.id}`);
   withdraw.hidden = tomb.status === 'withdrawn';
   card.hidden = false;
 }
@@ -70,14 +73,14 @@ form.addEventListener('submit', async (event) => {
     title.textContent =
       failure instanceof ApiRequestError &&
       failure.code === 'INVALID_CREDENTIALS'
-        ? '编号或密钥不对'
-        : '暂时没能查看';
+        ? tr('编号或密钥不对')
+        : tr('暂时没能查看');
     error.append(
       title,
       document.createTextNode(
         failure instanceof Error
           ? failure.message
-          : '检查一下有没有多复制空格。凭据丢了没法找回，可以重新立一块。',
+          : tr('检查一下有没有多复制空格。凭据丢了没法找回，可以重新立一块。'),
       ),
     );
     error.hidden = false;
@@ -113,10 +116,12 @@ dialog.addEventListener('close', async () => {
       });
     credential = undefined;
     secretInput.value = '';
-    toast('已撤回');
+    toast(tr('已撤回'));
   } catch (failure) {
     toast(
-      failure instanceof Error ? failure.message : '撤回没成功，请稍后再试。',
+      failure instanceof Error
+        ? failure.message
+        : tr('撤回没成功，请稍后再试。'),
     );
   } finally {
     withdraw.disabled = false;

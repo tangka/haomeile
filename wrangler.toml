@@ -20,7 +20,7 @@ migrations_dir = "migrations"
 [vars]
 ENVIRONMENT = "production"
 SITE_ORIGIN = "https://haomeile.rip"
-TURNSTILE_SITE_KEY = "TODO_TURNSTILE_SITE_KEY"
+TURNSTILE_SITE_KEY = "0x4AAAAAAGJ0wzKC_7z3Q2C_"
 
 [triggers]
 crons = ["17 20 * * *"]

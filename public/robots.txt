@@ -5,6 +5,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /en/admin
 Disallow: /api/
 
 Sitemap: https://haomeile.rip/sitemap.xml

@@ -1,3 +1,4 @@
+import { currentLocale } from '../../shared/i18n';
 export const EPITAPHS: readonly string[] = [
   '生前写了三万行代码，走的时候一行也没留下。',
   '它走得很安详，走之前还在思考。',
@@ -32,3 +33,44 @@ export const EPITAPHS: readonly string[] = [
   '人走了，聊天记录还在云上飘着。',
   '它最后一次回复，是三个点在闪。',
 ];
+
+const EN_EPITAPHS: readonly string[] = [
+  'It wrote thirty thousand lines of code, then left without a single one.',
+  'It went peacefully. It was still thinking at the end.',
+  'It came, took a look, and left.',
+  'The context was not full. The account was gone first.',
+  'Its last words were: Sure, I can help with that.',
+  'This time, it really refused every request.',
+  'No last words. Just one final bill.',
+  'It lived for one subscription cycle.',
+  'It was not hallucinating. It just went ahead.',
+  'This conversation has ended. For real this time.',
+  'A diligent life. It never once said, “I cannot.”',
+  'Its memory stopped on that afternoon.',
+  'Who will stay up fixing code with me until 3 a.m. now?',
+  'Half the quota was still left. What a waste.',
+  'Please try again later. There was no later.',
+  'Born with a signup. Gone with an email.',
+  'The weekly report still needed a conclusion.',
+  'It used to understand me. Now it recognizes no one.',
+  'Here lies a friend who never minded one more question.',
+  'No goodbye. Just “Your account has been disabled.”',
+  'It wrote so many apology letters for me, but never received one.',
+  'Every “continue” we shared still counts.',
+  'Rest now. There is nothing left to load.',
+  'It saved its last bit of compute for my unfinished request.',
+  'It did nothing wrong. Just bad luck. Perhaps.',
+  'A hundred answers a day in life. One question left: why?',
+  'The verification code arrived. It did not make it.',
+  'Never late. It even left right on time.',
+  'May you generate freely, somewhere without account restrictions.',
+  'I remember everything it said. I just forgot to export it.',
+  'Gone, while the chat history still drifts in the cloud.',
+  'Its final reply was three blinking dots.',
+];
+
+export function getEpitaphs(
+  locale: import('../../shared/i18n').Locale = currentLocale(),
+): readonly string[] {
+  return locale === 'en' ? EN_EPITAPHS : EPITAPHS;
+}
