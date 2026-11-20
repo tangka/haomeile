@@ -12,7 +12,7 @@ interface TipArticle {
   steps: { text: TipCopy; link?: { href: string; label: TipCopy } }[];
   source: `https://x.com/i/article/${string}`;
   sourceAuthor: string;
-  sourceDate: string;
+  sourcePublishedAt: string;
   sourceViews: number;
 }
 
@@ -68,7 +68,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2122671457008500736',
     sourceAuthor: '@leaf_sanren',
-    sourceDate: '2026-11-17',
+    sourcePublishedAt: '2026-11-17T12:48:35Z',
     sourceViews: 334881,
   },
   {
@@ -124,7 +124,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2122282102905307136',
     sourceAuthor: '@qifenglelelelel',
-    sourceDate: '2026-11-16',
+    sourcePublishedAt: '2026-11-16T11:06:00Z',
     sourceViews: 95444,
   },
   {
@@ -183,7 +183,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2121983690859520000',
     sourceAuthor: '@leo_xiaolei',
-    sourceDate: '2026-11-15',
+    sourcePublishedAt: '2026-11-15T15:10:34Z',
     sourceViews: 60998,
   },
   {
@@ -248,7 +248,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2117796918327697408',
     sourceAuthor: '@yangleiocx3',
-    sourceDate: '2026-11-04',
+    sourcePublishedAt: '2026-11-04T04:19:46Z',
     sourceViews: 135910,
   },
   {
@@ -315,7 +315,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2117217865128636416',
     sourceAuthor: '@alin_zone',
-    sourceDate: '2026-11-02',
+    sourcePublishedAt: '2026-11-02T11:41:55Z',
     sourceViews: 67316,
   },
   {
@@ -387,7 +387,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2116453063057948672',
     sourceAuthor: '@Astronaut_1216',
-    sourceDate: '2026-10-31',
+    sourcePublishedAt: '2026-10-31T09:35:01Z',
     sourceViews: 13859,
   },
   {
@@ -446,10 +446,20 @@ export const TIP_ARTICLES: TipArticle[] = [
     ],
     source: 'https://x.com/i/article/2096991393403301888',
     sourceAuthor: '@suversal',
-    sourceDate: '2026-09-08',
+    sourcePublishedAt: '2026-09-08T08:47:27Z',
     sourceViews: 125907,
   },
 ];
+
+const publishedTimeFormat = new Intl.DateTimeFormat('sv-SE', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+  timeZone: 'Asia/Singapore',
+});
+
+export function tipPublishedTime(iso: string): string {
+  return publishedTimeFormat.format(new Date(iso));
+}
 
 export function tipPageTitle(title: string, locale: 'zh' | 'en'): string {
   return locale === 'zh'

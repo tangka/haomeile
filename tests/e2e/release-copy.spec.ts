@@ -81,17 +81,25 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(link).toHaveAttribute('aria-current', 'page');
   const main = page.getByRole('main');
   await expect(main.getByRole('heading')).toHaveText(['使用小技巧']);
-  const titles = [...TIP_ARTICLES]
-    .sort((a, b) => b.sourceDate.localeCompare(a.sourceDate))
-    .map((tip) => tip.title);
+  const articles = [...TIP_ARTICLES].sort((a, b) =>
+    b.sourcePublishedAt.localeCompare(a.sourcePublishedAt),
+  );
+  const titles = articles.map((tip) => tip.title);
   const list = main.locator('.tips');
   await expect(list).toHaveCount(1);
-  await expect(list.locator(':scope > li')).toHaveText(titles);
   await expect(main.getByRole('link')).toHaveCount(titles.length);
+  const publishedTimes = list.locator('li > a > time');
+  await expect(publishedTimes).toHaveCount(articles.length);
+  await expect(publishedTimes.first()).toHaveText('2026-11-17 20:48');
+  expect(
+    await publishedTimes.evaluateAll((times) =>
+      times.map((time) => time.getAttribute('datetime')),
+    ),
+  ).toEqual(articles.map((tip) => tip.sourcePublishedAt));
 
   await page.setViewportSize({ width: 1100, height: 812 });
   const articleLinks = list.locator(':scope > li > a.tip-preview');
-  await expect(articleLinks).toHaveText(titles);
+  await expect(articleLinks.locator('.tip-title')).toHaveText(titles);
   const rows = await articleLinks.evaluateAll((links) =>
     links.map((link) => {
       const { left, top, bottom } = link.getBoundingClientRect();
@@ -123,7 +131,10 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(page).toHaveURL(/\/tips$/);
 
   await page.goto('/en/tips');
-  await expect(page.locator('.tips > li > a')).toHaveText(titles);
+  await expect(page.locator('.tips .tip-title')).toHaveText(titles);
+  await expect(page.locator('.tips time').first()).toHaveText(
+    '2026-11-17 20:48',
+  );
   await page.getByRole('link', { name: title, exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
 });

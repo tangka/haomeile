@@ -1,9 +1,9 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { TIP_ARTICLES } from '../../shared/tips';
+import { TIP_ARTICLES, tipPublishedTime } from '../../shared/tips';
 
 const tips = [...TIP_ARTICLES].sort((a, b) =>
-  b.sourceDate.localeCompare(a.sourceDate),
+  b.sourcePublishedAt.localeCompare(a.sourcePublishedAt),
 );
 ---
 
@@ -23,10 +23,19 @@ const tips = [...TIP_ARTICLES].sort((a, b) =>
             <a
               class="tip-preview"
               href={'/tips/' + tip.slug}
-              lang="zh-CN"
-              translate="no"
+              aria-labelledby={'tip-title-' + tip.slug}
             >
-              {tip.title}
+              <span
+                id={'tip-title-' + tip.slug}
+                class="tip-title"
+                lang="zh-CN"
+                translate="no"
+              >
+                {tip.title}
+              </span>
+              <time datetime={tip.sourcePublishedAt} title="UTC+8">
+                {tipPublishedTime(tip.sourcePublishedAt)}
+              </time>
             </a>
           </li>
         ))}
@@ -43,18 +52,35 @@ const tips = [...TIP_ARTICLES].sort((a, b) =>
     border-block-start: 1px solid var(--stone-shade);
   }
   .tip-preview {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
     align-items: center;
+    gap: 12px;
     min-height: 52px;
     padding: 10px 6px;
     border-block-end: 1px solid var(--stone-shade);
     font-size: var(--fs-s);
-    font-weight: 600;
     text-decoration: none;
+  }
+  .tip-title {
+    font-weight: 600;
     overflow-wrap: anywhere;
   }
-  .tip-preview:is(:hover, :focus-visible) {
+  .tip-preview:is(:hover, :focus-visible) .tip-title {
     text-decoration: underline;
     text-underline-offset: 4px;
+  }
+  .tip-preview time {
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    white-space: nowrap;
+    opacity: 0.8;
+  }
+  @media (max-width: 520px) {
+    .tip-preview time {
+      max-inline-size: 10ch;
+      white-space: normal;
+    }
   }
 </style>

@@ -1,6 +1,10 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { TIP_ARTICLES, tipPageTitle } from '../../../shared/tips';
+import {
+  TIP_ARTICLES,
+  tipPageTitle,
+  tipPublishedTime,
+} from '../../../shared/tips';
 
 export function getStaticPaths() {
   return TIP_ARTICLES.map((tip) => ({
@@ -55,7 +59,9 @@ const { tip } = Astro.props;
             阅读 X 长文
           </a>
           <span>{tip.sourceAuthor}</span>
-          <time datetime={tip.sourceDate}>{tip.sourceDate}</time>
+          <time datetime={tip.sourcePublishedAt} title="UTC+8">
+            {tipPublishedTime(tip.sourcePublishedAt)}
+          </time>
           <span>
             收录时浏览量{' '}
             <strong>{tip.sourceViews.toLocaleString('en-US')}</strong>
