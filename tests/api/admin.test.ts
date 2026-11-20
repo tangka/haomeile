@@ -318,6 +318,31 @@ describe('authenticated moderation', () => {
     });
   });
 
+  it('approves a stored legacy plan patch without inventing a named tier', async () => {
+    const { id, input } = await create('approved');
+    await bindings.DB.prepare(
+      'UPDATE tombstones SET plan=?,pending_patch=? WHERE id=?',
+    )
+      .bind(
+        'paid_personal',
+        JSON.stringify({
+          ...input,
+          plan: 'paid_personal',
+          codename: '旧分类修改审核测试示例',
+        }),
+        id,
+      )
+      .run();
+    const response = await request(`/tombstones/${id}/patch/approve`, {});
+    expect(response.status).toBe(200);
+    expect(await row(id)).toMatchObject({
+      status: 'approved',
+      codename: '旧分类修改审核测试示例',
+      plan: 'paid_personal',
+      pending_patch: null,
+    });
+  });
+
   it('keeps the current version when rejecting an edit and does not restore a hidden tombstone on patch approval', async () => {
     const { id, input } = await create('hidden');
     const patch = { ...input, codename: '隐藏中的审核测试示例' };

@@ -75,3 +75,11 @@
 - 对外分类称“产品”，数据库列、API 字段与兼容路由参数继续使用 `vendor`；规范键仅 `claude`、`codex`、`antigravity`。历史 `chatgpt`、`gemini` 键分别迁移到对应新键，其余旧产品记录不删除、不伪造映射，排除在公开墙、详情、统计和 sitemap 之外。
 - 同步修改实施方案和设计说明的产品范围；原静态 HTML、像素图与视觉样式保留，移植时以本次范围纠正及实际应用为准。产品选择、卡片生成器、官方入口与页面说明均限定三种产品；“其他”事件原因和法律厂商归属声明不受影响。
 - 验证：构建、类型检查、ESLint、121 项单元/接口测试和 35 项浏览器测试全部通过；实际浏览器确认三个产品的筛选、投稿与生成器选项以及新路由。`0002_three_products.sql` 仅已应用到本机 D1，未执行远程迁移或部署。
+
+## 2026-11-20 · 首页简化、套餐档位与验证配置
+
+- 按用户最新要求移除首页与产品页的产品、事件两组筛选，以及按产品、按事件种类的分布区；保留总体数字、纪念墙、近 30 天曲线。投稿里的产品和事件字段保留。原视觉 HTML 不改，实施说明不再要求还原已移除的区块。
+- 套餐改为按产品联动的个人档位，`unknown` 始终保留，Free 显示“免费”：本站当前支持 Claude `unknown/free/pro/max/ultra`、Codex `unknown/free/go/plus/pro`、Antigravity `unknown/free/pro/ultra`。核对来源：[Claude pricing](https://claude.com/pricing)、[Codex pricing](https://chatgpt.com/codex/pricing/)、[Antigravity pricing](https://antigravity.google/pricing)。这些是本站支持的选项，不宣称覆盖官网全部团队、企业或其他档位，不记录价格。
+- 不把旧 `paid_personal`、`paid_team`、`api` 猜测映射到具体新档位。读取及已有待审内容审核保留旧值；编辑时回到 `unknown` 并提示重新选择，新写入按产品对应的档位校验。
+- Turnstile 是真实 SDK + 后端 Siteverify 调用；当前本地为官方始终通过的测试密钥，生产 site key 仍待配置。官方[方案说明](https://developers.cloudflare.com/turnstile/plans/)显示免费版验证请求不限量，最多 20 个 widget、每个 widget 10 个主机名；免费并不表示正式密钥已配置或线上链路已验收。
+- 验证：构建、前端/Worker/E2E 类型检查、ESLint、146 项单元/接口测试和 38 项浏览器测试通过。实际浏览器确认筛选与分布区均不存在，套餐选项随三个产品联动；不创建新迁移、不改写已有套餐记录，也未配置生产 Turnstile 密钥或执行部署。

@@ -2,6 +2,8 @@
 
 一个只记录 Claude、Codex、Antigravity（反重力）账号停用、受限和异常经历的匿名社区。沿用 `design/` 的像素墓园设计，提供纪念墙、匿名立碑、凭据管理、献花举报、人工审核及纯浏览器墓志铭卡片生成器。所有上报均为用户自述，未经核实。
 
+首页保留总体数字、纪念墙和近 30 天曲线；产品与事件筛选、按产品与事件种类的分布区已移除。投稿表单仍填写产品与事件。
+
 当前仓库提供本地应用和部署配置；部署到 Cloudflare 需按 [DEPLOY.md](DEPLOY.md) 完成账号、域名、真实密钥及人工文案配置。这里的开发与测试命令不会发布生产服务。
 
 ## 本地运行
@@ -16,6 +18,8 @@ pnpm dev
 访问 <http://127.0.0.1:8787>。`pnpm dev` 会构建 Astro 页面、应用本地 D1 迁移，再启动同一端口上的 Worker 页面与 API；修改页面或公共资源会重新构建，Worker 代码由 Wrangler 监听。
 
 首次运行会在 `.dev.vars` 不存在时从 `.dev.vars.example` 复制**仅用于本地的 Cloudflare 官方 Turnstile 测试配置**。首次本地数据库为空，不导入设计稿的示例内容；已有本地数据库会保留。`.dev.vars`、`.wrangler/` 均已忽略，不能提交真实密钥。本地状态存于 `.wrangler/`，与生产 D1 分离。
+
+人机验证已接入前端 Turnstile SDK 和后端 Siteverify。当前本地使用官方始终通过的测试密钥，生产 site key 尚未配置；本地通过不能证明生产配置已就绪。Turnstile [免费方案](https://developers.cloudflare.com/turnstile/plans/)不限制验证请求次数，账户最多 20 个 widget，每个 widget 最多 10 个主机名。
 
 单独应用本地迁移：
 
@@ -62,6 +66,8 @@ Astro 采用静态输出。Worker 先处理请求，再用 HTMLRewriter 将 D1 �
 ## 内容与数据约束
 
 产品范围固定为 Claude（`claude`）、Codex（`codex`）、Antigravity／反重力（`antigravity`），没有其他产品选项。为保持兼容，数据库及 API 的产品字段仍名为 `vendor`。历史 `chatgpt`、`gemini` 记录分别迁移为 `codex`、`antigravity`；其余旧产品记录保留，但不计入公开页面、统计或 sitemap。
+
+投稿套餐按产品联动：Claude 支持未知、免费、Pro、Max、Ultra；Codex 支持未知、免费、Go、Plus、Pro；Antigravity 支持未知、免费、Pro、Ultra。“未知”始终可选。旧 `paid_personal`、`paid_team`、`api` 保留原值供读取与存量审核；编辑时提示重选，不擅自归入具体档位。
 
 公开内容必须人工审核；修改审核期间保留旧的公开版本。撤回会清空内容及凭据哈希，之后旧凭据失效；原公开地址返回 410。应用不保存原始 IP、不设置 Cookie、不引入第三方追踪。后台登录由 Cloudflare Access 的独立管理会话承担。
 

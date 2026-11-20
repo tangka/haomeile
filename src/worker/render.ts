@@ -38,13 +38,6 @@ export function renderTomb(t: PublicTombstone, detail = false): string {
     : '';
   return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(LABELS.vendor, t.vendor))}</li><li class="tag">${e(label(LABELS.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(t.story)}</p>${facts}<div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="献花 ${num(t.flowers)}，为这块碑献一朵花"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>献花 ${num(t.flowers)}</span></button></div></div></div></article>`;
 }
-export function renderBars(
-  rows: [string, number][],
-  labels: Record<string, string>,
-): string {
-  const max = Math.max(1, ...rows.map(([, n]) => n));
-  return `<ul class="bars">${rows.map(([key, n]) => `<li><span>${escapeHtml(label(labels, key))}</span><span class="bar" style="width:${n === 0 ? 0 : Math.max(2, Math.round((n / max) * 100))}%"></span><span class="n">${num(n)}</span></li>`).join('')}</ul>`;
-}
 export function renderTimeline(stats: Stats): string {
   const max = Math.max(
     1,
@@ -55,29 +48,6 @@ export function renderTimeline(stats: Stats): string {
       .map((day, i) => `${20 + (i * 720) / 29},${130 - (day[key] * 110) / max}`)
       .join(' ');
   return `<figure style="margin:0;padding-top:20px;padding-bottom:20px"><figcaption>近 30 天 · 上报日期与事件日期</figcaption><svg viewBox="0 0 760 170" role="img" aria-label="近30天按上报日期与事件发生日期统计，具体数值见下方表格" style="width:100%;height:auto"><path d="M20 20V130H740" fill="none" stroke="currentColor"/><polyline points="${line('reported')}" fill="none" stroke="var(--mum)" stroke-width="3"/><polyline points="${line('occurred')}" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><text x="20" y="158" fill="currentColor" font-size="13">${escapeHtml(stats.timeline[0]?.date)}</text><text x="740" y="158" text-anchor="end" fill="currentColor" font-size="13">${escapeHtml(stats.date)}</text></svg><p class="hint">实线：上报数；虚线：事件发生数。只统计当前公开墓碑。</p><details><summary>查看每日数据</summary><div style="overflow:auto"><table><thead><tr><th>日期</th><th>上报数</th><th>事件发生数</th></tr></thead><tbody>${stats.timeline.map((d) => `<tr><th scope="row">${escapeHtml(d.date)}</th><td>${d.reported}</td><td>${d.occurred}</td></tr>`).join('')}</tbody></table></div></details></figure>`;
-}
-function filters(
-  url: URL,
-  kind: 'vendor' | 'event',
-  vendorPage?: string,
-): string {
-  const labels = kind === 'vendor' ? LABELS.vendor : LABELS.event_type_short;
-  const current =
-    kind === 'vendor'
-      ? vendorPage || url.searchParams.get('vendor') || ''
-      : url.searchParams.get('event') || '';
-  return [['', '全部'], ...Object.entries(labels)]
-    .map(([key, value]) => {
-      const next = new URL(url);
-      next.searchParams.delete('cursor');
-      if (kind === 'vendor') {
-        next.pathname = key ? `/v/${key}` : '/';
-        next.searchParams.delete('vendor');
-      } else if (key) next.searchParams.set('event', key);
-      else next.searchParams.delete('event');
-      return `<a class="chip" href="${escapeHtml(next.pathname + next.search)}" aria-current="${String(key === current)}" data-value="${escapeHtml(key)}">${escapeHtml(value)}</a>`;
-    })
-    .join('');
 }
 function metadata(
   rewriter: HTMLRewriter,
@@ -174,21 +144,6 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         el.setInnerContent(tally, { html: true });
       },
     });
-    rewriter.on('[data-ssr="bars-vendor"]', {
-      element: (el) => {
-        el.setInnerContent(renderBars(stats.by_vendor, LABELS.vendor), {
-          html: true,
-        });
-      },
-    });
-    rewriter.on('[data-ssr="bars-event"]', {
-      element: (el) => {
-        el.setInnerContent(
-          renderBars(stats.by_event, LABELS.event_type_short),
-          { html: true },
-        );
-      },
-    });
     rewriter.on('[data-ssr="timeline"]', {
       element: (el) => {
         el.setInnerContent(renderTimeline(stats), { html: true });
@@ -218,22 +173,6 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         next.searchParams.set('cursor', page.next_cursor);
         el.setAttribute('href', next.pathname + next.search);
         el.removeAttribute('hidden');
-      },
-    });
-    rewriter.on('[data-ssr="filters-vendor"]', {
-      element: (el) => {
-        el.append(
-          filters(url, 'vendor', path.startsWith('/v/') ? vendor : undefined),
-          { html: true },
-        );
-      },
-    });
-    rewriter.on('[data-ssr="filters-event"]', {
-      element: (el) => {
-        el.append(
-          filters(url, 'event', path.startsWith('/v/') ? vendor : undefined),
-          { html: true },
-        );
       },
     });
     if (path.startsWith('/v/') && vendor) {

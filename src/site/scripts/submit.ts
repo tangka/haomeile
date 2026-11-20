@@ -1,4 +1,9 @@
-import type { TombInput, TombstoneRow } from '../../worker/types';
+import {
+  PRODUCT_PLANS,
+  type TombInput,
+  type TombstoneRow,
+  type Vendor,
+} from '../../worker/types';
 import { validateTombInput } from '../../worker/lib/validate';
 import { checkPrivacy } from '../../worker/lib/privacy';
 import { ApiError } from '../../worker/lib/errors';
@@ -12,6 +17,7 @@ import {
 } from './browser';
 import { toast } from './toast';
 import { mountTurnstile, type Challenge } from './turnstile';
+import { LABELS, LEGACY_PLAN_LABELS } from './labels';
 type OwnerTomb = Omit<
   TombstoneRow,
   'secret_hash' | 'flags' | 'pending_patch'
@@ -22,6 +28,33 @@ const errorBox = document.querySelector<HTMLElement>('#submit-error')!;
 const submit = document.querySelector<HTMLButtonElement>('#submit-button')!;
 const challengeContainer = document.querySelector<HTMLElement>('#turnstile')!;
 const died = document.querySelector<HTMLInputElement>('#died')!;
+const product = document.querySelector<HTMLSelectElement>('#vendor')!;
+const plan = document.querySelector<HTMLSelectElement>('#plan')!;
+const planHint = document.querySelector<HTMLElement>('#plan-hint')!;
+function syncPlans(preferred = plan.value): void {
+  const choices: readonly string[] = Object.hasOwn(PRODUCT_PLANS, product.value)
+    ? PRODUCT_PLANS[product.value as Vendor]
+    : ['unknown'];
+  const selected = choices.includes(preferred) ? preferred : 'unknown';
+  plan.replaceChildren(
+    ...choices.map(
+      (key) =>
+        new Option(
+          LABELS.plan[key as keyof typeof LABELS.plan],
+          key,
+          key === 'unknown',
+          key === selected,
+        ),
+    ),
+  );
+  planHint.textContent = !product.value
+    ? '先选择产品，再选择对应套餐。'
+    : Object.hasOwn(LEGACY_PLAN_LABELS, preferred)
+      ? '旧记录没有注明具体档位，请重新选择；不记得可以保持“不详或不想说”。'
+      : '选填，不记得可以保持“不详或不想说”。';
+}
+product.addEventListener('change', () => syncPlans());
+syncPlans();
 const born = document.querySelector<HTMLInputElement>('#born')!;
 const bornPrecision =
   document.querySelector<HTMLSelectElement>('#born-precision')!;
@@ -43,7 +76,10 @@ bornPrecision.addEventListener('change', () =>
   setBornPrecision(bornPrecision.value as BornPrecision),
 );
 form.addEventListener('reset', () =>
-  queueMicrotask(() => setBornPrecision(bornPrecision.value as BornPrecision)),
+  queueMicrotask(() => {
+    setBornPrecision(bornPrecision.value as BornPrecision);
+    syncPlans();
+  }),
 );
 died.max = shanghaiDate();
 died.value = shanghaiDate();
@@ -95,7 +131,10 @@ function fill(tomb: OwnerTomb): void {
   const values = tomb.pending_patch || tomb;
   // Set the input type before assigning a precise date; month inputs clear day values.
   setBornPrecision(values.born_precision);
+  product.value = values.vendor;
+  syncPlans(values.plan);
   for (const [field, value] of Object.entries(values)) {
+    if (field === 'vendor' || field === 'plan') continue;
     const name = names[field] || field;
     const controls = form.querySelectorAll<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -218,6 +257,7 @@ dialog.addEventListener('close', () => {
   document.querySelector('#credential-id')!.textContent = '';
   document.querySelector('#credential-secret')!.textContent = '';
   form.reset();
+  syncPlans('unknown');
   died.value = shanghaiDate();
   updateCount();
 });

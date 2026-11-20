@@ -125,6 +125,46 @@ describe('shared validation and privacy', () => {
     expect(() => validateVisitor('raw-ip')).toThrow(ApiError);
   });
 });
+describe('named subscription tiers', () => {
+  it.each([
+    ['claude', 'free'],
+    ['claude', 'pro'],
+    ['claude', 'max'],
+    ['claude', 'ultra'],
+    ['codex', 'free'],
+    ['codex', 'go'],
+    ['codex', 'plus'],
+    ['codex', 'pro'],
+    ['antigravity', 'free'],
+    ['antigravity', 'pro'],
+    ['antigravity', 'ultra'],
+  ])('accepts %s %s', (vendor, plan) => {
+    expect(
+      validateTombInput({ ...input, vendor, plan }, '2026-11-20').plan,
+    ).toBe(plan);
+  });
+  it.each([
+    ['claude', 'go'],
+    ['claude', 'plus'],
+    ['codex', 'max'],
+    ['codex', 'ultra'],
+    ['antigravity', 'go'],
+    ['antigravity', 'plus'],
+    ['antigravity', 'max'],
+  ])('rejects the tier %s does not offer: %s', (vendor, plan) => {
+    expect(() =>
+      validateTombInput({ ...input, vendor, plan }, '2026-11-20'),
+    ).toThrow(ApiError);
+  });
+  it.each(['paid_personal', 'paid_team', 'api'])(
+    'does not treat old %s classifications as named tiers',
+    (plan) => {
+      expect(() => validateTombInput({ ...input, plan }, '2026-11-20')).toThrow(
+        ApiError,
+      );
+    },
+  );
+});
 describe('Beijing calendar boundaries', () => {
   it('changes day at UTC 16:00', () => {
     expect(beijingDay(Date.parse('2026-11-19T15:59:59Z'))).toBe('2026-11-19');

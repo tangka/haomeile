@@ -6,6 +6,8 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 
 **产品范围修正**：正式应用只提供 Claude（`claude`）、Codex（`codex`）、Antigravity／反重力（`antigravity`）。界面分类称“产品”，API 与数据字段仍保留 `vendor`。静态 HTML 设计原稿可能保留旧名称或多产品占位，移植时以这三种产品为准；不重新引入原稿中的其他产品或自由输入产品选项。
 
+**页面简化修正**：正式首页及产品页不再渲染产品、事件两行筛选，也不渲染按产品、按事件种类的分布区；保留总体数字、纪念墙和近 30 天曲线。原稿中的 Filters、Census、Bars 仅为历史设计参考，不再移植回页面。投稿的产品和事件字段仍保留。
+
 给 Codex 的读法：
 1. 先读本文件的 §1–§4，知道每个页面、组件、脚本要变成哪个文件。
 2. 再看 HTML 里的 `<!-- @component 名称 → 目标文件 ... -->` 注释，它标出了每个组件的边界和数据来源。
@@ -42,9 +44,6 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 | SiteFooter | `.footer` | `src/site/components/SiteFooter.astro` | 无 |
 | HeroScene | `index.html` 的 `.scene` | `src/site/components/HeroScene.astro` | 无 |
 | Tally | `.ground` | `src/site/components/Tally.astro` | `today`、`last7`、`total` |
-| Census | `.census` | `src/site/components/Census.astro` | `by_vendor`、`by_event`（`[key, n][]`） |
-| Bars | `createBars()` 的输出 | `src/site/components/Bars.astro` | `rows: { label, n }[]` |
-| Filters | `.filters` 里两组 `.chips` | `src/site/components/Filters.astro` | 当前 `vendor`、`event` |
 | TombCard | `createTombCard()` 的输出 | `src/site/components/TombCard.astro` + `scripts/wall.ts` | 一条墓碑记录（§5 字段）、`detail?: boolean` |
 | FlowerButton | `.flower-btn` | 包含在 TombCard 内，逻辑在 `scripts/flower.ts` | `id`、`flowers`、今天是否已献 |
 | TombForm | `submit.html` 的 `#tomb-form` | `src/site/components/TombForm.astro` + `scripts/submit.ts` | `mode: 'new' \| 'edit'`、预填值 |
@@ -83,7 +82,7 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 | 代号 | `codename` | 文本 |
 | 署名 | `nickname` | 文本 |
 | 产品 | `vendor` | `claude` `codex` `antigravity` |
-| 套餐 | `plan` | `unknown` `free` `paid_personal` `paid_team` `api` |
+| 套餐 | `plan` | 依产品联动：Claude `unknown/free/pro/max/ultra`；Codex `unknown/free/go/plus/pro`；Antigravity `unknown/free/pro/ultra`；`unknown` 始终存在，`free` 显示“免费” |
 | 发生了什么 | `event` → 提交时映射为 `event_type` | `suspended` `org_suspended` `region` `verification` `billing` `other` |
 | 生于 | `born_at` | `YYYY-MM`；控件为空时 `born_precision = 'none'`，有值时为 `'month'`（正式版可再加“到日”切换） |
 | 卒于 | `died_at` | `YYYY-MM-DD` |
@@ -93,6 +92,8 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 | 碑脚放点什么 | `style` → 映射为 `card_style` | `flower` `cloud` `star` |
 
 ---
+
+历史 `paid_personal`、`paid_team`、`api` 不自动转换为具体套餐。读取与审核保留原值；用户进入编辑表单时选中 `unknown` 并提示重新选择，提交的新值按产品档位校验。
 
 ## 5. 视觉规则
 
@@ -119,7 +120,7 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 
 | 页面 | 状态 |
 |---|---|
-| 纪念墙 | 正常、空墙、筛选无结果、加载更多中、加载失败（toast） |
+| 纪念墙 | 正常、空墙、加载更多中、加载失败（toast）；兼容查询无结果时保留空状态，但没有筛选控件 |
 | 献花 | 未献、已献（当天）、请求失败回滚（toast） |
 | 立碑 | 正常、字段错误（每条隐私规则一句）、限流、人机验证失败、网络错误、成功弹窗 |
 | 凭据弹窗 | 未勾选“已保存”时关闭按钮禁用且 Esc 无效；复制后按钮文字变“已复制” |

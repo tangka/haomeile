@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { VENDORS, type AppEnv, type TombstoneRow } from '../types';
 import { ApiError } from '../lib/errors';
-import { validateTombInput } from '../lib/validate';
+import { validateStoredTombInput } from '../lib/validate';
 import { checkPrivacy } from '../lib/privacy';
 import { detectGrayMarket } from '../lib/graymarket';
 import { readJson } from '../lib/json';
@@ -214,7 +214,7 @@ for (const action of ['approve', 'reject'] as const) {
     let update: D1PreparedStatement;
     let status = row.status;
     if (action === 'approve') {
-      const input = validateTombInput(parsed(row.pending_patch));
+      const input = validateStoredTombInput(parsed(row.pending_patch));
       const { consent: _consent, ...fields } = input;
       const entries = Object.entries(fields);
       const flags = detectGrayMarket(

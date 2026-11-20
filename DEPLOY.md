@@ -32,6 +32,8 @@ pnpm exec wrangler d1 migrations apply haomeile --remote
 
 ## 3. 配置 Turnstile 与密钥
 
+应用已接入真实 Turnstile SDK，并由 Worker 调用 Siteverify 校验 token。当前本地使用官方始终通过的测试配置，生产 site key 尚未配置。Cloudflare 的 [免费方案](https://developers.cloudflare.com/turnstile/plans/)允许不限次数的验证请求，提供最多 20 个 widget、每个 widget 最多 10 个主机名；本项目可使用该方案，测试密钥仍需替换为正式配置。
+
 由站长在 Cloudflare 创建 Turnstile 站点，将 `haomeile.rip` 加入允许的主机名。把真实 **site key** 填入 `wrangler.toml` 的 `[vars].TURNSTILE_SITE_KEY`；site key 是公开配置。保留 `ENVIRONMENT = "production"` 和 `SITE_ORIGIN = "https://haomeile.rip"`。
 
 真实密钥通过 Wrangler 写入。除 `PEPPER` 外，下列命令均在提示时输入控制台取得的值，不把值写进命令行、源码或截图：

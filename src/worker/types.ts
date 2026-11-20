@@ -11,10 +11,20 @@ export const EVENTS = [
 export const PLANS = [
   'unknown',
   'free',
-  'paid_personal',
-  'paid_team',
-  'api',
+  'go',
+  'plus',
+  'pro',
+  'max',
+  'ultra',
 ] as const;
+export type Plan = (typeof PLANS)[number];
+export const LEGACY_PLANS = ['paid_personal', 'paid_team', 'api'] as const;
+export type LegacyPlan = (typeof LEGACY_PLANS)[number];
+export const PRODUCT_PLANS = {
+  claude: ['unknown', 'free', 'pro', 'max', 'ultra'],
+  codex: ['unknown', 'free', 'go', 'plus', 'pro'],
+  antigravity: ['unknown', 'free', 'pro', 'ultra'],
+} as const satisfies Record<(typeof VENDORS)[number], readonly Plan[]>;
 export const APPEALS = ['none', 'pending', 'rejected', 'restored'] as const;
 export const STYLES = ['flower', 'cloud', 'star'] as const;
 export const REPORT_REASONS = [
@@ -31,7 +41,7 @@ export interface TombInput {
   nickname: string;
   vendor: Vendor;
   event_type: (typeof EVENTS)[number];
-  plan: (typeof PLANS)[number];
+  plan: Plan;
   born_at: string | null;
   born_precision: 'none' | 'month' | 'day';
   died_at: string;
@@ -41,7 +51,10 @@ export interface TombInput {
   card_style: (typeof STYLES)[number];
   consent: true;
 }
-export interface TombstoneRow extends Omit<TombInput, 'consent'> {
+export interface StoredTombInput extends Omit<TombInput, 'plan'> {
+  plan: Plan | LegacyPlan;
+}
+export interface TombstoneRow extends Omit<StoredTombInput, 'consent'> {
   id: string;
   secret_hash: string;
   status: TombStatus;

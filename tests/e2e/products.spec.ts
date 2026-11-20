@@ -4,31 +4,31 @@ import { stubTurnstileSdk } from './helpers';
 const products = ['claude', 'codex', 'antigravity'];
 const names = ['Claude', 'Codex', 'Antigravity'];
 
-test('the wall, submission form, card maker and appeal page offer only the three actual products', async ({
+test('the wall has no category controls and forms keep only the three actual products', async ({
   page,
 }) => {
   await stubTurnstileSdk(page);
   await page.goto('/');
-  const filters = page.locator('#chips-vendor a.chip');
-  await expect(filters).toHaveText(['全部', ...names]);
-  expect(
-    await filters.evaluateAll((links) =>
-      links.map((link) => new URL((link as HTMLAnchorElement).href).pathname),
-    ),
-  ).toEqual(['/', ...products.map((key) => '/v/' + key)]);
+  await expect(
+    page.getByRole('heading', { name: '按产品', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: '按事件种类', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.filters, #chips-vendor, #chips-event'),
+  ).toHaveCount(0);
   await page.goto('/submit');
   const submission = page.locator('#vendor');
   expect(
-    await submission
-      .locator('option')
-      .evaluateAll((options) =>
-        options
-          .map((option) => ({
-            value: (option as HTMLOptionElement).value,
-            text: option.textContent?.trim(),
-          }))
-          .filter((option) => option.value),
-      ),
+    await submission.locator('option').evaluateAll((options) =>
+      options
+        .map((option) => ({
+          value: (option as HTMLOptionElement).value,
+          text: option.textContent?.trim(),
+        }))
+        .filter((option) => option.value),
+    ),
   ).toEqual(products.map((value, i) => ({ value, text: names[i] })));
   for (const key of ['codex', 'antigravity']) {
     await submission.selectOption(key);

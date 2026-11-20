@@ -1,3 +1,10 @@
+// Read-only labels retain the meaning of historical submissions. These are not
+// options for new submissions and must never be guessed into named tiers.
+export const LEGACY_PLAN_LABELS = {
+  paid_personal: '个人付费（旧分类）',
+  paid_team: '团队或企业（旧分类）',
+  api: 'API（旧分类）',
+} as const;
 export const LABELS = {
   vendor: {
     claude: 'Claude',
@@ -23,10 +30,13 @@ export const LABELS = {
   },
   plan: {
     unknown: '不详或不想说',
-    free: '免费版',
-    paid_personal: '个人付费',
-    paid_team: '团队或企业',
-    api: 'API',
+    free: 'Free（免费版）',
+    go: 'Go',
+    plus: 'Plus',
+    pro: 'Pro',
+    max: 'Max',
+    ultra: 'Ultra',
+    ...LEGACY_PLAN_LABELS,
   },
   appeal_status: {
     none: '还没申诉',

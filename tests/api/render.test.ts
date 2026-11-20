@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import { app } from '../../src/worker';
 import type { Bindings } from '../../src/worker/types';
-const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><p data-ssr="tally"></p><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><div data-ssr="filters-vendor"></div><div data-ssr="filters-event"></div><div data-ssr="timeline"></div></body></html>`;
+const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><p data-ssr="tally"></p><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><div data-ssr="timeline"></div></body></html>`;
 const assets = {
   async fetch(request: Request) {
     if (new URL(request.url).pathname === '/submit')
@@ -53,12 +53,10 @@ describe('Worker renders Astro templates on the server', () => {
       expect(html).toContain('/t/PRODUCTAAA');
     },
   );
-  it('renders only the three supported product filters and hides unsupported historical rows', async () => {
+  it('hides unsupported historical rows and rejects their product landing pages', async () => {
     await seed('LEGACYAAAA', 'approved', undefined, 'grok');
     const response = await app.request('https://haomeile.rip/', {}, bindings);
     const html = await response.text();
-    for (const product of ['claude', 'codex', 'antigravity'])
-      expect(html).toContain('href="/v/' + product + '"');
     for (const product of [
       'chatgpt',
       'gemini',
