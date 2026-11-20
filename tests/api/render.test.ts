@@ -24,15 +24,63 @@ async function seed(
   id: string,
   status = 'approved',
   story = '这是一段只存在于测试数据库的示例内容。',
+  vendor = 'claude',
 ) {
   const now = new Date().toISOString();
   await env.DB.prepare(
-    "INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) VALUES (?,'private-hash','渲染测试示例','claude','verification','2026-11-18',?,?,?,?,?)",
+    "INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) VALUES (?,'private-hash','渲染测试示例',?,'verification','2026-11-18',?,?,?,?,?)",
   )
-    .bind(id, story, status, now, now, now)
+    .bind(id, vendor, story, status, now, now, now)
     .run();
 }
 describe('Worker renders Astro templates on the server', () => {
+  it.each([
+    ['codex', 'Codex'],
+    ['antigravity', 'Antigravity'],
+  ])(
+    'renders the %s product landing page with its actual name',
+    async (vendor, name) => {
+      await seed('PRODUCTAAA', 'approved', undefined, vendor);
+      const response = await app.request(
+        'https://haomeile.rip/v/' + vendor,
+        {},
+        bindings,
+      );
+      expect(response.status).toBe(200);
+      const html = await response.text();
+      expect(html).toContain(name + ' 账号的墓碑');
+      expect(html).toContain('href="https://haomeile.rip/v/' + vendor + '"');
+      expect(html).toContain('/t/PRODUCTAAA');
+    },
+  );
+  it('renders only the three supported product filters and hides unsupported historical rows', async () => {
+    await seed('LEGACYAAAA', 'approved', undefined, 'grok');
+    const response = await app.request('https://haomeile.rip/', {}, bindings);
+    const html = await response.text();
+    for (const product of ['claude', 'codex', 'antigravity'])
+      expect(html).toContain('href="/v/' + product + '"');
+    for (const product of [
+      'chatgpt',
+      'gemini',
+      'grok',
+      'deepseek',
+      'kimi',
+      'qwen',
+      'doubao',
+      'other',
+    ]) {
+      expect(html).not.toContain('href="/v/' + product + '"');
+      expect(
+        (await app.request('https://haomeile.rip/v/' + product, {}, bindings))
+          .status,
+      ).toBe(404);
+    }
+    expect(html).not.toContain('/t/LEGACYAAAA');
+    expect(
+      (await app.request('https://haomeile.rip/t/LEGACYAAAA', {}, bindings))
+        .status,
+    ).toBe(404);
+  });
   it('serves the edit form without a redirect that loses its query string', async () => {
     const response = await app.request(
       'https://haomeile.rip/submit?mode=edit',

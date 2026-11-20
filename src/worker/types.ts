@@ -1,15 +1,5 @@
 import type { D1Database, Fetcher } from '@cloudflare/workers-types/index.ts';
-export const VENDORS = [
-  'claude',
-  'chatgpt',
-  'gemini',
-  'grok',
-  'deepseek',
-  'kimi',
-  'qwen',
-  'doubao',
-  'other',
-] as const;
+export const VENDORS = ['claude', 'codex', 'antigravity'] as const;
 export const EVENTS = [
   'suspended',
   'org_suspended',

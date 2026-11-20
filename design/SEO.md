@@ -5,6 +5,8 @@
 
 Codex 实现时按 §1–§8 逐项落地，§9 是站长上线后要做的事。
 
+本站只覆盖 Claude、Codex、Antigravity（反重力）。产品键依次为 `claude`、`codex`、`antigravity`；路由和查询参数保留 `vendor` 兼容字段名，页面标题、筛选与统计均按产品表述。
+
 ---
 
 ## 1. 每个页面的 `<head>`
@@ -63,14 +65,14 @@ const SITE = 'https://haomeile.rip';
 
 | 路由 | title | description | robots |
 |---|---|---|---|
-| `/` | 号没了 · AI 账号赛博公墓 | 被封了、被停了、卡在验证了？在号没了匿名立一块碑，看看别人的 AI 账号是怎么没的。内容为用户自述，本站与任何 AI 厂商无关。 | 默认 |
-| `/v/:vendor` | {厂商} 账号停用、封号经历 · 号没了 | 号没了上用户自述的 {厂商} 账号停用、地区限制、验证卡住等经历，共 {n} 块公开墓碑，截至 {日期}。内容未经核实，与 {厂商} 官方无关。 | 公开墓碑 ≥ 5 块时默认，否则 `noindex,follow` |
-| `/t/:id` | {代号}：{厂商} 账号{事件种类} · 号没了 | 用户自述：{经过的前 60 个字}…… 本站未核实。 | `index,follow,noarchive,max-image-preview:large` |
+| `/` | 号没了 · AI 账号赛博公墓 | 记录 Claude、Codex、Antigravity（反重力）的账号停用、验证受阻和异常经历。匿名立碑、献花或制作墓志铭卡片，内容为用户自述，未经核实；本站与产品所属厂商无关。 | 默认 |
+| `/v/:vendor` | {产品} 账号停用、封号经历 · 号没了 | 号没了上用户自述的 {产品} 账号停用、地区限制、验证卡住等经历，共 {n} 块公开墓碑，截至 {日期}。内容未经核实，与 {产品} 官方无关。 | 公开墓碑 ≥ 5 块时默认，否则 `noindex,follow` |
+| `/t/:id` | {代号}：{产品} 账号{事件种类} · 号没了 | 用户自述：{经过的前 60 个字}…… 本站未核实。 | `index,follow,noarchive,max-image-preview:large` |
 | `/epitaph` | 墓志铭卡片生成器 · 号没了 | 给没了的 AI 账号做一张像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。 | 默认 |
-| `/appeal` | AI 账号被封后去哪申诉：各厂商官方入口 · 号没了 | 汇总 Claude、ChatGPT、Gemini 等 AI 产品的官方帮助中心和申诉方式。本站无法帮你解封，请走官方渠道。 | 默认 |
+| `/appeal` | Claude、Codex、Antigravity 官方申诉入口 · 号没了 | 汇总 Claude、Codex、Antigravity（反重力）三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。 | 默认 |
 | `/rules` | 使用须知 · 号没了 | 在号没了立碑前需要知道的规则：写经过、不填隐私、保存凭据、不谈买卖账号和规避风控。 | 默认 |
 | `/privacy` | 数据说明 · 号没了 | 号没了公开哪些内容、不收集哪些信息、统计口径是什么，以及公开内容会被搜索引擎和 AI 服务抓取。 | 默认 |
-| `/about` | 关于 · 号没了 | 号没了是与任何 AI 厂商都无关的独立社区项目，记录用户自述的 AI 账号停用经历。 | 默认 |
+| `/about` | 关于 · 号没了 | 号没了是与任何 AI 厂商都无关的独立社区项目，只记录 Claude、Codex 和 Antigravity（反重力）的用户自述经历。 | 默认 |
 | `/submit` | 立一块碑 · 号没了 | 匿名记录你的 AI 账号是怎么没的。 | `noindex,follow` |
 | `/manage` | 管理我的墓碑 · 号没了 | 用凭据查看审核结果、修改或撤回。 | `noindex,nofollow` |
 | `/admin`、`/api/*` | — | — | 响应头 `X-Robots-Tag: noindex, nofollow` |
@@ -78,22 +80,22 @@ const SITE = 'https://haomeile.rip';
 
 规则：
 - 标题里的代号、经过都来自用户输入，输出前转义；描述截断按字符，不截断半个表情符号。
-- 首页带筛选参数（`/?vendor=…&event=…`）时 canonical 指向对应的 `/v/:vendor`，没有厂商参数时指向 `/`。
+- 首页带筛选参数（`/?vendor=…&event=…`）时 canonical 指向对应的 `/v/:vendor`，没有产品参数时指向 `/`。
 - 分页（`?cursor=`）的 canonical 指向不带 cursor 的地址。
 
-## 3. 新增路由：厂商落地页 `/v/:vendor`
+## 3. 新增路由：产品落地页 `/v/:vendor`
 
-- `vendor` 只接受 `labels.ts` 里的真实厂商键（`claude`、`chatgpt`……`other`），其他值返回 404。
-- 页面就是首页去掉天空场景的版本：页头写“{厂商} 账号的墓碑”，下面是只算这个厂商的统计句、按事件种类的分布、纪念墙。
+- `vendor` 只接受 `labels.ts` 里的三个产品键（`claude`、`codex`、`antigravity`），其他值返回 404。旧 `chatgpt`、`gemini` 记录应先迁移为新键，不能作为正式产品页继续收录。
+- 页面就是首页去掉天空场景的版本：页头写“{产品} 账号的墓碑”，下面是只算这个产品的统计句、按事件种类的分布、纪念墙。
 - 统计句写成可以单独引用的完整陈述（见 §6）。
-- 不做任何厂商之间的对比或排名。
+- 不做任何产品之间的对比或排名。
 
 ## 4. 抓取、收录与撤回
 
 **robots.txt**：见 `seo/robots.txt`，放在 `public/robots.txt`。
 
 **sitemap.xml**：由 Worker 动态生成，路径 `/sitemap.xml`。
-- 包含：`/`、`/epitaph`、`/appeal`、`/rules`、`/privacy`、`/about`、满足条件的 `/v/:vendor`、全部 `status = approved` 的 `/t/:id`。
+- 包含：`/`、`/epitaph`、`/appeal`、`/rules`、`/privacy`、`/about`、满足条件的 `/v/:vendor`、全部 `status = approved` 且属于上述三种产品的 `/t/:id`。
 - `<lastmod>` 用 `updated_at`（墓碑）或部署时间（静态页）。
 - 不写 `<priority>` 和 `<changefreq>`。
 - 超过 45,000 条时拆成 sitemap 索引。
@@ -128,7 +130,7 @@ const SITE = 'https://haomeile.rip';
   "alternateName": "AI 账号赛博公墓",
   "url": "https://haomeile.rip/",
   "inLanguage": "zh-CN",
-  "description": "用户匿名记录 AI 产品账号被停用、受限或异常经历的独立社区网站，与任何 AI 厂商无关。"
+  "description": "用户匿名记录 Claude、Codex 和 Antigravity（反重力）账号被停用、受限或异常经历的独立社区网站，与产品所属厂商无关。"
 }
 ```
 
@@ -164,16 +166,16 @@ const SITE = 'https://haomeile.rip';
 ]
 ```
 
-`author.name` 用署名，没有署名时写“匿名用户”。厂商落地页只放 BreadcrumbList。
+`author.name` 用署名，没有署名时写“匿名用户”。产品落地页只放 BreadcrumbList。
 
 ## 6. GEO：让 AI 引用时不说错
 
 - **统计写成完整陈述**，每个数字都带日期和口径，并用 `<time datetime>` 标出：
   > 截至 <time datetime="2026-11-19">2026 年 11 月 19 日</time>，号没了共有 1,204 块公开墓碑。这些都是用户自愿上报，未经核实，不代表任何平台的实际封号数量。
-  首页的统计句（Tally）在正式站点改成这个写法，厂商落地页同理。
+  首页的统计句（Tally）在正式站点改成这个写法，产品落地页同理。
 - **每页第一段先定义**：这是什么页面、内容从哪来。墓碑页在经过上方保留“用户自述，未经核实”。
 - **数据说明页加一节“统计口径”**（`/privacy#stats`），各页统计说明链接到这里。
-- **不写诱导性结论**：不出现“某厂商最爱封号”“封号率排名”之类的句子，标题、描述、页面文字都一样。
+- **不写诱导性结论**：不出现“某产品最爱封号”“封号率排名”之类的句子，标题、描述、页面文字都一样。
 - **关于页写清楚身份**：独立项目、与厂商无关、联系方式。AI 助手回答“这个网站是谁做的”时会用到。
 
 ## 7. 性能

@@ -197,7 +197,7 @@ for (const [label, value, message] of [
     });
     await page.goto('/submit');
     await page.locator('#codename').fill('隐私拦截测试示例');
-    await page.locator('#vendor').selectOption('other');
+    await page.locator('#vendor').selectOption('codex');
     await page.locator('#story').fill(value);
     await page.locator('#agree').check();
     await page.locator('#submit-button').click();

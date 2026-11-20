@@ -8,7 +8,7 @@ import type { Bindings, TombInput, TombstoneRow } from '../../src/worker/types';
 const input: TombInput = {
   codename: '并发测试示例',
   nickname: '',
-  vendor: 'other',
+  vendor: 'codex',
   event_type: 'verification',
   plan: 'unknown',
   born_at: null,
@@ -24,7 +24,7 @@ async function seed(): Promise<{ id: string; secret: string }> {
   const credential = await createCredentials(env.PEPPER),
     now = new Date().toISOString();
   await env.DB.prepare(
-    "INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) VALUES (?,?,?,'other','verification',?,?,'approved',?,?,?)",
+    "INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) VALUES (?,?,?,'codex','verification',?,?,'approved',?,?,?)",
   )
     .bind(
       credential.id,

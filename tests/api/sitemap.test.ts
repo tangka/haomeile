@@ -38,6 +38,32 @@ async function insert(
     .run();
 }
 describe('dynamic sitemap', () => {
+  it('never lists retained unsupported products or their historical tombstones', async () => {
+    await insert('SUPPORTEDA', 'approved', 'codex');
+    for (const [index, product] of [
+      'chatgpt',
+      'gemini',
+      'grok',
+      'deepseek',
+      'kimi',
+      'qwen',
+      'doubao',
+      'other',
+    ].entries()) {
+      await insert(
+        'LEGACYAAA' + String.fromCharCode(65 + index),
+        'approved',
+        product,
+      );
+    }
+    const xml = await (await map())!.text();
+    expect(xml).toContain('/t/SUPPORTEDA');
+    expect(xml).not.toContain('/t/LEGACY');
+    expect(xml.match(/<url>/g)).toHaveLength(7);
+    expect(
+      await env.DB.prepare('SELECT count(*) n FROM tombstones').first('n'),
+    ).toBe(9);
+  });
   it('lists the six public static routes using an actual supplied build timestamp', async () => {
     const response = (await map('/sitemap.xml', deployedAt))!;
     expect(response.headers.get('content-type')).toBe(
@@ -79,7 +105,7 @@ describe('dynamic sitemap', () => {
     ])
       await insert(id);
     for (const id of ['FFFFFFFFFF', 'GGGGGGGGGG', 'HHHHHHHHHH', 'IIIIIIIIII'])
-      await insert(id, 'approved', 'gemini');
+      await insert(id, 'approved', 'antigravity');
     for (const [id, status] of [
       ['JJJJJJJJJJ', 'pending'],
       ['KKKKKKKKKK', 'hidden'],
@@ -89,7 +115,7 @@ describe('dynamic sitemap', () => {
       await insert(id, status);
     const xml = await (await map('/sitemap.xml', deployedAt))!.text();
     expect(xml).toContain('<loc>https://haomeile.rip/v/claude</loc>');
-    expect(xml).not.toContain('/v/gemini');
+    expect(xml).not.toContain('/v/antigravity');
     expect(xml).toContain(
       `<loc>https://haomeile.rip/t/AAAAAAAAAA</loc><lastmod>${updatedAt}</lastmod>`,
     );
@@ -127,7 +153,7 @@ describe('dynamic sitemap', () => {
   });
   it('splits more than 45000 approved records into bounded deterministic parts', async () => {
     await env.DB.prepare(
-      "WITH RECURSIVE sequence(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM sequence WHERE n<=?) INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) SELECT printf('S%09d',n),'test-only-hash','分片测试示例','other','other','2026-11-18','仅供本地站点地图分片测试使用的示例。','approved',?,?,? FROM sequence",
+      "WITH RECURSIVE sequence(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM sequence WHERE n<=?) INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) SELECT printf('S%09d',n),'test-only-hash','分片测试示例','codex','other','2026-11-18','仅供本地站点地图分片测试使用的示例。','approved',?,?,? FROM sequence",
     )
       .bind(SITEMAP_PAGE_SIZE, updatedAt, updatedAt, updatedAt)
       .run();
@@ -144,12 +170,12 @@ describe('dynamic sitemap', () => {
     expect(first).toContain('/t/S000000001');
     expect(first).toContain('/t/S000045000');
     expect(second).toContain('/t/S000045001');
-    expect(first).not.toContain('/v/other');
+    expect(first).not.toContain('/v/codex');
     const staticXml = await (await map(
       '/sitemaps/static.xml',
       deployedAt,
     ))!.text();
-    expect(staticXml).toContain('/v/other');
+    expect(staticXml).toContain('/v/codex');
     expect(staticXml).not.toContain('/t/S');
     expect(await map('/sitemaps/tombstones-3.xml')).toBeNull();
     expect(await map('/sitemaps/tombstones-0.xml')).toBeNull();

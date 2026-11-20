@@ -2,9 +2,10 @@ import { drawEpitaphCard, type EpitaphCardData } from './epitaph-card';
 import { EPITAPHS } from './epitaphs';
 import { shanghaiDate } from './browser';
 import { toast } from './toast';
+import { LABELS } from './labels';
 const canvas = document.querySelector<HTMLCanvasElement>('#card')!;
 const name = document.querySelector<HTMLInputElement>('#m-name')!;
-const vendor = document.querySelector<HTMLInputElement>('#m-vendor')!;
+const vendor = document.querySelector<HTMLSelectElement>('#m-vendor')!;
 const born = document.querySelector<HTMLInputElement>('#m-born')!;
 const died = document.querySelector<HTMLInputElement>('#m-died')!;
 const epitaph = document.querySelector<HTMLInputElement>('#m-epitaph')!;
@@ -23,7 +24,9 @@ function radio(name: string): string {
 function draw(): void {
   const data: EpitaphCardData = {
     codename: name.value,
-    vendorLabel: vendor.value,
+    vendorLabel:
+      LABELS.vendor[vendor.value as keyof typeof LABELS.vendor] ||
+      LABELS.vendor.claude,
     born_at: born.value || null,
     born_precision: born.value ? 'day' : 'none',
     died_at: died.value,

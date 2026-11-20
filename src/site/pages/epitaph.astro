@@ -1,10 +1,11 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { LABELS } from '../scripts/labels';
 ---
 
 <SiteLayout
   title="墓志铭卡片生成器 · 号没了"
-  description="给没了的 AI 账号做一张像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。"
+  description="为 Claude、Codex 或 Antigravity（反重力）的账号生成像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。"
   path="/epitaph"
   current="/epitaph"
 >
@@ -26,24 +27,12 @@ import SiteLayout from '../layouts/SiteLayout.astro';
               <input class="input" id="m-name" maxlength="16" value="小橘号" />
             </div>
             <div class="field">
-              <label for="m-vendor">哪家的账号</label>
-              <input
-                class="input"
-                id="m-vendor"
-                maxlength="12"
-                value="某 AI"
-                list="vendors"
-              />
-              <datalist id="vendors">
-                <option>Claude</option>
-                <option>ChatGPT</option>
-                <option>Gemini</option>
-                <option>Grok</option>
-                <option>DeepSeek</option>
-                <option>Kimi</option>
-                <option>通义千问</option>
-                <option>豆包</option>
-              </datalist>
+              <label for="m-vendor">哪个产品</label>
+              <select class="select" id="m-vendor">
+                {Object.entries(LABELS.vendor).map(([key, name]) => (
+                  <option value={key}>{name}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div class="row-2">

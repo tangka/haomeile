@@ -334,7 +334,7 @@ describe('validation, verification and limits', () => {
           'AA';
         return bindings.DB.prepare(
           "INSERT INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,status,created_at,updated_at,approved_at) VALUES (?,'hash','分页测试示例',?,'billing','2026-11-18','这是用于分页接口测试的示例内容。','approved',?,?,?)",
-        ).bind(id, index < 21 ? 'claude' : 'gemini', now, now, now);
+        ).bind(id, index < 21 ? 'claude' : 'antigravity', now, now, now);
       }),
     );
     const first = await listTombstones(bindings.DB);
@@ -349,12 +349,12 @@ describe('validation, verification and limits', () => {
     expect(
       (
         await listTombstones(bindings.DB, {
-          vendor: 'gemini',
+          vendor: 'antigravity',
           event: 'billing',
         })
       ).items,
     ).toHaveLength(2);
-    expect((await getStats(bindings.DB, 'gemini')).total).toBe(2);
+    expect((await getStats(bindings.DB, 'antigravity')).total).toBe(2);
     expect((await getStats(bindings.DB)).timeline).toHaveLength(30);
   });
 });

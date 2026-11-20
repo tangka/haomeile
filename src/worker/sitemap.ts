@@ -1,4 +1,5 @@
 import { VENDORS } from './types';
+import { SUPPORTED_VENDOR_FILTER } from './lib/store';
 
 const SITE = 'https://haomeile.rip';
 const NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
@@ -74,9 +75,11 @@ export async function sitemapResponse(
     n?: number;
     modified?: string;
   }>([
-    db.prepare("SELECT COUNT(*) total FROM tombstones WHERE status='approved'"),
     db.prepare(
-      "SELECT vendor,COUNT(*) n,MAX(updated_at) modified FROM tombstones WHERE status='approved' GROUP BY vendor HAVING COUNT(*)>=5",
+      `SELECT COUNT(*) total FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER}`,
+    ),
+    db.prepare(
+      `SELECT vendor,COUNT(*) n,MAX(updated_at) modified FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} GROUP BY vendor HAVING COUNT(*)>=5`,
     ),
   ]);
   const count = Number(metadata[0]!.results[0]?.total || 0);
@@ -107,7 +110,7 @@ export async function sitemapResponse(
   if (part && page > Math.ceil(count / SITEMAP_PAGE_SIZE)) return null;
   const { results } = await db
     .prepare(
-      "SELECT id,updated_at FROM tombstones WHERE status='approved' ORDER BY id LIMIT ? OFFSET ?",
+      `SELECT id,updated_at FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} ORDER BY id LIMIT ? OFFSET ?`,
     )
     .bind(SITEMAP_PAGE_SIZE, (page - 1) * SITEMAP_PAGE_SIZE)
     .all<TombEntry>();

@@ -22,7 +22,7 @@ pnpm exec wrangler d1 create haomeile
 
 把输出的真实数据库 UUID 填入 `wrangler.toml` 的 `[[d1_databases]]` → `database_id`，保留 `binding = "DB"`、`database_name = "haomeile"` 和 `migrations_dir = "migrations"`。
 
-首次创建的生产库应为空。确认数据库与配置后执行生产迁移：
+首次创建的生产库应为空。产品范围仅 Claude、Codex、Antigravity（反重力），内部键为 `claude`、`codex`、`antigravity`；产品字段名仍保留 `vendor`。已有旧版本数据库时，迁移会把历史 `chatgpt`、`gemini` 键分别改为 `codex`、`antigravity`，其余旧产品记录保留原样，不改写成这三种产品，也不在公开页面、统计与 sitemap 中显示。确认数据库与配置后执行生产迁移：
 
 ```sh
 pnpm exec wrangler d1 migrations apply haomeile --remote
@@ -76,7 +76,7 @@ routes = [{ pattern = "haomeile.rip", custom_domain = true }]
 
 发布前由站长完成以下文本配置：
 
-- `src/site/pages/appeal.astro`：人工核对各厂商的官方网站及申诉方式后，替换 `TODO_OFFICIAL_URL`、`TODO` 和核对日期。占位符目前是不可点击的文本；填写后再改成真实 `<a>` 链接。不要猜测网址。
+- `src/site/pages/appeal.astro`：人工核对 Claude、Codex、Antigravity 三种产品的官方网站及申诉方式后，替换 `TODO_OFFICIAL_URL`、`TODO` 和核对日期。占位符目前是不可点击的文本；填写后再改成真实 `<a>` 链接。不要猜测网址。
 - `src/site/pages/about.astro`：填写 `TODO_CONTACT_EMAIL`。
 - 使用须知、数据说明等页面中的 `TODO_DATE`：填写实际修订日期，并核对公开、抓取和撤回说明。按 `PLAN.md` 的安排，由站长在上线前完成法律文本审阅。
 

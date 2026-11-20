@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { AppEnv, TombstoneRow } from '../types';
+import { VENDORS, type AppEnv, type TombstoneRow } from '../types';
 import { ApiError } from '../lib/errors';
 import { validateTombInput } from '../lib/validate';
 import { checkPrivacy } from '../lib/privacy';
@@ -125,7 +125,15 @@ for (const action of ['approve', 'reject', 'hide', 'restore'] as const) {
   adminRoutes.post(`/tombstones/:id/${action}`, async (c) => {
     const body = await readJson(c.req.raw);
     const id = c.req.param('id');
-    await rowOrFail(c.env.DB, id);
+    const row = await rowOrFail(c.env.DB, id);
+    if (
+      (action === 'approve' || action === 'restore') &&
+      !(VENDORS as readonly string[]).includes(row.vendor)
+    )
+      throw new ApiError(
+        'UNSUPPORTED_PRODUCT',
+        '这里只接受 Claude、Codex 和 Antigravity 的投稿，请先修改产品。',
+      );
     const now = new Date().toISOString();
     let reason = '';
     if (action === 'reject') {

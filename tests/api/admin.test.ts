@@ -161,6 +161,27 @@ const row = (id: string) =>
     .first<TombstoneRow>();
 
 describe('authenticated moderation', () => {
+  it.each(['approve', 'restore'] as const)(
+    'cannot %s unsupported historical products until the owner selects a supported product',
+    async (action) => {
+      const { id } = await create(action === 'approve' ? 'pending' : 'hidden');
+      await bindings.DB.prepare(
+        "UPDATE tombstones SET vendor='grok' WHERE id=?",
+      )
+        .bind(id)
+        .run();
+      const response = await request(`/tombstones/${id}/${action}`, {});
+      expect(response.status).toBe(400);
+      expect(await response.json()).toMatchObject({
+        ok: false,
+        error: { code: 'UNSUPPORTED_PRODUCT' },
+      });
+      expect((await row(id))?.status).toBe(
+        action === 'approve' ? 'pending' : 'hidden',
+      );
+      expect((await row(id))?.vendor).toBe('grok');
+    },
+  );
   it('protects the real Worker admin endpoints and all static HTML aliases', async () => {
     for (const path of [
       '/admin',

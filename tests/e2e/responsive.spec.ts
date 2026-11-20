@@ -14,10 +14,10 @@ const longEpitaph = '示例' + 'B'.repeat(118);
 test.beforeAll(({ baseURL }) => {
   assertIsolatedOrigin(baseURL);
   localSql(
-    `INSERT OR REPLACE INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,epitaph,status,created_at,updated_at,approved_at) VALUES ('${fixtureId}','non-usable-test-fixture','${longName}','other','verification','2026-11-18','这是一段只用于本地响应式检查的示例经过。','${longEpitaph}','approved',strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'));`,
+    `INSERT OR REPLACE INTO tombstones (id,secret_hash,codename,vendor,event_type,died_at,story,epitaph,status,created_at,updated_at,approved_at) VALUES ('${fixtureId}','non-usable-test-fixture','${longName}','antigravity','verification','2026-11-18','这是一段只用于本地响应式检查的示例经过。','${longEpitaph}','approved',strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'));`,
   );
   localSql(
-    `INSERT OR REPLACE INTO tombstones (id,secret_hash,codename,nickname,vendor,event_type,died_at,story,epitaph,status,created_at,updated_at,approved_at) VALUES ('${longFixtureId}','non-usable-test-fixture','${longContent.codename}','${longContent.nickname}','other','verification','2026-11-18','${longContent.story}','${longContent.epitaph}','approved',strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'));`,
+    `INSERT OR REPLACE INTO tombstones (id,secret_hash,codename,nickname,vendor,event_type,died_at,story,epitaph,status,created_at,updated_at,approved_at) VALUES ('${longFixtureId}','non-usable-test-fixture','${longContent.codename}','${longContent.nickname}','antigravity','verification','2026-11-18','${longContent.story}','${longContent.epitaph}','approved',strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now'));`,
   );
 });
 test.afterAll(() => {

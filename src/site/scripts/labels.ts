@@ -1,14 +1,8 @@
 export const LABELS = {
   vendor: {
     claude: 'Claude',
-    chatgpt: 'ChatGPT',
-    gemini: 'Gemini',
-    grok: 'Grok',
-    deepseek: 'DeepSeek',
-    kimi: 'Kimi',
-    qwen: '通义千问',
-    doubao: '豆包',
-    other: '其他',
+    codex: 'Codex',
+    antigravity: 'Antigravity',
   },
   // 表单里用完整说法，墓碑标签和筛选里用短说法
   event_type: {

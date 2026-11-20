@@ -4,6 +4,8 @@
 
 SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 
+**产品范围修正**：正式应用只提供 Claude（`claude`）、Codex（`codex`）、Antigravity／反重力（`antigravity`）。界面分类称“产品”，API 与数据字段仍保留 `vendor`。静态 HTML 设计原稿可能保留旧名称或多产品占位，移植时以这三种产品为准；不重新引入原稿中的其他产品或自由输入产品选项。
+
 给 Codex 的读法：
 1. 先读本文件的 §1–§4，知道每个页面、组件、脚本要变成哪个文件。
 2. 再看 HTML 里的 `<!-- @component 名称 → 目标文件 ... -->` 注释，它标出了每个组件的边界和数据来源。
@@ -66,7 +68,7 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 | `components.js` | `src/site/scripts/wall.ts`、`flower.ts`、`toast.ts` | 只用 DOM API 和 `textContent`，不要改成 `innerHTML` |
 | `epitaphs.js` | `src/site/scripts/epitaphs.ts` | 32 条墓志铭 |
 | `epitaph-card.js` | `src/site/scripts/epitaph-card.ts` | `drawEpitaphCard(canvas, data)`，纯函数 |
-| `sample-data.js` | `seed/dev-seed.sql` 的参考 | **不要移植到正式站点**。里面的 `demo_*` 厂商只在设计稿存在 |
+| `sample-data.js` | `seed/dev-seed.sql` 的参考 | **不要移植到正式站点**。里面的 `demo_*` 产品只在设计稿存在 |
 | `style.css` | `src/site/styles/global.css` | 原样复制，删掉末尾“设计稿专用”的 `.mock-note`、`.state-block`、`.tag-example` |
 | `*.svg` | `public/assets/` | 原样复制 |
 
@@ -80,7 +82,7 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 |---|---|---|
 | 代号 | `codename` | 文本 |
 | 署名 | `nickname` | 文本 |
-| 厂商 | `vendor` | `claude` `chatgpt` `gemini` `grok` `deepseek` `kimi` `qwen` `doubao` `other` |
+| 产品 | `vendor` | `claude` `codex` `antigravity` |
 | 套餐 | `plan` | `unknown` `free` `paid_personal` `paid_team` `api` |
 | 发生了什么 | `event` → 提交时映射为 `event_type` | `suspended` `org_suspended` `region` `verification` `billing` `other` |
 | 生于 | `born_at` | `YYYY-MM`；控件为空时 `born_precision = 'none'`，有值时为 `'month'`（正式版可再加“到日”切换） |
@@ -129,7 +131,7 @@ SEO、GEO、图标和分享图的落地方式见同目录的 `SEO.md`。
 
 - 不使用任何厂商的 Logo、吉祥物、品牌色。
 - 不加载外部字体、图标库、UI 框架或图表库。
-- 不把设计稿的黄色提示条、“示例”标签、`demo_*` 厂商、示例墓碑带进正式站点。
+- 不把设计稿的黄色提示条、“示例”标签、`demo_*` 产品、示例墓碑带进正式站点。
 - 不把用户内容拼进 `innerHTML`。
 
 ## 9. 需要写的单元测试（`tests/unit/format.test.ts`）

@@ -33,7 +33,7 @@ interface QueueResponse {
 const fieldLabels: Record<string, string> = {
   codename: '代号',
   nickname: '署名',
-  vendor: '厂商',
+  vendor: '产品',
   event_type: '事件种类',
   plan: '套餐',
   born_at: '生于',
