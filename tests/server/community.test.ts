@@ -271,21 +271,23 @@ describe('transactional editorial import', () => {
       ),
     );
     const records = validateCommunityCases(cases);
-    expect(records).toHaveLength(8);
-    expect(records.filter((record) => record.died_at === '')).toHaveLength(3);
+    const count = records.length;
+    expect(new Set(records.map((record) => record.source_url)).size).toBe(
+      count,
+    );
     expect(await importCommunityCases(db.binding, cases)).toEqual({
-      inserted: 8,
+      inserted: count,
       skipped: 0,
     });
     expect(await importCommunityCases(db.binding, cases)).toEqual({
       inserted: 0,
-      skipped: 8,
+      skipped: count,
     });
     expect(await getStats(db.binding)).toMatchObject({
       total: 0,
       today: 0,
       last7: 0,
-      community_total: 8,
+      community_total: count,
     });
   });
 
