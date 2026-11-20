@@ -1,4 +1,6 @@
-# 部署号没了到 Cloudflare
+# Cloudflare Workers 备用部署方案
+
+当前用户已选择新加坡服务器上线，请以 [DEPLOY-SERVER.md](DEPLOY-SERVER.md) 为当前运行方案。下面保留 Workers 方案供以后迁移使用。
 
 这是供站长执行的部署手册；仓库开发与本地验收不表示已经上线。目标域名为 `haomeile.rip`，运行时为 Workers + Static Assets + D1。
 

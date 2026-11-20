@@ -1,5 +1,10 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+const configuredContact = import.meta.env.PUBLIC_CONTACT_EMAIL?.trim() || '';
+const contactEmail =
+  /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(configuredContact)
+    ? configuredContact
+    : '';
 ---
 
 <SiteLayout
@@ -22,10 +27,24 @@ import SiteLayout from '../layouts/SiteLayout.astro';
         <p>
           墓碑上的内容都是用户自述，本站不核实，也不能据此判断任何账号被封的原因。
         </p>
-        <p>
-          需要更正内容、投诉或联系我们：
-          <span class="todo">TODO_CONTACT_EMAIL</span>
-        </p>
+        {contactEmail ? (
+          <p>
+            需要更正内容、投诉或联系我们：
+            <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          </p>
+        ) : (
+          <>
+            <p>
+              更正或撤回自己的碑文：
+              <a href="/manage">管理我的墓碑</a>
+            </p>
+            <p>
+              要举报不当内容，请从
+              <a href="/">纪念墙</a>
+              打开对应墓碑的详情页，点击“举报”。
+            </p>
+          </>
+        )}
       </article>
     </div>
   </main>

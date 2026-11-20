@@ -1,0 +1,11 @@
+# Add this site block to the existing Caddyfile; do not replace unrelated sites.
+haomeile.rip {
+    encode zstd gzip
+    log {
+        output discard
+    }
+    reverse_proxy 127.0.0.1:8788 {
+        header_up -CF-Connecting-IP
+        header_up X-Haomeile-Client-IP {remote_host}
+    }
+}

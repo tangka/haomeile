@@ -247,7 +247,7 @@ function credentialText(): string {
     tr('号没了 · 墓碑凭据'),
     `${tr('编号')}${separator}${created?.id || ''}`,
     `${tr('密钥')}${separator}${created?.secret || ''}`,
-    `${tr('管理地址')}${separator}https://haomeile.rip${localePath('/manage')}`,
+    `${tr('管理地址')}${separator}${location.origin}${localePath('/manage')}`,
     tr('只显示一次，丢了没法找回。'),
   ].join('\n');
 }

@@ -81,6 +81,10 @@ export const EN_STATIC: Record<string, string> = {
     'Memorials contain users’ own accounts of events. We do not verify them, and they do not establish why any account was banned.',
   '需要更正内容、投诉或联系我们：':
     'For corrections, complaints or other enquiries:',
+  '更正或撤回自己的碑文：': 'To correct or withdraw your memorial: ',
+  '要举报不当内容，请从':
+    'To report inappropriate content, find the memorial on the ',
+  '打开对应墓碑的详情页，点击“举报”。': ', open its details and choose Report.',
 
   '审核后台 · 号没了': 'Moderation · 号没了',
   '号没了投稿、修改和举报审核后台。':
@@ -102,17 +106,18 @@ export const EN_STATIC: Record<string, string> = {
 
   'Claude、Codex、Antigravity 官方申诉入口 · 号没了':
     'Official appeals for Claude, Codex and Antigravity · 号没了',
-  '汇总 Claude、Codex、Antigravity 三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。':
-    'Official help and appeal channels for Claude, Codex and Antigravity. We cannot restore your account; please contact the provider through its official channels.',
+  'Claude、Codex、Antigravity 账号申诉的准备建议。请通过产品内的官方支持渠道联系厂商，本站无法帮你解封。':
+    'How to prepare an account appeal for Claude, Codex or Antigravity. Contact the provider through its in-product official support channels. We cannot restore your account.',
   '这里只收录 Claude、Codex 和 Antigravity。本站没法帮你解封，请走产品所属厂商的官方渠道。':
     'This page covers Claude, Codex and Antigravity only. We cannot restore your account; please use the provider’s official channels.',
-  以下链接都指向厂商官方网站:
-    'The links below are for the providers’ official websites',
-  '最后核对日期：': 'Last checked: ',
-  '。如果发现链接失效，请通过“关于”页的邮箱告诉我们。':
-    '. If you find a broken link, let us know using the email address on the About page.',
-  '官方帮助中心：': 'Official help centre: ',
-  '官方申诉方式：': 'Official appeal method: ',
+  请使用产品内的官方支持渠道:
+    'Use the official support channels within the product',
+  '页面更新于：': 'Page updated: ',
+  '。本站不提供代申诉或解封服务。':
+    '. We do not offer appeal handling or account restoration services.',
+  '直接入口正在整理。': 'Direct links are being prepared.',
+  '请通过产品内的帮助与支持渠道联系官方，提交账号问题。':
+    'Use the help and support channels within the product to contact its official support team about your account.',
   Antigravity: 'Antigravity',
   申诉时可以写什么: 'What to include in an appeal',
   '出事的时间，以及你当时在做什么。':
@@ -190,7 +195,7 @@ export const EN_STATIC: Record<string, string> = {
   '数据说明 · 号没了': 'Data & privacy · 号没了',
   '号没了公开哪些内容、不收集哪些信息、统计口径是什么，以及公开内容会被搜索引擎和 AI 服务抓取。':
     'What 号没了 makes public, what it does not collect, how statistics are counted, and how search engines and AI services may crawl public content.',
-  '更新于 TODO_DATE': 'Updated TODO_DATE',
+  更新于: 'Updated ',
   会公开的内容: 'What becomes public',
   '审核通过后，墙上会显示：代号、署名、产品、事件种类、套餐、注册时间（按你选的精度）、出事日期、经过、墓志铭、申诉状态、碑脚样式、献花数和立碑时间。':
     'Once approved, the wall displays your alias, display name, product, incident type, plan, registration date at your chosen precision, incident date, story, epitaph, appeal status, decoration, flower count and submission time.',
@@ -198,8 +203,8 @@ export const EN_STATIC: Record<string, string> = {
   '不需要注册，不要邮箱、手机号或真实姓名。本站不设置 Cookie，不使用第三方统计、广告或追踪脚本。人机验证使用 Cloudflare Turnstile。':
     'No registration is required. We do not ask for your email address, phone number or real name. This site does not set cookies or use third-party analytics, advertising or tracking scripts. Human verification uses Cloudflare Turnstile.',
   '搜索引擎和 AI 服务': 'Search engines and AI services',
-  '公开的碑任何人都能看到，也欢迎搜索引擎和 AI 服务抓取。这意味着碑文可能出现在搜索结果里，可能被 AI 助手引用，也可能被用于训练 AI 模型。你撤回后，本站会立即下架并通知搜索引擎重新抓取，但无法删除第三方已经保存的副本。':
-    'Anyone can view public memorials, and search engines and AI services are welcome to crawl them. Their text may appear in search results, be quoted by AI assistants or be used to train AI models. If you withdraw a memorial, we remove it immediately and notify search engines to recrawl, but we cannot delete copies already saved by third parties.',
+  '公开的碑任何人都能看到，也欢迎搜索引擎和 AI 服务抓取。这意味着碑文可能出现在搜索结果里，可能被 AI 助手引用，也可能被用于训练 AI 模型。你撤回后，本站会立即下架，但无法删除第三方已经保存的副本。':
+    'Anyone can view public memorials, and search engines and AI services are welcome to crawl them. Their text may appear in search results, be quoted by AI assistants or be used to train AI models. If you withdraw a memorial, we remove it immediately, but we cannot delete copies already saved by third parties.',
   '本站所有数字都只统计当前公开、审核通过的自愿上报。它们不代表任何平台的实际封号数量，不能用来推算封号率，也不能用来比较不同产品。等待审核、未通过、已隐藏和已撤回的碑都不计入。“今天”和“近 7 天”按北京时间计算。':
     'All figures count only voluntary reports that are currently public and approved. They do not represent any platform’s actual ban count, cannot be used to estimate ban rates and should not be used to compare products. Pending, rejected, hidden and withdrawn memorials are excluded. “Today” and “past 7 days” use Beijing time (UTC+8).',
   'IP 地址': 'IP addresses',

@@ -11,7 +11,7 @@ import {
   type Locale,
 } from '../shared/i18n';
 import { languageRewriter, localizeTemplate } from './localize';
-const SITE = 'https://haomeile.rip';
+import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 export const escapeHtml = (value: unknown): string =>
   String(value ?? '').replace(
     /[&<>"']/g,
@@ -71,6 +71,7 @@ function metadata(
   path: string,
   robots = 'index,follow,max-image-preview:large',
   jsonLd?: object[],
+  site = DEFAULT_SITE_ORIGIN,
 ) {
   rewriter.on('title', {
     element: (el) => {
@@ -80,10 +81,10 @@ function metadata(
   const attrs: [string, string, string][] = [
     ['meta[name="description"]', 'content', description],
     ['meta[name="robots"]', 'content', robots],
-    ['link[rel="canonical"]', 'href', SITE + path],
+    ['link[rel="canonical"]', 'href', site + path],
     ['meta[property="og:title"]', 'content', title],
     ['meta[property="og:description"]', 'content', description],
-    ['meta[property="og:url"]', 'content', SITE + path],
+    ['meta[property="og:url"]', 'content', site + path],
   ];
   for (const [selector, attribute, value] of attrs)
     rewriter.on(selector, {
@@ -109,6 +110,7 @@ function metadata(
 }
 export async function servePage(c: Context<AppEnv>): Promise<Response> {
   const url = new URL(c.req.url);
+  const site = siteOrigin(c.env.SITE_ORIGIN);
   const requestedPath = basePath(url.pathname);
   // Normalize static HTML aliases internally; redirects would drop locale or edit queries.
   const path =
@@ -119,7 +121,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
   const locale = requestLocale(c.req.raw);
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const labels = getLabels(locale);
-  const rewriter = languageRewriter(c.req.raw)
+  const rewriter = languageRewriter(c.req.raw, site)
     .on('[data-turnstile-sitekey]', {
       element: (el) => {
         el.setAttribute('data-turnstile-sitekey', c.env.TURNSTILE_SITE_KEY);
@@ -237,19 +239,20 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
                 '@type': 'ListItem',
                 position: 1,
                 name: text('纪念墙', 'Memorial wall'),
-                item: SITE + localePath('/', locale),
+                item: site + localePath('/', locale),
               },
               { '@type': 'ListItem', position: 2, name },
             ],
           },
         ],
+        site,
       );
     } else if (vendor)
       rewriter.on('link[rel="canonical"]', {
         element: (el) => {
           el.setAttribute(
             'href',
-            `${SITE}${localePath(`/v/${vendor}`, locale)}`,
+            `${site}${localePath(`/v/${vendor}`, locale)}`,
           );
         },
       });
@@ -287,7 +290,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         '@type': 'DiscussionForumPosting',
         headline: title.replace(/ · (?:号没了|Haomeile)$/, ''),
         text: tomb.story,
-        url: SITE + localePath(path, locale),
+        url: site + localePath(path, locale),
         datePublished: tomb.approved_at,
         dateModified: tomb.updated_at,
         author: {
@@ -308,13 +311,13 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
             '@type': 'ListItem',
             position: 1,
             name: text('纪念墙', 'Memorial wall'),
-            item: SITE + localePath('/', locale),
+            item: site + localePath('/', locale),
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: label(labels.vendor, tomb.vendor),
-            item: SITE + localePath(`/v/${tomb.vendor}`, locale),
+            item: site + localePath(`/v/${tomb.vendor}`, locale),
           },
           { '@type': 'ListItem', position: 3, name: tomb.codename },
         ],
@@ -334,6 +337,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       localePath(path, locale),
       'index,follow,noarchive,max-image-preview:large',
       jsonLd,
+      site,
     );
     rewriter.on('meta[property="og:type"]', {
       element: (el) => {
@@ -356,7 +360,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
   if (!asset.headers.get('Content-Type')?.includes('text/html')) return asset;
   const status = asset.status;
   const response = rewriter.transform(
-    new Response(localizeTemplate(await asset.text(), locale), {
+    new Response(localizeTemplate(await asset.text(), locale, site), {
       status,
       headers: asset.headers,
     }),
@@ -371,12 +375,13 @@ async function serveMissing(
   c: Context<AppEnv>,
   status: 404 | 410,
 ): Promise<Response> {
+  const site = siteOrigin(c.env.SITE_ORIGIN);
   const url = new URL('/404.html', c.req.url);
   let asset = await c.env.ASSETS.fetch(new Request(url));
   if (!asset.ok)
     asset = await c.env.ASSETS.fetch(new Request(new URL('/404/', c.req.url)));
   const locale = requestLocale(c.req.raw);
-  const rewriter = languageRewriter(c.req.raw);
+  const rewriter = languageRewriter(c.req.raw, site);
   if (status === 410)
     rewriter
       .on('h1', {
@@ -390,7 +395,7 @@ async function serveMissing(
         },
       });
   const response = rewriter.transform(
-    new Response(localizeTemplate(await asset.text(), locale), {
+    new Response(localizeTemplate(await asset.text(), locale, site), {
       status,
       headers: asset.headers,
     }),

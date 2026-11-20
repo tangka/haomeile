@@ -4,7 +4,7 @@
 
 首页保留总体数字、纪念墙和近 30 天曲线；产品与事件筛选、按产品与事件种类的分布区已移除。投稿表单仍填写产品与事件。
 
-当前仓库提供本地应用和部署配置；部署到 Cloudflare 需按 [DEPLOY.md](DEPLOY.md) 完成账号、域名、真实密钥及人工文案配置。这里的开发与测试命令不会发布生产服务。
+当前上线方式为新加坡服务器，域名 `haomeile.rip` 在 Porkbun 管理；生产部署见 [DEPLOY-SERVER.md](DEPLOY-SERVER.md)。Cloudflare 提供免费正式 Turnstile，原 Workers 部署方案保留在 [DEPLOY.md](DEPLOY.md)。本地开发与测试命令不发布生产服务。
 
 ## 本地运行
 
@@ -35,6 +35,7 @@ pnpm db:migrate
 pnpm check
 pnpm lint
 pnpm test
+pnpm test:server
 pnpm test:e2e
 pnpm build
 ```
@@ -78,3 +79,5 @@ Astro 采用静态输出。Worker 先处理请求，再用 HTMLRewriter 将 D1 �
 公开内容必须人工审核；修改审核期间保留旧的公开版本。撤回会清空内容及凭据哈希，之后旧凭据失效；原公开地址返回 410。应用不保存原始 IP、不设置 Cookie、不引入第三方追踪。后台登录由 Cloudflare Access 的独立管理会话承担。
 
 `/appeal` 的官方入口、`TODO_DATE` 和 `TODO_CONTACT_EMAIL` 等占位内容需要站长人工核对填写。不要把设计示例或测试夹具导入生产数据库，也不要把测试 Turnstile 密钥用于生产。生产操作、备份和回滚步骤见 [DEPLOY.md](DEPLOY.md)。
+
+服务器入口位于 `src/server/`，使用固定版本 Bun 原生 SQLite 与 HTMLRewriter；`pnpm test:server` 验证实际服务器适配层与完整审核链路。后台在服务器模式使用 HTTPS Basic 认证，默认 Worker 模式继续使用 Access。公开页面不会显示未配置邮箱或官方链接占位符；联系邮箱仅在显式设置 `PUBLIC_CONTACT_EMAIL` 后公开。

@@ -5,7 +5,7 @@ import { LABELS } from '../scripts/labels';
 
 <SiteLayout
   title="Claude、Codex、Antigravity 官方申诉入口 · 号没了"
-  description="汇总 Claude、Codex、Antigravity 三个产品的官方帮助与申诉入口。本站无法帮你解封，请走产品所属厂商的官方渠道。"
+  description="Claude、Codex、Antigravity 账号申诉的准备建议。请通过产品内的官方支持渠道联系厂商，本站无法帮你解封。"
   path="/appeal"
   current="/appeal"
 >
@@ -20,22 +20,18 @@ import { LABELS } from '../scripts/labels';
       </div>
 
       <div class="notice" role="note">
-        <strong>以下链接都指向厂商官方网站</strong>
-        最后核对日期：<span class="todo">TODO_DATE</span>
-        。如果发现链接失效，请通过“关于”页的邮箱告诉我们。
+        <strong>请使用产品内的官方支持渠道</strong>
+        页面更新于：<time datetime="2026-11-20">2026-11-20</time>
+        。本站不提供代申诉或解封服务。
       </div>
 
-      <!-- 链接和申诉方式由站长人工核对后填写，Codex 不得自行填写网址（PLAN.md §2.5） -->
+      <!-- 未核对的官网链接不对外展示。 -->
       <div class="vendor-list">
         {Object.values(LABELS.vendor).map((name) => (
           <article class="vendor">
             <h2>{name}</h2>
-            <p>
-              官方帮助中心：<span class="todo">TODO_OFFICIAL_URL</span>
-            </p>
-            <p>
-              官方申诉方式：<span class="todo">TODO</span>
-            </p>
+            <p>直接入口正在整理。</p>
+            <p>请通过产品内的帮助与支持渠道联系官方，提交账号问题。</p>
           </article>
         ))}
       </div>

@@ -5,6 +5,11 @@ import {
   tr,
   type Locale,
 } from '../shared/i18n';
+import {
+  DEFAULT_SITE_ORIGIN,
+  siteOrigin,
+  templateSiteUrl,
+} from '../shared/site';
 
 const entities: Record<string, string> = {
   amp: '&',
@@ -39,27 +44,43 @@ const escape = (value: string) =>
         ch
       ]!,
   );
-function translateJson(value: unknown): unknown {
-  if (typeof value === 'string') return tr(value, 'en');
-  if (Array.isArray(value)) return value.map(translateJson);
+function translateJson(value: unknown, locale: Locale, site: string): unknown {
+  if (typeof value === 'string') return tr(value, locale);
+  if (Array.isArray(value))
+    return value.map((entry) => translateJson(entry, locale, site));
   if (value && typeof value === 'object')
     return Object.fromEntries(
       Object.entries(value).map(([key, entry]) => [
         key,
-        key === 'inLanguage'
+        key === 'inLanguage' && locale === 'en'
           ? 'en'
-          : key === 'url' &&
+          : [
+                'url',
+                'item',
+                '@id',
+                'image',
+                'contentUrl',
+                'thumbnailUrl',
+              ].includes(key) &&
               typeof entry === 'string' &&
-              entry.startsWith('https://haomeile.rip/')
-            ? 'https://haomeile.rip' + localePath(new URL(entry).pathname, 'en')
-            : translateJson(entry),
+              templateSiteUrl(entry, site)
+            ? site +
+              localePath(new URL(entry).pathname, locale) +
+              new URL(entry).search +
+              new URL(entry).hash
+            : translateJson(entry, locale, site),
       ]),
     );
   return value;
 }
 // Only trusted build templates enter this pass. User content is inserted afterwards.
-export function localizeTemplate(html: string, locale: Locale): string {
-  if (locale === 'zh') return html;
+export function localizeTemplate(
+  html: string,
+  locale: Locale,
+  configuredOrigin = DEFAULT_SITE_ORIGIN,
+): string {
+  const site = siteOrigin(configuredOrigin);
+  if (locale === 'zh' && site === DEFAULT_SITE_ORIGIN) return html;
   return html.replace(
     /<!--[^]*?-->|<script\b[^>]*>[^]*?<\/script\s*>|<style\b[^>]*>[^]*?<\/style\s*>|<(?:[^'">]|"[^"]*"|'[^']*')*>|[^<]+/gi,
     (token) => {
@@ -71,10 +92,9 @@ export function localizeTemplate(html: string, locale: Locale): string {
             try {
               return (
                 open +
-                JSON.stringify(translateJson(JSON.parse(json))).replace(
-                  /</g,
-                  '\\u003c',
-                ) +
+                JSON.stringify(
+                  translateJson(JSON.parse(json), locale, site),
+                ).replace(/</g, '\\u003c') +
                 close
               );
             } catch {
@@ -109,7 +129,11 @@ export function localizeTemplate(html: string, locale: Locale): string {
   );
 }
 
-export function languageRewriter(request: Request): HTMLRewriter {
+export function languageRewriter(
+  request: Request,
+  configuredOrigin = DEFAULT_SITE_ORIGIN,
+): HTMLRewriter {
+  const site = siteOrigin(configuredOrigin);
   const locale = requestLocale(request),
     url = new URL(request.url);
   const path =
@@ -126,18 +150,33 @@ export function languageRewriter(request: Request): HTMLRewriter {
     .on('a[href]', {
       element: (el) => {
         const href = el.getAttribute('href') || '';
-        el.setAttribute('href', localePath(href, locale));
+        const internal = templateSiteUrl(href, site);
+        el.setAttribute(
+          'href',
+          internal
+            ? site +
+                localePath(internal.pathname, locale) +
+                internal.search +
+                internal.hash
+            : localePath(href, locale),
+        );
       },
     })
     .on('link[rel="canonical"],meta[property="og:url"]', {
       element: (el) => {
         const attribute = el.tagName === 'link' ? 'href' : 'content';
-        const href = el.getAttribute(attribute);
-        if (href?.startsWith('https://haomeile.rip')) {
-          const canonical = new URL(href);
-          canonical.pathname = localePath(canonical.pathname, locale);
-          el.setAttribute(attribute, canonical.toString());
-        }
+        el.setAttribute(attribute, site + localePath(path, locale));
+      },
+    })
+    .on('meta[property="og:image"]', {
+      element: (el) => {
+        const original = el.getAttribute('content') || '';
+        const internal = templateSiteUrl(original, site);
+        if (internal)
+          el.setAttribute(
+            'content',
+            site + internal.pathname + internal.search + internal.hash,
+          );
       },
     })
     .on('meta[property="og:locale"]', {
@@ -147,8 +186,7 @@ export function languageRewriter(request: Request): HTMLRewriter {
     })
     .on('head', {
       element: (el) => {
-        const href = (target: Locale) =>
-          'https://haomeile.rip' + localePath(path, target);
+        const href = (target: Locale) => site + localePath(path, target);
         el.append(
           `<link rel="alternate" hreflang="zh-CN" href="${escape(href('zh'))}"><link rel="alternate" hreflang="en" href="${escape(href('en'))}"><link rel="alternate" hreflang="x-default" href="${escape(href('zh'))}">`,
           { html: true },

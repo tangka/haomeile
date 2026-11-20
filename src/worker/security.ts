@@ -2,6 +2,7 @@ import type { MiddlewareHandler, ErrorHandler } from 'hono';
 import type { AppEnv } from './types';
 import { ApiError } from './lib/errors';
 import { basePath, requestLocale, tr } from '../shared/i18n';
+import { siteOrigin } from '../shared/site';
 
 export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
   const path = basePath(c.req.path);
@@ -33,7 +34,7 @@ export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
     const expected =
       c.env.ENVIRONMENT === 'development'
         ? new URL(c.req.url).origin
-        : 'https://haomeile.rip';
+        : siteOrigin(c.env.SITE_ORIGIN);
     if (c.req.header('Origin') !== expected)
       throw new ApiError('ORIGIN', '请求来源不正确，请回到本站后重试。', 403);
     if (

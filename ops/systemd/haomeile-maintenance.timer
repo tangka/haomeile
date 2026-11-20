@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Haomeile backup and retention cleanup
+
+[Timer]
+OnCalendar=*-*-* 04:17:00 Asia/Singapore
+Persistent=true
+RandomizedDelaySec=120
+Unit=haomeile-maintenance.service
+
+[Install]
+WantedBy=timers.target

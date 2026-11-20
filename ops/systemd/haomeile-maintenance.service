@@ -1,0 +1,20 @@
+[Unit]
+Description=Back up and clean Haomeile data
+After=haomeile.service
+
+[Service]
+Type=oneshot
+User=haomeile
+Group=haomeile
+WorkingDirectory=/opt/haomeile/current
+EnvironmentFile=/etc/haomeile/haomeile.env
+ExecStart=/opt/haomeile/current/haomeile-server backup
+ExecStart=/opt/haomeile/current/haomeile-server cleanup
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/haomeile /var/backups/haomeile
+MemoryMax=256M
+CPUQuota=50%

@@ -4,13 +4,14 @@ import HeroScene from '../components/HeroScene.astro';
 import Tally from '../components/Tally.astro';
 import Wall from '../components/Wall.astro';
 import Timeline from '../components/Timeline.astro';
+import { siteOrigin } from '../../shared/site';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: '号没了',
     alternateName: 'AI 账号赛博公墓',
-    url: 'https://haomeile.rip/',
+    url: siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN) + '/',
     inLanguage: 'zh-CN',
     description:
       '用户匿名记录 Claude、Codex 和 Antigravity 账号被停用、受限或异常经历的独立社区网站，与产品所属厂商无关。',

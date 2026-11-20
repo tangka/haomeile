@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { siteOrigin } from '../../shared/site';
 interface Props {
   title: string;
   description: string;
@@ -26,7 +27,7 @@ const {
   modifiedTime,
   jsonLd = [],
 } = Astro.props;
-const SITE = 'https://haomeile.rip';
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 ---
 
 <!doctype html>

@@ -1,4 +1,4 @@
-import type { D1Database, Fetcher } from '@cloudflare/workers-types/index.ts';
+import type { D1Database } from '@cloudflare/workers-types/index.ts';
 import type { Locale } from '../shared/i18n';
 export const VENDORS = ['claude', 'codex', 'antigravity'] as const;
 export const EVENTS = [
@@ -83,10 +83,13 @@ export interface Stats {
   by_event: [string, number][];
   timeline: { date: string; reported: number; occurred: number }[];
 }
+export interface AssetBinding {
+  fetch(request: Request): Promise<Response>;
+}
 export interface Bindings {
   CF_VERSION_METADATA?: { id: string; tag: string; timestamp: string };
   DB: D1Database;
-  ASSETS: Fetcher;
+  ASSETS: AssetBinding;
   PEPPER: string;
   TURNSTILE_SECRET: string;
   TURNSTILE_SITE_KEY: string;

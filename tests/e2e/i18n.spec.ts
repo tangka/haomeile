@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
-import { assertIsolatedOrigin, localSql } from './helpers';
+import { assertIsolatedOrigin, E2E_ORIGIN, localSql } from './helpers';
 
 const fixtureId = 'BILINGUA22';
 const userText = {
@@ -189,7 +189,9 @@ for (const path of [
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      /^https:\/\/haomeile\.rip\/en(?:\/|$)/,
+      new RegExp(
+        '^' + E2E_ORIGIN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '/en(?:/|$)',
+      ),
     );
   });
 }

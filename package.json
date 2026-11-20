@@ -10,13 +10,16 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "astro build",
-    "check": "astro check && tsc -p tsconfig.worker.json --noEmit && tsc -p tsconfig.e2e.json --noEmit",
+    "check": "astro check && tsc -p tsconfig.worker.json --noEmit && tsc -p tsconfig.e2e.json --noEmit && tsc -p tsconfig.server.json --noEmit",
     "lint": "eslint .",
     "format": "prettier --write src tests scripts *.json *.mjs *.ts README.md DEPLOY.md DECISIONS.md",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "wrangler d1 migrations apply haomeile --local",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy",
+    "test:server": "bun test tests/server",
+    "build:server": "bun build src/server/index.ts --target=bun --outdir=artifacts/server",
+    "start": "bun src/server/index.ts"
   },
   "dependencies": {
     "astro": "7.4.13",
@@ -28,7 +31,9 @@
     "@cloudflare/workers-types": "latest",
     "@eslint/js": "10.0.1",
     "@playwright/test": "latest",
+    "@types/bun": "1.4.5",
     "@types/node": "^24.0.0",
+    "bun": "1.4.5",
     "eslint": "10.15.0",
     "eslint-plugin-astro": "latest",
     "globals": "latest",

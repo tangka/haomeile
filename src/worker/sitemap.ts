@@ -2,7 +2,7 @@ import { VENDORS } from './types';
 import { SUPPORTED_VENDOR_FILTER } from './lib/store';
 import { localePath } from '../shared/i18n';
 
-const SITE = 'https://haomeile.rip';
+import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 const NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 // Each tombstone produces two localized URLs, with room for static/product pages.
@@ -47,11 +47,11 @@ function lastmod(value?: string | null): string {
   if (!Number.isFinite(date.getTime())) return '';
   return `<lastmod>${escapeXml(value)}</lastmod>`;
 }
-function urlset(entries: SitemapEntry[]): string {
+function urlset(entries: SitemapEntry[], site: string): string {
   const urls = entries
     .map((entry) => {
-      const zh = escapeXml(SITE + localePath(entry.path, 'zh'));
-      const en = escapeXml(SITE + localePath(entry.path, 'en'));
+      const zh = escapeXml(site + localePath(entry.path, 'zh'));
+      const en = escapeXml(site + localePath(entry.path, 'en'));
       const alternates = `<xhtml:link rel="alternate" hreflang="zh-CN" href="${zh}"/><xhtml:link rel="alternate" hreflang="en" href="${en}"/><xhtml:link rel="alternate" hreflang="x-default" href="${zh}"/>`;
       return [zh, en]
         .map(
@@ -78,7 +78,9 @@ export async function sitemapResponse(
   db: D1Database,
   url: URL,
   deployedAt?: string,
+  configuredOrigin = DEFAULT_SITE_ORIGIN,
 ): Promise<Response | null> {
+  const site = siteOrigin(configuredOrigin);
   const path = url.pathname;
   const root = path === '/sitemap.xml',
     staticMap = path === '/sitemaps/static.xml';
@@ -109,7 +111,7 @@ export async function sitemapResponse(
       modified: vendors.get(vendor),
     })),
   ];
-  if (staticMap) return xmlResponse(urlset(staticEntries));
+  if (staticMap) return xmlResponse(urlset(staticEntries, site));
   if (root && count > SITEMAP_PAGE_SIZE) {
     const children = [
       '/sitemaps/static.xml',
@@ -119,7 +121,7 @@ export async function sitemapResponse(
       ),
     ];
     return xmlResponse(
-      `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="${NAMESPACE}">${children.map((path) => `<sitemap><loc>${escapeXml(SITE + path)}</loc></sitemap>`).join('')}</sitemapindex>`,
+      `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="${NAMESPACE}">${children.map((path) => `<sitemap><loc>${escapeXml(site + path)}</loc></sitemap>`).join('')}</sitemapindex>`,
     );
   }
   const page = part ? Number(part[1]) : 1;
@@ -135,6 +137,6 @@ export async function sitemapResponse(
     modified: row.updated_at,
   }));
   return xmlResponse(
-    urlset(root ? [...staticEntries, ...tombEntries] : tombEntries),
+    urlset(root ? [...staticEntries, ...tombEntries] : tombEntries, site),
   );
 }
