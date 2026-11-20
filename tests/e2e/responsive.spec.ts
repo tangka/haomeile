@@ -35,6 +35,7 @@ const routes = [
   '/manage',
   '/epitaph',
   '/appeal',
+  '/tips',
   '/privacy',
   '/about',
   '/not-a-page',

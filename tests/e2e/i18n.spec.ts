@@ -168,6 +168,7 @@ for (const path of [
   '/en/manage',
   '/en/epitaph',
   '/en/appeal',
+  '/en/tips',
   '/en/privacy',
   '/en/about',
   '/en/v/claude',

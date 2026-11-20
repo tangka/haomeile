@@ -152,6 +152,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       '/manage',
       '/epitaph',
       '/appeal',
+      '/tips',
       '/privacy',
       '/about',
       '/admin',

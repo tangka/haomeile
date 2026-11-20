@@ -61,3 +61,28 @@ test('public release information has no configuration placeholders', async ({
     );
   }
 });
+
+test('the main menu opens the tips directory and its product shortcuts', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  const link = page
+    .getByRole('navigation', { name: '主导航' })
+    .getByRole('link', { name: '使用小技巧' });
+  await link.click();
+  await expect(page).toHaveURL(/\/tips$/);
+  await expect(link).toHaveAttribute('aria-current', 'page');
+  await expect(
+    page.getByRole('heading', { name: '使用小技巧', level: 1 }),
+  ).toBeVisible();
+  await page
+    .getByRole('navigation', { name: '按产品查看' })
+    .getByRole('link', { name: 'Codex' })
+    .click();
+  await expect(page).toHaveURL(/\/tips#codex$/);
+  await expect(page.locator('#codex + ul code')).toHaveText(
+    'codex review --uncommitted',
+  );
+  await expect(page.getByRole('link', { name: '官方文档' })).toHaveCount(6);
+});
