@@ -18,6 +18,8 @@ compatibility_flags = ["nodejs_compat"]
 directory = ${JSON.stringify(output)}
 binding = "ASSETS"
 run_worker_first = true
+[version_metadata]
+binding = "CF_VERSION_METADATA"
 [[d1_databases]]
 binding = "DB"
 database_name = "haomeile"

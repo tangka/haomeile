@@ -20,7 +20,7 @@ function render(
   button.setAttribute('aria-pressed', String(pressed));
   button.setAttribute(
     'aria-label',
-    pressed ? `今天已献花，共 ${count} 朵` : `献一朵花，现在有 ${count} 朵`,
+    `献花 ${num(count)}${pressed ? '，今天已献过花' : '，为这块碑献一朵花'}`,
   );
   const label = button.querySelector('span');
   if (label) label.textContent = `献花 ${num(count)}`;

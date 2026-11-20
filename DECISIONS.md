@@ -53,3 +53,11 @@
 - E2E 构建、数据库与配置均隔离在 `.wrangler/e2e-*`；审核使用明确的本地 SQL 夹具，签名 JWT 的真正后台流程另由接口测试覆盖。浏览器 SDK 夹具产生官方 dummy token，实际业务请求仍由 Worker 向官方 Siteverify 校验。
 - 375px 逐页检查浅色/深色，另测 32 字无空格代号、120 字墓志铭、长署名与经过。文字检查针对实际墓碑裁切边界，避免将宋体字形超出行框的正常字体度量误判成裁切。
 - M5 验证：95 项 Workers/D1 单元和接口测试、34 项 Playwright 浏览器测试通过，构建、前端/Worker/E2E 严格类型检查与 ESLint 通过。
+
+## M5.5 · SEO、抓取与性能
+
+- 动态 sitemap 只包含当前公开墓碑和达到 5 条公开记录门槛的厂商页；超过 45,000 条时拆为索引、静态页面表及分片。已验证 45,001 条记录的边界、XML 转义和撤回移除。
+- 静态页面 lastmod 使用 Cloudflare 提供的 Worker 版本创建时间绑定，避免每次请求伪造“更新时间”；普通 `wrangler deploy` 会创建并激活新版本。依据：https://developers.cloudflare.com/workers/runtime-apis/bindings/version-metadata/ 。
+- 保留 canonical、OG、robots、llms、JSON-LD、410/404 与缓存限制；分页在服务端输出真实链接。筛选链接使用适用于链接的 aria-current，献花按钮可访问名称包含可见文字及格式化数字。
+- Lighthouse 13.6.0，在本地 Wrangler 上按默认模拟移动端运行：首页 Performance / Accessibility / Best Practices / SEO 均 100，LCP 775ms，CLS 0；公开墓碑详情四项均 100，LCP 766ms，CLS 0。无运行警告。原始结果在本地 artifacts/lighthouse/，可移植摘要在 docs/verification/lighthouse-summary.json；这是本地实验数据，不代表生产网络或真实用户表现。
+- 生产 Worker dry-run 打包通过，gzip 34.44 KiB；仅验证构建产物和配置，未创建远程资源、发布 Worker 或绑定域名。

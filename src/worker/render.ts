@@ -36,7 +36,7 @@ export function renderTomb(t: PublicTombstone, detail = false): string {
   const facts = detail
     ? `<dl class="facts"><dt>署名</dt><dd>${e(t.nickname || '匿名')}</dd><dt>套餐</dt><dd>${e(label(LABELS.plan, t.plan))}</dd><dt>申诉</dt><dd>${e(label(LABELS.appeal_status, t.appeal_status))}</dd><dt>立碑</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10)))}</dd></dl>`
     : '';
-  return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(LABELS.vendor, t.vendor))}</li><li class="tag">${e(label(LABELS.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(t.story)}</p>${facts}<div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="献一朵花，现在有 ${t.flowers} 朵"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>献花 ${num(t.flowers)}</span></button></div></div></div></article>`;
+  return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(LABELS.vendor, t.vendor))}</li><li class="tag">${e(label(LABELS.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(t.story)}</p>${facts}<div class="tomb-foot"><span class="tomb-unverified">用户自述，未经核实</span><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="献花 ${num(t.flowers)}，为这块碑献一朵花"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>献花 ${num(t.flowers)}</span></button></div></div></div></article>`;
 }
 export function renderBars(
   rows: [string, number][],
@@ -75,7 +75,7 @@ function filters(
         next.searchParams.delete('vendor');
       } else if (key) next.searchParams.set('event', key);
       else next.searchParams.delete('event');
-      return `<a class="chip" href="${escapeHtml(next.pathname + next.search)}" aria-pressed="${String(key === current)}" data-value="${escapeHtml(key)}">${escapeHtml(value)}</a>`;
+      return `<a class="chip" href="${escapeHtml(next.pathname + next.search)}" aria-current="${String(key === current)}" data-value="${escapeHtml(key)}">${escapeHtml(value)}</a>`;
     })
     .join('');
 }

@@ -86,7 +86,10 @@ export function createTombCard(
   flower.dataset.flowerId = tomb.id;
   flower.dataset.count = String(tomb.flowers);
   flower.setAttribute('aria-pressed', 'false');
-  flower.setAttribute('aria-label', `献一朵花，现在有 ${tomb.flowers} 朵`);
+  flower.setAttribute(
+    'aria-label',
+    `献花 ${num(tomb.flowers)}，为这块碑献一朵花`,
+  );
   flower.append(
     image('flower.svg', '', 14, 14),
     element('span', undefined, `献花 ${num(tomb.flowers)}`),

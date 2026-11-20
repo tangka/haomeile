@@ -7,6 +7,7 @@ import { verifyAccess } from './lib/access';
 import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
+import { sitemapResponse } from './sitemap';
 
 const app = new Hono<AppEnv>();
 app.use('*', security);
@@ -32,6 +33,24 @@ app.use('*', async (c, next) => {
 app.get('/api/health', (c) => c.json({ ok: true, data: { status: 'ok' } }));
 app.route('/api', publicRoutes);
 app.route('/api/admin', adminRoutes);
+app.get(
+  '/sitemap.xml',
+  async (c) =>
+    (await sitemapResponse(
+      c.env.DB,
+      new URL(c.req.url),
+      c.env.CF_VERSION_METADATA?.timestamp,
+    ))!,
+);
+app.get(
+  '/sitemaps/:file',
+  async (c) =>
+    (await sitemapResponse(
+      c.env.DB,
+      new URL(c.req.url),
+      c.env.CF_VERSION_METADATA?.timestamp,
+    )) ?? servePage(c),
+);
 app.all('/api/*', (c) =>
   c.json(
     { ok: false, error: { code: 'NOT_FOUND', message: '没有这个接口。' } },

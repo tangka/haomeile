@@ -151,9 +151,9 @@ test('submit, save credentials, publish, flower, edit and withdraw through the r
   await expect(page.locator('#status-text')).toContainText('碑文已清空');
   expect((await request.get(`/t/${id}`)).status()).toBe(410);
   expect((await request.get(`/api/tombstones/${id}`)).status()).toBe(404);
-  expect(await (await request.get('/sitemap.xml')).text()).not.toContain(
-    `/t/${id}`,
-  );
+  const sitemap = await request.get('/sitemap.xml');
+  expect(sitemap.status()).toBe(200);
+  expect(await sitemap.text()).not.toContain(`/t/${id}`);
   const finalStats = await (await request.get('/api/stats')).json();
   expect(finalStats.data.total).toBe(0);
   const row = localSql(

@@ -240,7 +240,7 @@ a { color: inherit; }
   flex: none; font: inherit; font-size: var(--fs-xs); padding: 5px 12px; min-height: 32px;
   border: 2px solid var(--grass-ink); background: transparent; color: var(--grass-ink); cursor: pointer;
 }
-.chip[aria-pressed="true"] { background: var(--grass-ink); color: var(--grass-deep); font-weight: 600; }
+.chip[aria-current="true"] { background: var(--grass-ink); color: var(--grass-deep); font-weight: 600; }
 .filters-label { font-size: var(--fs-xs); margin-right: 4px; align-self: center; flex: none; }
 
 .rows {
@@ -484,7 +484,7 @@ dialog.sheet::backdrop { background: rgba(10, 20, 15, 0.55); }
 .status-pill[data-status="approved"] { color: var(--ink); }
 .tally-note, .census .hint { opacity: 1; }
 .yard .chip { color: var(--ink); border-color: var(--ink); }
-.yard .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.yard .chip[aria-current="true"] { background: var(--ink); color: var(--paper); }
 .error, .flag, .todo,
 .status-pill[data-status="rejected"],
 .status-pill[data-status="hidden"],

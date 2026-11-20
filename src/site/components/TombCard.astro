@@ -73,7 +73,7 @@ const decor: Record<string, [string, string, number, number][]> = {
           class="flower-btn"
           data-flower-id={t.id}
           aria-pressed="false"
-          aria-label={`献一朵花，现在有 ${t.flowers} 朵`}
+          aria-label={`献花 ${num(t.flowers)}，为这块碑献一朵花`}
         >
           <img src="/assets/flower.svg" width="14" height="14" alt="" />
           <span>献花 {num(t.flowers)}</span>

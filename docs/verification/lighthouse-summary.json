@@ -1,0 +1,51 @@
+{
+  "environment": "Local Wrangler; simulated mobile; labelled local development fixture; not production field measurements",
+  "results": [
+    {
+      "page": "home",
+      "lighthouse": "13.6.0",
+      "date": "2026-11-20T02:37:17.827Z",
+      "formFactor": "mobile",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcpMs": 774.6428000000001,
+      "cls": 0,
+      "warnings": []
+    },
+    {
+      "page": "tomb",
+      "lighthouse": "13.6.0",
+      "date": "2026-11-20T02:37:30.891Z",
+      "formFactor": "mobile",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcpMs": 765.6360999999999,
+      "cls": 0,
+      "warnings": []
+    }
+  ]
+}
