@@ -321,17 +321,22 @@ test('English memorial pages retain every original user-written field', async ({
     await expect(memorial.locator('.tomb-epitaph')).toHaveText(
       userText.epitaph,
     );
-    await expect(memorial.locator('.tag')).toHaveText([
-      'Claude',
-      'Verification blocked',
-    ]);
-    if (path.includes('/t/'))
+    if (path.includes('/t/')) {
+      await expect(memorial.locator('.tag')).toHaveText([
+        'Claude',
+        'Verification blocked',
+      ]);
       await expect(memorial.locator('.facts dd').first()).toHaveText(
         userText.nickname,
       );
+    } else {
+      await expect(memorial.locator('.tomb-meta')).toHaveText(
+        'Claude · Verification blocked · 2026-11-18',
+      );
+    }
     await expect(memorial.locator('.flower-btn')).toHaveAttribute(
       'aria-label',
-      /^Flowers \d+\. Leave a flower/,
+      'Flowers. Leave a flower for this memorial',
     );
   }
 });

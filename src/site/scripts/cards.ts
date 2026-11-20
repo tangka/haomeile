@@ -2,7 +2,7 @@ import { currentLocale, localePath, tr } from '../../shared/i18n';
 import type { PublicTombstone } from '../../worker/types';
 import { element } from './browser';
 import { getLabels } from './labels';
-import { lifeLine, fmtDate, num } from './format';
+import { flowerPresentation, lifeLine, fmtDate, num } from './format';
 import { tombPresentation } from '../../shared/tomb-presentation';
 const labels = getLabels();
 const DECORATIONS: Record<string, [string, string, number, number][]> = {
@@ -38,9 +38,10 @@ export function createTombCard(
   const text = (zh: string, en: string) => tr(zh, locale, en);
   const card = element('article', 'tomb');
   card.dataset.id = tomb.id;
-  for (const [file, side, width, height] of DECORATIONS[tomb.card_style] ||
-    DECORATIONS.flower)
-    card.append(image(file, `tomb-deco ${side}`, width, height));
+  if (detail || !view.community)
+    for (const [file, side, width, height] of DECORATIONS[tomb.card_style] ||
+      DECORATIONS.flower)
+      card.append(image(file, `tomb-deco ${side}`, width, height));
   const body = element('div', 'tomb-body stone-shape');
   const face = element('div', 'tomb-face stone-shape');
   body.append(face);
@@ -57,31 +58,41 @@ export function createTombCard(
     link.append(name);
     face.append(link);
   }
-  const life = view.community
-      ? {
-          days: text('社区公开记录', 'Public community record'),
-          range: tomb.died_at
-            ? text('事件日期 ', 'Incident date ') +
-              fmtDate(tomb.died_at, locale)
-            : text('事件日期未说明', 'Incident date not stated'),
-        }
-      : lifeLine(tomb, locale),
-    lifeP = element('p', 'tomb-life');
-  lifeP.append(
-    element('span', 'tomb-days', life.days),
-    element('span', 'tomb-range', life.range),
-  );
-  face.append(lifeP);
-  const tags = element('ul', 'tags');
-  tags.append(
-    element('li', 'tag', labels.vendor[tomb.vendor] || tomb.vendor),
-    element(
-      'li',
-      'tag',
-      labels.event_type_short[tomb.event_type] || tr('其他'),
-    ),
-  );
-  face.append(tags);
+  const incidentDate = tomb.died_at
+    ? element('time', undefined, fmtDate(tomb.died_at, locale))
+    : text('事件日期未说明', 'Incident date not stated');
+  if (typeof incidentDate !== 'string') incidentDate.dateTime = tomb.died_at;
+  if (detail && view.community) {
+    const date = element('p', 'tomb-meta');
+    date.append(
+      tomb.died_at ? text('事件日期 ', 'Incident date ') : '',
+      incidentDate,
+    );
+    face.append(date);
+  } else if (
+    !view.community &&
+    (detail || (tomb.born_at && tomb.born_precision !== 'none'))
+  ) {
+    const life = lifeLine(tomb, locale);
+    const lifeP = element('p', 'tomb-life');
+    lifeP.append(element('span', 'tomb-days', life.days));
+    if (detail) lifeP.append(element('span', 'tomb-range', life.range));
+    face.append(lifeP);
+  }
+  const vendorName = labels.vendor[tomb.vendor] || tomb.vendor;
+  const eventName = labels.event_type_short[tomb.event_type] || tr('其他');
+  if (detail) {
+    const tags = element('ul', 'tags');
+    tags.append(
+      element('li', 'tag', vendorName),
+      element('li', 'tag', eventName),
+    );
+    face.append(tags);
+  } else {
+    const metadata = element('p', 'tomb-meta');
+    metadata.append(vendorName, ' · ', eventName, ' · ', incidentDate);
+    face.append(metadata);
+  }
   if (tomb.epitaph) face.append(element('p', 'tomb-epitaph', tomb.epitaph));
   face.append(element('p', 'tomb-story', view.story || ''));
   if (view.source) {
@@ -147,13 +158,11 @@ export function createTombCard(
   flower.dataset.flowerId = tomb.id;
   flower.dataset.count = String(tomb.flowers);
   flower.setAttribute('aria-pressed', 'false');
-  flower.setAttribute(
-    'aria-label',
-    tr(`献花 ${num(tomb.flowers)}，为这块碑献一朵花`),
-  );
+  const { label, ariaLabel } = flowerPresentation(tomb.flowers, locale);
+  flower.setAttribute('aria-label', ariaLabel);
   flower.append(
     image('flower.svg', '', 14, 14),
-    element('span', undefined, tr(`献花 ${num(tomb.flowers)}`)),
+    element('span', undefined, label),
   );
   foot.append(flower);
   face.append(foot);

@@ -62,9 +62,8 @@ test('public release information has no configuration placeholders', async ({
     await expect(
       page.getByRole('contentinfo').locator(appealLink),
     ).toBeVisible();
-    await expect(page.locator('[data-ssr="community-tally"]')).toContainText(
-      prefix ? 'Community summaries' : '社区整理',
-    );
+    await expect(page.locator('[data-ssr="tally-section"]')).toBeHidden();
+    await expect(page.locator('[data-ssr="timeline-section"]')).toBeHidden();
   }
 });
 

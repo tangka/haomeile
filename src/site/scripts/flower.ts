@@ -1,7 +1,7 @@
-import { tr } from '../../shared/i18n';
+import { currentLocale, tr } from '../../shared/i18n';
 import { api } from './api';
 import { shanghaiDate, visitorId } from './browser';
-import { num } from './format';
+import { flowerPresentation } from './format';
 import { toast } from './toast';
 function storageKey(id: string): string {
   return `haomeile:flower:${shanghaiDate()}:${id}`;
@@ -18,17 +18,15 @@ function render(
   count: number,
   pressed: boolean,
 ): void {
-  button.setAttribute('aria-pressed', String(pressed));
-  button.setAttribute(
-    'aria-label',
-    tr(
-      pressed
-        ? `献花 ${num(count)}，今天已献过花`
-        : `献花 ${num(count)}，为这块碑献一朵花`,
-    ),
+  const { label, ariaLabel } = flowerPresentation(
+    count,
+    currentLocale(),
+    pressed,
   );
-  const label = button.querySelector('span');
-  if (label) label.textContent = tr(`献花 ${num(count)}`);
+  button.setAttribute('aria-pressed', String(pressed));
+  button.setAttribute('aria-label', ariaLabel);
+  const text = button.querySelector('span');
+  if (text) text.textContent = label;
   button.dataset.count = String(count);
 }
 export function hydrateFlowers(root: ParentNode = document): void {

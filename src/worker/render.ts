@@ -2,7 +2,12 @@ import type { Context } from 'hono';
 import type { AppEnv, PublicTombstone, Stats } from './types';
 import { listTombstones, getStats, findPublicTombstone } from './lib/store';
 import { LABELS, getLabels } from '../site/scripts/labels';
-import { lifeLine, num, fmtDate } from '../site/scripts/format';
+import {
+  flowerPresentation,
+  lifeLine,
+  num,
+  fmtDate,
+} from '../site/scripts/format';
 import {
   basePath,
   localePath,
@@ -45,24 +50,44 @@ export function renderTomb(
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const e = escapeHtml;
   const view = tombPresentation(t, locale);
-  const life = view.community
-    ? {
-        days: text('社区公开记录', 'Public community record'),
-        range: t.died_at
-          ? text('事件日期 ', 'Incident date ') + fmtDate(t.died_at, locale)
-          : text('事件日期未说明', 'Incident date not stated'),
-      }
-    : lifeLine(t, locale);
   const name = detail
     ? `<h1 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h1>`
     : `<a class="tomb-link" href="${localePath(`/t/${e(t.id)}`, locale)}"><h3 class="tomb-name">${e(view.codename || text('无名氏', 'Unnamed'))}</h3></a>`;
+  const incidentDate = t.died_at
+    ? `<time datetime="${e(t.died_at)}">${e(fmtDate(t.died_at, locale))}</time>`
+    : text('事件日期未说明', 'Incident date not stated');
+  const vendorName = e(label(labels.vendor, t.vendor));
+  const eventName = e(label(labels.event_type_short, t.event_type));
+  const metadata = detail
+    ? `<ul class="tags"><li class="tag">${vendorName}</li><li class="tag">${eventName}</li></ul>`
+    : `<p class="tomb-meta">${vendorName} · ${eventName} · ${incidentDate}</p>`;
+  let lifeDetails = '';
+  if (detail && view.community)
+    lifeDetails = `<p class="tomb-meta">${t.died_at ? text('事件日期 ', 'Incident date ') : ''}${incidentDate}</p>`;
+  else if (
+    !view.community &&
+    (detail || (t.born_at && t.born_precision !== 'none'))
+  ) {
+    const life = lifeLine(t, locale);
+    lifeDetails = `<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span>${detail ? `<span class="tomb-range">${e(life.range)}</span>` : ''}</p>`;
+  }
+  const decorations =
+    detail || !view.community
+      ? (deco[t.card_style] ?? deco.flower)
+          .map(
+            ([file, side, width, height]) =>
+              `<img class="tomb-deco ${side}" src="/assets/${file}.svg" width="${width}" height="${height}" alt="">`,
+          )
+          .join('')
+      : '';
   const provenance = view.source
     ? `<p class="tomb-source"><a href="${e(view.source)}" target="_blank" rel="noopener noreferrer nofollow">${text('查看原帖', 'Read original post')} · ${e(t.source_platform)}</a>${t.source_published_at ? ` · <time datetime="${e(t.source_published_at)}">${e(fmtDate(t.source_published_at, locale))}</time>` : ''}</p>`
     : '';
   const facts = detail
     ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
     : '';
-  return `<article class="tomb" data-id="${e(t.id)}">${(deco[t.card_style] ?? deco.flower).map(([name, side, width, height]) => `<img class="tomb-deco ${side}" src="/assets/${name}.svg" width="${width}" height="${height}" alt="">`).join('')}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}<p class="tomb-life"><span class="tomb-days">${e(life.days)}</span><span class="tomb-range">${e(life.range)}</span></p><ul class="tags"><li class="tag">${e(label(labels.vendor, t.vendor))}</li><li class="tag">${e(label(labels.event_type_short, t.event_type))}</li></ul>${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" aria-pressed="false" aria-label="${text(`献花 ${num(t.flowers)}，为这块碑献一朵花`, `Flowers ${num(t.flowers, locale)}. Leave a flower for this memorial`)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${text('献花', 'Flowers')} ${num(t.flowers, locale)}</span></button></div></div></div></article>`;
+  const flower = flowerPresentation(t.flowers, locale);
+  return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
 }
 export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
@@ -76,6 +101,40 @@ export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
       .join(' ');
   return `<figure style="margin:0;padding-top:20px;padding-bottom:20px"><figcaption>${text('近 30 天 · 上报日期与事件日期', 'Last 30 days · reported and event dates')}</figcaption><svg viewBox="0 0 760 170" role="img" aria-label="${text('近30天按上报日期与事件发生日期统计', 'Reports and events over the last 30 days.')}" style="width:100%;height:auto"><path d="M20 20V130H740" fill="none" stroke="currentColor"/><polyline points="${line('reported')}" fill="none" stroke="var(--mum)" stroke-width="3"/><polyline points="${line('occurred')}" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><text x="20" y="158" fill="currentColor" font-size="13">${escapeHtml(stats.timeline[0]?.date)}</text><text x="740" y="158" text-anchor="end" fill="currentColor" font-size="13">${escapeHtml(stats.date)}</text></svg><p class="hint">${text('实线：上报数；虚线：事件发生数。', 'Solid line: reports. Dashed line: events.')}</p></figure>`;
 }
+function renderTally(stats: Stats, vendor: string, locale: Locale): string {
+  const { total: submitted, community_total: curated = 0, date } = stats;
+  const total = submitted + curated;
+  if (!total) return '';
+
+  const count = (value: number) => `<strong>${num(value, locale)}</strong>`;
+  const mixed = submitted > 0 && curated > 0;
+  const product = vendor ? `${escapeHtml(vendor)} ` : '';
+  if (locale === 'en') {
+    const dateLabel = new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'long',
+      timeZone: 'UTC',
+    }).format(new Date(date + 'T00:00:00Z'));
+    const submissions = `${count(submitted)} public user submission${submitted === 1 ? '' : 's'}`;
+    const summaries = `${count(curated)} community summar${curated === 1 ? 'y' : 'ies'}`;
+    const records = mixed
+      ? `${count(total)} records, including ${summaries} and ${submissions}`
+      : curated
+        ? summaries
+        : submissions;
+    return `As of <time datetime="${date}">${dateLabel}</time>, the ${product}memorial wall has ${records}.`;
+  }
+
+  const submissions = `${count(submitted)} 份用户投稿`;
+  const summaries = `${count(curated)} 条社区整理`;
+  const records = mixed
+    ? `${count(total)} 条记录，其中 ${summaries}、${submissions}`
+    : curated
+      ? summaries
+      : submissions;
+  const wall = vendor ? `${product}纪念墙` : '已';
+  return `截至 <time datetime="${date}">${date}</time>，${wall}收录 ${records}。`;
+}
+
 function metadata(
   rewriter: HTMLRewriter,
   title: string,
@@ -175,38 +234,35 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       getStats(c.env.DB, vendor),
     ]);
     assetPath = path.startsWith('/v/') ? '/_templates/vendor/' : '/';
-    const [year, month, day] = stats.date.split('-').map(Number);
-    const scope = vendor ? `${label(labels.vendor, vendor)} 账号的` : '';
-    const englishDate = new Intl.DateTimeFormat('en-US', {
-      dateStyle: 'long',
-      timeZone: 'UTC',
-    }).format(new Date(stats.date + 'T00:00:00Z'));
-    const tally = `截至 <time datetime="${stats.date}">${year} 年 ${month} 月 ${day} 日</time>，本站共有 <strong>${num(stats.total)}</strong> 份${escapeHtml(scope)}用户投稿。今天上报 <strong>${num(stats.today)}</strong> 份，近 7 天 <strong>${num(stats.last7)}</strong> 份。`;
-    const localizedTally =
-      locale === 'en'
-        ? `As of <time datetime="${stats.date}">${englishDate}</time>, Haomeile has <strong>${num(stats.total, locale)}</strong> public user ${vendor ? escapeHtml(label(labels.vendor, vendor)) + ' ' : ''}submissions. <strong>${num(stats.today, locale)}</strong> submitted today; <strong>${num(stats.last7, locale)}</strong> in the last 7 days.`
-        : tally;
-    rewriter.on('[data-ssr="tally"]', {
-      element: (el) => {
-        el.setInnerContent(localizedTally, { html: true });
-      },
-    });
-    rewriter.on('[data-ssr="community-tally"]', {
-      element: (el) => {
-        el.setInnerContent(
-          text(
-            `社区整理 <strong>${num(stats.community_total || 0)}</strong> 条。`,
-            `Community summaries: <strong>${num(stats.community_total || 0, locale)}</strong>.`,
-          ),
-          { html: true },
-        );
-      },
-    });
-    rewriter.on('[data-ssr="timeline"]', {
-      element: (el) => {
-        el.setInnerContent(renderTimeline(stats, locale), { html: true });
-      },
-    });
+    const tally = renderTally(
+      stats,
+      vendor ? label(labels.vendor, vendor) : '',
+      locale,
+    );
+    if (tally) {
+      rewriter.on('[data-ssr="tally-section"]', {
+        element: (el) => {
+          el.removeAttribute('hidden');
+        },
+      });
+      rewriter.on('[data-ssr="tally"]', {
+        element: (el) => {
+          el.setInnerContent(tally, { html: true });
+        },
+      });
+    }
+    if (stats.timeline.some((day) => day.reported > 0 || day.occurred > 0)) {
+      rewriter.on('[data-ssr="timeline-section"]', {
+        element: (el) => {
+          el.removeAttribute('hidden');
+        },
+      });
+      rewriter.on('[data-ssr="timeline"]', {
+        element: (el) => {
+          el.setInnerContent(renderTimeline(stats, locale), { html: true });
+        },
+      });
+    }
     rewriter.on('[data-ssr="wall"]', {
       element: (el) => {
         const empty =

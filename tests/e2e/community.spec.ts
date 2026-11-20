@@ -49,7 +49,7 @@ test('English pagination appends a sourced community summary without treating it
   await expect(page.locator('#rows article.tomb')).toHaveCount(20);
   await expect(page.locator('#more')).toBeVisible();
   await expect(page.locator('[data-ssr="tally"]')).toContainText(
-    '20 public user submissions',
+    '21 records, including 1 community summary and 20 public user submissions',
   );
 
   const nextPage = page.waitForResponse((response) => {
@@ -80,12 +80,10 @@ test('English pagination appends a sourced community summary without treating it
   await expect(curated.locator('.tomb-story')).toHaveText(
     communityEnglishStory,
   );
-  await expect(curated.locator('.tomb-days')).toHaveText(
-    'Public community record',
+  await expect(curated.locator('.tomb-meta')).toHaveText(
+    'Antigravity · Account disabled · Incident date not stated',
   );
-  await expect(curated.locator('.tomb-range')).toHaveText(
-    'Incident date not stated',
-  );
+  await expect(curated.locator('.tomb-deco, .tags, .tomb-life')).toHaveCount(0);
   await expect(curated.locator('.tomb-source a')).toHaveAttribute(
     'href',
     source,
@@ -98,11 +96,12 @@ test('English pagination appends a sourced community summary without treating it
     'datetime',
     '2026-11-10',
   );
-  await expect(curated.locator('.tomb-foot')).toHaveText('Flowers 0');
-  await expect(curated.locator('.tomb-origin,.tomb-unverified')).toHaveCount(0);
-  await expect(page.locator('[data-ssr="community-tally"]')).toContainText(
-    /\b1\b/,
+  await expect(curated.locator('.flower-btn')).toHaveText('Flowers');
+  await expect(curated.locator('.flower-btn')).toHaveAttribute(
+    'data-count',
+    '0',
   );
+  await expect(curated.locator('.tomb-origin,.tomb-unverified')).toHaveCount(0);
   await expect(page.locator('#more')).toBeHidden();
 
   const widths = await page.evaluate(() => ({

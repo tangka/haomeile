@@ -83,6 +83,7 @@ test('submit, save credentials, publish, flower, edit and withdraw through the r
   const card = page.locator(`article.tomb[data-id="${id}"]`);
   await expect(card).toContainText(original);
   const flower = card.locator('.flower-btn');
+  await expect(flower).toHaveText('献花');
   const flowerResponse = page.waitForResponse(
     (response) =>
       new URL(response.url()).pathname === `/api/tombstones/${id}/flower`,
@@ -91,6 +92,7 @@ test('submit, save credentials, publish, flower, edit and withdraw through the r
   expect((await flowerResponse).status()).toBe(200);
   await expect(flower).toHaveAttribute('data-count', '1');
   await expect(flower).toHaveAttribute('aria-pressed', 'true');
+  await expect(flower).toHaveText('献花 1');
   await flower.click();
   await expect(
     page.getByText('今天已经给这块碑献过花了', { exact: true }),

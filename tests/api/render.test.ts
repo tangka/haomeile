@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import { app } from '../../src/worker';
 import type { Bindings } from '../../src/worker/types';
-const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><p data-ssr="tally"></p><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><div data-ssr="timeline"></div></body></html>`;
+const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><section data-ssr="tally-section" hidden><p data-ssr="tally"></p></section><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><section data-ssr="timeline-section" hidden><div data-ssr="timeline"></div></section></body></html>`;
 const assets = {
   async fetch(request: Request) {
     if (new URL(request.url).pathname === '/submit')
@@ -146,7 +146,8 @@ describe('Worker renders Astro templates on the server', () => {
     const html = await response.text();
     expect(response.status).toBe(200);
     expect(html).toContain('这里还很安静。第一块碑，要不要由你来立？');
-    expect(html).toContain('<strong>0</strong>');
+    expect(html).toContain('data-ssr="tally-section" hidden');
+    expect(html).toContain('data-ssr="timeline-section" hidden');
     expect(html).toContain('content="1x00000000000000000000AA"');
   });
   it('includes first page and real pagination without requiring JavaScript', async () => {
@@ -156,6 +157,8 @@ describe('Worker renders Astro templates on the server', () => {
     const response = await app.request('https://haomeile.rip/', {}, bindings);
     const html = await response.text();
     expect((html.match(/class="tomb" /g) || []).length).toBe(20);
+    expect(html).toContain('<strong>21</strong> 份用户投稿');
+    expect(html).toContain('<section data-ssr="timeline-section">');
     expect(html).toMatch(/href="\/[?]cursor=/);
     expect(html).not.toContain('private-hash');
     expect(html).not.toContain('/t/PENDINGAAA');

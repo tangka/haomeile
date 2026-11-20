@@ -82,17 +82,8 @@ export const EN_STATIC: Record<string, string> = {
 
   '账号停用、封号经历 · 号没了': 'Account suspensions and bans · 号没了',
   账号的墓碑: 'Account memorials',
-  投稿统计: 'Submission statistics',
-  截至: 'As of',
-  '，园里一共有': ', the cemetery has',
-  '块公开墓碑。今天新立': 'public memorials. Added today:',
-  '块，近 7 天': '; in the past 7 days:',
-  '块。': '.',
+  纪念墙统计: 'Memorial wall statistics',
   统计口径: 'How we count',
-  '，本站共有': ', this site has',
-  '份用户投稿。今天新增': 'public user submissions. Added today:',
-  '份，近 7 天': '; in the past 7 days:',
-  '份。': '.',
   社区整理: 'Community summaries',
   '社区整理提供中英文编辑摘要，原文请看原帖。本站不会自动翻译用户提交的代号、署名、经过或墓志铭。':
     'Community summaries are edited in Chinese and English; read the original posts for the source text. We do not automatically translate aliases, display names, stories or epitaphs submitted by users.',

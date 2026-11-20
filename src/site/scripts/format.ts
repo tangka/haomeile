@@ -25,6 +25,26 @@ export function daysBetween(from: string, to: string): number | null {
 export function num(value: number, locale: Locale = 'zh'): string {
   return Number(value).toLocaleString(locale === 'en' ? 'en-US' : 'zh-CN');
 }
+export function flowerPresentation(
+  count: number,
+  locale: Locale,
+  pressed = false,
+): { label: string; ariaLabel: string } {
+  const english = locale === 'en';
+  const name = english ? 'Flowers' : '献花';
+  const label = count > 0 ? `${name} ${num(count, locale)}` : name;
+  const action = english
+    ? pressed
+      ? 'You already left a flower today'
+      : 'Leave a flower for this memorial'
+    : pressed
+      ? '今天已献过花'
+      : '为这块碑献一朵花';
+  return {
+    label,
+    ariaLabel: label + (english ? '. ' : '，') + action,
+  };
+}
 export function lifeLine(
   tomb: LifeDates,
   locale: Locale = 'zh',
