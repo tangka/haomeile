@@ -1,0 +1,98 @@
+/* 第二版改版：叠加在 design/assets/style.css（线上为 src/site/styles/global.css）之上。
+   每一段对应 REVISION-2.md 里的一个编号，Codex 移植时整段搬进 global.css 末尾。 */
+
+/* R3 · 首屏变矮：桌面 300px 以内，手机只留站名和一句话 */
+.scene .wrap { padding-top: 16px; }
+.scene-main { align-items: center; }
+.hero-stone { width: min(260px, 64vw); }
+.hero-stone-inner { padding: 44px 16px 22px; }
+.hero-stone h1 { font-size: clamp(44px, 11vw, 60px); }
+.hero-cat { width: 80px; }
+.scene-copy { padding-bottom: 24px; }
+.scene-copy h2 { font-size: var(--fs-l); }
+.scene-copy p { margin-bottom: 16px; }
+@media (max-width: 759px) {
+  .hero-cat { display: none; }
+  .hero-stone-wrap { justify-content: flex-start; }
+  .hero-stone { width: 200px; }
+  .hero-stone-inner { padding: 34px 12px 16px; }
+  .hero-stone h1 { font-size: 40px; }
+  .hero-stone .carved-line { font-size: var(--fs-xs); margin-top: 8px; }
+  .scene-copy { padding-bottom: 20px; }
+}
+
+/* R4 · 统计：一句话，零不出现 */
+.tally { padding: 14px 0 4px; }
+.tally-note { padding-bottom: 14px; }
+
+/* R5 · 产品切换：纪念墙标题下一排标签，就是 /v/:vendor 的链接 */
+.tabs-wall { display: flex; gap: 0; margin: 0 0 22px; border-bottom: 3px solid var(--grass-ink); overflow-x: auto; scrollbar-width: none; }
+.tabs-wall::-webkit-scrollbar { display: none; }
+.tabs-wall a {
+  flex: none; text-decoration: none; font-size: var(--fs-s); color: var(--grass-ink);
+  padding: 8px 14px; margin-bottom: -3px; border: 3px solid transparent; border-bottom: 0;
+}
+.tabs-wall a[aria-current="page"] { border-color: var(--grass-ink); background: var(--grass-deep); font-weight: 700; }
+.tabs-wall a .n { font-size: 12px; opacity: 0.8; margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+/* R6 · 纪念墙：等高网格，一行一条地平线 */
+.rows {
+  column-count: initial; column-width: initial; /* 取消瀑布流 */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 26px 18px;
+  align-items: stretch;
+}
+.rows > .tomb { display: flex; flex-direction: column; margin: 0; }
+.tomb-body { flex: 1; display: flex; flex-direction: column; }
+.tomb-face { flex: 1; display: flex; flex-direction: column; }
+
+/* R7 · 碑面：更安静，更好读 */
+.tomb-deco { display: none; }               /* 墙上不放花，花留给详情页和献花动效 */
+.detail .tomb-deco { display: block; }
+.tomb::after { margin: 0 -4px; height: 6px; }
+.tomb-face { padding: 26px 16px 12px; position: relative; }
+
+.tomb-meta {                                 /* 产品 · 事件 · 日期，一行小字代替两个方框标签 */
+  margin: 0 0 6px; text-align: center; font-size: 12px; line-height: 1.6;
+  color: var(--stone-soft); font-variant-numeric: tabular-nums;
+}
+.tomb-meta b { color: var(--stone-ink); font-weight: 700; }
+.tomb-name {
+  font-size: 19px; line-height: 1.4; letter-spacing: 0.02em;
+  text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 10px;
+}
+.tomb-epitaph { font-size: var(--fs-s); margin-bottom: 8px; text-wrap: balance; }
+.tomb-life { margin: 0 0 8px; font-family: var(--font-carve); font-weight: 900; font-size: var(--fs-s); display: block; }
+.tomb-story {
+  font-size: 14px; line-height: 1.75; color: var(--stone-ink);
+  -webkit-line-clamp: 4;
+}
+.tomb-foot {
+  margin-top: auto;                          /* 底栏贴底，同一行的碑底栏对齐 */
+  padding-top: 10px; border-top: 2px dotted var(--stone-shade);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.tomb-story + .tomb-foot, .tomb-epitaph + .tomb-foot { margin-top: auto; }
+.tomb-face > .tomb-story { margin-bottom: 12px; }
+.tomb-source { margin: 0; font-size: 12px; color: var(--stone-soft); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tomb-source a { color: inherit; }
+
+/* 来源角标：整理 / 自述。挂在碑的右上角，像一张小纸签 */
+.tomb-kind {
+  position: absolute; top: 8px; right: 10px;
+  font-size: 11px; line-height: 1; padding: 4px 6px;
+  border: 1.5px solid var(--stone-ink); background: var(--paper); color: var(--ink);
+}
+.tomb-kind[data-kind="self"] { background: var(--mum); color: var(--mum-ink); }
+
+/* R8 · 献花：0 不显示数字，按钮更轻 */
+.flower-btn { padding: 3px 8px; min-height: 30px; font-weight: 600; flex: none; }
+.flower-btn .n:empty { display: none; }
+.flower-btn .n { font-variant-numeric: tabular-nums; }
+
+/* R9 · 墙头说明只说一次 */
+.yard-head { margin-bottom: 10px; }
+.yard-note { margin: 0 0 14px; font-size: var(--fs-xs); opacity: 0.9; max-width: 46em; }

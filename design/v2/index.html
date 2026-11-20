@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>号没了 · 改版原型</title>
+<link rel="icon" href="../brand/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="v2.css">
+</head>
+<body>
+<div class="mock-note">改版原型：墙上是线上真实的社区整理记录，第三块“小橘号”是用户自述的示例。</div>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="../assets/logo.svg" alt="" width="32" height="32">号没了</a>
+    <nav class="nav" aria-label="主导航">
+      <a href="#" aria-current="page">纪念墙</a>
+      <a href="#">立碑</a>
+      <a href="#">墓志铭卡片</a>
+      <a href="#">官方申诉入口</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <section class="scene" aria-labelledby="hero-title">
+    <div class="scene-clouds" aria-hidden="true">
+      <img src="../assets/cloud.svg" alt="" width="72" height="32">
+      <img src="../assets/cloud.svg" alt="" width="54" height="24">
+    </div>
+    <div class="wrap">
+      <div class="scene-main">
+        <div class="hero-stone-wrap">
+          <div class="hero-stone stone-shape"><div class="hero-stone-inner stone-shape">
+            <h1 id="hero-title">号没了</h1>
+            <p class="carved-line">AI 账号赛博公墓</p>
+          </div></div>
+          <img class="hero-cat" src="../assets/cat.svg" alt="提着灯笼的守墓小猫" width="112" height="86">
+        </div>
+        <div class="scene-copy">
+          <h2>Claude、Codex、Antigravity 账号没了？</h2>
+          <p>来立一块碑，写下它是怎么没的。也看看别人遇到了什么。</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#">立一块碑</a>
+            <a class="btn" href="#">做一张墓志铭卡片</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="ground" aria-label="收录统计">
+    <div class="wrap">
+      <p class="tally">截至 <time datetime="2026-11-20">2026 年 11 月 20 日</time>，园里有 <strong>10</strong> 块碑：<strong>9</strong> 条社区整理，<strong>1</strong> 份用户自述。</p>
+      <p class="tally-note">都未经本站核实，不代表任何平台的实际封号数量。<a href="#">统计口径</a></p>
+    </div>
+  </section>
+  <section class="yard" aria-labelledby="wall-title">
+    <div class="wrap">
+      <div class="yard-head"><h2 id="wall-title">纪念墙</h2></div>
+      <p class="yard-note">“整理”是本站从公开帖子摘要的记录，附原帖链接；“自述”是用户在这里匿名投稿。新收录的在前面。</p>
+      <nav class="tabs-wall" aria-label="按产品查看"><a href="#" aria-current="page">全部<span class="n">10</span></a><a href="#">Claude<span class="n">4</span></a><a href="#">Codex<span class="n">3</span></a><a href="#">Antigravity<span class="n">3</span></a></nav>
+      <div class="rows" id="rows"></div>
+      <div class="more"><a class="btn" href="#">再看 20 块</a></div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap">
+  <p>号没了，一个记录 AI 账号经历的独立社区，与任何 AI 厂商无隶属关系。</p>
+  <nav aria-label="页脚"><a href="#">使用须知</a><a href="#">数据说明</a><a href="#">关于</a><a href="#">管理我的墓碑</a></nav>
+</div></footer>
+<script>
+const ITEMS = [{"kind": "community", "title": "Max 账号显示组织停用", "vendor": "Claude", "event": "组织暂停", "date": "2026-06-07", "story": "一名 Max 5x 用户在 6 月 7 日失去账号访问权限，官方 Claude Code CLI 随后提示组织已停用。尝试申诉时，表单又跳回聊天页面，作者因此在代码仓库发帖寻求协助。", "platform": "GitHub", "source": "https://github.com/anthropics/claude-code/issues/67069", "flowers": 0}, {"kind": "community", "title": "用过几天 Claude Code，申诉被拒", "vendor": "Claude", "event": "账号停用", "date": "2026-08-08", "story": "原帖作者订阅 Pro 后，在 8 月 3 日至 7 日使用了 Claude Code，8 月 8 日收到账号被封的邮件。随后提交申诉，又收到无法解封的回复。作者表示不清楚具体原因。", "platform": "Reddit", "source": "https://www.reddit.com/r/Anthropic/comments/1vznu5c/my_claude_pro_account_got_banned_appeal_got/", "flowers": 1}, {"kind": "self", "title": "小橘号", "vendor": "Claude", "event": "账号停用", "date": "2026-11-18", "days": "存活约 443 天", "epitaph": "生前写了三万行代码，走的时候一行也没留下。", "story": "示例：早上打开就提示账号已停用，邮件里只说违反了使用政策，没写具体原因。前一天还在正常改论文。已经提交申诉，还没回音。", "flowers": 3}, {"kind": "community", "title": "Codex 401，支持端却显示活跃", "vendor": "Codex", "event": "验证卡住", "date": "2026-06-07", "story": "这名 Pro 用户从 6 月 7 日起遇到网页登录空白、Codex CLI 返回 401 的问题，但联系支持时，对方看到的账号仍是活跃状态。作者已提交申诉；6 月 16 日，论坛支持回复会进一步查看工单。", "platform": "OpenAI Developer Community", "source": "https://community.openai.com/t/chatgpt-pro-account-deactivated-identity-edge-internal-error/1383773", "flowers": 0}, {"kind": "community", "title": "Pro 账号在夜间任务中停用", "vendor": "Codex", "event": "账号停用", "date": "2026-06-09", "story": "作者的 Pro 账号在 6 月 9 日运行 Codex 夜间任务时被停用，随后提交了申诉。6 月 14 日，论坛支持回复账号带有审核标记，申诉正等待专门团队处理。", "platform": "OpenAI Developer Community", "source": "https://community.openai.com/t/chatgpt-pro-account-deactivated-overnight-while-codex-was-running-appeal-already-submitted/1383153", "flowers": 0}, {"kind": "community", "title": "Pro 20x 恢复后套餐成免费版", "vendor": "Codex", "event": "账号停用", "date": "2026-06-25", "story": "这名 Pro 20x 用户平时使用 Codex CLI、app-server 和应用，6 月 25 日失去了账号访问权限。7 月 3 日更新中，作者说账号已经恢复，但原本的付费套餐变成了 Free。", "platform": "OpenAI Developer Community", "source": "https://community.openai.com/t/pro-20x-account-deactivated-due-to-potential-guardrail-false-positives/1384852", "flowers": 1}, {"kind": "community", "title": "回归时发现停用", "vendor": "Antigravity", "event": "账号停用", "date": "", "story": "帖主持有 Google AI Pro，约半年后重新打开 Antigravity 时，发现访问权限已经停用。作者不知道限制从何时开始，也不清楚具体原因。10 月 29 日回帖说，提交申诉、更新应用并重新登录后，仍然无法使用。", "platform": "Google AI Developers Forum", "source": "https://discuss.ai.google.dev/t/antigravity-access-suspended-after-months-of-inactivity-no-response-to-appeal/195031", "flowers": 0}, {"kind": "community", "title": "开发中途服务停用", "vendor": "Antigravity", "event": "账号停用", "date": "", "story": "11 月 14 日，作者在开发过程中遇到官方 Antigravity 客户端服务停用，界面提示违反服务条款，工作因此中断。作者随后提交申诉，并在 11 月 15 日回帖说，官方应用仍然无法使用。", "platform": "GitHub issue", "source": "https://github.com/can1357/oh-my-pi/issues/19303", "flowers": 0}, {"kind": "community", "title": "能登录但模型仍不可用", "vendor": "Antigravity", "event": "账号停用", "date": "", "story": "帖主此前无法登录 Antigravity，提交申诉后可以重新登录了，但模型调用仍然提示服务停用，连一条简单消息也发不出去。11 月 10 日发帖时，作者正在寻求继续处理这个问题的方法。", "platform": "Google AI Developers Forum", "source": "https://discuss.ai.google.dev/t/antigravity-still-reports-service-disabled-when-using-models-after-appeal/199388", "flowers": 0}, {"kind": "community", "title": "账号恢复后，Pro 续订仍被拒", "vendor": "Claude", "event": "扣费异常", "date": "2026-11-16", "story": "作者说，账号经申诉恢复后，11 月 16 日收到了按比例退回的 Pro 费用。用原来的银行卡重新订阅时，支付却一直被拒。发卡行告诉作者，他们没有收到这笔交易的授权请求。", "platform": "GitHub", "source": "https://github.com/anthropics/claude-code/issues/110572", "flowers": 0}];
+const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+const fmt = d => d ? d.replaceAll('-', '.') : '';
+function card(t) {
+  const a = el('article', 'tomb');
+  const body = el('div', 'tomb-body stone-shape'), face = el('div', 'tomb-face stone-shape');
+  body.append(face); a.append(body);
+  const kind = el('span', 'tomb-kind', t.kind === 'self' ? '自述' : '整理'); kind.dataset.kind = t.kind; face.append(kind);
+  const meta = el('p', 'tomb-meta');
+  meta.append(el('b', null, t.vendor), ' · ' + t.event + ' · ' + (t.date ? fmt(t.date) : '日期未说明'));
+  face.append(meta);
+  const link = el('a', 'tomb-link'); link.href = '#'; link.append(el('h3', 'tomb-name', t.title)); face.append(link);
+  if (t.days) face.append(el('p', 'tomb-life', t.days));
+  if (t.epitaph) face.append(el('p', 'tomb-epitaph', t.epitaph));
+  face.append(el('p', 'tomb-story', t.story));
+  const foot = el('div', 'tomb-foot');
+  const src = el('p', 'tomb-source');
+  if (t.kind === 'community') { const s = el('a', null, '原帖 · ' + t.platform); s.href = t.source; s.target = '_blank'; s.rel = 'noopener noreferrer nofollow'; src.append(s); }
+  else src.textContent = '匿名投稿';
+  const b = el('button', 'flower-btn'); b.type = 'button';
+  const img = document.createElement('img'); img.src = '../assets/flower.svg'; img.width = 14; img.height = 14; img.alt = '';
+  b.append(img, el('span', null, '献花'), el('span', 'n', t.flowers ? String(t.flowers) : ''));
+  b.setAttribute('aria-label', t.flowers ? '献花，已有 ' + t.flowers + ' 朵' : '献花');
+  foot.append(src, b); face.append(foot);
+  return a;
+}
+const rows = document.getElementById('rows'); ITEMS.forEach(t => rows.append(card(t)));
+</script>
+</body>
+</html>
