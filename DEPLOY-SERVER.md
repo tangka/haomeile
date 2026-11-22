@@ -1,6 +1,6 @@
 # 新加坡服务器部署
 
-当前用户选择 `haomeile.rip`：域名在 Porkbun，应用与 SQLite 数据库部署在现有新加坡 Debian 服务器。Cloudflare 仅提供免费正式 Turnstile；本方案不依赖 Workers 或 D1 远程资源。
+域名 `haomeile.rip` 在 Porkbun，应用与 SQLite 数据库部署在现有新加坡 Debian 服务器。Cloudflare 提供免费的 Turnstile 和 Web Analytics。本方案不依赖 Workers 或 D1 远程资源。
 
 ## 运行方式
 
@@ -61,6 +61,12 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 脚本在应用健康失败且存在上一发布时自动恢复旧 `current` 链接。手动回退也应先检查旧代码与当前数据库结构兼容，再原子切换 `current` 并重启本项目服务；不要自动回退或覆盖数据库。
 
 日常查看 `systemctl status haomeile`、`systemctl list-timers haomeile-maintenance.timer`，备份存放在受限目录。不得公开数据库、环境文件、后台密码或服务器 SSH 私钥。
+
+## 网站访问统计
+
+在 Cloudflare Web Analytics 中添加 `haomeile.rip`，选择手动接入。将该站的公开站点令牌保存到 `/etc/haomeile/haomeile.env` 的 `CLOUDFLARE_WEB_ANALYTICS_TOKEN`，发布时会沿用该配置。设为空并重启应用可关闭脚本。
+
+统计脚本只在生产的公开内容页加载。立碑、编辑、制卡、管理、后台、API 和错误页面不加载。访问趋势与页面来源在 [Cloudflare Web Analytics](https://dash.cloudflare.com/?to=/:account/web-analytics) 查看。
 
 ## 社区资料导入
 

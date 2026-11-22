@@ -28,7 +28,7 @@ const runtimes: Runtime[] = [];
 const directories: string[] = [];
 const fetchSpies: ReturnType<typeof spyOn<typeof globalThis, 'fetch'>>[] = [];
 
-async function runtime() {
+async function runtime(analyticsToken?: string) {
   const data = await mkdtemp(join(tmpdir(), 'haomeile-runtime-test-'));
   directories.push(data);
   const values = {
@@ -42,6 +42,7 @@ async function runtime() {
     // boundary is outbound Siteverify; application and SQLite code are real.
     TURNSTILE_SITE_KEY: '0xFAKE_RUNTIME_TEST_SITE_KEY',
     TURNSTILE_SECRET: '0xFAKE_RUNTIME_TEST_SECRET',
+    CLOUDFLARE_WEB_ANALYTICS_TOKEN: analyticsToken,
     ADMIN_AUTH_MODE: 'basic',
     ADMIN_USERNAME: 'runtime-admin',
     ADMIN_PASSWORD_HASH: await hashSecret(PASSWORD, PEPPER),
@@ -130,6 +131,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(zh).toContain('<html lang="zh-CN">');
     expect(zh).toContain('这里还很安静');
     expect(zh).toContain('content="0xFAKE_RUNTIME_TEST_SITE_KEY"');
+    expect(zh).not.toContain('static.cloudflareinsights.com');
     expect(zh).not.toContain('data-locale-switch');
     const redirect = await request(opened, '/submit?mode=edit', undefined, {
       'Accept-Language': 'en-US,en;q=0.9',
@@ -157,6 +159,59 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       url: SITE + '/en/',
       inLanguage: 'en',
     });
+  });
+
+  test('loads configured Cloudflare Web Analytics on public reading pages only', async () => {
+    const token = '0123456789abcdef0123456789abcdef';
+    const beacon = 'https://static.cloudflareinsights.com/beacon.min.js';
+    const { opened } = await runtime(token);
+    for (const path of ['/', '/en/', '/tips', '/en/privacy']) {
+      const response = await request(opened, path);
+      expect(response.status).toBe(200);
+      const html = await response.text();
+      expect(html.match(/data-cf-beacon=/g)).toHaveLength(1);
+      expect(html).toContain(`src="${beacon}"`);
+      expect(html).toContain(token);
+      if (path === '/en/privacy') {
+        expect(html).toContain('Public pages use Cloudflare Web Analytics');
+        expect(html).not.toContain('data-web-analytics-disabled');
+      }
+      const policy = response.headers.get('Content-Security-Policy');
+      expect(policy).toContain(beacon);
+      expect(policy).toContain('https://cloudflareinsights.com');
+      expect(response.headers.get('Referrer-Policy')).toBe(
+        'strict-origin-when-cross-origin',
+      );
+    }
+
+    for (const path of [
+      '/submit',
+      '/en/submit?mode=edit',
+      '/epitaph',
+      '/manage',
+      '/admin',
+      '/api/health',
+      '/not-a-page',
+    ]) {
+      const response = await request(opened, path, undefined, {
+        Authorization: AUTHORIZATION,
+      });
+      expect(await response.text()).not.toContain('data-cf-beacon');
+      expect(
+        response.headers.get('Content-Security-Policy') || '',
+      ).not.toContain(beacon);
+    }
+
+    const development = {
+      ...opened,
+      env: { ...opened.env, ENVIRONMENT: 'development' },
+    };
+    const local = await request(development, '/');
+    expect(await local.text()).not.toContain('data-cf-beacon');
+    const localPrivacy = await request(development, '/en/privacy');
+    expect(await localPrivacy.text()).not.toContain(
+      'Public pages use Cloudflare Web Analytics',
+    );
   });
 
   test('challenges anonymous and invalid administrators before serving any alias or queue data', async () => {

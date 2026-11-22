@@ -19,6 +19,11 @@ import {
 import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { tombPresentation } from '../shared/tomb-presentation';
+import {
+  contentSecurityPolicy,
+  REFERRER_POLICY,
+  WEB_ANALYTICS_BEACON,
+} from './security';
 export const escapeHtml = (value: unknown): string =>
   String(value ?? '').replace(
     /[&<>"']/g,
@@ -451,6 +456,40 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
   if (asset.status === 404) return serveMissing(c, 404);
   if (!asset.headers.get('Content-Type')?.includes('text/html')) return asset;
   const status = asset.status;
+  const analyticsToken =
+    status === 200 &&
+    c.env.ENVIRONMENT === 'production' &&
+    url.origin === DEFAULT_SITE_ORIGIN &&
+    site === DEFAULT_SITE_ORIGIN &&
+    (/^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
+      /^\/(?:v|t|tips)\/[^/]+$/.test(path))
+      ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
+      : undefined;
+  if (analyticsToken) {
+    const beacon = escapeHtml(JSON.stringify({ token: analyticsToken }));
+    rewriter.on('body', {
+      element: (el) => {
+        el.append(
+          `<script defer src="${WEB_ANALYTICS_BEACON}" data-cf-beacon="${beacon}"></script>`,
+          { html: true },
+        );
+      },
+    });
+  }
+  if (path === '/privacy') {
+    rewriter
+      .on('[data-web-analytics-disclosure]', {
+        element: (el) => {
+          if (analyticsToken) el.removeAttribute('hidden');
+          else el.remove();
+        },
+      })
+      .on('[data-web-analytics-disabled]', {
+        element: (el) => {
+          if (analyticsToken) el.remove();
+        },
+      });
+  }
   const response = rewriter.transform(
     new Response(localizeTemplate(await asset.text(), locale, site), {
       status,
@@ -461,6 +500,13 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
     'Cache-Control',
     path === '/admin' ? 'no-store' : 'public, max-age=60, s-maxage=300',
   );
+  if (analyticsToken) {
+    response.headers.set(
+      'Content-Security-Policy',
+      contentSecurityPolicy(true),
+    );
+    response.headers.set('Referrer-Policy', REFERRER_POLICY);
+  }
   return response;
 }
 async function serveMissing(

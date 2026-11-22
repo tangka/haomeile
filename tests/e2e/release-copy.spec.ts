@@ -53,7 +53,7 @@ test('public release information has no configuration placeholders', async ({
       if (route === '/privacy')
         await expect(page.locator('.updated time')).toHaveAttribute(
           'datetime',
-          '2026-11-20',
+          '2026-11-22',
         );
     }
     await page.goto(prefix + '/');

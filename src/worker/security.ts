@@ -4,14 +4,21 @@ import { ApiError } from './lib/errors';
 import { basePath, requestLocale, tr } from '../shared/i18n';
 import { siteOrigin } from '../shared/site';
 
+export const WEB_ANALYTICS_BEACON =
+  'https://static.cloudflareinsights.com/beacon.min.js';
+export const REFERRER_POLICY = 'strict-origin-when-cross-origin';
+
+export function contentSecurityPolicy(webAnalytics = false): string {
+  const scripts = webAnalytics ? ` ${WEB_ANALYTICS_BEACON}` : '';
+  const connections = webAnalytics ? ' https://cloudflareinsights.com' : '';
+  return `default-src 'self'; script-src 'self' https://challenges.cloudflare.com${scripts}; frame-src https://challenges.cloudflare.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'${connections}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`;
+}
+
 export const security: MiddlewareHandler<AppEnv> = async (c, next) => {
   const path = basePath(c.req.path);
   c.set('locale', requestLocale(c.req.raw));
-  c.header(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
-  );
-  c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  c.header('Content-Security-Policy', contentSecurityPolicy());
+  c.header('Referrer-Policy', REFERRER_POLICY);
   c.header('X-Content-Type-Options', 'nosniff');
   c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   if (

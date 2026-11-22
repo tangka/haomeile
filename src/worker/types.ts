@@ -104,6 +104,7 @@ export interface Bindings {
   TURNSTILE_SECRET: string;
   TURNSTILE_SITE_KEY: string;
   TURNSTILE_TEST_MODE?: string;
+  CLOUDFLARE_WEB_ANALYTICS_TOKEN?: string;
   ACCESS_AUD: string;
   ACCESS_TEAM_DOMAIN: string;
   ENVIRONMENT: string;

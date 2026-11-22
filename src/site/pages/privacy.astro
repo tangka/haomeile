@@ -14,7 +14,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
         <div class="page-head">
           <h1>数据说明</h1>
           <p class="updated">
-            更新于 <time datetime="2026-11-20">2026-11-20</time>
+            更新于 <time datetime="2026-11-22">2026-11-22</time>
           </p>
         </div>
         <h2>会公开的内容</h2>
@@ -29,10 +29,20 @@ import SiteLayout from '../layouts/SiteLayout.astro';
         </p>
         <h2>不会收集的内容</h2>
         <p>
-          不需要注册，不要邮箱、手机号或真实姓名。本站不设置
-          Cookie，不使用第三方统计、广告或追踪脚本。人机验证使用 Cloudflare
-          Turnstile。
+          不需要注册，也不要求邮箱、手机号或真实姓名。本站不设置
+          Cookie。人机验证使用 Cloudflare Turnstile。
         </p>
+        <p data-web-analytics-disabled>
+          本站不使用第三方统计、广告或追踪脚本。
+        </p>
+        <section data-web-analytics-disclosure hidden>
+          <h2>访问统计</h2>
+          <p>
+            公开浏览页面使用 Cloudflare Web Analytics
+            统计浏览量、访问来源和页面加载表现。该服务不使用
+            Cookie。立碑、制卡、管理和审核页面不加载统计脚本。
+          </p>
+        </section>
         <h2>搜索引擎和 AI 服务</h2>
         <p>
           公开的碑任何人都能看到，也欢迎搜索引擎和 AI

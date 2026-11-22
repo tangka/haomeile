@@ -220,8 +220,13 @@ export const EN_STATIC: Record<string, string> = {
   '审核通过后，墙上会显示：代号、署名、产品、事件种类、套餐、注册时间（按你选的精度）、出事日期、经过、墓志铭、申诉状态、碑脚样式、献花数和立碑时间。':
     'Once approved, the wall displays your alias, display name, product, incident type, plan, registration date at your chosen precision, incident date, story, epitaph, appeal status, decoration, flower count and submission time.',
   不会收集的内容: 'What we do not collect',
-  '不需要注册，不要邮箱、手机号或真实姓名。本站不设置 Cookie，不使用第三方统计、广告或追踪脚本。人机验证使用 Cloudflare Turnstile。':
-    'No registration is required. We do not ask for your email address, phone number or real name. This site does not set cookies or use third-party analytics, advertising or tracking scripts. Human verification uses Cloudflare Turnstile.',
+  '不需要注册，也不要求邮箱、手机号或真实姓名。本站不设置 Cookie。人机验证使用 Cloudflare Turnstile。':
+    'No registration is required. We do not ask for your email address, phone number or real name. This site does not set cookies. Human verification uses Cloudflare Turnstile.',
+  '本站不使用第三方统计、广告或追踪脚本。':
+    'This site does not use third-party analytics, advertising or tracking scripts.',
+  访问统计: 'Web analytics',
+  '公开浏览页面使用 Cloudflare Web Analytics 统计浏览量、访问来源和页面加载表现。该服务不使用 Cookie。立碑、制卡、管理和审核页面不加载统计脚本。':
+    'Public pages use Cloudflare Web Analytics to measure page views, traffic sources and page load performance. This service does not use cookies. Analytics does not run on submission, card creation, management or moderation pages.',
   '搜索引擎和 AI 服务': 'Search engines and AI services',
   '公开的碑任何人都能看到，也欢迎搜索引擎和 AI 服务抓取。这意味着碑文可能出现在搜索结果里，可能被 AI 助手引用，也可能被用于训练 AI 模型。你撤回后，本站会立即下架，但无法删除第三方已经保存的副本。':
     'Anyone can view public memorials, and search engines and AI services are welcome to crawl them. Their text may appear in search results, be quoted by AI assistants or be used to train AI models. If you withdraw a memorial, we remove it immediately, but we cannot delete copies already saved by third parties.',
