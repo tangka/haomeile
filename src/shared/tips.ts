@@ -18,6 +18,59 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-pro-switch-to-annual',
+    title:
+      '黑五 5 折 99.99 刀正规上车 Google AI Pro：美区白号不等 27 号两步升级实测',
+    englishTitle:
+      'How I switched Google AI Pro to the Black Friday annual plan',
+    summary: {
+      zh: '我在 Google One 把 Google AI Pro 从月付切到年付，然后在 Google Play 核对了收据和续费价格。',
+      en: 'I switched Google AI Pro from monthly to yearly billing in Google One, then checked the receipt and renewal price in Google Play.',
+    },
+    experience: {
+      zh: '11 月 22 日，我在月付开通后进入 Google One 的方案管理，那里显示了年付选项。我的收据上，首年实付 99.99 美元，次年续费价是 199.99 美元。我在 Google Play 取消续费后，又核对了一次已付费的到期日。',
+      en: 'On November 22, I opened plan management after starting my monthly membership and found an annual option. My receipt showed $99.99 charged for the first year and $199.99 for renewal. I turned off auto-renewal in Google Play and checked how long my paid access would last.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用已有 Google AI Pro 订阅的个人账号打开 Google One。进入「管理会员方案」找年付，也可以在设置里找「更换会员方案」。页面显示的方案和价格以你自己的账号为准。',
+          en: 'Open Google One with the personal account that has your Google AI Pro membership. Look for an annual option under Manage membership, or find Change membership plan in Settings. Check the offers and prices shown for your own account.',
+        },
+        link: {
+          href: 'https://support.google.com/googleone/answer/9003633',
+          label: {
+            zh: '查看切换结算周期的入口',
+            en: 'Find billing interval settings',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在确认付款前，对照套餐名称、本次扣款、续费金额和续费日期。付款后回 Google One 看结算周期是否已变成年付，再用收据核对实际扣款。',
+          en: 'Before confirming, compare the plan name, the charge today, the renewal price and the renewal date. After paying, check that Google One shows annual billing and match the actual charge to the receipt.',
+        },
+      },
+      {
+        text: {
+          zh: '如果是 Google Play 结算，可以在「付款和订阅 → 订阅 → Google One」查看下一次扣款。只打算用已付费的一年时，可以在这页关闭续费，再确认显示的到期日期。',
+          en: 'If Google Play bills you, open Payments & subscriptions → Subscriptions → Google One to check the next charge. If you plan to use only the year you paid for, turn off renewal there and check the expiration date afterward.',
+        },
+        link: {
+          href: 'https://play.google.com/store/account/subscriptions',
+          label: {
+            zh: '查看 Google Play 订阅',
+            en: 'View Google Play subscriptions',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2124429521420230656',
+    sourceAuthor: '@heitieya',
+    sourcePublishedAt: '2026-11-22T09:17:50Z',
+    sourceViews: 5841,
+  },
+  {
     slug: 'antigravity-paid-plan-starter-quota',
     title:
       '3 万字超干货 Antigravity 群峰× AI 精品短剧：280元打通双顶配模型池与 96G 云显卡，跑通电影级双语成片',

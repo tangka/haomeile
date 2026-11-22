@@ -439,5 +439,23 @@
     "reviewed_at": "2026-11-22",
     "evidence": "X embeds verify the original suspension report, the billing follow-up https://x.com/ruofeng_x/status/2123269723618259219 and the refund update https://x.com/ruofeng_x/status/2124275956932358220.",
     "status_as_of": "2026-11-22"
+  },
+  {
+    "key": "antigravity-x-2122577253800526118",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": "2026-11-17",
+    "appeal_status": "restored",
+    "source_url": "https://x.com/xueyu1125/status/2122577253800526118",
+    "source_platform": "X",
+    "source_published_at": "2026-11-17",
+    "codename": "两个账号停用，申诉后重新登进了 Antigravity",
+    "codename_en": "Two accounts disabled, then Antigravity access returned after an appeal",
+    "story": "我用第三方工具接入 Antigravity 大约一个月。11 月 17 日一早，手上两个关联账号都用不了了。我填了申诉表，第二天重新登录时发现已经能进 Antigravity。当时没收到恢复邮件。",
+    "story_en": "I'd been accessing Antigravity through a third-party tool for about a month. On the morning of November 17, two linked accounts lost access. I filled out the appeal form and could use Antigravity again when I signed in the next day. I didn't get a reinstatement email.",
+    "reviewed_at": "2026-11-22",
+    "evidence": "X's official embeds confirm the original report and the next-day restoration update https://x.com/xueyu1125/status/2122969182031724956. The follow-up does not specify whether both accounts recovered.",
+    "status_as_of": "2026-11-18"
   }
 ]
