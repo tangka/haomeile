@@ -457,5 +457,23 @@
     "reviewed_at": "2026-11-22",
     "evidence": "X's official embeds confirm the original report and the next-day restoration update https://x.com/xueyu1125/status/2122969182031724956. The follow-up does not specify whether both accounts recovered.",
     "status_as_of": "2026-11-18"
+  },
+  {
+    "key": "antigravity-forum-203730",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "pro",
+    "event_date": null,
+    "appeal_status": "pending",
+    "source_url": "https://discuss.ai.google.dev/t/203730",
+    "source_platform": "Google AI Developers Forum",
+    "source_published_at": "2026-11-22",
+    "codename": "Pro 仍有效，Antigravity 命令行提示停用",
+    "codename_en": "Antigravity CLI disabled while my Pro subscription was active",
+    "story": "我的 Google AI Pro 订阅还有效，但在 Linux 上打开官方 Antigravity 命令行就报 403，提示服务因条款限制停用。我填过一次官方申诉表。Google One 客服让我来论坛反馈，说后台团队还在调查。我发帖时，命令行仍然用不了。",
+    "story_en": "My Google AI Pro subscription was still active, but the official Antigravity CLI on Linux returned a 403 saying my access had been disabled under the terms of service. I submitted the official appeal form once. Google One support asked me to post on the forum while the team investigated. The CLI was still unavailable when I posted.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The original forum post identifies the official Linux CLI, active Google AI Pro plan, appeal already sent, and support referral. The forum's original post timestamp is 2026-11-22T11:38:10Z.",
+    "status_as_of": "2026-11-22"
   }
 ]
