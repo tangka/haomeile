@@ -280,7 +280,9 @@ export const EN_STATIC: Record<string, string> = {
   '先选择产品，再选择对应套餐。':
     'Choose a product first, then select its plan.',
   发生了什么: 'What happened?',
-  扣费或支付异常: 'Billing or payment issue',
+  组织停用: 'Org suspended',
+  卡在验证: 'Verification stuck',
+  扣费或付款异常: 'Billing issue',
   '生于（注册时间）': 'Born (registration date)',
   不记得: 'I don’t remember',
   记得到月: 'I remember the month',

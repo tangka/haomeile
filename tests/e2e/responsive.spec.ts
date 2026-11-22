@@ -173,6 +173,28 @@ test('aligns paired controls on the English submission form', async ({
   await stubTurnstileSdk(page);
   await page.goto('/en/submit');
 
+  const eventOptions = page.locator('.event-options');
+  const eventLayout = () =>
+    eventOptions.evaluate((element) => {
+      const labels = [...element.querySelectorAll('label')];
+      const { overflowX } = getComputedStyle(element);
+      return {
+        count: labels.length,
+        rows: new Set(
+          labels.map((label) => Math.round(label.getBoundingClientRect().top)),
+        ).size,
+        optionsOverflow: element.scrollWidth > element.clientWidth,
+        optionsScrollable: overflowX === 'auto' || overflowX === 'scroll',
+        pageOverflow: document.documentElement.scrollWidth > innerWidth,
+      };
+    });
+  expect(await eventLayout()).toMatchObject({
+    count: 6,
+    rows: 1,
+    optionsOverflow: false,
+    pageOverflow: false,
+  });
+
   const pairs = [
     ['#codename', '#nickname'],
     ['#vendor', '#plan'],
@@ -193,6 +215,13 @@ test('aligns paired controls on the English submission form', async ({
   }
 
   await page.setViewportSize({ width: 375, height: 812 });
+  expect(await eventLayout()).toEqual({
+    count: 6,
+    rows: 1,
+    optionsOverflow: true,
+    optionsScrollable: true,
+    pageOverflow: false,
+  });
   for (const [first, second] of pairs) {
     const [upper, lower] = await Promise.all([
       page.locator(first).boundingBox(),
