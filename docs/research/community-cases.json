@@ -475,5 +475,41 @@
     "reviewed_at": "2026-11-23",
     "evidence": "The original forum post identifies the official Linux CLI, active Google AI Pro plan, appeal already sent, and support referral. The forum's original post timestamp is 2026-11-22T11:38:10Z.",
     "status_as_of": "2026-11-22"
+  },
+  {
+    "key": "antigravity-x-2123566976115310616",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "pending",
+    "source_url": "https://x.com/codermatt/status/2123566976115310616",
+    "source_platform": "X",
+    "source_published_at": "2026-11-20",
+    "codename": "新账号尝试用第三方工具后停用",
+    "codename_en": "New account suspended after trying Gemini in another coding tool",
+    "story": "我刚注册，就试着在第三方编程工具里用 Gemini。之后账号被停用，我只好去申诉。",
+    "story_en": "I'd only just signed up when I tried using Gemini in another coding tool. My account was suspended afterward, and I had to appeal.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The X reply discusses an Antigravity subscription and reports recent sign-up, access loss, and an appeal. The author confirms the suspension and describes the same third-party use in https://x.com/codermatt/status/2123620276307153009. Both posts were published November 20 Singapore time.",
+    "status_as_of": "2026-11-20"
+  },
+  {
+    "key": "claude-github-111617",
+    "vendor": "claude",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "rejected",
+    "source_url": "https://github.com/anthropics/claude-code/issues/111617",
+    "source_platform": "GitHub",
+    "source_published_at": "2026-11-22",
+    "codename": "Claude 申诉被拒，客服邮件又指回申诉表",
+    "codename_en": "Claude appeal rejected, support sent me back to the same form",
+    "story": "我平时用 Claude Code 做自己的开发项目。账号停用后，我填了官方申诉表，收到的拒绝回复没说具体原因。我又发邮件联系支持，自动回复把我指回同一张表。客服对话随后关闭，我就到 GitHub 发帖请求人工复核。",
+    "story_en": "I used Claude Code for my own development projects. After my account was suspended, I submitted the official appeal form and got a rejection without a specific reason. I emailed support and was sent back to the same form by an automated reply. The support conversation was then closed, so I asked for a human review on GitHub.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The GitHub issue's first-person account records the official appeal rejection, automated redirection, and support conversation closure. GitHub lists the original publication at 2026-11-22T02:58:03Z.",
+    "status_as_of": "2026-11-22"
   }
 ]
