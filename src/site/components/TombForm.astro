@@ -17,7 +17,7 @@ import { LABELS } from '../scripts/labels';
         aria-describedby="codename-hint"
       />
       <p class="hint" id="codename-hint">
-        会刻在碑上公开显示。别用邮箱或真实用户名。
+        代号会作为碑文标题公开显示。
       </p>
     </div>
     <div class="field">
@@ -63,7 +63,7 @@ import { LABELS } from '../scripts/labels';
     <legend>
       发生了什么<span class="req">必填</span>
     </legend>
-    <div class="seg">
+    <div class="seg event-options">
       <label>
         <input type="radio" name="event" value="suspended" checked /> 账号停用
       </label>
@@ -113,13 +113,13 @@ import { LABELS } from '../scripts/labels';
         卒于（出事那天）<span class="req">必填</span>
       </label>
       <input class="input" id="died" name="died_at" type="date" />
-      <p class="hint">按北京时间填出事的日期，不是今天。</p>
+      <p class="hint">填写事件发生当天（北京时间，UTC+8）。</p>
     </div>
   </div>
 
   <div class="field">
     <label for="story">
-      经过<span class="req">必填，10 到 800 字</span>
+      事情经过<span class="req">必填，10 到 800 字</span>
     </label>
     <textarea
       class="textarea"
@@ -128,13 +128,15 @@ import { LABELS } from '../scripts/labels';
       maxlength="800"
       aria-describedby="story-hint story-error"
     ></textarea>
-    <p class="hint" id="story-hint">
-      写你看到了什么、做了什么。猜测请注明“猜测”。
-    </p>
+    <div class="story-meta">
+      <p class="hint" id="story-hint">
+        写你看到了什么、做了什么。猜测请注明“猜测”。
+      </p>
+      <p class="count" aria-live="polite">
+        0 / 800
+      </p>
+    </div>
     <p class="error" id="story-error" hidden></p>
-    <p class="count" aria-live="polite">
-      0 / 800
-    </p>
   </div>
 
   <div class="field">
@@ -217,3 +219,47 @@ import { LABELS } from '../scripts/labels';
     </a>
   </div>
 </form>
+
+<style>
+  .event-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-options label {
+    min-height: 44px;
+    min-width: 0;
+    padding: 8px 10px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .event-options input {
+    flex: none;
+    margin: 0;
+  }
+
+  @media (max-width: 339px) {
+    .event-options {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .event-options {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .story-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .story-meta .count {
+    flex: none;
+    margin: 0;
+  }
+</style>

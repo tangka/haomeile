@@ -165,6 +165,46 @@ for (const colorScheme of ['light', 'dark'] as const) {
     }
   });
 }
+
+test('aligns paired controls on the English submission form', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await stubTurnstileSdk(page);
+  await page.goto('/en/submit');
+
+  const pairs = [
+    ['#codename', '#nickname'],
+    ['#vendor', '#plan'],
+    ['#born-precision', '#died'],
+  ] as const;
+  for (const [first, second] of pairs) {
+    const [left, right] = await Promise.all([
+      page.locator(first).boundingBox(),
+      page.locator(second).boundingBox(),
+    ]);
+    expect(left, first).not.toBeNull();
+    expect(right, second).not.toBeNull();
+    expect(right!.x, second).toBeGreaterThan(left!.x + left!.width);
+    expect(Math.abs(right!.y - left!.y), second).toBeLessThanOrEqual(1);
+    expect(Math.abs(right!.height - left!.height), second).toBeLessThanOrEqual(
+      1,
+    );
+  }
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  for (const [first, second] of pairs) {
+    const [upper, lower] = await Promise.all([
+      page.locator(first).boundingBox(),
+      page.locator(second).boundingBox(),
+    ]);
+    expect(upper, first).not.toBeNull();
+    expect(lower, second).not.toBeNull();
+    expect(lower!.y, second).toBeGreaterThan(upper!.y + upper!.height);
+    expect(Math.abs(lower!.x - upper!.x), second).toBeLessThanOrEqual(1);
+  }
+});
+
 test('keeps the administrator page and API protected without an Access assertion', async ({
   request,
   baseURL,

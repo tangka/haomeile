@@ -265,14 +265,12 @@ export const EN_STATIC: Record<string, string> = {
     'Anonymously record what happened to your Claude, Codex or Antigravity account.',
   '写下账号是怎么没的。审核通过后会出现在纪念墙上，你随时可以修改或撤回。':
     'Tell us what happened to your account. Your memorial will appear on the wall after review, and you can edit or withdraw it at any time.',
-  这些信息不要填: 'Leave out private information',
-  '邮箱、密码、API Key、订单号、手机号、微信或 QQ、链接、证件号码。碑文是公开的，填了会被拦下来。':
-    'No email addresses, passwords, API keys, order numbers, phone numbers, WeChat or QQ details, links or identity document numbers. Memorials are public; submissions containing these will be blocked.',
+  '碑文会公开。别填邮箱、手机号等私人信息。':
+    'Memorials are public. Leave out email addresses, phone numbers and other private information.',
   读取我的墓碑: 'Load my memorial',
   必填: 'Required',
   '比如：小橘号': 'e.g. Little Orange',
-  '会刻在碑上公开显示。别用邮箱或真实用户名。':
-    'This will appear publicly on the memorial. Do not use an email address or your actual username.',
+  '代号会作为碑文标题公开显示。': 'The codename is the public memorial title.',
   署名: 'Display name',
   选填: 'Optional',
   '不填就显示“匿名”': 'Leave blank for “Anonymous”',
@@ -291,9 +289,9 @@ export const EN_STATIC: Record<string, string> = {
   '记不清就空着，存活天数会显示“不详”。':
     'Leave blank if you’re unsure. The lifespan will show as “Unknown”.',
   '卒于（出事那天）': 'Died (incident date)',
-  '按北京时间填出事的日期，不是今天。':
-    'Enter the incident date in Beijing time (UTC+8), rather than today’s date.',
-  经过: 'Your story',
+  '填写事件发生当天（北京时间，UTC+8）。':
+    'Enter the date the incident occurred (Beijing time, UTC+8).',
+  事情经过: 'Your story',
   '必填，10 到 800 字': 'Required, 10–800 characters',
   '写你看到了什么、做了什么。猜测请注明“猜测”。':
     'Describe what you saw and did. Label speculation as “speculation”.',
