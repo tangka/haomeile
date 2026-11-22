@@ -89,7 +89,10 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(main.getByRole('link')).toHaveCount(titles.length);
   const publishedTimes = list.locator('li > a > time');
   await expect(publishedTimes).toHaveCount(articles.length);
-  await expect(publishedTimes.first()).toHaveText('2026-11-17 20:48');
+  const creditsPath = '/tips/google-ai-claim-cloud-credits';
+  await expect(list.locator(`a[href="${creditsPath}"] time`)).toHaveText(
+    '2026-11-17 20:48',
+  );
   expect(
     await publishedTimes.evaluateAll((times) =>
       times.map((time) => time.getAttribute('datetime')),
@@ -131,9 +134,9 @@ test('the tips directory lists articles by date in one column and links to detai
 
   await page.goto('/en/tips');
   await expect(page.locator('.tips .tip-title')).toHaveText(titles);
-  await expect(page.locator('.tips time').first()).toHaveText(
-    '2026-11-17 20:48',
-  );
+  await expect(
+    page.locator(`.tips a[href="/en${creditsPath}"] time`),
+  ).toHaveText('2026-11-17 20:48');
   await page.getByRole('link', { name: title, exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
 });

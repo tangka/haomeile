@@ -18,6 +18,56 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'antigravity-paid-plan-starter-quota',
+    title:
+      '3 万字超干货 Antigravity 群峰× AI 精品短剧：280元打通双顶配模型池与 96G 云显卡，跑通电影级双语成片',
+    englishTitle:
+      'A hands-on Antigravity guide: from Google AI Ultra setup to a bilingual short film',
+    summary: {
+      zh: '看原文第二章 (g) 的问题 2。Google One 已显示 Ultra，Antigravity 还显示 Starter Quota 时，先核对登录账号和额度页的提示。',
+      en: 'See issue 2 in section 2(g). If Google One shows Ultra and Antigravity still shows Starter Quota, check the signed-in account and the message beneath the quota.',
+    },
+    experience: {
+      zh: '若宇开通 Ultra 5x 后，Google One 已显示订阅生效，Antigravity 里却还是 Starter Quota。客户端提示需要验证年龄。作者完成账号验证，再退出客户端重新登录，才看到付费额度。',
+      en: 'Google One showed an active Ultra 5x subscription after Ruoyu subscribed, but Antigravity still showed Starter Quota. The client asked for age verification. The paid quota appeared after the author verified the account and signed back in.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在 Google One 确认订阅档位和会员账号。打开 Antigravity 的「Settings → Account」，核对客户端邮箱是否和会员账号一致，同时查看当前额度档位。',
+          en: 'Check your plan and subscription email in Google One. In Antigravity, open Settings → Account and compare both the signed-in email and the quota tier.',
+        },
+        link: {
+          href: 'https://one.google.com/',
+          label: { zh: '打开 Google One', en: 'Open Google One' },
+        },
+      },
+      {
+        text: {
+          zh: '如果免费额度下方明确提示验证年龄，用同一个 Google 账号打开官方验证页，选页面提供的验证方式，按提示提交。',
+          en: 'If the message beneath Starter Quota explicitly asks for age verification, open Google’s verification page with the same account and follow one of the options offered there.',
+        },
+        link: {
+          href: 'https://myaccount.google.com/age-verification',
+          label: {
+            zh: '打开 Google 年龄验证',
+            en: 'Open Google age verification',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '完成后在 Antigravity 退出账号，用已开通订阅的账号重新登录。回到「Settings → Account」查看套餐及额度有没有更新。',
+          en: 'Sign out of Antigravity after verification, then sign back in with the subscribed account. Return to Settings → Account and check whether the tier and quota have updated.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2123388387155443940',
+    sourceAuthor: '@ElowenY20119',
+    sourcePublishedAt: '2026-11-19T12:10:16Z',
+    sourceViews: 27336,
+  },
+  {
     slug: 'google-ai-claim-cloud-credits',
     title:
       '万字干货｜Gemini 4 + Antigravity，从 0 到 1 跑通全自动出片（附 Agent 指令）',
@@ -187,6 +237,49 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceViews: 60998,
   },
   {
+    slug: 'apple-in-app-purchase-review',
+    title:
+      '外区苹果内购被风控怎么破？8 步挖出隐藏真人客服：实测拿下土区 Google AI Ultra，通杀一切订阅拦截',
+    englishTitle:
+      'How one Google AI Ultra subscriber resolved an App Store purchase block',
+    summary: {
+      zh: 'Apple 内购提示「Purchase Not Completed」并要求提交审核时，先从弹窗提交请求。原文有作者找到 Apple 人工支持的逐屏截图。',
+      en: 'If an Apple in-app purchase says “Purchase Not Completed” and asks you to request a review, start with that prompt. The original article shows the screens the author used to reach Apple Support.',
+    },
+    experience: {
+      zh: '码农暖爸在 iPhone 上订阅 Google AI Ultra 时，Apple 要求审核购买。他提交审核，又到 Apple 支持网站找到人工客服。作者说自己第三天收到通知，重试后开通了订阅。',
+      en: 'Apple requested a purchase review when Delroy tried to subscribe to Google AI Ultra on iPhone. He sent the request and reached a support advisor through Apple’s website. He says Apple notified him on the third day and the purchase worked when he retried.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '先保存购买提示和出现时间。如果弹窗有「Submit a request」，点进去提交审核。再到 App Store 的购买记录和「订阅」里看这笔交易是否已经成功。',
+          en: 'Save the purchase message and the time it appeared. If the prompt offers Submit a request, use it to request a review. Then check App Store purchase history and Subscriptions to see whether the charge or subscription already went through.',
+        },
+      },
+      {
+        text: {
+          zh: '需要跟进时，打开 Apple 支持，选择 Apple 账号所在地区，从「App Store → 订阅与购买 → 无法购买」进入。往下找「获取更多帮助」。页面如果提供聊天，可带上报错时间、App 名称和套餐联系支持。',
+          en: 'To follow up, open Apple Support for the region of your Apple Account and go to App Store → Subscriptions & Purchases → Unable to purchase. Look for Get more help. If chat is offered, give the advisor the error time, app and plan.',
+        },
+        link: {
+          href: 'https://getsupport.apple.com/',
+          label: { zh: '打开 Apple 支持', en: 'Open Apple Support' },
+        },
+      },
+      {
+        text: {
+          zh: '收到审核结果后按 Apple 的回复处理。可以重试时，确认订单中的方案和金额。付款完成后，在 Apple 的订阅列表核对续费日期，再回 App 确认套餐已经生效。',
+          en: 'Follow Apple’s response when the review is complete. If told to try again, check the plan and amount before confirming. After it goes through, check the renewal date in Apple Subscriptions and the active plan in the app.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2119344771475156992',
+    sourceAuthor: '@Delroy715',
+    sourcePublishedAt: '2026-11-08T11:53:06Z',
+    sourceViews: 38494,
+  },
+  {
     slug: 'google-ai-ultra-iphone-subscription',
     title: '410元开通谷歌 Ultra 20×：爽用用96GB云端显卡，跑通了开源生图和视频',
     englishTitle:
@@ -250,6 +343,57 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceAuthor: '@yangleiocx3',
     sourcePublishedAt: '2026-11-04T04:19:46Z',
     sourceViews: 135910,
+  },
+  {
+    slug: 'claude-pro-iphone-apple-sign-in',
+    title: 'Claude Pro 保姆级订阅教程 ｜ 性价比版',
+    englishTitle: 'A hands-on guide to subscribing to Claude Pro on iPhone',
+    summary: {
+      zh: '看原文注册和订阅部分。用 Apple 登录 Claude 时，先确认 Claude 账号邮箱，再在 iPhone 上开通 Pro，付款后检查订阅归属。',
+      en: 'See the registration and subscription sections. If you use Sign in with Apple, check the Claude account email before upgrading on iPhone and confirm the subscription on that account after paying.',
+    },
+    experience: {
+      zh: '徐行 AI 用 Apple 登录注册自己的 Claude 账号，在 iPhone 上开了 Pro，再到电脑上使用 Claude Code。他记录了「隐藏邮件地址」生成的转发邮箱，以及用邮件登录时去哪个邮箱收信。',
+      en: 'Xu Xing AI registered a Claude account with Sign in with Apple, bought Pro on iPhone and then used Claude Code on a computer. The guide shows how he identified the relay address created by Hide My Email and where to receive sign-in emails.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '如果注册时选了「隐藏邮件地址」，在 iPhone 打开「设置 → 你的姓名 → 通过 Apple 登录」，选 Claude，查看 Apple 为它生成的转发邮箱。回 Claude 核对账号邮箱，记住实际接收转发邮件的邮箱。',
+          en: 'If you chose Hide My Email at registration, open iPhone Settings → your name → Sign in with Apple and select Claude to see its relay address. Match it to the email shown in Claude and know which inbox receives the forwarded messages.',
+        },
+        link: {
+          href: 'https://support.apple.com/en-us/105078',
+          label: {
+            zh: '查 Apple 转发邮箱',
+            en: 'Find your Apple relay address',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在 Claude App 打开头像，再点「Upgrade to Pro」。确认 Claude 当前登录的是要升级的账号，在 Apple 的确认页核对付款账号、订阅价格和续费周期，确认后付款。',
+          en: 'Open your profile in the Claude app and choose Upgrade to Pro. Confirm the Claude account you want to upgrade, then review the Apple account, price and renewal period on the purchase screen before paying.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9266495-how-do-i-sign-up-for-claude-pro-on-the-claude-app-for-ios',
+          label: {
+            zh: '查 Claude 的 iOS 订阅入口',
+            en: 'Find the Claude iOS upgrade option',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '付款后回 Claude 确认显示 Pro，再到 iPhone 的「设置 → 你的姓名 → 订阅」查看 Claude 及下次续费时间。如果手机上已开通、电脑上还是免费版，先核对电脑端是否登录了同一个 Claude 账号。',
+          en: 'After paying, confirm Pro inside Claude, then check Claude and the next renewal date in iPhone Settings → your name → Subscriptions. If Pro appears on the phone and the computer still shows Free, check that both are signed into the same Claude account.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2117809198637744395',
+    sourceAuthor: '@xuxingai',
+    sourcePublishedAt: '2026-11-04T02:40:34Z',
+    sourceViews: 240652,
   },
   {
     slug: 'claude-pro-web-subscription',
