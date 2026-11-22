@@ -105,9 +105,11 @@ export function validateCommunityCases(
           ? 'GitHub'
           : host === 'www.reddit.com'
             ? 'Reddit'
-            : host === 'community.openai.com'
-              ? 'OpenAI Developer Community'
-              : 'Google AI Developers Forum',
+            : host === 'x.com'
+              ? 'X'
+              : host === 'community.openai.com'
+                ? 'OpenAI Developer Community'
+                : 'Google AI Developers Forum',
       source_published_at: published,
     };
   });

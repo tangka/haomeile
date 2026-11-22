@@ -91,6 +91,36 @@ describe('community source boundaries', () => {
     ])
       expect(safeCommunitySource(value)).toBeNull();
   });
+
+  test('normalizes official X post links and rejects other X routes and domains', () => {
+    const id = '1966547284500012345';
+    const canonical = `https://x.com/i/status/${id}`;
+    for (const url of [
+      canonical,
+      `https://x.com/Some_Author/status/${id}?s=20#context`,
+      `https://www.x.com/i/web/status/${id}`,
+      `https://twitter.com/old_author/status/${id}/`,
+      `https://www.twitter.com/i/status/${id}`,
+      `https://mobile.twitter.com/old_author/status/${id}`,
+    ])
+      expect(safeCommunitySource(url)).toBe(canonical);
+    for (const url of [
+      `http://x.com/author/status/${id}`,
+      `https://x.com.example/author/status/${id}`,
+      `https://twitter.com@evil.example/author/status/${id}`,
+      `https://login@x.com/author/status/${id}`,
+      `https://x.com:444/author/status/${id}`,
+      `https://api.x.com/author/status/${id}`,
+      `https://x.com/author/status/${id}/photo/1`,
+      `https://x.com/intent/retweet?tweet_id=${id}`,
+      'https://x.com/author',
+      'https://x.com/author/status/0123',
+      'https://x.com/author/status/invalid',
+      'https://t.co/example',
+    ])
+      expect(safeCommunitySource(url)).toBeNull();
+  });
+
   test('keeps body privacy filtering and requires bilingual summaries and real published dates', () => {
     expect(validateCommunityCases([fixture])[0]).toMatchObject({
       died_at: '',
@@ -116,6 +146,23 @@ describe('community source boundaries', () => {
 });
 
 describe('transactional editorial import', () => {
+  test('stores the X source label and deduplicates aliases of the same post', async () => {
+    const db = await database();
+    const id = '1966547284500012345';
+    expect(
+      await importCommunityCases(db.binding, [
+        { ...fixture, source_url: `https://twitter.com/author/status/${id}` },
+        { ...fixture, source_url: `https://x.com/i/web/status/${id}?s=20` },
+      ]),
+    ).toEqual({ inserted: 1, skipped: 1 });
+    const { items } = await listTombstones(db.binding);
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      source_url: `https://x.com/i/status/${id}`,
+      source_platform: 'X',
+    });
+  });
+
   test('imports approved source-backed cases separately from voluntary submission counts', async () => {
     const db = await database();
     expect(await importCommunityCases(db.binding, [fixture])).toEqual({

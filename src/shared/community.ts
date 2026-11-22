@@ -36,6 +36,22 @@ export function safeCommunitySource(
     if (!post) return null;
     return `https://www.reddit.com/comments/${post[1].toLowerCase()}/`;
   }
+  if (
+    [
+      'x.com',
+      'www.x.com',
+      'twitter.com',
+      'www.twitter.com',
+      'mobile.twitter.com',
+    ].includes(host)
+  ) {
+    const post =
+      /^\/(?:[a-z\d_]{1,15}|i\/web)\/status\/([1-9]\d{0,19})\/?$/i.exec(
+        url.pathname,
+      );
+    if (!post) return null;
+    return `https://x.com/i/status/${post[1]}`;
+  }
   if (host === 'discuss.ai.google.dev' || host === 'community.openai.com') {
     const match = /^\/t\/(?:[a-z\d][a-z\d-]*\/)?([1-9]\d*)\/?$/i.exec(
       url.pathname,
