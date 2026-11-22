@@ -39,9 +39,14 @@ test.afterEach(({ baseURL }) => {
   resetIsolatedDatabase();
 });
 
-test('English pagination appends a sourced community summary without treating it as an owner submission', async ({
+test('scrolling the English wall appends a sourced community summary in full', async ({
   page,
 }) => {
+  let paginationRequests = 0;
+  page.on('request', (request) => {
+    if (request.url().startsWith(`${E2E_ORIGIN}/api/tombstones?`))
+      paginationRequests++;
+  });
   await page.setViewportSize({ width: 375, height: 812 });
   const first = await page.goto('/en/');
   expect(first!.status()).toBe(200);
@@ -49,6 +54,7 @@ test('English pagination appends a sourced community summary without treating it
   await expect(page.locator('#rows article.tomb')).toHaveCount(20);
   await expect(page.locator('#rows .tomb-number')).toHaveCount(20);
   await expect(page.locator('#more')).toBeVisible();
+  expect(paginationRequests).toBe(0);
   await expect(page.locator('[data-ssr="tally"]')).toContainText(
     '21 records, including 1 community summary and 20 public user submissions',
   );
@@ -62,7 +68,7 @@ test('English pagination appends a sourced community summary without treating it
       response.request().method() === 'GET'
     );
   });
-  await page.locator('#more').click();
+  await page.locator('#more').scrollIntoViewIfNeeded();
   const response = await nextPage;
   expect(response.status()).toBe(200);
   const { items } = (await response.json()).data;
@@ -108,6 +114,7 @@ test('English pagination appends a sourced community summary without treating it
   );
   await expect(curated.locator('.tomb-origin,.tomb-unverified')).toHaveCount(0);
   await expect(page.locator('#more')).toBeHidden();
+  expect(paginationRequests).toBe(1);
 
   const widths = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -158,4 +165,26 @@ test('English pagination appends a sourced community summary without treating it
     `<h1 class="tomb-name">${communityTitle}</h1>`,
   );
   await expect(page.locator('.tomb-number')).toHaveText(number);
+});
+
+test('a failed automatic load leaves the wall available for manual retry', async ({
+  page,
+}) => {
+  let paginationRequests = 0;
+  await page.route(`${E2E_ORIGIN}/api/tombstones?*`, (route) => {
+    paginationRequests++;
+    return paginationRequests === 1 ? route.abort() : route.continue();
+  });
+  await page.goto('/');
+  const more = page.locator('#more');
+  await more.scrollIntoViewIfNeeded();
+  await expect(page.getByText('没能加载更多，稍后再试。')).toBeVisible();
+  await expect(page.locator('#rows article.tomb')).toHaveCount(20);
+  await expect(more).toBeEnabled();
+  expect(paginationRequests).toBe(1);
+
+  await more.click();
+  await expect(page.locator('#rows article.tomb')).toHaveCount(21);
+  await expect(more).toBeHidden();
+  expect(paginationRequests).toBe(2);
 });
