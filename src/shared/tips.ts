@@ -24,12 +24,12 @@ export const TIP_ARTICLES: TipArticle[] = [
     englishTitle:
       'A hands-on Antigravity guide: from Google AI Ultra setup to a bilingual short film',
     summary: {
-      zh: '看原文第二章 (g) 的问题 2。Google One 已显示 Ultra，Antigravity 还显示 Starter Quota 时，先核对登录账号和额度页的提示。',
-      en: 'See issue 2 in section 2(g). If Google One shows Ultra and Antigravity still shows Starter Quota, check the signed-in account and the message beneath the quota.',
+      zh: '我开通了 Ultra，Antigravity 却还显示 Starter Quota。排查时先核对登录账号，再看额度页提示。',
+      en: 'I had an active Ultra subscription, but Antigravity still showed Starter Quota. Start by checking the signed-in account and the message on the quota page.',
     },
     experience: {
-      zh: '若宇开通 Ultra 5x 后，Google One 已显示订阅生效，Antigravity 里却还是 Starter Quota。客户端提示需要验证年龄。作者完成账号验证，再退出客户端重新登录，才看到付费额度。',
-      en: 'Google One showed an active Ultra 5x subscription after Ruoyu subscribed, but Antigravity still showed Starter Quota. The client asked for age verification. The paid quota appeared after the author verified the account and signed back in.',
+      zh: '当时 Google One 里已经显示 Ultra 5x 生效。我看到 Antigravity 的额度下面有一行提示，让我先验证年龄。我按提示验证，再退出客户端重新登录，付费额度就出来了。',
+      en: 'Google One showed that Ultra 5x was active. Under the quota in Antigravity, I saw a message asking me to verify my age. I followed the prompt, then signed out of the client and back in. The paid quota appeared.',
     },
     steps: [
       {
@@ -74,12 +74,12 @@ export const TIP_ARTICLES: TipArticle[] = [
     englishTitle:
       'Gemini 4 and Antigravity: a full walkthrough for automated video production',
     summary: {
-      zh: '看原文第三节。开通 Google AI Pro 或 Ultra 后，到 AI Studio 领取赠金，再到 Cloud Billing 核对到账。',
-      en: 'Section three shows how to claim the credit in AI Studio after subscribing to Google AI Pro or Ultra, then verify it in Cloud Billing.',
+      zh: '我开通 Google AI Pro 后，在 AI Studio 领了 Cloud 赠金，再去 Cloud Billing 核对到账。',
+      en: 'After subscribing to Google AI Pro, I claimed Cloud credits in AI Studio and checked them in Cloud Billing.',
     },
     experience: {
-      zh: 'Leaf Yeah! 用自己的 Pro 账号领了 Google Cloud 赠金。他在账单里查到赠金已生效，之后用它抵扣了 Gemini API 的调用费用。原文也记录了他用预付费账单账户时遇到的余额提示。',
-      en: 'Leaf Yeah! claimed Google Cloud credits with his own Pro account. He verified them in Billing and used them against Gemini API charges. He also documented the balance notice he saw on his prepaid billing account.',
+      zh: '账单里显示赠金已经生效，可以抵扣我的 Gemini API 调用费。我的结算账户是预付费，页面还要求余额大于零。我补了余额才恢复调用。',
+      en: 'Once the credit showed as active in Billing, I could use it against my Gemini API charges. My prepaid billing account still needed a positive balance. I added funds before I could make API calls again.',
     },
     steps: [
       {
@@ -107,8 +107,8 @@ export const TIP_ARTICLES: TipArticle[] = [
       },
       {
         text: {
-          zh: '打开 Google Cloud 的「结算 → 赠金」，选同一个结算账户，再找 Google Developer Program 的赠金条目，查看状态、金额和到期日。作者的预付费账户当时还提示余额要大于零，他在自己的结算账户充值后才恢复调用。遇到同样提示时，先核对自己的结算模式。',
-          en: 'In Google Cloud, open Billing → Credits for the same billing account and check the Google Developer Program credit status, amount and expiration. The author’s prepaid account required a positive balance before API calls resumed. If you see that notice, check your own billing mode.',
+          zh: '打开 Google Cloud 的「结算 → 赠金」，选同一个结算账户，找到 Google Developer Program 的赠金，查看状态、金额和到期日。遇到余额提示时，先核对自己的结算模式。',
+          en: 'In Google Cloud, open Billing → Credits for the same billing account and check the Google Developer Program credit status, amount and expiration. If you see a balance notice, check your billing mode.',
         },
         link: {
           href: 'https://console.cloud.google.com/billing',
@@ -127,12 +127,12 @@ export const TIP_ARTICLES: TipArticle[] = [
     englishTitle:
       'What I learned about Claude sign-up and network setup after more than 20 suspensions',
     summary: {
-      zh: '看原文注册和付款部分。开 Pro 时弹出身份验证，先确认现在是在验证、付款，还是核对订阅。',
-      en: 'See the sign-up and payment sections. If a verification prompt appears while buying Pro, identify whether you are at identity verification, checkout or subscription confirmation.',
+      zh: '我碰到过两次身份验证，一次是在开 Pro 时，另一次是刚注册完。',
+      en: 'I got two identity prompts. One came up as I tried to buy Pro and the other right after sign-up.',
     },
     experience: {
-      zh: '起风了记录了自己遇到两次身份验证的经过。第一个账号走到订阅时弹窗，第二个刚注册就看到了提示。他没继续这两次验证。以下步骤结合他的场景和 Claude 当前的验证、账单入口整理。',
-      en: 'Qifeng documented two identity prompts. One appeared during subscription checkout and another immediately after sign-up. He did not complete those checks. The steps below pair his scenario with Claude’s current verification and billing instructions.',
+      zh: '第一个账号在结账时弹出了验证窗口，第二个还没走到付款。我两次都停在这一步。遇到这个弹窗，可以先确认是身份验证还是支付问题，再去对应的页面处理。',
+      en: 'The first account showed a verification window at checkout. The second had yet to reach payment. I stopped at the prompt both times. If you see it, check whether you are being asked to verify your identity or resolve a payment issue before proceeding.',
     },
     steps: [
       {
@@ -187,8 +187,8 @@ export const TIP_ARTICLES: TipArticle[] = [
       en: 'Compare the models, your current usage and the checkout price before paying. This is for Antigravity users deciding between Google AI Pro and Ultra.',
     },
     experience: {
-      zh: '刘老板说自己订阅了 Ultra 5X，在 Antigravity 上用 Carbon 跑过编码任务。这篇是对一篇 Linux.do 文章的复测补充，重点是他在多 Agent 和重构任务中感受到的用量消耗，以及云盘、Colab 等权益对购买决策的影响。',
-      en: 'Leo says he subscribed to Ultra 5X and ran coding tasks with Carbon in Antigravity. His article revisits a Linux.do post with his own tests, focusing on consumption during parallel and refactoring work and the value of benefits such as storage and Colab.',
+      zh: '我订了 Ultra 5X，用 Antigravity 的 Carbon 跑了编码任务。我对照 Linux.do 上的一篇文章做了复测，主要看多 Agent 和代码重构会吃掉多少额度，再算云盘和 Colab 这些权益值不值。',
+      en: 'I subscribed to Ultra 5X and ran coding tasks with Carbon in Antigravity. I tested what I had read on Linux.do, looking at how much quota parallel agents and refactoring used and whether storage and Colab were worth paying for.',
     },
     steps: [
       {
@@ -241,14 +241,14 @@ export const TIP_ARTICLES: TipArticle[] = [
     title:
       '外区苹果内购被风控怎么破？8 步挖出隐藏真人客服：实测拿下土区 Google AI Ultra，通杀一切订阅拦截',
     englishTitle:
-      'How one Google AI Ultra subscriber resolved an App Store purchase block',
+      'How I handled an App Store purchase review while subscribing to Google AI Ultra',
     summary: {
-      zh: 'Apple 内购提示「Purchase Not Completed」并要求提交审核时，先从弹窗提交请求。原文有作者找到 Apple 人工支持的逐屏截图。',
-      en: 'If an Apple in-app purchase says “Purchase Not Completed” and asks you to request a review, start with that prompt. The original article shows the screens the author used to reach Apple Support.',
+      zh: '我在 iPhone 上订阅 Google AI Ultra 时弹出了「Purchase Not Completed」。我先从弹窗提交了审核请求。',
+      en: 'I got a “Purchase Not Completed” message while subscribing to Google AI Ultra on iPhone. I requested a review from the purchase prompt.',
     },
     experience: {
-      zh: '码农暖爸在 iPhone 上订阅 Google AI Ultra 时，Apple 要求审核购买。他提交审核，又到 Apple 支持网站找到人工客服。作者说自己第三天收到通知，重试后开通了订阅。',
-      en: 'Apple requested a purchase review when Delroy tried to subscribe to Google AI Ultra on iPhone. He sent the request and reached a support advisor through Apple’s website. He says Apple notified him on the third day and the purchase worked when he retried.',
+      zh: '提交后，我又去 Apple 支持网站找到了人工客服。第三天我收到了 Apple 的通知，这时再试一次，订阅就开通了。',
+      en: 'After submitting the request, I reached a support advisor through Apple’s website. Apple notified me on the third day, and the subscription went through when I tried again.',
     },
     steps: [
       {
@@ -289,8 +289,8 @@ export const TIP_ARTICLES: TipArticle[] = [
       en: 'Check availability first. Your Apple Account pays and your personal Google Account receives the membership.',
     },
     experience: {
-      zh: '阿磊在 11 月 4 日记录了用 Apple 内购开通 Google AI Ultra 的过程。他在付款前核对了自己的方案和月价，开通后用同一个 Google 账号实际跑通了 Colab。想用 Antigravity 的读者，还要单独确认它的地区和模型资格。',
-      en: 'On November 4, A-Lei documented buying Google AI Ultra through Apple in-app purchase. He checked his plan and monthly price before paying, then ran a Colab notebook with the same Google Account. If you want Antigravity, check its separate region and model requirements as well.',
+      zh: '我用 Apple 内购开通了 Google AI Ultra。付款前核对了方案和月价，开通后用同一个 Google 账号跑通了 Colab。要用 Antigravity 的话，可以再查一次它自己的地区和模型要求。',
+      en: 'I subscribed to Google AI Ultra through an Apple in-app purchase. I checked the plan and monthly price first, then ran a Colab notebook with the same Google Account. If you plan to use Antigravity, also check its region and model requirements.',
     },
     steps: [
       {
@@ -349,12 +349,12 @@ export const TIP_ARTICLES: TipArticle[] = [
     title: 'Claude Pro 保姆级订阅教程 ｜ 性价比版',
     englishTitle: 'A hands-on guide to subscribing to Claude Pro on iPhone',
     summary: {
-      zh: '看原文注册和订阅部分。用 Apple 登录 Claude 时，先确认 Claude 账号邮箱，再在 iPhone 上开通 Pro，付款后检查订阅归属。',
-      en: 'See the registration and subscription sections. If you use Sign in with Apple, check the Claude account email before upgrading on iPhone and confirm the subscription on that account after paying.',
+      zh: '我用 Apple 登录注册 Claude，在 iPhone 上开了 Pro，然后在电脑上用同一个账号登录 Claude Code。',
+      en: 'I created my Claude account with Sign in with Apple, bought Pro on iPhone and signed into Claude Code on my computer with the same account.',
     },
     experience: {
-      zh: '徐行 AI 用 Apple 登录注册自己的 Claude 账号，在 iPhone 上开了 Pro，再到电脑上使用 Claude Code。他记录了「隐藏邮件地址」生成的转发邮箱，以及用邮件登录时去哪个邮箱收信。',
-      en: 'Xu Xing AI registered a Claude account with Sign in with Apple, bought Pro on iPhone and then used Claude Code on a computer. The guide shows how he identified the relay address created by Hide My Email and where to receive sign-in emails.',
+      zh: '我注册时选了「隐藏邮件地址」，Claude 账号里显示的是 Apple 生成的转发邮箱。后来用邮箱登录时，我就填这个地址，再去收转发邮件的邮箱看登录邮件。',
+      en: 'I chose Hide My Email at sign-up, so Claude showed the relay address Apple generated. When signing in by email, I entered that address and checked the inbox Apple forwards to for the sign-in message.',
     },
     steps: [
       {
@@ -406,8 +406,8 @@ export const TIP_ARTICLES: TipArticle[] = [
       en: 'Sign up with your own email and phone number in a supported location. Check the card’s issuing country, billing address and total with tax before paying.',
     },
     experience: {
-      zh: '阿蔺在 11 月 2 日发的长文里，记录了用本人名下的新加坡 Mastercard 开通 Claude Pro 月付。结账页显示应付 30 新元，付款后他在 Claude 看到了 Pro，并核对了卡上的交易。原文含开卡推广。',
-      en: 'In his November 2 article, A-Lin documented buying Claude Pro monthly with a Singapore-issued Mastercard in his own name. Checkout showed a total of SGD 30. After paying, he saw Pro on his Claude account and checked the card transaction. His original article includes a card promotion.',
+      zh: '我用自己名下的新加坡 Mastercard 开通了 Claude Pro 月付。结账时显示应付 30 新元。付完我回 Claude 看到了 Pro，又在银行记录里核对了这笔交易。',
+      en: 'I paid for monthly Claude Pro with a Singapore-issued Mastercard in my name. Checkout showed SGD 30. After paying, I saw Pro on my Claude account and checked the transaction with my bank.',
     },
     steps: [
       {
@@ -472,8 +472,8 @@ export const TIP_ARTICLES: TipArticle[] = [
       en: 'Check whether your App Store offers in-app purchase, review the price, then verify both the Apple order and the ChatGPT plan.',
     },
     experience: {
-      zh: '叫我阿杭在 10 月 31 日的图文里演示了把礼品卡兑进 Apple 账户余额、在 ChatGPT App 买 Plus，再回到原账号检查套餐的过程。图文里的美国商店是他的示例，下面按你自己实际使用的商店来操作。',
-      en: 'In his illustrated October 31 article, A-Hang showed how to add Apple Account credit, buy Plus inside the ChatGPT app and confirm the plan on the original account. He used the U.S. storefront as his example. Follow the steps for your own eligible storefront.',
+      zh: '我用美区 App Store 做演示，从把礼品卡兑进 Apple 账户、在 ChatGPT App 选 Plus，到回原账号检查套餐。操作时看你自己的商店和账号。',
+      en: 'I used the U.S. App Store as an example to show how to redeem an Apple gift card, buy Plus in ChatGPT and check the plan on the same account. Use the storefront and account you normally use.',
     },
     steps: [
       {
@@ -540,12 +540,12 @@ export const TIP_ARTICLES: TipArticle[] = [
     englishTitle:
       'How to subscribe to ChatGPT and Claude yourself through official checkout',
     summary: {
-      zh: '原文整理了多个自助付款渠道。这里把安卓的 Google Play 结账、到账和续费入口列清楚。',
-      en: 'The original covers several self-service payment channels. These steps focus on Android checkout, subscription verification and renewal through Google Play.',
+      zh: '我平时用 Safari 网页付款，也整理了安卓用户从 Google Play 开通、核对到账和管理续费的入口。',
+      en: 'I usually pay on the web in Safari. I also put together the Google Play options for Android users to pay, confirm their plan and manage renewal.',
     },
     experience: {
-      zh: '苏码玩家在 9 月的长文里写了自己常用的 Safari 网页付款方式，也整理了安卓从官方 App 发起、交给 Google Play 结账的路径。下面按目前的商店和应用入口核对。',
-      en: 'In his September article, Suversal described his own Safari checkout method and documented the Android path from the official app to Google Play. The steps below reflect the current store and app controls.',
+      zh: '安卓这条路径从 Claude 或 ChatGPT 的官方 App 开始。到了购买页，先看清付款用的 Google 账号，再确认订阅要开在哪个 Claude 或 ChatGPT 账号上。',
+      en: 'On Android, start in the official Claude or ChatGPT app. When the purchase sheet opens, check the Google Account that will pay and which Claude or ChatGPT account will receive the subscription.',
     },
     steps: [
       {
