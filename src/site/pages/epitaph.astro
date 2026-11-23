@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { LABELS } from '../scripts/labels';
+import MemorialModes from '../components/MemorialModes.astro';
 ---
 
 <SiteLayout
@@ -11,6 +12,7 @@ import { LABELS } from '../scripts/labels';
 >
   <main class="page">
     <div class="wrap">
+      <MemorialModes current="/epitaph" />
       <div class="page-head">
         <h1>墓志铭卡片</h1>
         <p>

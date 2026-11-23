@@ -11,8 +11,7 @@ const links = admin
     ]
   : [
       ['/', '纪念墙'],
-      ['/submit', '立碑'],
-      ['/epitaph', '墓志铭卡片'],
+      ['/submit', '立碑制卡'],
       ['/tips', '使用小技巧'],
       ['/radar', '重置雷达'],
     ];
@@ -26,7 +25,16 @@ const links = admin
     </a>
     <nav class="nav" aria-label={admin ? '后台导航' : '主导航'}>
       {links.map(([href, text]) => (
-        <a href={href} aria-current={current === href ? 'page' : undefined}>
+        <a
+          href={href}
+          aria-current={
+            current === href
+              ? 'page'
+              : current === '/epitaph' && href === '/submit'
+                ? 'location'
+                : undefined
+          }
+        >
           {text}
         </a>
       ))}

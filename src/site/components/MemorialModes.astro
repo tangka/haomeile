@@ -1,0 +1,39 @@
+---
+interface Props {
+  current: '/submit' | '/epitaph';
+}
+const { current } = Astro.props;
+---
+
+<nav class="memorial-modes" aria-label="立碑方式">
+  <a href="/submit" aria-current={current === '/submit' ? 'page' : undefined}>
+    公开立碑
+  </a>
+  <a href="/epitaph" aria-current={current === '/epitaph' ? 'page' : undefined}>
+    本地制卡
+  </a>
+</nav>
+
+<style>
+  .memorial-modes {
+    display: flex;
+    gap: 1rem;
+    margin-block-end: 1.25rem;
+    font-size: var(--fs-s);
+  }
+  .memorial-modes a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 4px;
+    border-bottom: 3px solid transparent;
+    text-decoration: none;
+  }
+  .memorial-modes a[aria-current] {
+    font-weight: 700;
+    border-color: currentColor;
+  }
+  .memorial-modes a:hover {
+    text-decoration: underline;
+  }
+</style>

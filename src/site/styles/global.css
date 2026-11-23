@@ -169,11 +169,6 @@ a {
   margin-left: auto;
   scrollbar-width: none;
 }
-@media (max-width: 640px) {
-  .nav {
-    flex-wrap: wrap;
-  }
-}
 .nav::-webkit-scrollbar {
   display: none;
 }
@@ -183,7 +178,7 @@ a {
   padding: 6px 10px;
   white-space: nowrap;
 }
-.nav a[aria-current='page'] {
+.nav a[aria-current] {
   background: var(--sky-ink);
   color: var(--sky);
 }
@@ -191,7 +186,7 @@ a {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.nav a[aria-current='page']:hover {
+.nav a[aria-current]:hover {
   text-decoration: none;
 }
 .locale-switch {
@@ -233,6 +228,18 @@ a {
     order: 3;
     flex: 1 0 100%;
     margin-left: 0;
+  }
+}
+@media (max-width: 640px) {
+  .nav {
+    gap: 0;
+  }
+  .nav a {
+    flex: 1 0 auto;
+    text-align: center;
+    align-content: center;
+    min-height: 44px;
+    padding-inline: clamp(4px, 1.2vw, 8px);
   }
 }
 

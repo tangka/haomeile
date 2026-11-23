@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import TombForm from '../components/TombForm.astro';
 import CredentialDialog from '../components/CredentialDialog.astro';
 import PostingRulesDialog from '../components/PostingRulesDialog.astro';
+import MemorialModes from '../components/MemorialModes.astro';
 ---
 
 <SiteLayout
@@ -14,6 +15,7 @@ import PostingRulesDialog from '../components/PostingRulesDialog.astro';
 >
   <main class="page submit-page">
     <div class="wrap">
+      <MemorialModes current="/submit" />
       <div class="page-head">
         <div class="submit-heading">
           <h1 id="submit-title">立一块碑</h1>
