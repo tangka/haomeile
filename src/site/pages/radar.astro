@@ -210,7 +210,7 @@ const jsonLd = [
             </div>
             <div class="actions">
               <button class="btn btn-primary" type="submit">
-                发送验证码
+                订阅
               </button>
             </div>
           </form>
@@ -250,6 +250,18 @@ const jsonLd = [
             tabindex="-1"
             data-radar-email-status
           ></p>
+          <div class="actions" data-radar-email-duplicate-actions hidden>
+            <button class="btn" type="button" data-radar-email-manage-existing>
+              修改订阅
+            </button>
+            <button
+              class="btn btn-quiet"
+              type="button"
+              data-radar-email-other-address
+            >
+              使用其他邮箱
+            </button>
+          </div>
         </div>
       </dialog>
 
@@ -498,6 +510,10 @@ const jsonLd = [
   .radar-email .form {
     gap: 14px;
     margin-top: 16px;
+  }
+
+  [data-radar-email-duplicate-actions] {
+    margin-top: 14px;
   }
 
   .radar-email .seg label {

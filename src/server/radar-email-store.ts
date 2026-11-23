@@ -154,6 +154,7 @@ export function createRadarEmailStore(
     input: string,
     platforms: readonly RadarPlatformId[],
     locale: Locale,
+    intent: 'subscribe' | 'manage' = 'subscribe',
   ) {
     const email = normalizeRadarEmail(input);
     if (
@@ -171,7 +172,8 @@ export function createRadarEmailStore(
       .prepare(
         `
       INSERT INTO radar_email_confirmations(email, platforms, locale, nonce, token_hash, requested_at, expires_at, code_hash, code_expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
+      WHERE ? = 'manage' OR NOT EXISTS (SELECT 1 FROM radar_email_contacts WHERE email = ?)
       ON CONFLICT(email) DO UPDATE SET
         platforms = excluded.platforms,
         locale = excluded.locale,
@@ -198,6 +200,8 @@ export function createRadarEmailStore(
         timestamp + EXPIRY_MS,
         codeHash(email, code),
         timestamp + CODE_TTL_MS,
+        intent,
+        email,
         timestamp - RECONFIRM_MS,
         email,
       )
@@ -349,17 +353,16 @@ export function createRadarEmailStore(
     );
   }
 
-  async function rememberedSubscription(
-    id: string,
+  async function subscriptionForEmail(
     email: string,
     platforms: readonly RadarPlatformId[],
     locale: Locale,
   ) {
     return db
       .prepare(
-        'SELECT id, (platforms = ? AND locale = ?) AS matches FROM radar_email_contacts WHERE id = ? AND email = ?',
+        'SELECT id, (platforms = ? AND locale = ?) AS matches FROM radar_email_contacts WHERE email = ?',
       )
-      .bind(platformMask(platforms), locale, id, email)
+      .bind(platformMask(platforms), locale, email)
       .first<{ id: string; matches: number }>();
   }
 
@@ -512,7 +515,7 @@ export function createRadarEmailStore(
     confirmCode,
     unsubscribe,
     isSubscribed,
-    rememberedSubscription,
+    subscriptionForEmail,
     dispatch,
   };
 }

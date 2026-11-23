@@ -138,8 +138,10 @@ export function createRadarEmail(
     );
     const body = await readJson(c.req.raw);
     const email = normalizeRadarEmail(body.email);
+    const intent = body.intent === undefined ? 'subscribe' : body.intent;
     if (
       !email ||
+      (intent !== 'subscribe' && intent !== 'manage') ||
       (body.locale !== 'en' && body.locale !== 'zh') ||
       !Array.isArray(body.platforms) ||
       body.platforms.length < 1 ||
@@ -152,24 +154,41 @@ export function createRadarEmail(
       throw new ApiError('INVALID_SUBSCRIPTION', '请检查邮箱地址和所选平台。');
     }
     const knownId = await rememberedContact(c);
-    const existing = knownId
-      ? await store.rememberedSubscription(
-          knownId,
-          email,
-          body.platforms,
-          body.locale,
-        )
-      : null;
-    if (existing?.matches) {
-      await remember(c, existing.id);
+    const existing = await store.subscriptionForEmail(
+      email,
+      body.platforms,
+      body.locale,
+    );
+    const remembered = existing !== null && existing.id === knownId;
+    async function duplicate(contactId: string) {
+      if (contactId === knownId) {
+        await remember(c, contactId);
+        return c.json({ ok: true, alreadySubscribed: true, remembered: true });
+      }
       return c.json({ ok: true, alreadySubscribed: true });
+    }
+    if (
+      existing &&
+      (intent === 'subscribe' || (remembered && existing.matches))
+    ) {
+      return duplicate(existing.id);
     }
     await reserveRate(env.DB, env.PEPPER, email, 'radar_email_address', 3);
     const confirmation = await store.requestConfirmation(
       email,
       body.platforms,
       body.locale,
+      intent,
     );
+    // A concurrent confirmation may have activated the address between lookup and insert.
+    if (!confirmation && intent === 'subscribe') {
+      const active = await store.subscriptionForEmail(
+        email,
+        body.platforms,
+        body.locale,
+      );
+      if (active) return duplicate(active.id);
+    }
     if (confirmation) {
       const { locale, token, code, idempotencyKey, platforms } = confirmation;
       const url = link(locale, '/email#confirm=' + token);
@@ -207,7 +226,7 @@ export function createRadarEmail(
       }
     }
     return c.json(
-      existing ? { ok: true, alreadySubscribed: true } : { ok: true },
+      remembered ? { ok: true, alreadySubscribed: true } : { ok: true },
       202,
     );
   });

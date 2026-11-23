@@ -236,17 +236,42 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(await knownRepeat.json()).toEqual({
       ok: true,
       alreadySubscribed: true,
+      remembered: true,
     });
     expect(knownRepeat.headers.has('Set-Cookie')).toBe(true);
     expect(mail).toHaveLength(2);
-    const unknownRepeat = await request(
-      opened,
-      '/api/radar/email/subscribe',
-      signup,
-    );
-    expect(unknownRepeat.status).toBe(202);
-    expect(await unknownRepeat.json()).toEqual({ ok: true });
+    const unknownRepeat = await request(opened, '/api/radar/email/subscribe', {
+      ...signup,
+      email: ' Reader@Example.Test ',
+      platforms: ['claude'],
+      locale: 'zh',
+    });
+    expect(unknownRepeat.status).toBe(200);
+    expect(await unknownRepeat.json()).toEqual({
+      ok: true,
+      alreadySubscribed: true,
+    });
     expect(unknownRepeat.headers.has('Set-Cookie')).toBe(false);
+    expect(mail).toHaveLength(2);
+    expect(
+      await opened.env.DB.prepare(
+        'SELECT count(*) AS count FROM radar_email_confirmations',
+      ).first('count'),
+    ).toBe(0);
+    expect(
+      await opened.env.DB.prepare(
+        'SELECT platforms, locale FROM radar_email_contacts WHERE email = ?',
+      )
+        .bind(signup.email)
+        .first(),
+    ).toEqual({ platforms: 1, locale: 'en' });
+    const verifyBrowser = await request(opened, '/api/radar/email/subscribe', {
+      ...signup,
+      intent: 'manage',
+    });
+    expect(verifyBrowser.status).toBe(202);
+    expect(await verifyBrowser.json()).toEqual({ ok: true });
+    expect(verifyBrowser.headers.has('Set-Cookie')).toBe(false);
     expect(mail[2].text).toContain('This email address is already subscribed.');
     const repeatLink = mail[2].text.match(
       /\/en\/radar\/email#confirm=([\w-]+)/,
@@ -263,6 +288,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       '/api/radar/email/subscribe',
       {
         ...signup,
+        intent: 'manage',
         locale: 'zh',
       },
       { Cookie },
@@ -292,11 +318,16 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     const otherBrowser = await request(
       opened,
       '/api/radar/email/subscribe',
-      { ...signup, email: other },
+      { ...signup, email: other, intent: 'subscribe' },
       { Cookie },
     );
-    expect(otherBrowser.status).toBe(202);
-    expect(await otherBrowser.json()).toEqual({ ok: true });
+    expect(otherBrowser.status).toBe(200);
+    expect(await otherBrowser.json()).toEqual({
+      ok: true,
+      alreadySubscribed: true,
+    });
+    expect(otherBrowser.headers.has('Set-Cookie')).toBe(false);
+    expect(mail).toHaveLength(4);
     const unsubscribed = await request(
       opened,
       '/api/radar/email/unsubscribe',

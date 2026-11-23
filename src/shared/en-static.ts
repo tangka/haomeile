@@ -84,6 +84,9 @@ export const EN_STATIC: Record<string, string> = {
   订阅邮件提醒: 'Get email alerts',
   已订阅: 'Subscribed',
   修改订阅: 'Edit subscription',
+  订阅: 'Subscribe',
+  使用其他邮箱: 'Use another email',
+  确认修改: 'Confirm changes',
   '这个邮箱已经订阅过了。': 'This email is already subscribed.',
   '这个邮箱已经订阅过了。提醒设置已更新。':
     'This email is already subscribed. Your alert settings have been updated.',

@@ -157,6 +157,7 @@ describe('Reset Radar email ownership', () => {
       email,
       ['antigravity', 'claude'],
       'zh',
+      'manage',
     );
     expect(change?.platforms).toEqual(['claude', 'antigravity']);
     const prefs = () =>
@@ -164,6 +165,9 @@ describe('Reset Radar email ownership', () => {
         .prepare('SELECT platforms, locale FROM radar_email_contacts')
         .first();
     expect(await prefs()).toEqual({ platforms: 1, locale: 'en' });
+    clock += 11 * minute;
+    // A duplicate signup cannot replace even a resend-eligible pending edit.
+    expect(await store.requestConfirmation(email, ['codex'], 'en')).toBeNull();
     expect(await store.confirm(change!.token)).toMatchObject({
       contactId: expect.any(String),
       alreadySubscribed: true,
@@ -182,7 +186,12 @@ describe('Reset Radar email ownership', () => {
     clock += minute;
     const firstAlert = snapshot('codex', 85);
     await store.dispatch(firstAlert, async () => 'retry');
-    const recovery = (await store.requestConfirmation(email, ['codex'], 'en'))!;
+    const recovery = (await store.requestConfirmation(
+      email,
+      ['codex'],
+      'en',
+      'manage',
+    ))!;
     expect(recovery.alreadySubscribed).toBe(true);
     expect(await store.confirmCode(email, recovery.code)).toEqual({
       contactId,
@@ -291,6 +300,7 @@ describe('Reset Radar alert delivery', () => {
       email,
       ['claude'],
       'en',
+      'manage',
     );
     expect(await restarted.unsubscribe(attempts[0].unsubscribeToken)).toEqual(
       expect.any(String),

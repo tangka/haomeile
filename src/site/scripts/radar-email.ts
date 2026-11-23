@@ -2,6 +2,7 @@ import { currentLocale, tr } from '../../shared/i18n';
 
 type EmailAction = 'confirm' | 'unsubscribe';
 type EmailLink = { action: EmailAction; token: string };
+type SignupIntent = 'subscribe' | 'manage';
 
 function subscriptionChannel() {
   try {
@@ -24,7 +25,12 @@ async function postEmail(
   body:
     | { token: string }
     | { email: string; code: string }
-    | { email: string; platforms: string[]; locale: 'en' | 'zh' },
+    | {
+        email: string;
+        platforms: string[];
+        locale: 'en' | 'zh';
+        intent: SignupIntent;
+      },
 ) {
   try {
     const response = await fetch('/api/radar/email/' + action, {
@@ -42,10 +48,16 @@ async function postEmail(
     return {
       status: response.status,
       alreadySubscribed: data?.alreadySubscribed === true,
+      remembered: data?.remembered === true,
       preferencesChanged: data?.preferencesChanged === true,
     };
   } catch {
-    return { status: 0, alreadySubscribed: false, preferencesChanged: false };
+    return {
+      status: 0,
+      alreadySubscribed: false,
+      remembered: false,
+      preferencesChanged: false,
+    };
   }
 }
 
@@ -79,6 +91,15 @@ function bindSignup(form: HTMLFormElement): void {
   const verify = dialog?.querySelector<HTMLFormElement>(
     '[data-radar-email-verify]',
   );
+  const duplicate = dialog?.querySelector<HTMLElement>(
+    '[data-radar-email-duplicate-actions]',
+  );
+  const manageExisting = duplicate?.querySelector<HTMLButtonElement>(
+    '[data-radar-email-manage-existing]',
+  );
+  const otherAddress = duplicate?.querySelector<HTMLButtonElement>(
+    '[data-radar-email-other-address]',
+  );
   const code = verify?.querySelector<HTMLInputElement>('[name="code"]');
   const verifyButton =
     verify?.querySelector<HTMLButtonElement>('[type="submit"]');
@@ -98,6 +119,9 @@ function bindSignup(form: HTMLFormElement): void {
     !trigger ||
     trigger.hidden ||
     !verify ||
+    !duplicate ||
+    !manageExisting ||
+    !otherAddress ||
     !code ||
     !verifyButton ||
     !edit ||
@@ -108,12 +132,23 @@ function bindSignup(form: HTMLFormElement): void {
     return;
   let pendingEmail = '';
   let statusVersion = 0;
+  let formVersion = 0;
+  let intent: SignupIntent = 'subscribe';
+  const setIntent = (next: SignupIntent) => {
+    intent = next;
+    title.textContent = tr(next === 'manage' ? '修改订阅' : '订阅邮件提醒');
+    button.textContent = tr(next === 'manage' ? '发送验证码' : '订阅');
+    verifyButton.textContent = tr(next === 'manage' ? '确认修改' : '确认订阅');
+  };
   const resetForms = () => {
+    ++formVersion;
     pendingEmail = '';
     verify.reset();
     form.reset();
     code.removeAttribute('aria-invalid');
     verify.hidden = true;
+    duplicate.hidden = true;
+    button.disabled = verifyButton.disabled = edit.disabled = false;
     form.hidden = false;
     status.textContent = '';
   };
@@ -171,15 +206,28 @@ function bindSignup(form: HTMLFormElement): void {
     notice.textContent = message;
     updates?.postMessage('changed');
   };
-  const open = () => {
+  const open = (next: SignupIntent) => {
     if (dialog.open) return;
     notice.textContent = '';
-    title.textContent = tr(trigger.hidden ? '修改订阅' : '订阅邮件提醒');
+    if (!duplicate.hidden || (!pendingEmail && intent !== next)) resetForms();
+    if (!pendingEmail) setIntent(next);
     dialog.showModal();
     if (pendingEmail) code.focus();
   };
-  trigger.addEventListener('click', open);
-  change.addEventListener('click', open);
+  trigger.addEventListener('click', () => open('subscribe'));
+  change.addEventListener('click', () => open('manage'));
+  manageExisting.addEventListener('click', () => {
+    duplicate.hidden = true;
+    form.hidden = false;
+    status.textContent = '';
+    setIntent('manage');
+    form.querySelector<HTMLInputElement>('input[name="platform"]')?.focus();
+  });
+  otherAddress.addEventListener('click', () => {
+    resetForms();
+    setIntent('subscribe');
+    address.focus();
+  });
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
   });
@@ -196,13 +244,23 @@ function bindSignup(form: HTMLFormElement): void {
     }
     button.disabled = true;
     status.textContent = tr('正在提交…');
+    const version = formVersion;
     const result = await postEmail('subscribe', {
       email,
       platforms,
       locale: currentLocale(),
+      intent,
     });
+    if (version !== formVersion) return;
     if (result.status === 200 && result.alreadySubscribed) {
-      finish(confirmationMessage(result));
+      if (result.remembered) {
+        finish(confirmationMessage(result));
+      } else {
+        form.hidden = true;
+        duplicate.hidden = false;
+        status.textContent = confirmationMessage(result);
+        status.focus();
+      }
     } else if (result.status === 202) {
       pendingEmail = email;
       form.hidden = true;
@@ -239,10 +297,12 @@ function bindSignup(form: HTMLFormElement): void {
     if (!pendingEmail || verifyButton.disabled) return;
     verifyButton.disabled = edit.disabled = true;
     status.textContent = tr('正在提交…');
+    const version = formVersion;
     const result = await postEmail('confirm-code', {
       email: pendingEmail,
       code: code.value,
     });
+    if (version !== formVersion) return;
     if (result.status === 200) {
       finish(confirmationMessage(result));
     } else if (result.status === 410) {
