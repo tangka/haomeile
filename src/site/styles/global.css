@@ -194,6 +194,20 @@ a {
 .nav a[aria-current='page']:hover {
   text-decoration: none;
 }
+.locale-switch {
+  flex: none;
+  white-space: nowrap;
+  text-decoration: none;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 5px 10px;
+  border: 1.5px solid currentColor;
+  line-height: 1.2;
+}
+.locale-switch:hover {
+  background: var(--sky-ink);
+  color: var(--sky);
+}
 
 /* Keep longer English navigation within the viewport. */
 .nav {
@@ -208,6 +222,9 @@ a {
   }
   .brand {
     margin-right: auto;
+  }
+  .locale-switch {
+    order: 2;
   }
   .nav {
     order: 3;
