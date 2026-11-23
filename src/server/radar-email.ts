@@ -114,12 +114,7 @@ export function createRadarEmail(
     if (result.status === 'rejected' && result.blockedUntil) {
       await capacity.block(provider, result.blockedUntil);
     }
-    await capacity.settle(
-      idempotencyKey,
-      result.status === 'rejected' && result.charged
-        ? 'unknown'
-        : result.status,
-    );
+    await capacity.settle(idempotencyKey, result.status);
     if (result.usage)
       await capacity.observeResendUsage(
         result.usage.day,

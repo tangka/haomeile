@@ -18,8 +18,6 @@ const all = radarEmailProviders({
   RADAR_EMAIL_FROM: 'Reset Radar <' + from + '>',
   RADAR_BREVO_API_KEY: 'brevo-test',
   RADAR_BREVO_FROM: from,
-  RADAR_SMTP2GO_API_KEY: 'smtp-test',
-  RADAR_SMTP2GO_FROM: from,
   RADAR_MAILJET_API_KEY: 'mailjet-test',
   RADAR_MAILJET_SECRET_KEY: 'test-secret',
   RADAR_MAILJET_FROM: from,
@@ -36,18 +34,12 @@ function respond(response: () => Response) {
 afterEach(() => http?.mockRestore());
 
 test('only enables fully configured provider and sender pairs', () => {
-  expect([...all.keys()].sort()).toEqual([
-    'brevo',
-    'mailjet',
-    'resend',
-    'smtp2go',
-  ]);
+  expect([...all.keys()].sort()).toEqual(['brevo', 'mailjet', 'resend']);
   expect(
     radarEmailProviders({
       RADAR_MAILJET_API_KEY: 'public-only',
       RADAR_MAILJET_FROM: from,
       RADAR_BREVO_FROM: from,
-      RADAR_SMTP2GO_API_KEY: 'missing-sender',
       RADAR_RESEND_API_KEY: 're_test',
       RADAR_EMAIL_FROM: 'invalid',
     }).size,
@@ -67,20 +59,6 @@ test.each([
       textContent: message.text,
     },
     receipt: { messageId: '<test@example.test>' },
-  },
-  {
-    provider: 'smtp2go',
-    url: 'https://api.smtp2go.com/v3/email/send',
-    header: 'X-Smtp2go-Api-Key',
-    authentication: 'smtp-test',
-    body: {
-      sender: '号没了~重置雷达 <' + from + '>',
-      to: [message.to],
-      subject: message.subject,
-      text_body: message.text,
-      fastaccept: false,
-    },
-    receipt: { data: { succeeded: 1, failed: 0, email_id: 'test-receipt' } },
   },
   {
     provider: 'mailjet',
@@ -118,8 +96,6 @@ test.each([
 
 test.each([
   ['mailjet', { Messages: [{ Status: 'error' }] }, 'rejected'],
-  ['smtp2go', { data: { succeeded: 0, failed: 1 } }, 'rejected'],
-  ['smtp2go', { data: { succeeded: 1, failed: 0 } }, 'unknown'],
   ['brevo', {}, 'unknown'],
   ['mailjet', { Messages: [{ Status: 'success', To: [] }] }, 'unknown'],
 ] as const)(
@@ -163,44 +139,18 @@ test('reports Resend server usage without treating a missing quota header as zer
   expect(body.from).toBe('号没了~重置雷达 <radar@example.test>');
 });
 
-test('a lost SMTP2GO response is recorded as ambiguous', async () => {
+test('a lost Brevo response is recorded as ambiguous', async () => {
   respond(() => {
     throw new Error('Connection interrupted');
   });
-  expect(
-    await deliverRadarEmail('smtp2go', all.get('smtp2go')!, message),
-  ).toEqual({ status: 'unknown' });
+  expect(await deliverRadarEmail('brevo', all.get('brevo')!, message)).toEqual({
+    status: 'unknown',
+  });
 });
 
 test.each([
   ['resend', 401, { name: 'missing_api_key' }],
   ['brevo', 403, { code: 'permission_denied' }],
-  [
-    'smtp2go',
-    400,
-    {
-      data: {
-        error_code: 'E_ApiResponseCodes.ENDPOINT_PERMISSION_DENIED',
-        error: 'You do not have permission to access this API endpoint',
-      },
-    },
-  ],
-  [
-    'smtp2go',
-    200,
-    {
-      data: {
-        succeeded: 0,
-        failed: 1,
-        failures: [
-          [
-            'reader@example.test',
-            '552 Your monthly email allowance is exhausted',
-          ],
-        ],
-      },
-    },
-  ],
   [
     'mailjet',
     200,
@@ -243,16 +193,6 @@ test.each([
 
 test.each([
   [
-    'smtp2go',
-    {
-      data: {
-        succeeded: 0,
-        failed: 1,
-        failures: ['Recipient <reader@example.test> is not on your allow list'],
-      },
-    },
-  ],
-  [
     'mailjet',
     {
       Messages: [
@@ -291,32 +231,4 @@ test('limits a Mailjet rate cooldown to five minutes even for a longer Retry-Aft
     expect(result.blockedUntil).toBeGreaterThanOrEqual(before + 5 * 60_000);
     expect(result.blockedUntil).toBeLessThanOrEqual(Date.now() + 5 * 60_000);
   }
-});
-
-test('keeps the quota charge for SMTP2GO unverified sender and for ambiguous accepted messages', async () => {
-  respond(() =>
-    Response.json({
-      data: {
-        succeeded: 0,
-        failed: 1,
-        failures: ['From header sender domain not verified (example.test)'],
-      },
-    }),
-  );
-  expect(
-    await deliverRadarEmail('smtp2go', all.get('smtp2go')!, message),
-  ).toMatchObject({
-    status: 'rejected',
-    charged: true,
-    blockedUntil: expect.any(Number),
-  });
-  http.mockRestore();
-  respond(() =>
-    Response.json({
-      data: { succeeded: 1, failed: 0, error: 'Conflicting receipt data' },
-    }),
-  );
-  expect(
-    await deliverRadarEmail('smtp2go', all.get('smtp2go')!, message),
-  ).toEqual({ status: 'unknown' });
 });

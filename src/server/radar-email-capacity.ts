@@ -16,7 +16,7 @@ type Reservation =
 const capacityQuery = `
   WITH clock(now, enabledList) AS (VALUES (?, ?)),
   plans(provider, dayLimit, monthLimit) AS (
-    VALUES ('resend', 100, 3000), ('brevo', 300, NULL), ('smtp2go', 200, 1000), ('mailjet', 200, 6000)
+    VALUES ('resend', 100, 3000), ('brevo', 300, NULL), ('mailjet', 200, 6000)
   ),
   windows AS (
     SELECT plans.*, clock.*,

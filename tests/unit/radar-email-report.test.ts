@@ -34,14 +34,15 @@ describe('operator radar email capacity report', () => {
   it('reports monthly exhaustion despite unused daily or other provider capacity', () => {
     const tight = {
       ...resend,
-      provider: 'smtp2go' as const,
-      monthLimit: 1000,
-      monthUsed: 1000,
+      provider: 'mailjet' as const,
+      dayLimit: 200,
+      monthLimit: 6000,
+      monthUsed: 6000,
       remaining: 0,
     };
     expect(radarCapacityReport([tight, resend]).alerts).toEqual([
-      { provider: 'smtp2go', reason: 'month', level: 'critical' },
-      { provider: 'smtp2go', reason: 'remaining', level: 'critical' },
+      { provider: 'mailjet', reason: 'month', level: 'critical' },
+      { provider: 'mailjet', reason: 'remaining', level: 'critical' },
     ]);
   });
   it('warns before one more notification round or the daily threshold exhausts a channel', () => {

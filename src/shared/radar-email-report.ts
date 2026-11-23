@@ -1,5 +1,5 @@
 export interface RadarProviderUsage {
-  provider: 'resend' | 'brevo' | 'smtp2go' | 'mailjet';
+  provider: 'resend' | 'brevo' | 'mailjet';
   enabled: boolean;
   dayLimit: number;
   dayUsed: number;

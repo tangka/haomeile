@@ -22,7 +22,6 @@ type DeliveryResult =
       status: 'rejected';
       retry: boolean;
       blockedUntil?: number;
-      charged?: boolean;
     };
 
 export function radarEmailProviders(values: Environment) {
@@ -54,16 +53,6 @@ export function radarEmailProviders(values: Environment) {
         'api-key': brevo,
       },
     );
-  const smtp2go = values.RADAR_SMTP2GO_API_KEY?.trim();
-  if (smtp2go)
-    add(
-      'smtp2go',
-      values.RADAR_SMTP2GO_FROM,
-      'https://api.smtp2go.com/v3/email/send',
-      {
-        'X-Smtp2go-Api-Key': smtp2go,
-      },
-    );
   const mailjet = values.RADAR_MAILJET_API_KEY?.trim();
   const secret = values.RADAR_MAILJET_SECRET_KEY?.trim();
   if (mailjet && secret)
@@ -92,14 +81,6 @@ function payload(id: RadarProvider, email: string, message: RadarMessage) {
         to: [{ email: to }],
         subject,
         textContent: text,
-      };
-    case 'smtp2go':
-      return {
-        sender: from,
-        to: [to],
-        subject,
-        text_body: text,
-        fastaccept: false,
       };
     case 'mailjet':
       return {
@@ -136,15 +117,6 @@ function receipt(
     case 'brevo':
       if (nonempty(body.messageId)) return { status: 'sent' };
       break;
-    case 'smtp2go': {
-      // Even a rejected recipient can return HTTP 200.
-      const data = record(body.data);
-      if (data.succeeded === 1 && data.failed === 0 && nonempty(data.email_id))
-        return { status: 'sent' };
-      if (data.succeeded === 0 && data.failed === 1)
-        return { status: 'rejected', retry: false };
-      break;
-    }
     case 'mailjet': {
       const message = Array.isArray(body.Messages)
         ? record(body.Messages[0])
@@ -189,24 +161,7 @@ function rejectedDelivery(
   let recipientError = false;
   let explicitError = receiptResult.status === 'rejected';
 
-  if (provider === 'smtp2go') {
-    const data = record(body.data);
-    if (typeof data.succeeded === 'number' && data.succeeded > 0)
-      return { status: 'unknown' };
-    // Some failures arrive as strings or [recipient, reason] pairs in data.failures.
-    const failures = Array.isArray(data.failures)
-      ? data.failures
-          .flat()
-          .map((value) =>
-            typeof value === 'string'
-              ? value
-              : (record(value).error ?? record(value).message ?? ''),
-          )
-      : [];
-    message = [data.error, ...failures].filter(Boolean).join(' ');
-    code = String(data.error_code ?? '');
-    explicitError ||= Boolean(data.error || code);
-  } else if (provider === 'mailjet') {
+  if (provider === 'mailjet') {
     const entry = Array.isArray(body.Messages) ? record(body.Messages[0]) : {};
     if (entry.Status === 'success') return { status: 'unknown' };
     const errors =
@@ -246,9 +201,6 @@ function rejectedDelivery(
   if (recipientError) return { status: 'rejected', retry: false };
 
   let blockedUntil: number | undefined;
-  const senderUnverified =
-    provider === 'smtp2go' &&
-    /from header sender domain not verified/i.test(message);
   if (provider === 'resend' && code === 'daily_quota_exceeded') {
     blockedUntil = new Date().setUTCHours(24, 0, 0, 0);
   } else if (
@@ -261,26 +213,16 @@ function rejectedDelivery(
   ) {
     // Some quotas reset on the account billing cycle and may also be upgraded manually.
     blockedUntil = retryAt(response, hour, 24 * hour);
-  } else if (status === 429 || /API key ratelimit exceeded/i.test(message)) {
+  } else if (status === 429) {
     blockedUntil = retryAt(response, minute, 5 * minute);
   } else if (
     status === 401 ||
     status === 403 ||
-    senderUnverified ||
-    code === 'E_ApiResponseCodes.ENDPOINT_PERMISSION_DENIED' ||
     (provider === 'mailjet' && /^(?:mj-0001|mj-0015|send-000[678])$/.test(code))
   ) {
     blockedUntil = Date.now() + hour;
   }
-  if (blockedUntil) {
-    // SMTP2GO counts rejected unverified-sender attempts against its monthly quota.
-    return {
-      status: 'rejected',
-      retry: true,
-      blockedUntil,
-      ...(senderUnverified && { charged: true }),
-    };
-  }
+  if (blockedUntil) return { status: 'rejected', retry: true, blockedUntil };
   if (response.ok) return { status: 'rejected', retry: status >= 500 };
   return { status: 'rejected', retry: status !== 422 };
 }

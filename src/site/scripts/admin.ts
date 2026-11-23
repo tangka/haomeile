@@ -346,7 +346,6 @@ function renderLog(audits: Audit[]) {
 const providerNames = {
   resend: 'Resend',
   brevo: 'Brevo',
-  smtp2go: 'SMTP2GO',
   mailjet: 'Mailjet',
 };
 const capacityAlertLabels = {

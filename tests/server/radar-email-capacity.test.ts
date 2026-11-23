@@ -10,7 +10,7 @@ let db: LocalDatabase;
 let now: number;
 const clock = () => now;
 const day = 86_400_000;
-const enabled: RadarProvider[] = ['resend', 'brevo', 'smtp2go', 'mailjet'];
+const enabled: RadarProvider[] = ['resend', 'brevo', 'mailjet'];
 const email = 'recipient@example.com';
 const store = () =>
   createRadarEmailStore(db.binding, 'test-only-secret', clock);
@@ -65,7 +65,7 @@ describe('radar sender affinity and quota reservations', () => {
     expect(await capacity.reserve(email, 'alert-2', 'alert')).toEqual({
       status: 'unavailable',
     });
-    const serviceWithoutMailjet = allocator(['resend', 'brevo', 'smtp2go']);
+    const serviceWithoutMailjet = allocator(['resend', 'brevo']);
     expect(
       await serviceWithoutMailjet.reserve(email, 'alert-2', 'alert'),
     ).toEqual({ status: 'unavailable' });
@@ -191,8 +191,8 @@ describe('radar sender affinity and quota reservations', () => {
     expect(await monthUsed()).toBe(0);
   });
 
-  test('assignments scale with sustainable quota and omit disabled providers', async () => {
-    const capacity = allocator(['resend', 'brevo', 'smtp2go']);
+  test('assignments scale with sustainable quota across the three supported providers', async () => {
+    const capacity = allocator();
     await Promise.all(
       Array.from({ length: 50 }, async (_, index) => {
         const address = 'test-' + index + '@example.com';
@@ -209,10 +209,10 @@ describe('radar sender affinity and quota reservations', () => {
     const counts = Object.fromEntries(
       snapshot.map((row) => [row.provider, row.pending]),
     );
-    expect(counts.mailjet).toBe(0);
-    expect(counts.brevo).toBeGreaterThan(counts.resend);
-    expect(counts.resend).toBeGreaterThan(counts.smtp2go);
-    expect(counts.smtp2go).toBeGreaterThan(0);
+    expect(Object.keys(counts).sort()).toEqual(['brevo', 'mailjet', 'resend']);
+    expect(counts.brevo).toBeGreaterThan(counts.mailjet);
+    expect(counts.mailjet).toBeGreaterThan(counts.resend);
+    expect(counts.resend).toBeGreaterThan(0);
     expect(snapshot.reduce((total, row) => total + row.pending, 0)).toBe(50);
     expect(snapshot.reduce((total, row) => total + row.remaining, 0)).toBe(550);
   });

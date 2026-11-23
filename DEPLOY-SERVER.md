@@ -104,7 +104,6 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 | --- | --- | --- | ---: | ---: |
 | Resend | `RADAR_RESEND_API_KEY` | `RADAR_EMAIL_FROM` | 100 | 3,000 |
 | Brevo | `RADAR_BREVO_API_KEY` | `RADAR_BREVO_FROM` | 300 | 按日 |
-| SMTP2GO | `RADAR_SMTP2GO_API_KEY` | `RADAR_SMTP2GO_FROM` | 200 | 1,000 |
 | Mailjet | `RADAR_MAILJET_API_KEY` 和 `RADAR_MAILJET_SECRET_KEY` | `RADAR_MAILJET_FROM` | 200 | 6,000 |
 
 进入 `/admin` 的「雷达邮件额度」，可以查看各渠道的订阅人数、已用额度和可用余额。新加坡服务使用 SQLite 原子预留每一封的额度。Resend 会在发信响应带回用量时校准，其他渠道的数字只统计本站。对于账期起点未知的渠道，使用滚动 24 小时或 31 天保守计算。任一渠道日用量或月用量达 80%、剩余额度接近一轮订阅人数、渠道暂停或停用后仍有绑定用户，面板会提示。站长本机可运行 `node scripts/check-radar-email-capacity.mjs` 读取同一份汇总，凭据从被 Git 忽略的本机管理文件加载。
