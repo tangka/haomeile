@@ -33,6 +33,8 @@ node scripts/prepare-server-release.mjs
 
 打包前提交本次源码，使发布信息中的 Git 版本对应已检查代码。`prepare-server-release.mjs` 仅打包静态资源、迁移、独立程序及运维配置；真实 `.dev.vars`、生产环境文件和管理密码不会进入发布归档。首次准备生成新的生产 PEPPER 与管理凭据，复用已有本机生产配置时不轮换。已有远程配置在更新时只更新发布版本和构建时间，密钥、PEPPER、管理员凭据及其余配置保持不变。
 
+本地只保留最新发布的目录和对应的压缩包。新包生成成功后会自动清理旧包。可运行 `node scripts/prepare-server-release.mjs --prune-only` 清理已有的本地旧包，无需重新构建。
+
 `SITE_ORIGIN` 必须为 HTTPS 纯 origin；静态资源构建支持 `PUBLIC_SITE_ORIGIN`。本项目正式值是 `https://haomeile.rip`。Turnstile widget 已允许此域名，普通开发与生产拒绝测试密钥，后端核对精确 hostname。
 
 ## 安装与切换

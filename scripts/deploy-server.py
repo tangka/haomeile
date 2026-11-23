@@ -42,11 +42,15 @@ def install_app(client, sftp, archive):
         raise RuntimeError('Invalid release archive name')
     base = '/opt/haomeile'
     release = base + '/releases/' + version
-    execute(client, "getent passwd haomeile >/dev/null || useradd --system --home-dir /var/lib/haomeile --no-create-home --shell /usr/sbin/nologin haomeile")
-    execute(client, 'install -d -m 0755 /opt/haomeile/releases; install -d -m 0750 /etc/haomeile; install -d -m 0700 -o haomeile -g haomeile /var/lib/haomeile /var/backups/haomeile')
     remote_archive = base + '/releases/' + archive.name
-    sftp.put(str(archive), remote_archive)
-    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    # Snapshot the metadata and keep the archive open while a newer build may prune it.
+    with archive.open('rb') as package:
+        release_metadata = json.loads((archive.parent / version / 'release.json').read_text())
+        digest = hashlib.sha256(package.read()).hexdigest()
+        package.seek(0)
+        execute(client, "getent passwd haomeile >/dev/null || useradd --system --home-dir /var/lib/haomeile --no-create-home --shell /usr/sbin/nologin haomeile")
+        execute(client, 'install -d -m 0755 /opt/haomeile/releases; install -d -m 0750 /etc/haomeile; install -d -m 0700 -o haomeile -g haomeile /var/lib/haomeile /var/backups/haomeile')
+        sftp.putfo(package, remote_archive)
     actual = execute(client, 'sha256sum ' + shlex.quote(remote_archive)).split()[0]
     if actual != digest:
         raise RuntimeError('Uploaded release checksum mismatch')
@@ -65,7 +69,6 @@ def install_app(client, sftp, archive):
         # Update release labels only; preserve every existing production secret.
         with sftp.open(env_path, 'r') as source:
             existing_env = source.read().decode()
-        release_metadata = json.loads((archive.parent / version / 'release.json').read_text())
         updated_env = re.sub(r'^(?:APP_VERSION|BUILD_TIMESTAMP)=.*\n?', '', existing_env, flags=re.MULTILINE)
         updated_env = updated_env.rstrip('\n') + '\nAPP_VERSION=' + json.dumps(version) + '\nBUILD_TIMESTAMP=' + json.dumps(release_metadata['builtAt']) + '\n'
         pending_env = env_path + '.metadata-pending'
