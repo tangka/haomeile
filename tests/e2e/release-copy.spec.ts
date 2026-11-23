@@ -146,3 +146,32 @@ test('the tips directory lists articles by date in one column and links to detai
   );
   await expect(page.locator('.tip-original-title')).toContainText(title);
 });
+
+test('tip details share one centered reading column on desktop and fit mobile', async ({
+  page,
+}) => {
+  const path = '/tips/antigravity-first-install-google-ai-pro';
+  for (const prefix of ['', '/en']) {
+    await page.setViewportSize({ width: 1374, height: 850 });
+    await page.goto(prefix + path);
+    const article = page.getByRole('article');
+    await expect(article.getByRole('heading', { level: 1 })).toBeVisible();
+    const column = await article.evaluate((node) => {
+      const { left, right } = node.getBoundingClientRect();
+      return { left, right, viewport: document.documentElement.clientWidth };
+    });
+    const rightMargin = column.viewport - column.right;
+    expect(Math.abs(column.left - rightMargin)).toBeLessThanOrEqual(1);
+    expect(column.right - column.left).toBeLessThan(column.viewport * 0.75);
+    for (const block of await article.locator('h1, h2, p, ol, nav').all()) {
+      const box = await block.boundingBox();
+      expect(box!.x).toBeCloseTo(column.left, 0);
+      expect(box!.x + box!.width).toBeCloseTo(column.right, 0);
+    }
+
+    await page.setViewportSize({ width: 320, height: 750 });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(320);
+  }
+});
