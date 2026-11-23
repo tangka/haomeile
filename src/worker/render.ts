@@ -327,6 +327,7 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
 export async function servePage(
   c: Context<AppEnv>,
   readRadarOverview?: ReadRadarOverview,
+  radarEmailReady = false,
 ): Promise<Response> {
   const url = new URL(c.req.url);
   const site = siteOrigin(c.env.SITE_ORIGIN);
@@ -378,6 +379,12 @@ export async function servePage(
     radarAccessible =
       c.env.RADAR_HUMAN_CHECK === 'false' || (await hasRadarPass(c));
     assetPath = radarAccessible ? '/radar/' : '/_templates/radar-gate/';
+    if (radarAccessible && radarEmailReady)
+      rewriter.on('[data-ssr="radar-email-signup"]', {
+        element: (el) => {
+          el.removeAttribute('hidden');
+        },
+      });
     const overview = radarAccessible ? readRadarOverview?.() : null;
     if (overview) {
       const ageMinutes = Math.max(
@@ -840,6 +847,11 @@ export async function servePage(
         : 'public, max-age=60, s-maxage=300',
   );
   if (path === '/radar') response.headers.append('Vary', 'Cookie');
+  if (path === '/radar/email') {
+    response.headers.set('Cache-Control', 'private, no-store');
+    response.headers.set('Referrer-Policy', 'no-referrer');
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
   if (analyticsEnabled) {
     response.headers.set(
       'Content-Security-Policy',

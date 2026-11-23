@@ -205,6 +205,7 @@ describe('Bun SQLite D1 binding', () => {
       '0002_three_products.sql',
       '0003_community.sql',
       '0004_memorial_numbers.sql',
+      '0005_radar_email.sql',
     ]);
     expect(
       await db.binding

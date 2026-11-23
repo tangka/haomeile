@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import RadarMark from '../components/RadarMark.astro';
+import { RADAR_PLATFORM_NAMES } from '../../shared/radar';
 import { siteOrigin } from '../../shared/site';
 
 const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
@@ -103,10 +104,63 @@ const jsonLd = [
         </p>
       </section>
 
+      <section
+        class="radar-email"
+        data-ssr="radar-email-signup"
+        aria-labelledby="radar-email-title"
+        hidden
+      >
+        <h2 id="radar-email-title">订阅邮件提醒</h2>
+        <p>
+          所选平台的新预测超过 80% 时发邮件。连续高于 80%
+          期间，每个平台只提醒一次。
+        </p>
+        <form class="form" method="post" data-radar-email-signup>
+          <fieldset class="field">
+            <legend>选择提醒的平台</legend>
+            <div class="seg">
+              {Object.entries(RADAR_PLATFORM_NAMES).map(([id, name]) => (
+                <label>
+                  <input type="checkbox" name="platform" value={id} />
+                  {name}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <div class="field">
+            <label for="radar-email-address">邮箱地址</label>
+            <input
+              class="input"
+              id="radar-email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              aria-describedby="radar-email-help"
+              maxlength="254"
+              required
+            />
+            <p class="hint" id="radar-email-help">
+              提交后请查收确认邮件。每封提醒邮件都附有退订链接。
+            </p>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">
+              发送确认邮件
+            </button>
+          </div>
+          <p
+            class="radar-email-status"
+            role="status"
+            data-radar-email-status
+          ></p>
+        </form>
+      </section>
+
       <section class="radar-notes" aria-labelledby="radar-notes-title">
         <h2 id="radar-notes-title">说明与相关入口</h2>
         <p>
-          百分比表示基于社区观测信号的未来 24 小时额度重置概率参考，不代表厂商官方通知。
+          百分比表示基于社区观测信号的未来 24
+          小时额度重置概率参考，不代表厂商官方通知。
         </p>
         <nav class="radar-links" aria-label="相关入口">
           <a href="/v/codex">查看 Codex 停用案例</a>
@@ -120,6 +174,7 @@ const jsonLd = [
   </main>
   <script>
     import '../scripts/radar-trend';
+    import '../scripts/radar-email';
   </script>
 </SiteLayout>
 
@@ -274,6 +329,27 @@ const jsonLd = [
     flex-wrap: wrap;
     align-items: center;
     gap: 6px 16px;
+  }
+
+  .radar-email {
+    margin-top: 24px;
+    padding: clamp(14px, 3vw, 24px);
+    border: 2px solid var(--ink);
+  }
+
+  .radar-email h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-carve);
+    font-size: var(--fs-l);
+  }
+
+  .radar-email form {
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .radar-email-status:empty {
+    display: none;
   }
 
   .radar-history-head {

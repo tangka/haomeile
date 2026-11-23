@@ -36,6 +36,7 @@ async function runtime(
   ga4MeasurementId?: string,
   radarApiKey?: string,
   radarHumanCheck?: string,
+  enableRadarEmail = false,
 ) {
   const data = await mkdtemp(join(tmpdir(), 'haomeile-runtime-test-'));
   directories.push(data);
@@ -54,6 +55,8 @@ async function runtime(
     GA4_MEASUREMENT_ID: ga4MeasurementId,
     RADAR_OVERVIEW_API_KEY: radarApiKey,
     RADAR_HUMAN_CHECK: radarHumanCheck,
+    RADAR_RESEND_API_KEY: enableRadarEmail ? 're_local_test_only' : undefined,
+    RADAR_EMAIL_FROM: enableRadarEmail ? 'radar@example.test' : undefined,
     ADMIN_AUTH_MODE: 'basic',
     ADMIN_USERNAME: 'runtime-admin',
     ADMIN_PASSWORD_HASH: await hashSecret(PASSWORD, PEPPER),
@@ -131,6 +134,82 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
+  test('delivers opt-in radar mail to the selected platform through the configured adapter', async () => {
+    const { opened } = await runtime(
+      'analytics-test',
+      MEASUREMENT_ID,
+      'x'.repeat(48),
+      'false',
+      true,
+    );
+    const mail: { subject: string; to: string[]; text: string }[] = [];
+    const mock = spyOn(globalThis, 'fetch').mockImplementation(
+      Object.assign(
+        async (url: Parameters<typeof fetch>[0], options?: RequestInit) => {
+          expect(String(url)).toBe('https://api.resend.com/emails');
+          expect(options?.method).toBe('POST');
+          expect(new Headers(options?.headers).get('Idempotency-Key')).toMatch(
+            /^radar-/,
+          );
+          mail.push(JSON.parse(String(options?.body)));
+          return Response.json({ id: 'test-mail-receipt' });
+        },
+        { preconnect() {} },
+      ),
+    );
+    fetchSpies.push(mock);
+    const html = await (await request(opened, '/en/radar')).text();
+    expect(
+      html.match(/<section[^>]*data-ssr="radar-email-signup"[^>]*>/)?.[0],
+    ).not.toContain('hidden');
+    const manage = await request(opened, '/en/radar/email');
+    expect(manage.status).toBe(200);
+    expect(manage.headers.get('Referrer-Policy')).toBe('no-referrer');
+    expect(await manage.text()).not.toMatch(
+      /data-ga4-measurement-id|data-cf-beacon/,
+    );
+    const signup = {
+      platforms: ['codex'],
+      email: 'reader@example.test',
+      locale: 'en',
+    };
+    expect(
+      (await request(opened, '/api/radar/email/subscribe', signup)).status,
+    ).toBe(202);
+    expect(mail).toHaveLength(1);
+    expect(mail[0].to).toEqual([signup.email]);
+    const token = mail[0].text.match(/\/en\/radar\/email#confirm=([\w-]+)/)![1];
+    expect(
+      (await request(opened, '/api/radar/email/confirm', { token })).status,
+    ).toBe(200);
+    const now = Date.now();
+    const snapshot = {
+      generatedAt: new Date(now).toISOString(),
+      stale: false,
+      platforms: [{ name: 'Codex', probability: 84 }],
+      history: [
+        {
+          id: 'codex' as const,
+          name: 'Codex',
+          points: [{ time: now, probability: 84 }],
+        },
+      ],
+    };
+    await opened.radarEmail.dispatch(snapshot);
+    await opened.radarEmail.dispatch(snapshot);
+    expect(mail).toHaveLength(2);
+    expect(mail[1].subject).toContain('84%');
+    const removal = mail[1].text.match(
+      /\/en\/radar\/email#unsubscribe=([\w-]+)/,
+    )![1];
+    expect(
+      (
+        await request(opened, '/api/radar/email/unsubscribe', {
+          token: removal,
+        })
+      ).status,
+    ).toBe(200);
+  });
   test('serves the entire Radar page only after verifying a short-lived browser pass', async () => {
     const key = 'fictional-integration-key-for-isolated-runtime-tests';
     const generatedAt = new Date().toISOString();

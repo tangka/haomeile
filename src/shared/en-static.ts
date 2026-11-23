@@ -65,6 +65,36 @@ export const EN_STATIC: Record<string, string> = {
   '请开启 JavaScript 完成验证。': 'Enable JavaScript to verify.',
   '暂未获取到额度重置预测。':
     'Quota reset estimates are currently unavailable.',
+  订阅邮件提醒: 'Email alerts',
+  '所选平台的新预测超过 80% 时发邮件。连续高于 80% 期间，每个平台只提醒一次。':
+    'Get an email when a new forecast for a selected platform exceeds 80%. You get one alert per platform while its forecast stays above 80%.',
+  选择提醒的平台: 'Choose platforms',
+  邮箱地址: 'Email address',
+  '提交后请查收确认邮件。每封提醒邮件都附有退订链接。':
+    'Check your inbox to confirm. Every alert includes an unsubscribe link.',
+  发送确认邮件: 'Send confirmation email',
+  '请至少选择一个平台。': 'Choose at least one platform.',
+  '正在提交…': 'Submitting…',
+  '请查收确认邮件。若收件箱没有，请检查垃圾邮件。':
+    'Check your email to confirm. If you cannot find the message, check your spam folder.',
+  '提交未完成，请稍后再试。': 'Submission failed. Please try again later.',
+  '管理雷达邮件提醒 · 号没了': 'Manage Radar email alerts · Haomeile',
+  管理雷达邮件提醒: 'Manage Radar email alerts',
+  '确认或退订重置雷达的邮件提醒。':
+    'Confirm or unsubscribe from Reset Radar email alerts.',
+  '请打开邮件中的确认或退订链接。':
+    'Open the confirmation or unsubscribe link from your email.',
+  确认订阅: 'Confirm subscription',
+  退订邮件提醒: 'Unsubscribe from email alerts',
+  返回重置雷达: 'Back to Reset Radar',
+  '确认后，你会收到所选平台的邮件提醒。':
+    'After confirming, you will receive alerts for your selected platforms.',
+  '退订后将停止收到重置雷达的邮件提醒。':
+    'Unsubscribing stops Reset Radar email alerts.',
+  '订阅已确认。': 'Your subscription is confirmed.',
+  '已退订。': 'You have unsubscribed.',
+  '链接无效或已失效，请使用最新邮件中的链接。':
+    'This link is invalid or expired. Use the link from your latest email.',
   '阅读 X 长文': 'Read the full article on X',
   返回技巧目录: 'Back to tips',
   文章导航: 'Article navigation',
@@ -285,8 +315,11 @@ export const EN_STATIC: Record<string, string> = {
   '审核通过后，墙上会显示：代号、署名、产品、事件种类、套餐、注册时间（按你选的精度）、出事日期、经过、墓志铭、申诉状态、碑脚样式、献花数和立碑时间。':
     'Once approved, the wall displays your alias, display name, product, incident type, plan, registration date at your chosen precision, incident date, story, epitaph, appeal status, decoration, flower count and submission time.',
   不会收集的内容: 'What we do not collect',
-  '不需要注册，也不要求邮箱、手机号或真实姓名。人机验证使用 Cloudflare Turnstile。':
-    'No registration is required. We do not ask for your email address, phone number or real name. Human verification uses Cloudflare Turnstile.',
+  '浏览和立碑不需要注册，也不要求邮箱、手机号或真实姓名。人机验证使用 Cloudflare Turnstile。':
+    'Browsing and posting memorials require no registration, email address, phone number, or real name. Human verification uses Cloudflare Turnstile.',
+  雷达邮件提醒: 'Radar email alerts',
+  '订阅时保存邮箱、所选平台、语言和确认状态，用于发送确认邮件和提醒。邮箱不会公开。你可以通过邮件内的链接退订。':
+    'When you subscribe, we store your email address, selected platforms, language, and confirmation status to deliver confirmation messages and alerts. Your email address stays private. Use the link in your email to unsubscribe.',
   '本站不使用第三方统计、广告或追踪脚本。':
     'This site does not use third-party analytics, advertising or tracking scripts.',
   访问统计: 'Web analytics',

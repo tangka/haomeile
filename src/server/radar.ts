@@ -134,6 +134,7 @@ export function createRadarOverview(key?: string, url = SITE_OVERVIEW) {
   let failed = false;
   let running = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let onRefresh: (() => void) | undefined;
 
   async function refresh() {
     let delay = POLL_MS;
@@ -158,13 +159,17 @@ export function createRadarOverview(key?: string, url = SITE_OVERVIEW) {
     } catch {
       failed = true;
     } finally {
-      if (running) timer = setTimeout(() => void refresh(), delay);
+      if (running) {
+        timer = setTimeout(() => void refresh(), delay);
+        onRefresh?.();
+      }
     }
   }
 
   return {
-    start() {
+    start(afterRefresh?: () => void) {
       if (running) return;
+      onRefresh = afterRefresh;
       running = true;
       void refresh();
     },

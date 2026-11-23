@@ -8,5 +8,6 @@ export async function cleanup(env: Pick<Bindings, 'DB'>, now = new Date()): Prom
     env.DB.prepare('DELETE FROM reports WHERE resolved_at IS NOT NULL AND resolved_at<?').bind(cutoff(90)),
     env.DB.prepare('DELETE FROM rate_limits WHERE window_start<?').bind(day),
     env.DB.prepare('DELETE FROM flowers WHERE day<?').bind(day),
+    env.DB.prepare('DELETE FROM radar_email_confirmations WHERE expires_at<=?').bind(now.getTime()),
   ]);
 }

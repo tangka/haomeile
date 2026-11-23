@@ -11,6 +11,7 @@ import { openDatabase } from './database';
 import { createAdminVerifier, prepareRequest } from './auth';
 import { importCommunityCases } from './community';
 import { createRadarOverview } from './radar';
+import { createRadarEmail } from './radar-email';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -85,18 +86,24 @@ export async function openRuntime(
       DB: database.binding,
       ASSETS: assets,
     } satisfies Bindings;
-    const app =
-      config.mode === 'basic'
-        ? createApp({
-            verifyAdministrator: createAdminVerifier(env, {
-              username: config.username,
-              passwordHash: config.passwordHash,
-            }),
-            basicChallenge: true,
-            readRadarOverview: radar?.read,
-          })
-        : createApp({ readRadarOverview: radar?.read });
-    return { config, database, env, app, radar };
+    const radarEmail = createRadarEmail(
+      env,
+      radar ? values.RADAR_RESEND_API_KEY : undefined,
+      values.RADAR_EMAIL_FROM,
+    );
+    const app = createApp({
+      radarEmailRoutes: radarEmail.routes,
+      radarEmailReady: radarEmail.ready,
+      readRadarOverview: radar?.read,
+      ...(config.mode === 'basic' && {
+        verifyAdministrator: createAdminVerifier(env, {
+          username: config.username,
+          passwordHash: config.passwordHash,
+        }),
+        basicChallenge: true,
+      }),
+    });
+    return { config, database, env, app, radar, radarEmail };
   } catch (error) {
     database.close();
     throw error;
@@ -114,7 +121,7 @@ async function main() {
   const runtime = await openRuntime(process.env, {
     migrate: command === 'serve' || command === 'migrate',
   });
-  const { config, database, app, env, radar } = runtime;
+  const { config, database, app, env, radar, radarEmail } = runtime;
   if (command !== 'serve') {
     try {
       if (command === 'import-community') {
@@ -186,7 +193,16 @@ async function main() {
       });
     },
   });
-  radar?.start();
+  let mailRun: Promise<void> | undefined;
+  radar?.start(
+    radarEmail.ready
+      ? () => {
+          mailRun = radarEmail.dispatch(radar.read()).catch(() => {
+            console.error('Radar email dispatch failed');
+          });
+        }
+      : undefined,
+  );
   console.log(`Haomeile listening on loopback port ${server.port}`);
   let stopping = false;
   const stop = async () => {
@@ -194,6 +210,7 @@ async function main() {
     stopping = true;
     radar?.stop();
     await server.stop();
+    await mailRun;
     database.close();
   };
   process.on('SIGTERM', () => void stop());

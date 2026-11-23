@@ -15,6 +15,8 @@ export interface AppOptions {
   verifyAdministrator?: typeof verifyAccess;
   basicChallenge?: boolean;
   readRadarOverview?: ReadRadarOverview;
+  radarEmailRoutes?: Hono<AppEnv>;
+  radarEmailReady?: boolean;
 }
 /** Runtime-owned authentication strategy; Workers continue to require Access JWTs. */
 export function createApp(options: AppOptions = {}) {
@@ -82,6 +84,8 @@ export function createApp(options: AppOptions = {}) {
   app.get('/api/health', (c) => c.json({ ok: true, data: { status: 'ok' } }));
   app.route('/api', publicRoutes);
   app.route('/api/admin', adminRoutes);
+  if (options.radarEmailRoutes)
+    app.route('/api/radar/email', options.radarEmailRoutes);
   app.get(
     '/sitemap.xml',
     async (c) =>
@@ -114,7 +118,9 @@ export function createApp(options: AppOptions = {}) {
       404,
     ),
   );
-  app.get('*', (c) => servePage(c, options.readRadarOverview));
+  app.get('*', (c) =>
+    servePage(c, options.readRadarOverview, options.radarEmailReady),
+  );
   return app;
 }
 export const app = createApp();
