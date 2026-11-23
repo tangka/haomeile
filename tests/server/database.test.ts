@@ -231,9 +231,26 @@ describe('Bun SQLite D1 binding', () => {
         now + 600_000,
       )
       .run();
+    await db.binding
+      .prepare(
+        `INSERT INTO radar_email_contacts(id,email,platforms,locale,unsubscribe_hash,confirmed_at)
+      VALUES ('previous','prior@example.test',1,'en','prior-hash',?)`,
+      )
+      .bind(now)
+      .run();
     expect(await db.migrate(migrations)).toContain(
       '0006_radar_email_codes.sql',
     );
+    expect(
+      await db.binding
+        .prepare('SELECT provider FROM radar_email_confirmations')
+        .first('provider'),
+    ).toBe('resend');
+    expect(
+      await db.binding
+        .prepare('SELECT provider FROM radar_email_contacts')
+        .first('provider'),
+    ).toBe('resend');
     const store = createRadarEmailStore(
       db.binding,
       'legacy-migration-test-only',
@@ -258,6 +275,7 @@ describe('Bun SQLite D1 binding', () => {
       '0004_memorial_numbers.sql',
       '0005_radar_email.sql',
       '0006_radar_email_codes.sql',
+      '0007_radar_email_providers.sql',
     ]);
     expect(
       await db.binding

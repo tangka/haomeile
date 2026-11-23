@@ -159,6 +159,22 @@ export const EN_DYNAMIC: Record<string, string> = {
   投稿人: 'Author',
   '还没有操作记录。': 'No actions recorded yet.',
   '这个队列是空的。': 'This queue is empty.',
+  '按本站发信记录，今日还可发 {remaining} 封，已启用渠道的日额度共 {limit} 封。':
+    'Based on this site’s sending records, {remaining} emails are available today. Enabled providers have a combined daily limit of {limit}.',
+  '暂未启用发信渠道。': 'No email providers are enabled.',
+  已启用: 'Enabled',
+  未启用: 'Disabled',
+  无月上限: 'No monthly limit',
+  日额度即将用完: 'Daily quota nearly exhausted',
+  日额度已用完: 'Daily quota exhausted',
+  月额度即将用完: 'Monthly quota nearly exhausted',
+  月额度已用完: 'Monthly quota exhausted',
+  一轮提醒的余量偏低: 'Low headroom for a round of alerts',
+  余额不足以通知所有订阅者: 'Insufficient quota to notify all subscribers',
+  渠道暂停发信: 'Sending paused',
+  已有订阅者的渠道未启用: 'Provider disabled with subscribers assigned',
+  '发信额度读取失败，请刷新额度。':
+    'Could not load email usage. Select Refresh usage to try again.',
   '审核队列没有加载出来，请重试。':
     'Could not load the review queue. Please try again.',
   重试: 'Try again',

@@ -10,6 +10,7 @@ import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
 import { basePath, localePath, requestLocale, tr } from '../shared/i18n';
 import type { ReadRadarOverview } from '../shared/radar';
+import type { RadarCapacityReport } from '../shared/radar-email-report';
 
 export interface AppOptions {
   verifyAdministrator?: typeof verifyAccess;
@@ -17,6 +18,7 @@ export interface AppOptions {
   readRadarOverview?: ReadRadarOverview;
   radarEmailRoutes?: Hono<AppEnv>;
   radarEmailReady?: boolean;
+  readRadarEmailCapacity?: () => Promise<RadarCapacityReport>;
 }
 /** Runtime-owned authentication strategy; Workers continue to require Access JWTs. */
 export function createApp(options: AppOptions = {}) {
@@ -84,6 +86,11 @@ export function createApp(options: AppOptions = {}) {
   app.get('/api/health', (c) => c.json({ ok: true, data: { status: 'ok' } }));
   app.route('/api', publicRoutes);
   app.route('/api/admin', adminRoutes);
+  const readCapacity = options.readRadarEmailCapacity;
+  if (readCapacity)
+    app.get('/api/admin/radar/email-capacity', async (c) =>
+      c.json({ ok: true, data: await readCapacity() }),
+    );
   if (options.radarEmailRoutes)
     app.route('/api/radar/email', options.radarEmailRoutes);
   app.get(

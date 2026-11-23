@@ -3,6 +3,7 @@ import { api } from './api';
 import { toast } from './toast';
 import { getLabels } from './labels';
 import { ago, num } from './format';
+import type { RadarCapacityReport } from '../../shared/radar-email-report';
 import type { PublicTombstone, TombInput } from '../../worker/types';
 const labels = getLabels();
 
@@ -342,6 +343,84 @@ function renderLog(audits: Audit[]) {
   }
 }
 
+const providerNames = {
+  resend: 'Resend',
+  brevo: 'Brevo',
+  smtp2go: 'SMTP2GO',
+  mailjet: 'Mailjet',
+};
+const capacityAlertLabels = {
+  day: { warning: '日额度即将用完', critical: '日额度已用完' },
+  month: { warning: '月额度即将用完', critical: '月额度已用完' },
+  remaining: {
+    warning: '一轮提醒的余量偏低',
+    critical: '余额不足以通知所有订阅者',
+  },
+  blocked: { warning: '渠道暂停发信', critical: '渠道暂停发信' },
+  disabled: {
+    warning: '已有订阅者的渠道未启用',
+    critical: '已有订阅者的渠道未启用',
+  },
+};
+const refreshCapacity =
+  document.querySelector<HTMLButtonElement>('#capacity-refresh')!;
+const capacitySummary =
+  document.querySelector<HTMLElement>('#capacity-summary')!;
+const capacityDetails =
+  document.querySelector<HTMLElement>('#capacity-details')!;
+const capacityProviders = document.querySelector<HTMLTableSectionElement>(
+  '#capacity-providers',
+)!;
+
+function renderCapacity(report: RadarCapacityReport) {
+  const format = (value: number) => num(value, currentLocale());
+  capacitySummary.textContent = report.providers.some((entry) => entry.enabled)
+    ? tr(
+        `按本站发信记录，今日还可发 ${format(report.remaining)} 封，已启用渠道的日额度共 ${format(report.dayLimit)} 封。`,
+      )
+    : tr('暂未启用发信渠道。');
+  const rows = report.providers.map((entry) => {
+    const row = element('tr');
+    const provider = element('th', '', providerNames[entry.provider]);
+    provider.scope = 'row';
+    const status = element('td', '', tr(entry.enabled ? '已启用' : '未启用'));
+    for (const alert of report.alerts.filter(
+      (item) => item.provider === entry.provider,
+    )) {
+      const message = capacityAlertLabels[alert.reason][alert.level];
+      status.append(element('div', 'flag', tr(message)));
+    }
+    const monthLimit =
+      entry.monthLimit === null ? tr('无月上限') : format(entry.monthLimit);
+    row.append(
+      provider,
+      status,
+      element('td', '', `${format(entry.dayUsed)} / ${format(entry.dayLimit)}`),
+      element('td', '', `${format(entry.monthUsed)} / ${monthLimit}`),
+      element('td', '', format(entry.remaining)),
+      element('td', '', format(entry.contacts)),
+    );
+    return row;
+  });
+  capacityProviders.replaceChildren(...rows);
+  capacityDetails.hidden = false;
+}
+
+async function loadCapacity() {
+  refreshCapacity.disabled = true;
+  capacitySummary.textContent = tr('正在读取发信额度……');
+  try {
+    renderCapacity(
+      await api<RadarCapacityReport>('/api/admin/radar/email-capacity'),
+    );
+  } catch {
+    capacityDetails.hidden = true;
+    capacitySummary.textContent = tr('发信额度读取失败，请刷新额度。');
+  } finally {
+    refreshCapacity.disabled = false;
+  }
+}
+
 async function load() {
   const version = ++loadVersion;
   queue.setAttribute('aria-busy', 'true');
@@ -399,3 +478,5 @@ tabs.forEach((tab, index) => {
   });
 });
 void load();
+refreshCapacity.addEventListener('click', () => void loadCapacity());
+void loadCapacity();

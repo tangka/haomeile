@@ -96,7 +96,18 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 ### 重置雷达邮件提醒
 
-在 Resend 验证发信子域名（例如 `alerts.haomeile.rip`），把 Resend 为该子域名生成的 DKIM、SPF 等记录添加到 Porkbun。创建仅限此域名发送邮件的 API Key。在新加坡服务器的 `/etc/haomeile/haomeile.env` 配置 `RADAR_RESEND_API_KEY` 和 `RADAR_EMAIL_FROM`（该域名下的发件地址），重启 `haomeile.service` 后用中英文雷达页检查订阅表单。生产密钥只在服务端使用。
+新订阅按已启用渠道的日余额、月余额及订阅人数分配发信商。首次验证码确定渠道，确认后的提醒和设置变更沿用该渠道。已有订阅归属 Resend。所有渠道使用发件人名称「号没了~重置雷达」。
+
+先在服务商后台激活事务邮件并验证发信域名，将服务商给出的 DNS 记录添加到 Porkbun。逐家核对发件地址和免费套餐后，在新加坡服务器的 `/etc/haomeile/haomeile.env` 配置下列变量并重启 `haomeile.service`。只配置已经通过验证的渠道。现有 Resend 密钥和地址可继续使用。
+
+| 渠道 | 服务端凭据 | 已验证的发件地址 | 免费日上限 | 免费月上限 |
+| --- | --- | --- | ---: | ---: |
+| Resend | `RADAR_RESEND_API_KEY` | `RADAR_EMAIL_FROM` | 100 | 3,000 |
+| Brevo | `RADAR_BREVO_API_KEY` | `RADAR_BREVO_FROM` | 300 | 按日 |
+| SMTP2GO | `RADAR_SMTP2GO_API_KEY` | `RADAR_SMTP2GO_FROM` | 200 | 1,000 |
+| Mailjet | `RADAR_MAILJET_API_KEY` 和 `RADAR_MAILJET_SECRET_KEY` | `RADAR_MAILJET_FROM` | 200 | 6,000 |
+
+进入 `/admin` 的「雷达邮件额度」，可以查看各渠道的订阅人数、已用额度和可用余额。新加坡服务使用 SQLite 原子预留每一封的额度。Resend 会在发信响应带回用量时校准，其他渠道的数字只统计本站。对于账期起点未知的渠道，使用滚动 24 小时或 31 天保守计算。任一渠道日用量或月用量达 80%、剩余额度接近一轮订阅人数、渠道暂停或停用后仍有绑定用户，面板会提示。站长本机可运行 `node scripts/check-radar-email-capacity.mjs` 读取同一份汇总，凭据从被 Git 忽略的本机管理文件加载。
 
 订阅者选择平台后，网站先发送一封验证邮件。订阅者可在页面输入邮件中的六位验证码（10 分钟有效），也可在 24 小时内打开同一封邮件中的链接并点击「确认订阅」。完成其中一种验证后，该邮箱才会加入所选平台的提醒名单。
 

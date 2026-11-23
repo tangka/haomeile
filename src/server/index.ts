@@ -12,6 +12,7 @@ import { createAdminVerifier, prepareRequest } from './auth';
 import { importCommunityCases } from './community';
 import { createRadarOverview } from './radar';
 import { createRadarEmail } from './radar-email';
+import { radarCapacityReport } from '../shared/radar-email-report';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -86,14 +87,12 @@ export async function openRuntime(
       DB: database.binding,
       ASSETS: assets,
     } satisfies Bindings;
-    const radarEmail = createRadarEmail(
-      env,
-      radar ? values.RADAR_RESEND_API_KEY : undefined,
-      values.RADAR_EMAIL_FROM,
-    );
+    const radarEmail = createRadarEmail(env, radar ? values : {});
     const app = createApp({
       radarEmailRoutes: radarEmail.routes,
       radarEmailReady: radarEmail.ready,
+      readRadarEmailCapacity: async () =>
+        radarCapacityReport(await radarEmail.capacity.snapshot()),
       readRadarOverview: radar?.read,
       ...(config.mode === 'basic' && {
         verifyAdministrator: createAdminVerifier(env, {

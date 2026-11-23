@@ -451,7 +451,10 @@ export function createRadarEmailStore(
     running = (async () => {
       const eligible = await queue(overview);
       if (!eligible.length) return;
-      for (let index = 0; index < 20; index++) {
+      // Each refresh has five minutes. Leave room for the next observation even
+      // if a provider is slow, while draining a normal burst in the first run.
+      const deadline = now() + 3 * 60_000;
+      for (let index = 0; index < 200 && now() < deadline; index++) {
         const claimResult = await claim(eligible);
         if (!claimResult) break;
         const { row, lease } = claimResult;

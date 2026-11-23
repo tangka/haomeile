@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { openRuntime } from '../../src/server';
+import { createRadarEmail } from '../../src/server/radar-email';
 import { createRadarEmailStore } from '../../src/server/radar-email-store';
 import { hashSecret } from '../../src/worker/lib/crypto';
 import { decodeHtml } from '../../src/worker/localize';
@@ -135,6 +136,92 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
+  test('sticks to the signup provider after enabling new senders or removing the original one', async () => {
+    const { opened } = await runtime(undefined, undefined, undefined, 'false');
+    const brevo = {
+      RADAR_BREVO_FROM: 'radar@example.test',
+      RADAR_BREVO_API_KEY: 'isolated-brevo-key',
+    };
+    const resend = {
+      RADAR_EMAIL_FROM: 'old alias <other@example.test>',
+      RADAR_RESEND_API_KEY: 're_isolated',
+    };
+    const mail = createRadarEmail(opened.env, brevo);
+    const recipient = 'bound-reader@example.test';
+    const receipts: string[] = [];
+    fetchSpies.push(
+      spyOn(globalThis, 'fetch').mockImplementation(
+        Object.assign(
+          async (input: Parameters<typeof fetch>[0], options?: RequestInit) => {
+            expect(String(input)).toBe('https://api.brevo.com/v3/smtp/email');
+            const payload = JSON.parse(String(options?.body));
+            expect(payload.sender).toEqual({
+              name: '号没了~重置雷达',
+              email: 'radar@example.test',
+            });
+            expect(payload.to).toEqual([{ email: recipient }]);
+            receipts.push(payload.textContent);
+            return Response.json({ messageId: '<test-receipt@example.test>' });
+          },
+          { preconnect() {} },
+        ),
+      ),
+    );
+    const post = (path: string, body: unknown) =>
+      mail.routes.request(
+        path,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        },
+        opened.env,
+      );
+    expect(
+      (
+        await post('/subscribe', {
+          email: recipient,
+          platforms: ['codex'],
+          locale: 'en',
+        })
+      ).status,
+    ).toBe(202);
+    const code = receipts[0].match(/verification code is (\d{6})/)![1];
+    expect(
+      (await post('/confirm-code', { email: recipient, code })).status,
+    ).toBe(200);
+    expect(
+      await opened.env.DB.prepare(
+        'SELECT provider FROM radar_email_contacts WHERE email=?',
+      )
+        .bind(recipient)
+        .first('provider'),
+    ).toBe('brevo');
+    const sample = (probability: number, time: number) => ({
+      generatedAt: new Date(time).toISOString(),
+      stale: false,
+      platforms: [{ name: 'Codex', probability }],
+      history: [
+        {
+          id: 'codex' as const,
+          name: 'Codex',
+          points: [{ time, probability }],
+        },
+      ],
+    });
+    const expanded = createRadarEmail(opened.env, { ...resend, ...brevo });
+    await expanded.dispatch(sample(95, Date.now()));
+    expect(receipts).toHaveLength(2);
+    expect(receipts[1]).toContain('95%');
+    const onlyResend = createRadarEmail(opened.env, resend);
+    await Bun.sleep(2);
+    await onlyResend.dispatch(sample(50, Date.now()));
+    await Bun.sleep(2);
+    await onlyResend.dispatch(sample(99, Date.now()));
+    expect(receipts).toHaveLength(2);
+    expect(fetchSpies.at(-1)!.mock.calls).toHaveLength(2);
+  });
+
   test('delivers opt-in radar mail to the selected platform through the configured adapter', async () => {
     const { opened } = await runtime(
       'analytics-test',
@@ -190,7 +277,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       (await request(opened, '/api/radar/email/subscribe', signup)).status,
     ).toBe(202);
     expect(mail).toHaveLength(1);
-    expect(mail[0].from).toBe('Reset Radar <radar@example.test>');
+    expect(mail[0].from).toBe('号没了~重置雷达 <radar@example.test>');
     expect(mail[0].to).toEqual([signup.email]);
     const token = mail[0].text.match(/\/en\/radar\/email#confirm=([\w-]+)/)![1];
     const code = mail[0].text.match(/verification code is (\d{6})\./)![1];
@@ -222,7 +309,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     await opened.radarEmail.dispatch(snapshot);
     await opened.radarEmail.dispatch(snapshot);
     expect(mail).toHaveLength(2);
-    expect(mail[1].from).toBe('Reset Radar <radar@example.test>');
+    expect(mail[1].from).toBe('号没了~重置雷达 <radar@example.test>');
     expect(mail[1].subject).toContain('84%');
     const removal = mail[1].text.match(
       /\/en\/radar\/email#unsubscribe=([\w-]+)/,
@@ -306,7 +393,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       alreadySubscribed: true,
       preferencesChanged: true,
     });
-    expect(mail.at(-1)?.from).toBe('重置雷达 <radar@example.test>');
+    expect(mail.at(-1)?.from).toBe('号没了~重置雷达 <radar@example.test>');
     const other = 'other-reader@example.test';
     const store = createRadarEmailStore(opened.env.DB, PEPPER);
     const otherProof = (await store.requestConfirmation(
@@ -753,9 +840,14 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(zh).not.toContain('static.cloudflareinsights.com');
     expect(zh).toContain('data-locale-switch');
     expect(zh).toContain('href="/en/"');
-    const directChinese = await request(opened, '/submit?mode=edit', undefined, {
-      'Accept-Language': 'en-US,en;q=0.9',
-    });
+    const directChinese = await request(
+      opened,
+      '/submit?mode=edit',
+      undefined,
+      {
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    );
     expect(directChinese.status).toBe(200);
     expect(directChinese.headers.has('Location')).toBe(false);
     expect(await directChinese.text()).toContain('<html lang="zh-CN">');
@@ -851,7 +943,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(localPrivacyHtml).not.toContain(
       'Public pages use Cloudflare Web Analytics',
     );
-    expect(localPrivacyHtml).not.toContain('Public pages use Google Analytics 4');
+    expect(localPrivacyHtml).not.toContain(
+      'Public pages use Google Analytics 4',
+    );
     expect(localPrivacyHtml).toContain('data-web-analytics-disabled');
   });
 
@@ -881,7 +975,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       'Public pages use Cloudflare Web Analytics',
     );
     expect(cloudflareOnlyHtml).not.toContain('data-ga4-measurement-id');
-    expect(cloudflareOnlyHtml).not.toContain('Public pages use Google Analytics 4');
+    expect(cloudflareOnlyHtml).not.toContain(
+      'Public pages use Google Analytics 4',
+    );
     expect(cloudflareOnly.headers.get('Content-Security-Policy')).not.toContain(
       'googletagmanager.com',
     );

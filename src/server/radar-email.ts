@@ -1,3 +1,4 @@
+import { setTimeout as delay } from 'node:timers/promises';
 import { Hono, type Context } from 'hono';
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie';
 import {
@@ -11,6 +12,15 @@ import { readJson } from '../worker/lib/json';
 import { hasRadarPass } from '../worker/lib/radar-gate';
 import { reserveRate } from '../worker/lib/ratelimit';
 import {
+  createRadarEmailCapacity,
+  type RadarProvider,
+} from './radar-email-capacity';
+import {
+  radarEmailProviders,
+  deliverRadarEmail,
+  type RadarMessage,
+} from './radar-email-providers';
+import {
   createRadarEmailStore,
   normalizeRadarEmail,
   type RadarEmailOutcome,
@@ -22,12 +32,13 @@ const rememberSeconds = 180 * 24 * 60 * 60;
 
 export function createRadarEmail(
   env: Bindings,
-  apiKey?: string,
-  sender?: string,
+  values: Record<string, string | undefined>,
 ) {
   const store = createRadarEmailStore(env.DB, env.PEPPER);
-  const senderAddress = normalizeRadarEmail(sender);
-  const ready = Boolean(senderAddress && apiKey?.startsWith('re_'));
+  const providers = radarEmailProviders(values);
+  const capacity = createRadarEmailCapacity(env.DB, [...providers.keys()]);
+  const ready = providers.size > 0;
+  const lastAlertAt = new Map<RadarProvider, number>();
   const routes = new Hono<AppEnv>();
   const signingKey = env.PEPPER + '\0radar-email-read-only-v1';
   const cookieOptions = {
@@ -79,43 +90,47 @@ export function createRadarEmail(
     env.SITE_ORIGIN + (locale === 'en' ? '/en' : '') + '/radar' + path;
 
   async function send(
-    locale: 'zh' | 'en',
-    to: string,
-    subject: string,
-    text: string,
-    idempotencyKey: string,
-  ): Promise<RadarEmailOutcome> {
-    if (!ready) return 'retry';
-    const from = `${locale === 'en' ? 'Reset Radar' : '重置雷达'} <${senderAddress}>`;
-    try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'Idempotency-Key': idempotencyKey,
-        },
-        body: JSON.stringify({ from, to: [to], subject, text }),
-        redirect: 'error',
-        signal: AbortSignal.timeout(8_000),
-      });
-      if (response.ok) {
-        const receipt: unknown = await response.json();
-        return receipt &&
-          typeof receipt === 'object' &&
-          'id' in receipt &&
-          typeof receipt.id === 'string' &&
-          receipt.id
-          ? 'sent'
-          : 'retry';
-      }
-      await response.body?.cancel();
-      console.warn('Radar email provider returned HTTP', response.status);
-      return response.status === 422 ? 'permanent' : 'retry';
-    } catch {
-      console.warn('Radar email provider unavailable');
-      return 'retry';
+    kind: 'confirmation' | 'alert',
+    message: RadarMessage,
+  ): Promise<RadarEmailOutcome | 'unknown'> {
+    const { to, idempotencyKey } = message;
+    const reservation = await capacity.reserve(to, idempotencyKey, kind);
+    if (reservation.status === 'sent') return 'sent';
+    if (reservation.status === 'busy') return 'unknown';
+    if (reservation.status !== 'reserved') return 'retry';
+    const provider = reservation.provider;
+    if (kind === 'alert') {
+      // Pace bulk sends while leaving the interactive verification path available.
+      const wait = (lastAlertAt.get(provider) ?? 0) + 250 - Date.now();
+      if (wait > 0) await delay(wait);
+      lastAlertAt.set(provider, Date.now());
     }
+    const startedAt = Date.now();
+    const result = await deliverRadarEmail(
+      provider,
+      providers.get(provider)!,
+      message,
+    );
+    if (result.status === 'rejected' && result.blockedUntil) {
+      await capacity.block(provider, result.blockedUntil);
+    }
+    await capacity.settle(
+      idempotencyKey,
+      result.status === 'rejected' && result.charged
+        ? 'unknown'
+        : result.status,
+    );
+    if (result.usage)
+      await capacity.observeResendUsage(
+        result.usage.day,
+        result.usage.month,
+        Date.now(),
+        undefined,
+        startedAt,
+      );
+    if (result.status === 'rejected')
+      return result.retry ? 'retry' : 'permanent';
+    return result.status;
   }
 
   routes.post('/subscribe', async (c) => {
@@ -208,15 +223,14 @@ export function createRadarEmail(
         locale === 'en'
           ? `Your verification code is ${code}. Enter it on Reset Radar within 10 minutes to receive alerts when the reset probability for ${products} rises above 80%.\n\nYou can also confirm using this link. It expires 24 hours after it was first sent.\n${url}\n\nIf you didn’t request these alerts, ignore this email.`
           : `你的验证码是 ${code}。请在 10 分钟内回到重置雷达输入验证码。确认后，${products} 的重置概率超过 80% 时，你会收到提醒。\n\n你也可以通过下面的链接确认，链接从首次发出起 24 小时内有效。\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
-      const outcome = await send(
-        locale,
-        email,
+      const outcome = await send('confirmation', {
+        to: email,
         subject,
-        existingNote + text,
+        text: existingNote + text,
         idempotencyKey,
-      );
+      });
       if (outcome !== 'sent') {
-        if (outcome === 'permanent')
+        if (outcome !== 'unknown')
           await store.discardConfirmation(token, confirmation.requestedAt);
         throw new ApiError(
           'EMAIL_UNAVAILABLE',
@@ -279,8 +293,9 @@ export function createRadarEmail(
   return {
     ready,
     routes,
+    capacity,
     dispatch(overview: RadarOverview | null) {
-      return store.dispatch(overview, (alert) => {
+      return store.dispatch(overview, async (alert) => {
         const {
           email,
           platform,
@@ -303,7 +318,13 @@ export function createRadarEmail(
           locale === 'en'
             ? `Reset Radar estimates a ${probability}% chance of a ${name} quota reset in the next 24 hours.\n\nView the forecast: ${radar}\n\nUnsubscribe: ${unsubscribe}`
             : `重置雷达预计，${name} 在未来 24 小时内重置额度的概率为 ${probability}%。\n\n查看趋势 ${radar}\n\n退订提醒 ${unsubscribe}`;
-        return send(locale, email, subject, text, idempotencyKey);
+        const outcome = await send('alert', {
+          to: email,
+          subject,
+          text,
+          idempotencyKey,
+        });
+        return outcome === 'unknown' ? 'permanent' : outcome;
       });
     },
   };

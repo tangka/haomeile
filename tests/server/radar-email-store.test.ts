@@ -236,6 +236,24 @@ describe('Reset Radar alert delivery', () => {
     });
   }
 
+  test('drains a burst of more than twenty separate opted-in recipients', async () => {
+    for (let i = 0; i < 24; i++) {
+      const confirmation = await store.requestConfirmation(
+        `reader${i}@example.test`,
+        ['codex'],
+        'en',
+      );
+      await store.confirm(confirmation!.token);
+    }
+    clock += minute;
+    const recipients = new Set<string>();
+    await store.dispatch(snapshot('codex', 85), async (message) => {
+      recipients.add(message.email);
+      return 'sent';
+    });
+    expect(recipients.size).toBe(24);
+  });
+
   test('uses strictly above 80 and deduplicates high episodes without allowing a replay or unhiding a missing platform', async () => {
     const alerts: RadarEmailAlert[] = [];
     const send = async (alert: RadarEmailAlert) => {
