@@ -293,6 +293,51 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceViews: 334881,
   },
   {
+    slug: 'claude-portal-suspension-review',
+    title: 'Claude Portal 门户认证后被停用：我的中国护照 KYC 与申诉解封全过程',
+    englishTitle:
+      'My Claude account was suspended after Portal verification: how I used my Chinese passport and appealed',
+    summary: {
+      zh: '我用了八个月的 Claude Pro 突然要求验证身份。我在手机上用自己的中国护照完成验证，回到 Claude 却看到组织已停用。点开「Request a review」，表单问了我两个问题。',
+      en: 'After eight months on Claude Pro, I was asked to verify my identity. I used my Chinese passport on my phone, then returned to Claude to find my organization suspended. I clicked “Request a review” and got a form with two questions.',
+    },
+    experience: {
+      zh: '我在第一栏写平时怎么用 Claude 查技术文档、审代码和排查前端问题，第二栏附上自己发教程的 YouTube 频道和 X 账号。从收到受理邮件到收到恢复邮件，我等了 3 小时 32 分钟。重新登录后，账号能用了。',
+      en: 'In the first field I described how I use Claude to read technical docs, review code and debug front-end issues. In the second I linked my YouTube channel and X profile, where I publish tutorials. The restoration email arrived 3 hours and 32 minutes after the acknowledgment. I signed back in and could use Claude again.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在 Claude 里登录原账号，查看组织列表。需要验证身份时，核对组织名称，按页面提示用自己的有效证件完成验证。若列表显示某个组织已停用，点它旁边的「Request a review」打开复核表单。',
+          en: 'Sign in to the original Claude account and check the organization list. If you see an identity prompt, confirm the organization and follow the instructions with your own valid ID. If the list shows an organization on hold, select “Request a review” beside its name.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
+          label: {
+            zh: '查看组织停用后的复核入口',
+            en: 'Find the organization review option',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果表单问你用账号做什么，挑一两件自己实际做过的事写清楚。例如你用它排查过代码问题，就写遇到了什么问题、让 Claude 帮你检查了哪一段。',
+          en: 'If the form asks how you use the account, describe one or two things you actually did. If you used Claude to debug code, for example, explain what went wrong and what you asked it to check.',
+        },
+      },
+      {
+        text: {
+          zh: '在补充说明栏写下验证后看到的停用提示，请求复核这个组织。如果你有相关的公开作品，也愿意分享，可以附上链接并说明它和账号用途的关系。提交后留存受理邮件，收到审核结果再登录查看。',
+          en: 'In the additional information field, describe the suspension message you saw after verification and ask for a review of that organization. If you have relevant public work you want to share, link it and explain how it relates to your use. Keep the acknowledgment email and check access again when you receive the decision.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122625340376031232',
+    sourceAuthor: '@theEarlyPanda',
+    sourcePublishedAt: '2026-11-17T09:47:26Z',
+    sourceViews: 22496,
+  },
+  {
     slug: 'claude-sign-up-identity-verification',
     title: '封了20多个号换来的全网Claude防封分流保姆级教程全网整合版',
     englishTitle:
@@ -846,6 +891,7 @@ const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
   'antigravity-paid-plan-starter-quota': ['antigravity'],
   'claude-max-google-play-recovery': ['claude'],
   'google-ai-claim-cloud-credits': ['antigravity'],
+  'claude-portal-suspension-review': ['claude'],
   'claude-sign-up-identity-verification': ['claude'],
   'google-ai-ultra-plan-evaluation': ['antigravity'],
   'apple-in-app-purchase-review': ['antigravity'],
