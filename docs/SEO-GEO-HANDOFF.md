@@ -1,6 +1,6 @@
 # 号没了 · 搜索、AI 引用、统计与广告交接
 
-交接快照为 2026 年 11 月 23 日（新加坡时间）。站点是 [haomeile.rip](https://haomeile.rip/)，仓库是 `tangka/haomeile`，现行实现分支是 `codex/implement-haomeile`，本轮工作基于 `d7d2f13`。涉及账户、收录状态或流量时，以当轮后台核对为准。
+交接快照更新于 2026 年 11 月 23 日 16:50（新加坡/北京时间）。站点是 [haomeile.rip](https://haomeile.rip/)，仓库是 `tangka/haomeile`，现行实现分支是 `codex/implement-haomeile`，线上最新代码为 `f591079`（线上发布包 `20261123074147-f591079`）。涉及账户、收录状态或流量时，以当轮后台核对为准。
 
 [新加坡生产部署](../DEPLOY-SERVER.md)是线上发布入口。[SEO 设计稿](../design/SEO.md)和 [main 分支的早期运营计划](https://github.com/tangka/haomeile/blob/35329be7b5e78a787f1b3f3a84a80e0730b86da9/docs/OPERATIONS.md)提供历史背景。站长后续决定保留「使用小技巧」、启用 GA4，并在 AdSense 审核通过后再加广告。
 
@@ -8,12 +8,12 @@
 
 | 项目                  | 已核对的结果                                                                                                                                                                             | 实现或记录                                                                                                                                 |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Google Search Console | `https://haomeile.rip/` 网址前缀资源通过首页 HTML 元标签完成所有权验证。站点地图详情显示成功处理并发现 104 个网址。首页、申诉页和技巧目录在「网址检查」中已收录，更新后均提交重新抓取。  | [首页模板](../src/site/pages/index.astro)，`e631d97`、`d7d2f13`                                                                            |
-| 品牌词曝光            | 实际在 Google 搜「号没了」时，第一页没有本站。刚建好的 Search Console 效果报告仍在处理，暂无可靠的查询曝光、点击和排名数据。                                                             | [Search Console 效果报告](https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Fhaomeile.rip%2F) |
-| 搜索标题和内链        | 中英文首页、申诉页、技巧目录已用更具体的标题与描述。首页产品名可跳到各自的案例页，申诉页有入口通往 Claude Max 账单排查指南。中英 canonical 和语言路径已在线核对。                        | [英文文案](../src/shared/en-static.ts)，`d7d2f13`                                                                                          |
-| AI 搜索               | 公开页面允许抓取，首屏正文由服务端输出。案例详情带原帖链接，已有结构化数据通过 `citation` 和 `isBasedOn` 关联来源。`llms.txt` 补了三个产品页和代表性指南。暂未取得可核实的 AI 引用数据。 | [robots.txt](../public/robots.txt)、[llms.txt](../public/llms.txt)、[页面渲染](../src/worker/render.ts)                                    |
-| GA4 与 Cloudflare     | 两套访问统计都在生产公开阅读页运行。浏览器实测 GA4 `page_view` 返回 HTTP 204，随后在「实时概览」看到测试访问。                                                                           | [GA4 脚本](../public/assets/ga4.js)、[部署和环境配置](../DEPLOY-SERVER.md#网站访问统计)，`2b556b8`                                         |
-| AdSense               | 站点通过 `ads.txt` 所有权验证，后台已显示「已请求审核」「正在准备」。收款地区已设为中国。线上 `/ads.txt` 返回 200，内容与仓库记录一致。                                                  | [ads.txt](../public/ads.txt)，`9306a32`                                                                                                    |
+| Google Search Console | `https://haomeile.rip/` 网址前缀资源已验证。站点地图已处理（上次读取 `2026-11-23`，原显示 104 个网址，线上 `/sitemap.xml` 现已增至 108 个）。实查 `/`、`/appeal`、`/tips`、`/v/claude`、`/v/codex`、`/v/antigravity` 6 个核心页**全部已编入索引**且规范网址匹配，三个 `/v/*` 页已检出有效 `Breadcrumbs`；上次抓取时间均在 `15:35` 新版发布前，且「请求编入索引」触发 reCAPTCHA 需站长手动完成。 | [首页模板](../src/site/pages/index.astro)，`e631d97`、`d7d2f13`、`901c790`、`f591079` |
+| 品牌词曝光            | 实际在 Google 搜「号没了」时第一页尚无本站；搜 `"haomeile.rip"` 已可被 AI 搜索识别引用。Search Console 效果报告仍显示「正在处理数据，请过 1 天左右再来查看」。 | [Search Console 效果报告](https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Fhaomeile.rip%2F) |
+| 搜索标题、语言切换与内链 | 移除中文路径基于 `Accept-Language` 的强制 302 跳转，在顶部导航栏新增显式 `English` / `中文` 切换；修复 `/t/:id` 重复词「账号账号停用」（影响 25/32 条案例）；统一英文标题后缀与 `og:site_name` 为 `Haomeile`；扩充 `/appeal`（含 Antigravity 403、Starter Quota、Codex 401、Claude 恢复问答）与三个 `/v/*` 产品页专属标题/摘要/内链；`/en/tips` 展示英文标题并保留原中文标题出处；修复 3 处硬编码中文官方文档外链。 | [渲染](../src/worker/render.ts)、[本地化](../src/worker/localize.ts)、[申诉页](../src/site/pages/appeal.astro)、[顶栏](../src/site/components/SiteHeader.astro)，`901c790`、`f591079` |
+| AI 搜索与结构化数据    | 公开页均直出 HTML 且不因 `Accept-Language` 跳转。`/appeal` 已加 `FAQPage` + `BreadcrumbList`，`/tips` 与 `/v/*` 已加 `CollectionPage` + `BreadcrumbList`，13 篇 `/tips/*` 已加 `HowTo`（含 `author`/`datePublished`/`citation`/`isBasedOn`）+ `BreadcrumbList`，`/t/*` 已补 `publisher`/`mainEntityOfPage`/社区摘要 `inLanguage`。`llms.txt` 已补全 13 篇指南、官方申诉摘要和完整英文入口。Bing Webmaster Tools 尚未登录核对。 | [robots.txt](../public/robots.txt)、[llms.txt](../public/llms.txt)、[技巧页](../src/site/pages/tips/[slug].astro)，`901c790` |
+| GA4 与 Cloudflare     | **Cloudflare Web Analytics**（MCP 实拉 `11-22 ~ 11-23 08:42 UTC`）：累计 **108 Visits / 148 Page views**（`11-22` 为 12/16，`11-23` 为 96/132）；Top 页面为 `/tips/antigravity-first-install-google-ai-pro`（53 Visits / 57 Views）、`/`（20/34）、`/tips/claude-max-google-play-recovery`（21/21）；已出现来自 `www.google.com`（2 Visits）与 `cn.bing.com`（1 Visit）的自然搜索访问及微信（8 Visits）。**GA4** 实时概览正常采集（11-23 下午见实时 `page_view`），标准报表因默认截至 `11-22` 且有 24–48h 延迟暂显示 0，待次日核对 `11-23` 数据。 | [GA4 脚本](../public/assets/ga4.js)、[部署和环境配置](../DEPLOY-SERVER.md#网站访问统计)，`2b556b8` |
+| AdSense               | 线上 `/ads.txt` 返回 200 且与仓库逐字节一致，公开页未加载任何广告脚本。本轮浏览器访问 `adsense.google.com` 触发 `accounts.google.com` 二次验证未读取最新审批状态，需站长在「网站」列表核对是否已变为「准备就绪」。 | [ads.txt](../public/ads.txt)，`9306a32` |
 
 站点地图里的 104 是 Google 发现的网址数。“百度是否收录”“目前自然搜索日活”“AI 是否已引用”和“广告审核是否通过”都需要各自的证据。直接访问某页成功，只能验证该页当前可访问。
 
@@ -76,4 +76,4 @@ curl -fsS https://haomeile.rip/ads.txt | cmp - public/ads.txt
 
 修改社区数据时运行 `pnpm exec bun test tests/server/community.test.ts`，导入后用公开 API 和详情核对原帖及编号。修改页面时在中英文线上地址核对标题、摘要、canonical、hreflang、实际正文、内链和抓取权限。日常应用发布用 [现有新加坡部署脚本](../DEPLOY-SERVER.md)，打包前提交待构建版本，本地保留一版发布包（`d7b92fc`）。每次交接写出提交号、测试结果、已上线地址和后台待处理状态。
 
-最近一次 SEO/GEO 发布通过类型检查、Lint、215 项 Worker 测试和 30 项页面端到端测试。线上首页、申诉页和技巧目录的中英文版本、`/llms.txt`、`/sitemap.xml`、`/ads.txt` 均已复核。
+最近一次 SEO/GEO 发布（`901c790` + `f591079`，线上版本 `20261123074147-f591079`）通过类型检查、Lint、214 项 Worker 测试、48 项 Bun 服务端测试和 53 项端到端测试（`release-copy`、`responsive`、`i18n`）。线上 16 项回读检查及顶栏语言切换均已复核。下一步待处理：1）站长在 GSC 手动过一次 reCAPTCHA 为 `/appeal`、`/v/claude`、`/v/codex`、`/v/antigravity`、`/tips` 请求重抓；2）登录 Bing Webmaster Tools 验证并提交 `/sitemap.xml`（Cloudflare 已观测到 `cn.bing.com` 来访）；3）核对 AdSense「网站」列表状态与次日 GA4 `11-23` 标准报表；4）补齐 Codex 近期案例（当前仅 6 条，远低于 Claude/Antigravity 各 13 条）。
