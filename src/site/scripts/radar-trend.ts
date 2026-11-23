@@ -126,8 +126,7 @@ function mountTrend(
       context.lineWidth = 2;
       context.beginPath();
       points.forEach(({ time, probability }, index) => {
-        if (index === 0 || time - points[index - 1].time > 2 * HOUR)
-          context.moveTo(x(time), y(probability));
+        if (index === 0) context.moveTo(x(time), y(probability));
         else context.lineTo(x(time), y(probability));
       });
       context.stroke();
