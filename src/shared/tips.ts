@@ -451,6 +451,51 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceViews: 38494,
   },
   {
+    slug: 'claude-pro-apple-receipt-refund',
+    title: '付了钱，Pro 仍是 Free：我在 Claude 和 Apple 之间的申诉经历',
+    englishTitle:
+      'I paid for Claude Pro but still had Free: my appeal to Claude and Apple',
+    summary: {
+      zh: '我在 iPhone 上买了 Claude Pro，收据写着 21.65 美元，账号里却还是 Free。我把几笔订单分开对账，才弄清为什么 PayPal 的扣款和收据上的总额不一样。',
+      en: 'I bought Claude Pro on my iPhone. The receipt said $21.65, but my account still showed Free. I checked each order separately to work out why the PayPal charge was smaller than the receipt total.',
+    },
+    experience: {
+      zh: '11 月 2 日，我收到了升级 Max 失败的退款。后来重新买 Pro，Apple 用旧 Pro 订单退回的 11.85 美元余额抵了部分款，PayPal 只扣了余下的 9.80 美元。我退出又登录了同一个 Claude 账号，还是 Free。Apple 拒绝了这笔新订单的首次退款申请，11 月 4 日我提交了复核，写下这篇文章时还在等结果。',
+      en: 'On November 2, I received a refund for a failed Max upgrade. When I bought Pro again, Apple applied an $11.85 credit from my old Pro order and charged the remaining $9.80 to PayPal. I signed out of Claude and back into the same account. It still showed Free. Apple declined my first refund request for the new Pro order. On November 4, I asked for another review and was waiting for a decision when I wrote the article.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '找出每笔 Apple 收据，分别记下套餐、含税金额和付款方式。如果一笔订单同时用了账户余额和 PayPal，把两项相加再和收据总额核对。上一笔退款如果已作为余额抵扣，PayPal 就只会显示这次实际扣走的部分。',
+          en: 'Open each Apple receipt and note the plan, total after tax and payment method. If one order used both account credit and PayPal, add those amounts and compare the sum with the receipt. PayPal shows only the part it paid.',
+        },
+      },
+      {
+        text: {
+          zh: '用购买时的账号重新登录 Claude，查看套餐。如果仍显示 Free，保留套餐页面和对应的收据，请 Claude 支持核对这笔订单关联的账号和激活状态。升级 Max 和后来购买 Pro 各用各的收据。',
+          en: 'Sign back into the Claude account you used for the purchase and check the plan. If it still shows Free, save the plan screen and the matching receipt. Ask Claude support which account the order was linked to and whether it was activated. Use separate receipts for a Max upgrade and a later Pro purchase.',
+        },
+      },
+      {
+        text: {
+          zh: '用实际扣款的 Apple 账户登录「报告问题」，选「请求退款」，选中未开通的那笔订阅。第一次申请被拒后，若页面提供复核入口，说明收据已开出、同一 Claude 账号仍显示 Free。提交后到「查看申请状态」查这笔订单的进度。',
+          en: 'Sign in to Apple’s Report a Problem with the account that paid. Choose Request a refund and select the subscription that was never activated. If Apple declines and offers another review, explain that you received a receipt and the same Claude account still shows Free. Track that order under Check Status of Claims.',
+        },
+        link: {
+          href: 'https://reportaproblem.apple.com/',
+          label: {
+            zh: '到 Apple 查看退款申请',
+            en: 'Check a refund request with Apple',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2117889766700290048',
+    sourceAuthor: '@SHANQINGJINXIA',
+    sourcePublishedAt: '2026-11-04T08:07:20Z',
+    sourceViews: 4204,
+  },
+  {
     slug: 'google-ai-ultra-iphone-subscription',
     title: '410元开通谷歌 Ultra 20×：爽用用96GB云端显卡，跑通了开源生图和视频',
     englishTitle:
@@ -804,6 +849,7 @@ const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
   'claude-sign-up-identity-verification': ['claude'],
   'google-ai-ultra-plan-evaluation': ['antigravity'],
   'apple-in-app-purchase-review': ['antigravity'],
+  'claude-pro-apple-receipt-refund': ['claude'],
   'google-ai-ultra-iphone-subscription': ['antigravity'],
   'claude-pro-iphone-apple-sign-in': ['claude'],
   'claude-pro-web-subscription': ['claude'],
