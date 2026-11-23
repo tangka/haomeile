@@ -121,6 +121,68 @@ export const TIP_ARTICLES: TipArticle[] = [
     sourceViews: 27336,
   },
   {
+    slug: 'claude-max-google-play-recovery',
+    title: 'Claude 封号申诉成功了！丢掉的 125 刀 Max 订阅，磨了 5 天也回来了',
+    englishTitle:
+      'My Claude appeal worked, and I got my $125 Max subscription back after five days',
+    summary: {
+      zh: '我的 Claude 账号解封后，已付费的 Max 却变成了 Free。我查了 Google Play 的订单，也从 Claude 网页里联系了支持。几天后，Max 回到了原账号。',
+      en: 'After Claude restored my account, the Max plan I’d paid for showed up as Free. I checked the Google Play order and contacted support from Claude on the web. A few days later, Max was back on the same account.',
+    },
+    experience: {
+      zh: '11 月 13 日，我收到停用通知，Google Play 也发信说 Claude 订阅将取消。次日，Anthropic 回复说停用是误判，我重新登了进去，但还剩 9 天的 Max 显示成了 Free。我用原账号打开 Claude 网页左下角的「获取帮助」。这次客服查到了由 Google Play 结算的记录，说会把问题转给人工团队。11 月 17 日晚上，我再查时看到 Max 已恢复。具体是哪一步让权益恢复的，我没收到确认。',
+      en: 'On November 13, I got a suspension notice and a Google Play email saying my Claude subscription would be canceled. Anthropic told me the next day that the suspension was a mistake. I could sign in again, but my account showed Free with nine days left on Max. I signed in to the same account on Claude’s website and opened Get help in the lower left. Support found the Google Play billing record and said they would pass the issue to a human team. When I checked again on the evening of November 17, Max was back. I never got confirmation of which step restored it.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '账号仍然停用时，从 Claude 的申诉说明打开表单，填写受影响账号的邮箱，写清收到通知的时间、平时的用途和希望复核的问题。收到恢复通知后，登录原账号查看当前套餐。',
+          en: 'If you still can’t access the account, open the form from Claude’s appeal instructions and enter the email address associated with the affected account. Explain when the notice arrived, how you normally use Claude and what you want reviewed. After you receive confirmation that access is restored, sign in to the same account and check the current plan.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
+          label: {
+            zh: '查看 Claude 申诉说明',
+            en: 'See Claude’s appeal instructions',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果 Claude 显示 Free，用付款时的 Google 账号打开 Google Play 的「付款和订阅 → 预算和订单记录」。找到 Claude 收据，核对套餐、扣款日期和金额，并记下订阅页显示的状态。',
+          en: 'If Claude shows Free, sign in to Google Play with the account you paid with and open Payments & subscriptions → Budget & order history. Find the Claude receipt and check the plan, charge date and amount. Note the status shown on the subscriptions page.',
+        },
+        link: {
+          href: 'https://support.google.com/googleplay/answer/2850369',
+          label: {
+            zh: '查看 Google Play 订单记录说明',
+            en: 'Find your Google Play order history',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在已登录的 Claude 网页左下角点「获取帮助」。说明账号哪天恢复、当前显示哪一档、Google Play 收据对应哪一档，请客服核对该订单和 Claude 账号上的订阅权益。需要提供订单号时，把它发给官方客服。',
+          en: 'While signed in to Claude on the web, open Get help in the lower left. Give support the date your account was restored, the tier Claude currently shows and the tier on the Google Play receipt. Ask them to match the order to the subscription on your Claude account. Share the order number with official support if requested.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9015913-how-to-get-support',
+          label: { zh: '查看 Claude 客服入口', en: 'Find Claude support' },
+        },
+      },
+      {
+        text: {
+          zh: '后续的进展补在同一条客服对话里。处理完成后回到 Claude 核对套餐名，再从 Google Play 查看订阅状态和下一次扣款日期。',
+          en: 'Add any updates to the same support conversation. Once the issue is resolved, confirm the plan name in Claude and check the subscription status and next billing date in Google Play.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122767782291066880',
+    sourceAuthor: '@qianshuixia2026',
+    sourcePublishedAt: '2026-11-18T01:22:52Z',
+    sourceViews: 6866,
+  },
+  {
     slug: 'google-ai-claim-cloud-credits',
     title:
       '万字干货｜Gemini 4 + Antigravity，从 0 到 1 跑通全自动出片（附 Agent 指令）',
