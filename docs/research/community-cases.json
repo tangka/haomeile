@@ -547,5 +547,23 @@
     "reviewed_at": "2026-11-23",
     "evidence": "The official X embed confirms the author's public post date and restoration account. Its linked X article, https://x.com/i/article/2122767782291066880, gives the November 13 suspension, November 14 account restoration, and November 17 subscription restoration timeline.",
     "status_as_of": "2026-11-17"
+  },
+  {
+    "key": "antigravity-forum-204089",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "none",
+    "source_url": "https://discuss.ai.google.dev/t/204089",
+    "source_platform": "Google AI Developers Forum",
+    "source_published_at": "2026-11-23",
+    "codename": "Antigravity 恢复后没再用，账号又停用",
+    "codename_en": "Antigravity access disabled again before I used it",
+    "story": "我的 Antigravity 账号第一次停用后，申诉成功了。恢复后我还没用过 Antigravity，就发现这个账号再次提示服务停用。我不知道这次是怎么回事，11 月 23 日用另一个账号发帖，请求人工复查。",
+    "story_en": "My Antigravity access came back after my first appeal. Before I used Antigravity again, I found that the same account was disabled a second time. I didn't know why, so I posted from another account on November 23 to request a manual review.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The author's original forum post confirms the prior reinstatement, no use before discovering the second suspension, and a request for manual review. It gives no incident date or tier and does not report filing a second appeal through the form. The post was published at 2026-11-23T04:47:29Z.",
+    "status_as_of": "2026-11-23"
   }
 ]
