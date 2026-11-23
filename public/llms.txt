@@ -23,6 +23,7 @@
 - [Codex 账号停用记录](https://haomeile.rip/v/codex): OpenAI Codex 与关联 ChatGPT 账号停用、401 与恢复案例
 - [Antigravity 服务停用与 403 记录](https://haomeile.rip/v/antigravity): Google Antigravity 服务停用、403、地区限制与申诉案例
 - [官方申诉入口与常见排查](https://haomeile.rip/appeal): 三家官方申诉链接、填写清单与分产品问答
+- [重置雷达（24 小时额度重置概率）](https://haomeile.rip/radar): Codex、Claude Code 与 Antigravity 未来 24 小时额度重置概率实时预测与近 24 小时趋势（UTC+8 定期更新）
 - [使用小技巧目录](https://haomeile.rip/tips): Claude、ChatGPT/Codex 与 Google AI / Antigravity 的开通、付款、续费与套餐异常处理步骤
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
@@ -57,6 +58,7 @@ Haomeile (https://haomeile.rip/en/) is a bilingual independent community documen
 - [Codex account deactivations & appeals (EN)](https://haomeile.rip/en/v/codex)
 - [Antigravity 403 & service suspensions (EN)](https://haomeile.rip/en/v/antigravity)
 - [Official appeal channels & FAQ (EN)](https://haomeile.rip/en/appeal)
+- [Reset Radar — 24h quota reset forecast (EN)](https://haomeile.rip/en/radar)
 - [Tips & troubleshooting guides (EN)](https://haomeile.rip/en/tips)
 - [Claude Max still Free after reinstatement (EN)](https://haomeile.rip/en/tips/claude-max-google-play-recovery)
 - [Antigravity paid plan still showing Starter Quota (EN)](https://haomeile.rip/en/tips/antigravity-paid-plan-starter-quota)

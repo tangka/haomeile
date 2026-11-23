@@ -94,11 +94,15 @@ const jsonLd = [
     grid-template-columns: minmax(0, 1fr) max-content;
     align-items: center;
     gap: 12px;
-    min-height: 52px;
-    padding: 10px 6px;
+    min-height: 54px;
+    padding: 12px 8px;
     border-block-end: 1px solid var(--stone-shade);
     font-size: var(--fs-s);
     text-decoration: none;
+    transition: background-color 120ms ease;
+  }
+  .tip-preview:is(:hover, :focus-visible) {
+    background: color-mix(in srgb, var(--stone) 55%, transparent);
   }
   .tip-title {
     font-weight: 600;

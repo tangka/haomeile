@@ -20,6 +20,7 @@ import Timeline from '../../components/Timeline.astro';
       <div class="wrap page-head">
         <h1 data-ssr="page-title">账号的墓碑</h1>
         <p data-ssr="vendor-intro">这里收录账号经历的用户投稿和社区整理。</p>
+        <p class="vendor-summary" data-ssr="vendor-summary" hidden></p>
         <nav class="vendor-links" data-ssr="vendor-links" aria-label="相关入口"></nav>
       </div>
     </div>
@@ -30,12 +31,30 @@ import Timeline from '../../components/Timeline.astro';
 </SiteLayout>
 
 <style>
+  .vendor-summary {
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border-inline-start: 4px solid var(--grass-deep);
+    background: color-mix(in srgb, var(--stone) 55%, transparent);
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+  }
   .vendor-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 16px;
-    margin-block-start: 14px;
-    font-size: var(--fs-s);
+    gap: 8px 10px;
+    margin-block-start: 16px;
+    font-size: var(--fs-xs);
+  }
+  .vendor-links :global(a) {
+    padding: 5px 10px;
+    border: 1.5px solid var(--ink);
+    text-decoration: none;
+  }
+  .vendor-links :global(a:hover),
+  .vendor-links :global(a:focus-visible) {
+    background: var(--ink);
+    color: var(--paper);
   }
   .vendor-links:empty {
     display: none;

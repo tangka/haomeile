@@ -202,18 +202,21 @@ a {
   font-weight: 600;
   padding: 5px 10px;
   border: 1.5px solid currentColor;
+  box-shadow: 2px 2px 0 currentColor;
   line-height: 1.2;
 }
-.locale-switch:hover {
+.locale-switch:hover,
+.locale-switch:focus-visible {
   background: var(--sky-ink);
   color: var(--sky);
+  box-shadow: none;
 }
 
 /* Keep longer English navigation within the viewport. */
 .nav {
   min-width: 0;
 }
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .topbar .wrap {
     flex-wrap: wrap;
     gap: 8px 16px;

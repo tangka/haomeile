@@ -5,6 +5,7 @@ import {
   tipLinkHref,
   tipPageTitle,
   tipPublishedTime,
+  tipSeoTitle,
   tipVendors,
   type TipVendor,
 } from '../../../shared/tips';
@@ -102,7 +103,7 @@ const jsonLd = [
 ---
 
 <SiteLayout
-  title={tipPageTitle(tip.title, 'zh')}
+  title={tipPageTitle(tipSeoTitle(tip, 'zh'), 'zh')}
   description={tip.summary.zh}
   current="/tips"
   path={'/tips/' + tip.slug}

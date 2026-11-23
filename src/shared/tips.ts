@@ -815,11 +815,62 @@ export function tipVendors(slug: string): TipVendor[] {
   return TIP_VENDOR_MAP[slug] ?? [];
 }
 
+const TIP_SEO_TITLES: Record<string, TipCopy> = {
+  'antigravity-first-install-google-ai-pro': {
+    zh: 'Antigravity 桌面端登录与 Google AI Pro 订阅核对指南',
+    en: 'Antigravity Desktop Sign-In & Google AI Pro Setup Guide',
+  },
+  'google-ai-pro-switch-to-annual': {
+    zh: 'Google AI Pro 月付切换年付及 Google Play 续费核对步骤',
+    en: 'Switch Google AI Pro from Monthly to Annual & Check Renewal',
+  },
+  'antigravity-paid-plan-starter-quota': {
+    zh: 'Antigravity 开通 Ultra / Pro 仍显示 Starter Quota 怎么办（年龄验证排查）',
+    en: 'Antigravity Paid Plan Still Shows Starter Quota: Age Verification Fix',
+  },
+  'claude-max-google-play-recovery': {
+    zh: 'Claude 解封后 Max 订阅仍显示 Free 怎么办（Google Play 订单恢复）',
+    en: 'Claude Max Still Shows Free After Appeal: Google Play Billing Recovery',
+  },
+  'google-ai-claim-cloud-credits': {
+    zh: 'Google AI Pro 领取 Google Cloud API 赠金与预付余额排查',
+    en: 'How to Claim Google AI Pro Cloud API Credits & Fix Prepaid Balance',
+  },
+  'claude-sign-up-identity-verification': {
+    zh: 'Claude 注册或结账弹出身份验证怎么办（支持地区与证件核对）',
+    en: 'Claude Identity Verification at Sign-Up or Checkout: What to Check',
+  },
+  'apple-in-app-purchase-review': {
+    zh: 'Apple 内购订阅提示 Purchase Not Completed 审核与客服处理',
+    en: 'App Store Purchase Not Completed: Review & Apple Support Steps',
+  },
+  'google-ai-ultra-iphone-subscription': {
+    zh: 'iPhone 开通 Google AI Ultra 核对地区与 Antigravity 生效步骤',
+    en: 'Subscribing to Google AI Ultra on iPhone for Antigravity: Region & Setup',
+  },
+  'chatgpt-plus-iphone-subscription': {
+    zh: 'iPhone 订阅 ChatGPT Plus 与 Codex 账号到账核对指南',
+    en: 'Subscribe to ChatGPT Plus on iPhone & Verify Codex Access',
+  },
+};
+
+export function tipSeoTitle(
+  tip: Pick<TipArticle, 'slug' | 'title' | 'englishTitle'>,
+  locale: 'zh' | 'en',
+): string {
+  const custom = TIP_SEO_TITLES[tip.slug];
+  if (custom) return custom[locale];
+  return locale === 'zh' ? tip.title : tip.englishTitle;
+}
+
 export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
 
 export const TIP_TRANSLATIONS = Object.fromEntries(
-  TIP_ARTICLES.flatMap(
-    ({ title, englishTitle, summary, experience, steps }) => [
+  TIP_ARTICLES.flatMap((tip) => {
+    const { title, englishTitle, summary, experience, steps } = tip;
+    const seoZh = tipSeoTitle(tip, 'zh');
+    const seoEn = tipSeoTitle(tip, 'en');
+    return [
       [title, englishTitle],
       ...[summary, experience].map(({ zh, en }) => [zh, en]),
       ...steps.flatMap(({ text, link }) => [
@@ -827,6 +878,9 @@ export const TIP_TRANSLATIONS = Object.fromEntries(
         ...(link ? [[link.label.zh, link.label.en]] : []),
       ]),
       [tipPageTitle(title, 'zh'), tipPageTitle(englishTitle, 'en')],
-    ],
-  ),
+      ...(seoZh !== title
+        ? [[tipPageTitle(seoZh, 'zh'), tipPageTitle(seoEn, 'en')]]
+        : []),
+    ];
+  }),
 );

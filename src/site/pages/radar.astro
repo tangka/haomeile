@@ -1,18 +1,65 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import RadarMark from '../components/RadarMark.astro';
+import { siteOrigin } from '../../shared/site';
 
-const description =
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
+const subtitle =
   'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。';
+const description =
+  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势（UTC+8 定期更新），附各平台停用案例与官方申诉入口。';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率',
+    description,
+    url: SITE + '/radar',
+    inLanguage: 'zh-CN',
+    creator: {
+      '@type': 'Organization',
+      name: 'Haomeile',
+      url: SITE + '/',
+    },
+    variableMeasured: [
+      'Codex 24-hour quota reset probability',
+      'Claude Code 24-hour quota reset probability',
+      'Antigravity 24-hour quota reset probability',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '纪念墙',
+        item: SITE + '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '重置雷达',
+      },
+    ],
+  },
+];
 ---
 
-<SiteLayout title="重置雷达 · 号没了" description={description} path="/radar">
+<SiteLayout
+  title="重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率 · 号没了"
+  description={description}
+  path="/radar"
+  jsonLd={jsonLd}
+>
   <main class="page radar-page">
     <div class="wrap">
       <header class="radar-intro">
         <div>
           <h1>重置雷达</h1>
-          <p>{description}</p>
+          <p>{subtitle}</p>
         </div>
         <div class="radar-intro-mark">
           <RadarMark />
@@ -54,6 +101,20 @@ const description =
         <p id="radar-trend-help" class="radar-trend-help">
           指向、轻点或用方向键查看采样点。
         </p>
+      </section>
+
+      <section class="radar-notes" aria-labelledby="radar-notes-title">
+        <h2 id="radar-notes-title">说明与相关入口</h2>
+        <p>
+          百分比表示基于社区观测信号的未来 24 小时额度重置概率参考，按 UTC+8 定期刷新，不代表厂商官方通知。
+        </p>
+        <nav class="radar-links" aria-label="相关入口">
+          <a href="/v/codex">查看 Codex 停用案例</a>
+          <a href="/v/claude">查看 Claude 停用案例</a>
+          <a href="/v/antigravity">查看 Antigravity 停用案例</a>
+          <a href="/appeal">官方申诉入口</a>
+          <a href="/tips">使用小技巧</a>
+        </nav>
       </section>
     </div>
   </main>
@@ -99,27 +160,30 @@ const description =
 
   .radar-vitals :global(.radar-forecasts) {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    gap: 14px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .radar-vitals :global(.radar-forecasts li) {
+    --card-accent: var(--grass-deep);
     display: grid;
     gap: 10px;
     padding: clamp(14px, 2.5vw, 24px);
     border: 2px solid var(--ink);
-    border-top: 4px solid var(--grass-deep);
+    border-top: 5px solid var(--card-accent);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--ink);
   }
 
   .radar-vitals :global(.radar-forecasts li:nth-child(2)) {
-    border-top-color: var(--mum);
+    --card-accent: var(--mum);
   }
 
   .radar-vitals :global(.radar-forecasts li:nth-child(3)) {
-    border-top-color: var(--focus);
+    --card-accent: var(--focus);
   }
 
   .radar-vitals :global(.radar-forecasts h3) {
@@ -133,15 +197,75 @@ const description =
     line-height: 1;
   }
 
-  .radar-vitals :global(.radar-updated) {
-    margin: 12px 0 0;
+  .radar-vitals :global(.radar-bar) {
+    height: 8px;
+    border: 1.5px solid var(--ink);
+    background: color-mix(in srgb, var(--stone) 70%, transparent);
+    overflow: hidden;
+  }
+
+  .radar-vitals :global(.radar-bar span) {
+    display: block;
+    height: 100%;
+    background: var(--card-accent);
+  }
+
+  .radar-vitals :global(.radar-sub) {
     font-size: var(--fs-xs);
+    opacity: 0.78;
+  }
+
+  .radar-vitals :global(.radar-updated) {
+    margin: 14px 0 0;
+    font-size: var(--fs-xs);
+    opacity: 0.82;
   }
 
   .radar-history {
     margin-top: 24px;
     border: 2px solid var(--ink);
-    padding: clamp(12px, 3vw, 24px);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: clamp(14px, 3vw, 24px);
+  }
+
+  .radar-notes {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--stone-shade);
+    display: grid;
+    gap: 10px;
+  }
+
+  .radar-notes h2 {
+    margin: 0;
+    font-size: var(--fs-m);
+    font-family: var(--font-carve);
+  }
+
+  .radar-notes p {
+    font-size: var(--fs-s);
+    opacity: 0.88;
+  }
+
+  .radar-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    margin-top: 4px;
+    font-size: var(--fs-xs);
+  }
+
+  .radar-links a {
+    padding: 5px 10px;
+    border: 1.5px solid var(--ink);
+    text-decoration: none;
+  }
+
+  .radar-links a:hover,
+  .radar-links a:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
   }
 
   .radar-history-head,

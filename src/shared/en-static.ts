@@ -42,6 +42,15 @@ export const EN_STATIC: Record<string, string> = {
   使用小技巧: 'Tips',
   重置雷达: 'Reset Radar',
   '重置雷达 · 号没了': 'Reset Radar · Haomeile',
+  '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率':
+    'Reset Radar: 24-Hour Quota Reset Forecast for Codex, Claude Code & Antigravity',
+  '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率 · 号没了':
+    'Reset Radar: 24-Hour Quota Reset Forecast for Codex, Claude Code & Antigravity · Haomeile',
+  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势（UTC+8 定期更新），附各平台停用案例与官方申诉入口。':
+    'Live 24-hour quota reset probability forecasts and trend charts for Codex, Claude Code and Antigravity (updated in UTC+8), with links to suspension cases and official appeal channels.',
+  说明与相关入口: 'Methodology & related links',
+  '百分比表示基于社区观测信号的未来 24 小时额度重置概率参考，按 UTC+8 定期刷新，不代表厂商官方通知。':
+    'Percentages reflect community-signal estimates of quota resets over the next 24 hours, refreshed periodically in UTC+8. They are not official provider announcements.',
   '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
   'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。':
     '24-hour quota reset estimates for Codex, Claude Code and Antigravity.',

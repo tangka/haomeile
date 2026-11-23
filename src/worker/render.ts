@@ -232,6 +232,13 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
           en: 'Claude identity verification guide',
         },
       },
+      {
+        href: '/radar',
+        label: {
+          zh: '24 小时额度重置雷达',
+          en: '24h quota reset radar',
+        },
+      },
     ],
   },
   codex: {
@@ -260,6 +267,13 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
         label: {
           zh: 'ChatGPT Plus 与 Codex 订阅核对',
           en: 'ChatGPT Plus & Codex subscription guide',
+        },
+      },
+      {
+        href: '/radar',
+        label: {
+          zh: '24 小时额度重置雷达',
+          en: '24h quota reset radar',
         },
       },
     ],
@@ -297,6 +311,13 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
         label: {
           zh: 'Antigravity 登录与 Pro 开通核对',
           en: 'Antigravity install & Pro setup',
+        },
+      },
+      {
+        href: '/radar',
+        label: {
+          zh: '24 小时额度重置雷达',
+          en: '24h quota reset radar',
         },
       },
     ],
@@ -366,10 +387,13 @@ export async function servePage(
       const label = overview.stale
         ? text('最近一次预测', 'Last available forecast')
         : text('预测更新时间', 'Forecast updated');
-      const cards = overview.platforms.map(
-        ({ name, probability }) =>
-          `<li><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong></li>`,
+      const subLabel = escapeHtml(
+        text('未来 24 小时重置概率', '24h reset probability'),
       );
+      const cards = overview.platforms.map(({ name, probability }) => {
+        const pct = Math.max(0, Math.min(100, Number(probability) || 0));
+        return `<li><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong><div class="radar-bar" aria-hidden="true"><span style="width:${pct}%"></span></div><span class="radar-sub">${subLabel}</span></li>`;
+      });
       rewriter.on('[data-ssr="radar-overview"]', {
         element: (el) => {
           el.setInnerContent(
@@ -492,6 +516,47 @@ export async function servePage(
           );
         },
       });
+      if (totalRecords > 0) {
+        const [eventRows, appealRows] = await c.env.DB.batch<{
+          k: string;
+          n: number;
+        }>([
+          c.env.DB.prepare(
+            "SELECT event_type k, COUNT(*) n FROM tombstones WHERE status='approved' AND vendor=? GROUP BY event_type ORDER BY n DESC",
+          ).bind(vendor),
+          c.env.DB.prepare(
+            "SELECT appeal_status k, COUNT(*) n FROM tombstones WHERE status='approved' AND vendor=? GROUP BY appeal_status ORDER BY n DESC",
+          ).bind(vendor),
+        ]);
+        const eventSummary = eventRows!.results
+          .map((row) =>
+            locale === 'en'
+              ? `${label(labels.event_type_short, row.k)} (${row.n})`
+              : `${label(labels.event_type_short, row.k)} ${row.n} 条`,
+          )
+          .join(locale === 'en' ? ', ' : '、');
+        const appealSummary = appealRows!.results
+          .map((row) => {
+            const nameText =
+              row.k === 'none'
+                ? text('未说明/未申诉', 'Not stated / no appeal')
+                : label(labels.appeal_status, row.k);
+            return locale === 'en'
+              ? `${nameText} (${row.n})`
+              : `${nameText} ${row.n} 条`;
+          })
+          .join(locale === 'en' ? ', ' : '、');
+        const summaryCopy =
+          locale === 'en'
+            ? `Sample breakdown (${totalRecords} public records as of ${stats.date}): Event types — ${eventSummary}. Visible appeal outcomes — ${appealSummary}.`
+            : `公开样本分布（截至 ${stats.date} 共 ${totalRecords} 条，含社区整理与用户投稿）：事件类型为${eventSummary}；可见申诉状态为${appealSummary}。`;
+        rewriter.on('[data-ssr="vendor-summary"]', {
+          element: (el) => {
+            el.removeAttribute('hidden');
+            el.setInnerContent(summaryCopy);
+          },
+        });
+      }
       if (seo) {
         rewriter.on('[data-ssr="vendor-intro"]', {
           element: (el) => {
