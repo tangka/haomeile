@@ -12,7 +12,7 @@ import { TIP_PATHS } from '../../src/shared/tips';
 
 const deployedAt = '2026-11-19T12:34:56.000Z';
 const updatedAt = '2026-11-20T01:02:03.000Z';
-const staticUrls = (6 + TIP_PATHS.length) * 2;
+const staticUrls = (7 + TIP_PATHS.length) * 2;
 function expectLanguagePair(xml: string, path: string): void {
   const zh = `https://haomeile.rip${path}`;
   const en = `https://haomeile.rip/en${path}`;
@@ -97,6 +97,7 @@ describe('dynamic sitemap', () => {
       '/epitaph',
       '/appeal',
       '/tips',
+      '/radar',
       '/privacy',
       '/about',
       ...TIP_PATHS,

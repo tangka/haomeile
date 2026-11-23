@@ -13,6 +13,7 @@ const STATIC_PATHS = [
   '/epitaph',
   '/appeal',
   '/tips',
+  '/radar',
   '/privacy',
   '/about',
   ...TIP_PATHS,

@@ -40,6 +40,14 @@ export const EN_STATIC: Record<string, string> = {
   墓志铭卡片: 'Epitaph cards',
   官方申诉入口: 'Official appeals',
   使用小技巧: 'Tips',
+  重置雷达: 'Reset Radar',
+  '重置雷达 · 号没了': 'Reset Radar · Haomeile',
+  '关注 Codex 和 Claude Code 的额度动态，查看未来 24 小时的重置概率和研判依据。':
+    'Follow Codex and Claude Code quota updates, with 24-hour reset estimates and the signals behind them.',
+  '用微信扫码，或在微信小程序里搜索「重置雷达」。':
+    'Scan with WeChat, or search for “重置雷达” in WeChat Mini Programs.',
+  重置雷达微信小程序码: 'Reset Radar WeChat Mini Program code',
+  查看小程序码原图: 'View full-size Mini Program code',
   '阅读 X 长文': 'Read the full article on X',
   返回技巧目录: 'Back to tips',
   文章导航: 'Article navigation',

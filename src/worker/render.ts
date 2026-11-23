@@ -331,6 +331,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       '/epitaph',
       '/appeal',
       '/tips',
+      '/radar',
       '/privacy',
       '/about',
       '/admin',
@@ -640,7 +641,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
     c.env.ENVIRONMENT === 'production' &&
     url.origin === DEFAULT_SITE_ORIGIN &&
     site === DEFAULT_SITE_ORIGIN &&
-    (/^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
+    (/^\/(?:appeal|privacy|about|tips|radar)?$/.test(path) ||
       /^\/(?:v|t|tips)\/[^/]+$/.test(path));
   const analyticsToken = publicAnalyticsPage
     ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()

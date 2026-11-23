@@ -1,0 +1,79 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+const description =
+  '关注 Codex 和 Claude Code 的额度动态，查看未来 24 小时的重置概率和研判依据。';
+const codeImage = '/assets/reset-radar-qr.jpg';
+---
+
+<SiteLayout title="重置雷达 · 号没了" description={description} path="/radar">
+  <main class="page">
+    <div class="wrap">
+      <div class="radar-entry">
+        <div>
+          <h1>重置雷达</h1>
+          <p>{description}</p>
+          <p>用微信扫码，或在微信小程序里搜索「重置雷达」。</p>
+        </div>
+        <a class="radar-code" href={codeImage} aria-label="查看小程序码原图">
+          <img
+            src={codeImage}
+            alt="重置雷达微信小程序码"
+            width="430"
+            height="430"
+          />
+        </a>
+      </div>
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .radar-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 13rem;
+    align-items: center;
+    gap: clamp(24px, 5vw, 56px);
+    max-width: 52rem;
+    padding: clamp(20px, 4vw, 48px);
+    border: 2px solid var(--ink);
+    background: var(--sky);
+    color: var(--sky-ink);
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--font-carve);
+    font-size: clamp(var(--fs-xl), 5vw, var(--fs-xxl));
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: 16px;
+    font-size: var(--fs-s);
+  }
+
+  .radar-code {
+    display: block;
+    width: min(13rem, 100%);
+    border: 2px solid var(--ink);
+    background: white;
+    box-shadow: var(--px) var(--px) 0 var(--ink);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 640px) {
+    .radar-entry {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
