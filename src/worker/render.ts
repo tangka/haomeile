@@ -380,10 +380,13 @@ export async function servePage(
     assetPath = radarAccessible ? '/radar/' : '/_templates/radar-gate/';
     const overview = radarAccessible ? readRadarOverview?.() : null;
     if (overview) {
-      const formattedAt = new Intl.DateTimeFormat(
-        locale === 'en' ? 'en-GB' : 'zh-CN',
-        { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Singapore' },
-      ).format(new Date(overview.generatedAt));
+      const ageMinutes = Math.max(
+        0,
+        Math.floor((Date.now() - Date.parse(overview.generatedAt)) / 60_000),
+      );
+      const relativeTime = new Intl.RelativeTimeFormat(locale, {
+        numeric: 'auto',
+      }).format(-ageMinutes, 'minute');
       const label = overview.stale
         ? text('最近一次预测', 'Last available forecast')
         : text('预测更新时间', 'Forecast updated');
@@ -397,7 +400,7 @@ export async function servePage(
       rewriter.on('[data-ssr="radar-overview"]', {
         element: (el) => {
           el.setInnerContent(
-            `<ul class="radar-forecasts" role="list">${cards.join('')}</ul><p class="radar-updated">${label} <time datetime="${escapeHtml(overview.generatedAt)}">${escapeHtml(formattedAt)} (UTC+8)</time></p>`,
+            `<ul class="radar-forecasts" role="list">${cards.join('')}</ul><p class="radar-updated">${label} <time datetime="${escapeHtml(overview.generatedAt)}">${escapeHtml(relativeTime)}</time></p>`,
             { html: true },
           );
         },

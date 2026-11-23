@@ -2,6 +2,16 @@ import { currentLocale } from '../../shared/i18n';
 import type { RadarTrendData } from '../../shared/radar';
 
 const HOUR = 60 * 60 * 1000;
+const locale = currentLocale() === 'en' ? 'en-GB' : 'zh-CN';
+const updated = document.querySelector<HTMLTimeElement>('.radar-updated time');
+if (updated) {
+  updated.textContent = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    hourCycle: 'h23',
+  }).format(new Date(updated.dateTime));
+}
+
 const chart = document.querySelector<HTMLCanvasElement>(
   'canvas[data-radar-trend]',
 );
@@ -44,26 +54,25 @@ function mountTrend(
   const times = [
     ...new Set(entries.flatMap(({ points }) => points.map(({ time }) => time))),
   ].sort((a, b) => a - b);
-  const clock = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Asia/Shanghai',
+  const date = new Intl.DateTimeFormat(locale, {
+    month: 'short',
+    day: 'numeric',
+  });
+  const clock = new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
   });
-  const timestamp = new Intl.DateTimeFormat(
-    currentLocale() === 'en' ? 'en-GB' : 'zh-CN',
-    {
-      timeZone: 'Asia/Shanghai',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hourCycle: 'h23',
-    },
-  );
+  const timestamp = new Intl.DateTimeFormat(locale, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  });
   let selected: number | undefined;
   const left = 40;
-  const right = 22;
+  const right = 30;
 
   const timeX = (time: number, width: number): number =>
     left + ((time - start) / (24 * HOUR)) * (width - left - right);
@@ -80,7 +89,7 @@ function mountTrend(
     context.clearRect(0, 0, width, height);
 
     const top = 12;
-    const bottom = height - 26;
+    const bottom = height - 44;
     const x = (time: number): number => timeX(time, width);
     const y = (probability: number): number =>
       bottom - (probability / 100) * (bottom - top);
@@ -105,6 +114,7 @@ function mountTrend(
     const hourOffsets = width < 400 ? [24, 12, 0] : [24, 18, 12, 6, 0];
     for (const hours of hourOffsets) {
       const time = end - hours * HOUR;
+      context.fillText(date.format(time), x(time), height - 25);
       context.fillText(clock.format(time), x(time), height - 9);
     }
 
