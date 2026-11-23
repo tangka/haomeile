@@ -511,5 +511,41 @@
     "reviewed_at": "2026-11-23",
     "evidence": "The GitHub issue's first-person account records the official appeal rejection, automated redirection, and support conversation closure. GitHub lists the original publication at 2026-11-22T02:58:03Z.",
     "status_as_of": "2026-11-22"
+  },
+  {
+    "key": "antigravity-forum-203919",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": "2026-11-17",
+    "appeal_status": "pending",
+    "source_url": "https://discuss.ai.google.dev/t/203919",
+    "source_platform": "Google AI Developers Forum",
+    "source_published_at": "2026-11-23",
+    "codename": "Antigravity 两次申诉后仍未恢复",
+    "codename_en": "Antigravity still disabled after two appeals",
+    "story": "我用 Antigravity 官方桌面版做日常开发，付费订阅还有效。11 月 17 日，客户端提示我的账号已无法使用 Antigravity。我在 18 日用受影响的账号提交申诉，没收到回复，21 日又提交了一次。到 23 日发帖时，我还是用不了，也没有收到回复。",
+    "story_en": "I used the official Antigravity desktop app for everyday development and still had an active paid subscription. On November 17, the app said Antigravity had been disabled for my account. I appealed from the affected account on November 18 and filed a follow-up on November 21 after hearing nothing. When I posted on November 23, I still had no access or reply.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The original forum post lists the suspension and both appeal dates, an active paid subscription without naming its tier, and no response at the time of publication. The forum timestamps the original post at 2026-11-23T01:28:16Z.",
+    "status_as_of": "2026-11-23"
+  },
+  {
+    "key": "claude-x-2122863073694523573",
+    "vendor": "claude",
+    "event_type": "suspended",
+    "plan": "max",
+    "event_date": "2026-11-13",
+    "appeal_status": "restored",
+    "source_url": "https://x.com/qianshuixia2026/status/2122863073694523573",
+    "source_platform": "X",
+    "source_published_at": "2026-11-18",
+    "codename": "Claude 申诉恢复账号，Max 晚三天回来",
+    "codename_en": "Claude account restored on appeal, Max returned three days later",
+    "story": "我在 Google Play 买了 Claude Max。11 月 13 日按提示完成身份验证后，账号被停用，邮件提到地区政策。我提交申诉，14 日收到账号恢复的回复，可登录后只显示免费版。我联系了 Google Play 和 Claude 的账单支持。17 日再次检查时，Max 已经回来了，我没收到通知，也没收到退款。",
+    "story_en": "I paid for Claude Max through Google Play. After I completed a prompted identity check on November 13, my account was disabled and the email cited the region policy. I appealed and got my account back on November 14, but it showed Free when I signed in. I contacted Google Play and Claude billing support. When I checked again on November 17, Max was back. I hadn't received a notice or refund.",
+    "reviewed_at": "2026-11-23",
+    "evidence": "The official X embed confirms the author's public post date and restoration account. Its linked X article, https://x.com/i/article/2122767782291066880, gives the November 13 suspension, November 14 account restoration, and November 17 subscription restoration timeline.",
+    "status_as_of": "2026-11-17"
   }
 ]
