@@ -42,20 +42,15 @@ export const EN_STATIC: Record<string, string> = {
   使用小技巧: 'Tips',
   重置雷达: 'Reset Radar',
   '重置雷达 · 号没了': 'Reset Radar · Haomeile',
-  '查看 Codex 和 Claude Code 未来 24 小时的额度重置概率，扫码进入重置雷达小程序。':
-    'See 24-hour quota reset estimates for Codex and Claude Code, or scan the code for the Reset Radar Mini Program.',
   '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
-  '根据公开信号估算。': 'Estimates based on public signals.',
-  验证后查看预测: 'Verify to see predictions',
-  '开启 JavaScript 后完成验证，或在微信查看重置雷达。':
-    'Enable JavaScript to verify, or open Reset Radar in WeChat.',
+  'Codex 和 Claude Code 未来 24 小时的额度重置概率。':
+    '24-hour quota reset estimates for Codex and Claude Code.',
+  重置预测: 'Reset forecast',
+  '通过人机验证后进入重置雷达。': 'Verify you are human to open Reset Radar.',
+  '请完成人机验证后进入。': 'Complete the human verification to continue.',
+  '请开启 JavaScript 完成验证。': 'Enable JavaScript to verify.',
   '暂未获取到额度重置预测。':
     'Quota reset estimates are currently unavailable.',
-  在微信查看研判依据: 'See the signals behind the forecast in WeChat',
-  '用微信扫码，或在微信小程序里搜索「重置雷达」。':
-    'Scan with WeChat, or search for “重置雷达” in WeChat Mini Programs.',
-  重置雷达微信小程序码: 'Reset Radar WeChat Mini Program code',
-  查看小程序码原图: 'View full-size Mini Program code',
   '阅读 X 长文': 'Read the full article on X',
   返回技巧目录: 'Back to tips',
   文章导航: 'Article navigation',

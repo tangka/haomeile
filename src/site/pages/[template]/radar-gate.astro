@@ -1,0 +1,115 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import RadarMark from '../../components/RadarMark.astro';
+
+export function getStaticPaths() {
+  return [{ params: { template: '_templates' } }];
+}
+---
+
+<SiteLayout
+  title="重置雷达 · 号没了"
+  description="通过人机验证后进入重置雷达。"
+  path="/radar"
+  standalone
+>
+  <main class="gate">
+    <section
+      class="gate-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="radar-gate-title"
+      data-radar-verify
+    >
+      <div class="gate-mark">
+        <RadarMark />
+      </div>
+      <h1 id="radar-gate-title">重置雷达</h1>
+      <p>请完成人机验证后进入。</p>
+      <div class="gate-challenge" data-radar-challenge></div>
+      <p class="gate-status" data-radar-status role="status"></p>
+      <noscript>请开启 JavaScript 完成验证。</noscript>
+      <button class="btn btn-primary" type="button" data-radar-start hidden>
+        重新验证
+      </button>
+      <div class="gate-footer">
+        <a href="/">回到纪念墙</a>
+        <a data-locale-switch href="/en/radar" hreflang="en" lang="en">
+          English
+        </a>
+      </div>
+    </section>
+  </main>
+  <script>
+    import '../../scripts/radar';
+  </script>
+</SiteLayout>
+
+<style>
+  .gate {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 24px 12px;
+    color: var(--sky-ink);
+    background:
+      radial-gradient(circle at 72% 26%, var(--sky) 0, transparent 62%),
+      color-mix(in srgb, var(--paper) 75%, var(--sky));
+  }
+
+  .gate-card {
+    width: min(100%, 28rem);
+    padding: clamp(14px, 4vw, 36px);
+    border: 2px solid var(--sky-ink);
+    background: var(--paper);
+    box-shadow: 8px 8px 0 color-mix(in srgb, var(--sky-ink) 76%, transparent);
+  }
+
+  .gate-mark {
+    --radar-mark-size: 54px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font: 900 clamp(32px, 6vw, 46px) / 1.12 var(--font-carve);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .gate-challenge {
+    min-height: 68px;
+    margin-top: 22px;
+  }
+
+  .gate-status,
+  noscript {
+    color: var(--sky-ink);
+    font-size: var(--fs-s);
+  }
+
+  .gate-status:not(:empty),
+  button:not([hidden]) {
+    margin-top: 10px;
+  }
+
+  button[hidden] {
+    display: none;
+  }
+
+  .gate-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid color-mix(in srgb, var(--sky-ink) 23%, transparent);
+    font-size: var(--fs-xs);
+  }
+
+  .gate-footer a {
+    text-underline-offset: 3px;
+  }
+</style>

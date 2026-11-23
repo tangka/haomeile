@@ -18,6 +18,7 @@ function bindVerifier(verifier: HTMLElement): void {
     if (submitting) return;
     start.textContent = tr('重新验证');
     start.disabled = false;
+    start.hidden = false;
     status.textContent = tr(message);
   };
 
@@ -35,6 +36,10 @@ function bindVerifier(verifier: HTMLElement): void {
         body: JSON.stringify({ turnstile_token: token }),
       });
       if (response.ok) {
+        history.replaceState(
+          { ...history.state, radarVerifiedAt: Date.now() },
+          '',
+        );
         location.reload();
         return;
       }
@@ -50,7 +55,8 @@ function bindVerifier(verifier: HTMLElement): void {
     }
   };
 
-  start.addEventListener('click', async () => {
+  const beginVerification = async (): Promise<void> => {
+    start.hidden = true;
     start.disabled = true;
     status.textContent = tr('请完成人机验证。');
     try {
@@ -65,6 +71,16 @@ function bindVerifier(verifier: HTMLElement): void {
     } catch {
       retry('人机验证暂时不可用，稍后再试。');
     }
-  });
-  start.hidden = false;
+  };
+
+  start.addEventListener('click', beginVerification);
+  const verifiedAt = history.state?.radarVerifiedAt;
+  const now = Date.now();
+  if (
+    typeof verifiedAt === 'number' &&
+    verifiedAt <= now &&
+    now - verifiedAt < 30_000
+  )
+    retry('验证未完成，请重试。');
+  else void beginVerification();
 }

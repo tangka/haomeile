@@ -308,15 +308,20 @@ export async function servePage(
   const site = siteOrigin(c.env.SITE_ORIGIN);
   const requestedPath = basePath(url.pathname);
   // Normalize static HTML aliases internally; redirects would drop locale or edit queries.
-  const path =
-    requestedPath
-      .replace(/\/index\.html$/, '/')
-      .replace(/\.html$/, '')
-      .replace(/\/$/, '') || '/';
+  const radarPage = /^\/radar(?:\/index\.html|\.html)?\/?$/.test(requestedPath);
+  const path = radarPage
+    ? '/radar'
+    : requestedPath
+        .replace(/\/index\.html$/, '/')
+        .replace(/\.html$/, '')
+        .replace(/\/$/, '') || '/';
   const locale = routeLocale(url.pathname);
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const labels = getLabels(locale);
-  const rewriter = languageRewriter(c.req.raw, site)
+  const pageRequest = radarPage
+    ? new Request(new URL(localePath(path, locale), url), c.req.raw)
+    : c.req.raw;
+  const rewriter = languageRewriter(pageRequest, site)
     .on('[data-turnstile-sitekey]', {
       element: (el) => {
         el.setAttribute('data-turnstile-sitekey', c.env.TURNSTILE_SITE_KEY);
@@ -328,6 +333,7 @@ export async function servePage(
       },
     });
   let assetPath = requestedPath;
+  let radarVerified = false;
   // Fetch directory assets internally so their canonical redirects cannot drop form query parameters.
   if (
     [
@@ -336,7 +342,6 @@ export async function servePage(
       '/epitaph',
       '/appeal',
       '/tips',
-      '/radar',
       '/privacy',
       '/about',
       '/admin',
@@ -346,21 +351,10 @@ export async function servePage(
     assetPath = path + '/';
   if (path === '/radar') {
     c.header('Cache-Control', 'private, no-store');
-    const overview = readRadarOverview?.();
-    const showOverview = !overview || (await hasRadarPass(c));
-    if (showOverview) {
-      rewriter.on('[data-radar-verify]', {
-        element: (el) => {
-          el.setAttribute('hidden', '');
-        },
-      });
-      rewriter.on('[data-ssr="radar-overview"]', {
-        element: (el) => {
-          el.removeAttribute('hidden');
-        },
-      });
-    }
-    if (showOverview && overview) {
+    radarVerified = await hasRadarPass(c);
+    assetPath = radarVerified ? '/radar/' : '/_templates/radar-gate/';
+    const overview = radarVerified ? readRadarOverview?.() : null;
+    if (overview) {
       const formattedAt = new Intl.DateTimeFormat(
         locale === 'en' ? 'en-GB' : 'zh-CN',
         { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Singapore' },
@@ -684,7 +678,8 @@ export async function servePage(
     c.env.ENVIRONMENT === 'production' &&
     url.origin === DEFAULT_SITE_ORIGIN &&
     site === DEFAULT_SITE_ORIGIN &&
-    (/^\/(?:appeal|privacy|about|tips|radar)?$/.test(path) ||
+    ((path === '/radar' && radarVerified) ||
+      /^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
       /^\/(?:v|t|tips)\/[^/]+$/.test(path));
   const analyticsToken = publicAnalyticsPage
     ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()

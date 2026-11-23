@@ -128,11 +128,14 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
-  test('shows a small radar snapshot only after verifying a short-lived browser pass', async () => {
+  test('serves the entire Radar page only after verifying a short-lived browser pass', async () => {
     const key = 'fictional-integration-key-for-isolated-runtime-tests';
     const generatedAt = new Date().toISOString();
     const respond = async (...[target, options]: Parameters<typeof fetch>) => {
-      if (String(target) === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
+      if (
+        String(target) ===
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+      ) {
         const token = (options?.body as URLSearchParams).get('response');
         return Response.json({
           success: true,
@@ -162,31 +165,71 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       Object.assign(respond, { preconnect() {} }),
     );
     fetchSpies.push(fetchMock);
-    const { opened } = await runtime(undefined, undefined, key);
+    const { opened } = await runtime(
+      'radar-analytics-test-token',
+      MEASUREMENT_ID,
+      key,
+    );
     expect(opened.radar!.read()).toBeNull();
     opened.radar!.start();
     opened.radar!.start();
     await Bun.sleep(0);
 
-    const [anonymous, forged, direct] = await Promise.all([
+    const [
+      anonymous,
+      forged,
+      alias,
+      localizedAlias,
+      direct,
+      gateTemplate,
+      home,
+    ] = await Promise.all([
       request(opened, '/radar?url=https://example.invalid', undefined, {
         Authorization: 'Bearer visitor-credential',
       }),
-      request(opened, '/en/radar', undefined, { Cookie: '__Host-haomeile_radar=forged' }),
+      request(opened, '/en/radar', undefined, {
+        Cookie: '__Host-haomeile_radar=forged',
+      }),
+      request(opened, '/radar.html/'),
+      request(opened, '/en/radar/index.html/'),
       request(opened, '/api/radar'),
+      request(opened, '/en/_templates/radar-gate/index.html'),
+      request(opened, '/'),
     ]);
     expect(direct.status).toBe(404);
-    for (const response of [anonymous, forged]) {
+    expect(gateTemplate.status).toBe(404);
+    expect(await gateTemplate.text()).not.toContain('data-radar-verify');
+    expect(home.status).toBe(200);
+    const homeHtml = await home.text();
+    expect(homeHtml).toContain('这里还很安静');
+    expect(homeHtml).not.toContain('data-radar-verify');
+    const gates = [anonymous, forged, alias, localizedAlias] as const;
+    for (const [index, response] of gates.entries()) {
       expect(response.status).toBe(200);
       expect(response.headers.get('cache-control')).toBe('private, no-store');
+      expect(response.headers.get('vary')).toContain('Cookie');
       const html = await response.text();
       expect(html).toContain('data-radar-verify');
-      expect(html).not.toContain('<strong>18%</strong>');
+      const canonical = index % 2 === 0 ? '/radar' : '/en/radar';
+      expect(html).toContain(`rel="canonical" href="${SITE}${canonical}"`);
+      expect(html).not.toMatch(
+        /data-ssr="radar-overview"|reset-radar-qr|<strong>18%|data-ga4-measurement-id|data-cf-beacon/,
+      );
     }
-    expect((await request(opened, '/api/radar/verify', { turnstile_token: 'wrong-action' })).status).toBe(400);
-    const verified = await request(opened, '/api/radar/verify', { turnstile_token: TOKEN });
+    expect(
+      (
+        await request(opened, '/api/radar/verify', {
+          turnstile_token: 'wrong-action',
+        })
+      ).status,
+    ).toBe(400);
+    const verified = await request(opened, '/api/radar/verify', {
+      turnstile_token: TOKEN,
+    });
     expect(verified.status).toBe(200);
-    const replayed = await request(opened, '/api/radar/verify', { turnstile_token: TOKEN });
+    const replayed = await request(opened, '/api/radar/verify', {
+      turnstile_token: TOKEN,
+    });
     expect(replayed.status).toBe(400);
     expect(replayed.headers.has('set-cookie')).toBe(false);
     const cookie = verified.headers.get('set-cookie')!;
@@ -199,7 +242,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       ...headers,
       'CF-Connecting-IP': '198.51.100.19',
     });
-    expect(await otherNetwork.text()).not.toContain('<strong>18%</strong>');
+    const otherNetworkHtml = await otherNetwork.text();
+    expect(otherNetworkHtml).toContain('data-radar-verify');
+    expect(otherNetworkHtml).not.toMatch(/reset-radar-qr|<strong>18%/);
     const [zh, en] = await Promise.all([
       request(opened, '/radar', undefined, headers),
       request(opened, '/en/radar/index.html', undefined, headers),
@@ -207,15 +252,42 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     for (const response of [zh, en]) {
       expect(response.status).toBe(200);
       expect(response.headers.get('cache-control')).toBe('private, no-store');
+      expect(response.headers.get('vary')).toContain('Cookie');
       const html = await response.text();
+      expect(html).not.toContain('reset-radar-qr.jpg');
+      expect(html).toContain(`data-ga4-measurement-id="${MEASUREMENT_ID}"`);
       expect(html).toContain('<h3>Codex</h3><strong>18%</strong>');
       expect(html).toContain('<h3>Claude Code</h3><strong>0%</strong>');
       expect(html).toContain(`datetime="${generatedAt}"`);
       expect(html).not.toMatch(
-        /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok/,
+        /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok|data-radar-verify/,
       );
     }
-    expect(fetchMock.mock.calls.filter(([target]) => String(target).startsWith('https://api.tangka.online/'))).toHaveLength(1);
+
+    const { opened: noRadar } = await runtime();
+    const lockedBeforeData = await request(noRadar, '/radar');
+    const lockedBeforeDataHtml = await lockedBeforeData.text();
+    expect(lockedBeforeDataHtml).toContain('data-radar-verify');
+    expect(lockedBeforeDataHtml).not.toMatch(
+      /data-ssr="radar-overview"|reset-radar-qr/,
+    );
+    const passedWithoutData = await request(noRadar, '/api/radar/verify', {
+      turnstile_token: TOKEN,
+    });
+    expect(passedWithoutData.status).toBe(200);
+    const openWithoutData = await request(noRadar, '/radar', undefined, {
+      Cookie: passedWithoutData.headers.get('set-cookie')!.split(';')[0],
+    });
+    const openWithoutDataHtml = await openWithoutData.text();
+    expect(openWithoutDataHtml).not.toContain('reset-radar-qr.jpg');
+    expect(openWithoutDataHtml).toContain('暂未获取到额度重置预测。');
+    expect(openWithoutDataHtml).not.toContain('data-radar-verify');
+
+    expect(
+      fetchMock.mock.calls.filter(([target]) =>
+        String(target).startsWith('https://api.tangka.online/'),
+      ),
+    ).toHaveLength(1);
     expect(fetchMock.mock.calls[0][0]).toBe(
       'https://api.tangka.online/radar-api/integrations/haomeile/overview',
     );

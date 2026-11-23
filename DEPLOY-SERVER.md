@@ -76,9 +76,9 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 在 `/etc/haomeile/haomeile.env` 配置 `RADAR_OVERVIEW_API_KEY`，将 `RADAR_OVERVIEW_API_URL` 设为 `https://api.tangka.online/radar-api/integrations/haomeile/overview` 并重启应用。重置雷达端要求单独的只读 Bearer Token，并核对 Nginx 读到的本站出口 IP。两台服务通过 HTTPS 通信，客户端拿不到上游凭据。怀疑泄露时，先在雷达端吊销旧凭据，再给两台服务配置新凭据并核验新旧令牌的响应。
 
-进程启动后主动获取快照，之后每五分钟刷新，遇到上游限流时延后。`/radar` 和 `/en/radar` 只从内存快照渲染 Codex、Claude Code 的概率和生成时间。若刷新失败或生成时间距今超过 45 分钟，页面标记为最近一次预测。超过三小时或没有有效快照时，页面显示数据暂不可用，仍可扫码进入小程序。
+进程启动后主动获取快照，之后每五分钟刷新，遇到上游限流时延后。`/radar` 和 `/en/radar` 只从内存快照渲染 Codex、Claude Code 的概率和生成时间。若刷新失败或生成时间距今超过 45 分钟，页面标记为最近一次预测。超过三小时或没有有效快照时，页面显示数据暂不可用。
 
-浏览器通过 Cloudflare Turnstile，服务器校验域名和 `radar_gate` 动作后签发 15 分钟通行 Cookie，验证和读取均按网络限频。雷达 HTML 禁止共享缓存。公开的 `/api/radar/verify` 只发放通行凭证，概率与更新时间只在通过验证的 HTML 中显示。
+未验证的 `/radar` 和 `/en/radar` 只返回独立的全屏验证页。Cloudflare Turnstile 验证成功后，服务器校验域名和 `radar_gate` 动作，签发 15 分钟通行 Cookie。验证和读取均按网络限频，雷达 HTML 禁止共享缓存。只有验证后的页面包含预测和访问统计脚本。这个入口的验证仅适用于雷达页面。
 
 ## 社区资料导入
 

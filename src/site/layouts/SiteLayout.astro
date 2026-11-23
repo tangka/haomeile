@@ -8,6 +8,7 @@ interface Props {
   description: string;
   path: string;
   current?: string;
+  standalone?: boolean;
   robots?: string;
   ogType?: 'website' | 'article';
   ogImage?: string;
@@ -20,6 +21,7 @@ const {
   description,
   path,
   current = path,
+  standalone = false,
   robots = 'index,follow,max-image-preview:large',
   ogType = 'website',
   ogImage = '/og/default.png',
@@ -80,14 +82,18 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main-content">
-      跳到正文
-    </a>
-    <SiteHeader current={current} />
+    {!standalone && (
+      <>
+        <a class="skip-link" href="#main-content">
+          跳到正文
+        </a>
+        <SiteHeader current={current} />
+      </>
+    )}
     <div id="main-content" tabindex="-1">
       <slot />
     </div>
-    <SiteFooter />
+    {!standalone && <SiteFooter />}
     <div class="toast" role="status" aria-live="polite" hidden></div>
   </body>
 </html>
