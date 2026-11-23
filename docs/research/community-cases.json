@@ -655,5 +655,41 @@
     "reviewed_at": "2026-11-24",
     "evidence": "Original post published at 2026-11-19T10:55:19Z. The author reported appealing, asking for a refund and receiving no specific reason. On November 20 the author described an unsuccessful appeal and continuing permanent suspension (X status 2123757292021772435), without quoting a formal appeal decision. A November 23 post (2124773691229933929) refers to several accounts. Those are not counted separately or used to infer this account’s tier. No incident date or refund result is given.",
     "status_as_of": "2026-11-24"
+  },
+  {
+    "key": "claude-x-2124984532860559578",
+    "vendor": "claude",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": "2026-10-08",
+    "appeal_status": "rejected",
+    "source_url": "https://x.com/Austinlucero29/status/2124984532860559578",
+    "source_platform": "X",
+    "source_published_at": "2026-11-24",
+    "codename": "几个月没登录 Claude，申诉一夜之间被拒",
+    "codename_en": "My Claude appeal was denied overnight after months without logging in",
+    "story": "10 月 8 日，我的 Claude 账号因为“异常活动”被停用。那之前我已经几个月没登录了，也没收到具体解释。我提交了申诉，一夜之间就收到了自动拒绝的回复。账号停用已经影响到我的生意，我在 X 上请求人工复查。",
+    "story_en": "On October 8, Claude suspended my account for unusual activity. I hadn’t signed in for months, and I didn’t get an explanation of what activity was flagged. I appealed and got an automatic denial overnight. Losing access was affecting my business, so I asked on X for someone to review my case.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "The original X post and official X embed confirm the stated incident date of October 8, an overnight appeal denial described by the author as automatic, and a request for human review. Posted at 2026-11-23T21:52:47Z (November 24 in Singapore). A search of the author’s subsequent posts found no decision on the requested human review. No plan was disclosed.",
+    "status_as_of": "2026-11-24"
+  },
+  {
+    "key": "antigravity-forum-204423",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "pending",
+    "source_url": "https://discuss.ai.google.dev/t/204423",
+    "source_platform": "Google AI Developers Forum",
+    "source_published_at": "2026-11-24",
+    "codename": "Antigravity 停用，申诉约五次还没收到答复",
+    "codename_en": "I appealed my Antigravity suspension about five times without a reply",
+    "story": "我偶尔用 Antigravity 做自己的项目。后来账号上出现了违反条款、服务已停用的提示。我提交过大约五次申诉，一直没收到答复。我停用了第三方工具，到论坛请求人工复查，发帖时还没能恢复访问。",
+    "story_en": "I used Antigravity occasionally for personal projects. Then I got a message that access had been disabled for a terms violation. I sent about five appeals and still hadn’t heard back. I stopped using third-party tools and asked for a manual review on the forum. I still couldn’t get in when I posted.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "Original topic posted at 2026-11-23T21:37:49Z (November 24 in Singapore). The author reports a disablement, about five appeals, no response and a request for manual review. No tier or incident date given. At review the topic contained only the original post.",
+    "status_as_of": "2026-11-24"
   }
 ]
