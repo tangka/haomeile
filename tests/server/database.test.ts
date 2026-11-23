@@ -1,9 +1,19 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import {
+  copyFile,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { openDatabase, type LocalDatabase } from '../../src/server/database';
 import { findPublicTombstone } from '../../src/worker/lib/store';
+import { createRadarEmailStore } from '../../src/server/radar-email-store';
 
 const opened: LocalDatabase[] = [];
 const directories: string[] = [];
@@ -196,6 +206,45 @@ describe('Bun SQLite D1 binding', () => {
     expect(await query.first('count')).toBe(2);
   });
 
+  test('upgrading email verification keeps legacy pending links usable without granting them an OTP', async () => {
+    const previous = await temporary();
+    for (const name of await readdir(migrations)) {
+      if (name.endsWith('.sql') && name < '0006') {
+        await copyFile(join(migrations, name), join(previous, name));
+      }
+    }
+    const db = database();
+    await db.migrate(previous);
+    const link = 'A'.repeat(43);
+    const tokenHash = createHash('sha256').update(link).digest('hex');
+    const now = Date.now();
+    await db.binding
+      .prepare(
+        'INSERT INTO radar_email_confirmations VALUES (?, 1, ?, ?, ?, ?, ?)',
+      )
+      .bind(
+        'legacy@example.test',
+        'en',
+        'legacy-nonce',
+        tokenHash,
+        now,
+        now + 600_000,
+      )
+      .run();
+    expect(await db.migrate(migrations)).toContain(
+      '0006_radar_email_codes.sql',
+    );
+    const store = createRadarEmailStore(
+      db.binding,
+      'legacy-migration-test-only',
+    );
+    expect(await store.confirmCode('legacy@example.test', '000000')).toBe(
+      false,
+    );
+    expect(await store.confirm(link)).toBe(true);
+    expect(await store.confirm(link)).toBe(false);
+  });
+
   test('persists data and idempotent migrations without importing fixtures', async () => {
     const directory = await temporary(),
       file = join(directory, 'db.sqlite');
@@ -206,6 +255,7 @@ describe('Bun SQLite D1 binding', () => {
       '0003_community.sql',
       '0004_memorial_numbers.sql',
       '0005_radar_email.sql',
+      '0006_radar_email_codes.sql',
     ]);
     expect(
       await db.binding

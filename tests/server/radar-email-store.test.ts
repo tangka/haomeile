@@ -44,6 +44,67 @@ function snapshot(
 }
 
 describe('Reset Radar email ownership', () => {
+  test('a code confirms only its pending mailbox and settings, once, including concurrent submissions', async () => {
+    const pending = (await store.requestConfirmation(
+      email,
+      ['antigravity'],
+      'en',
+    ))!;
+    expect(pending.code).toMatch(/^\d{6}$/);
+    expect(await store.confirmCode('other@example.com', pending.code)).toBe(
+      false,
+    );
+    expect(await store.confirmCode(email, pending.code + '0')).toBe(false);
+    const accepted = await Promise.all(
+      Array.from({ length: 4 }, () => store.confirmCode(email, pending.code)),
+    );
+    expect(accepted.filter(Boolean)).toHaveLength(1);
+    expect(await store.confirm(pending.token)).toBe(false);
+    expect(
+      await database.binding
+        .prepare('SELECT email, platforms, locale FROM radar_email_contacts')
+        .first(),
+    ).toEqual({ email, platforms: 4, locale: 'en' });
+  });
+
+  test('five wrong attempts lock the code and leave the inbox confirmation link usable', async () => {
+    const pending = (await store.requestConfirmation(email, ['codex'], 'zh'))!;
+    const wrong = pending.code === '000000' ? '000001' : '000000';
+    await Promise.all(
+      Array.from({ length: 10 }, () => store.confirmCode(email, wrong)),
+    );
+    expect(
+      await database.binding
+        .prepare('SELECT code_failures FROM radar_email_confirmations')
+        .first('code_failures'),
+    ).toBe(5);
+    expect(await store.confirmCode(email, pending.code)).toBe(false);
+    expect(await store.confirm(pending.token)).toBe(true);
+    expect(await store.confirmCode(email, pending.code)).toBe(false);
+  });
+
+  test('a resend issues a new ten-minute code; stale delivery reports cannot discard the new request', async () => {
+    const first = (await store.requestConfirmation(email, ['claude'], 'zh'))!;
+    clock += 10 * minute;
+    expect(await store.confirmCode(email, first.code)).toBe(false);
+    const second = (await store.requestConfirmation(email, ['claude'], 'zh'))!;
+    await store.discardConfirmation(first.token, first.requestedAt);
+    const wrong = second.code === '000000' ? '000001' : '000000';
+    for (let i = 0; i < 4; i++)
+      expect(await store.confirmCode(email, wrong)).toBe(false);
+    expect(await store.confirmCode(email, second.code)).toBe(true);
+  });
+
+  test('a code issued near the original link deadline gets its full ten minutes', async () => {
+    const first = (await store.requestConfirmation(email, ['codex'], 'en'))!;
+    clock += (24 * 60 - 5) * minute;
+    const recent = (await store.requestConfirmation(email, ['codex'], 'en'))!;
+    clock += 6 * minute;
+    expect(await store.confirm(first.token)).toBe(false);
+    await store.dispatch(null, async () => 'sent');
+    expect(await store.confirmCode(email, recent.code)).toBe(true);
+  });
+
   test('normalizes email, limits resends, and requires a one-time confirmation before preference changes', async () => {
     expect(normalizeRadarEmail(' Subscriber@Example.COM ')).toBe(email);
     for (const invalid of [

@@ -179,9 +179,18 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(mail).toHaveLength(1);
     expect(mail[0].to).toEqual([signup.email]);
     const token = mail[0].text.match(/\/en\/radar\/email#confirm=([\w-]+)/)![1];
+    const code = mail[0].text.match(/verification code is (\d{6})\./)![1];
+    expect(
+      (
+        await request(opened, '/api/radar/email/confirm-code', {
+          email: signup.email,
+          code,
+        })
+      ).status,
+    ).toBe(200);
     expect(
       (await request(opened, '/api/radar/email/confirm', { token })).status,
-    ).toBe(200);
+    ).toBe(410);
     const now = Date.now();
     const snapshot = {
       generatedAt: new Date(now).toISOString(),
@@ -209,6 +218,28 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
         })
       ).status,
     ).toBe(200);
+  });
+  test('rate-limits code verification by mailbox and IP even for unknown mailboxes', async () => {
+    const { opened } = await runtime(
+      undefined,
+      undefined,
+      undefined,
+      'false',
+      true,
+    );
+    const check = async (email: string) =>
+      (
+        await request(opened, '/api/radar/email/confirm-code', {
+          email,
+          code: '123456',
+        })
+      ).status;
+    for (let i = 0; i < 15; i++)
+      expect(await check('empty@example.test')).toBe(410);
+    expect(await check('empty@example.test')).toBe(429);
+    for (let i = 0; i < 14; i++)
+      expect(await check(`other${i}@example.test`)).toBe(410);
+    expect(await check('another@example.test')).toBe(429);
   });
   test('serves the entire Radar page only after verifying a short-lived browser pass', async () => {
     const key = 'fictional-integration-key-for-isolated-runtime-tests';

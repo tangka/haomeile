@@ -70,13 +70,18 @@ export const EN_STATIC: Record<string, string> = {
     'Get an email when a new forecast for a selected platform exceeds 80%. You get one alert per platform while its forecast stays above 80%.',
   选择提醒的平台: 'Choose platforms',
   邮箱地址: 'Email address',
-  '提交后请查收确认邮件。每封提醒邮件都附有退订链接。':
-    'Check your inbox to confirm. Every alert includes an unsubscribe link.',
-  发送确认邮件: 'Send confirmation email',
+  '验证邮箱后开始接收提醒，可随时退订。':
+    'Verify your email to receive alerts. You can unsubscribe at any time.',
+  发送验证码: 'Send code',
+  邮箱验证码: 'Email verification code',
+  '请输入邮件里的 6 位验证码，10 分钟内有效。也可以点击邮件中的确认链接。':
+    'Enter the 6-digit code from your email within 10 minutes, or use the confirmation link in the email.',
+  修改邮箱或重新获取验证码: 'Change email or request another code',
+  '验证码错误或已过期，请核对或重新获取。':
+    'That code is incorrect or has expired. Check it or request another code.',
   '请至少选择一个平台。': 'Choose at least one platform.',
   '正在提交…': 'Submitting…',
-  '请查收确认邮件。若收件箱没有，请检查垃圾邮件。':
-    'Check your email to confirm. If you cannot find the message, check your spam folder.',
+  '请查看 {email} 的收件箱。': 'Check the inbox for {email}.',
   '提交未完成，请稍后再试。': 'Submission failed. Please try again later.',
   '管理雷达邮件提醒 · 号没了': 'Manage Radar email alerts · Haomeile',
   管理雷达邮件提醒: 'Manage Radar email alerts',

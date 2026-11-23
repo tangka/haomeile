@@ -11,9 +11,10 @@ if (signup) bindSignup(signup);
 if (manage) bindManagement(manage);
 
 async function postEmail(
-  action: EmailAction | 'subscribe',
+  action: EmailAction | 'subscribe' | 'confirm-code',
   body:
     | { token: string }
+    | { email: string; code: string }
     | { email: string; platforms: string[]; locale: 'en' | 'zh' },
 ): Promise<number> {
   try {
@@ -35,14 +36,35 @@ async function postEmail(
 }
 
 function bindSignup(form: HTMLFormElement): void {
+  const section = form.closest('section');
+  const verify = section?.querySelector<HTMLFormElement>(
+    '[data-radar-email-verify]',
+  );
+  const code = verify?.querySelector<HTMLInputElement>('[name="code"]');
+  const verifyButton =
+    verify?.querySelector<HTMLButtonElement>('[type="submit"]');
+  const edit = verify?.querySelector<HTMLButtonElement>('[data-edit-email]');
   const button = form.querySelector<HTMLButtonElement>('[type="submit"]');
-  const status = form.querySelector<HTMLElement>('[data-radar-email-status]');
-  if (!button || !status) return;
+  const address = form.querySelector<HTMLInputElement>('[name="email"]');
+  const status = section?.querySelector<HTMLElement>(
+    '[data-radar-email-status]',
+  );
+  if (
+    !verify ||
+    !code ||
+    !verifyButton ||
+    !edit ||
+    !button ||
+    !address ||
+    !status
+  )
+    return;
+  let pendingEmail = '';
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (button.disabled) return;
+    if (button.disabled || form.hidden) return;
     const fields = new FormData(form);
-    const email = String(fields.get('email') || '').trim();
+    const email = address.value.trim();
     const platforms = fields.getAll('platform').map(String);
     if (platforms.length === 0) {
       status.textContent = tr('请至少选择一个平台。');
@@ -51,22 +73,71 @@ function bindSignup(form: HTMLFormElement): void {
     }
     button.disabled = true;
     status.textContent = tr('正在提交…');
-    const code = await postEmail('subscribe', {
+    const result = await postEmail('subscribe', {
       email,
       platforms,
       locale: currentLocale(),
     });
-    if (code >= 200 && code < 300) {
-      form.reset();
-      status.textContent = tr('请查收确认邮件。若收件箱没有，请检查垃圾邮件。');
+    if (result >= 200 && result < 300) {
+      pendingEmail = email;
+      form.hidden = true;
+      verify.hidden = false;
+      status.textContent = tr('请查看 {email} 的收件箱。').replace(
+        '{email}',
+        () => email,
+      );
+      code.focus();
     } else {
       status.textContent = tr(
-        code === 429
+        result === 429
           ? '请求过于频繁，请稍后再试。'
           : '提交未完成，请稍后再试。',
       );
     }
     button.disabled = false;
+  });
+
+  edit.addEventListener('click', () => {
+    pendingEmail = '';
+    verify.reset();
+    code.removeAttribute('aria-invalid');
+    verify.hidden = true;
+    form.hidden = false;
+    status.textContent = '';
+    address.focus();
+  });
+
+  code.addEventListener('input', () => code.removeAttribute('aria-invalid'));
+  verify.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!pendingEmail || verifyButton.disabled) return;
+    verifyButton.disabled = edit.disabled = true;
+    status.textContent = tr('正在提交…');
+    const result = await postEmail('confirm-code', {
+      email: pendingEmail,
+      code: code.value,
+    });
+    if (result >= 200 && result < 300) {
+      pendingEmail = '';
+      verify.reset();
+      form.reset();
+      verify.hidden = true;
+      form.hidden = false;
+      status.textContent = tr('订阅已确认。');
+      status.focus();
+    } else if (result === 410) {
+      status.textContent = tr('验证码错误或已过期，请核对或重新获取。');
+      code.setAttribute('aria-invalid', 'true');
+      code.focus();
+      code.select();
+    } else {
+      status.textContent = tr(
+        result === 429
+          ? '请求过于频繁，请稍后再试。'
+          : '提交未完成，请稍后再试。',
+      );
+    }
+    verifyButton.disabled = edit.disabled = false;
   });
 }
 

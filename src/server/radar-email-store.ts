@@ -1,4 +1,4 @@
-import { createHash, createHmac, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomInt, randomUUID } from 'node:crypto';
 import type { D1Database } from '@cloudflare/workers-types/index.ts';
 import {
   RADAR_PLATFORM_NAMES,
@@ -10,6 +10,8 @@ const PLATFORMS = ['codex', 'claude', 'antigravity'] as const;
 const THRESHOLD = 80;
 const MAX_AGE_MS = 45 * 60_000;
 const RECONFIRM_MS = 10 * 60_000;
+const CODE_TTL_MS = 10 * 60_000;
+const CODE_MAX_FAILURES = 5;
 const EXPIRY_MS = 24 * 60 * 60_000;
 const CLAIM_MS = 2 * 60_000;
 const RETRY_MS = [60_000, 3 * 60_000, 10 * 60_000, 20 * 60_000];
@@ -130,6 +132,10 @@ export function createRadarEmailStore(
     createHmac('sha256', secret)
       .update(`haomeile/radar-email/${purpose}\0${id}`)
       .digest('base64url');
+  const codeHash = (email: string, code: string) =>
+    createHmac('sha256', secret)
+      .update(`haomeile/radar-email/code\0${email}\0${code}`)
+      .digest('hex');
 
   async function requestConfirmation(
     input: string,
@@ -151,11 +157,12 @@ export function createRadarEmailStore(
     if (!preferences) return null;
     const timestamp = now();
     const nonce = randomUUID();
+    const code = randomInt(1_000_000).toString().padStart(6, '0');
     const row = await db
       .prepare(
         `
-      INSERT INTO radar_email_confirmations(email, platforms, locale, nonce, token_hash, requested_at, expires_at)
-      SELECT ?, ?, ?, ?, ?, ?, ?
+      INSERT INTO radar_email_confirmations(email, platforms, locale, nonce, token_hash, requested_at, expires_at, code_hash, code_expires_at)
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
       WHERE NOT EXISTS (SELECT 1 FROM radar_email_contacts WHERE email = ? AND platforms = ? AND locale = ?)
       ON CONFLICT(email) DO UPDATE SET
         platforms = excluded.platforms,
@@ -165,6 +172,7 @@ export function createRadarEmailStore(
         token_hash = CASE WHEN platforms = excluded.platforms AND locale = excluded.locale
           AND expires_at > excluded.requested_at THEN token_hash ELSE excluded.token_hash END,
         requested_at = excluded.requested_at,
+        code_hash = excluded.code_hash, code_expires_at = excluded.code_expires_at, code_failures = 0,
         expires_at = CASE WHEN platforms = excluded.platforms AND locale = excluded.locale
           AND expires_at > excluded.requested_at THEN expires_at ELSE excluded.expires_at END
       WHERE requested_at <= ?
@@ -179,6 +187,8 @@ export function createRadarEmailStore(
         hash(token('confirmation', nonce)),
         timestamp,
         timestamp + EXPIRY_MS,
+        codeHash(email, code),
+        timestamp + CODE_TTL_MS,
         email,
         preferences,
         locale,
@@ -193,51 +203,88 @@ export function createRadarEmailStore(
         ),
         locale: row.locale,
         token: token('confirmation', row.nonce),
+        code,
+        requestedAt: row.requested_at,
         idempotencyKey: `radar-confirm-${row.nonce}-${row.requested_at}`,
       }
     );
   }
 
-  async function discardConfirmation(value: string) {
+  async function discardConfirmation(value: string, requestedAt: number) {
     const digest = tokenHash(value);
     if (digest)
       await db
-        .prepare('DELETE FROM radar_email_confirmations WHERE token_hash = ?')
-        .bind(digest)
+        .prepare(
+          'DELETE FROM radar_email_confirmations WHERE token_hash = ? AND requested_at = ?',
+        )
+        .bind(digest, requestedAt)
         .run();
   }
 
-  async function confirm(value: string) {
-    const digest = tokenHash(value);
-    if (!digest) return false;
+  // Both proofs consume the same pending preferences inside a single transaction.
+  async function activate(
+    proof: { tokenHash: string } | { email: string; codeHash: string },
+  ) {
     const id = randomUUID();
     const timestamp = now();
-    const [result] = await db.batch([
+    const match =
+      'email' in proof
+        ? 'email = ? AND code_hash = ? AND code_expires_at > ? AND code_failures < ?'
+        : 'token_hash = ? AND expires_at > ?';
+    const args =
+      'email' in proof
+        ? [proof.email, proof.codeHash, timestamp, CODE_MAX_FAILURES]
+        : [proof.tokenHash, timestamp];
+    const statements = [
       db
         .prepare(
           `
         INSERT INTO radar_email_contacts(id, email, platforms, locale, unsubscribe_hash, confirmed_at)
-        SELECT ?, email, platforms, locale, ?, ? FROM radar_email_confirmations WHERE token_hash = ? AND expires_at > ?
+        SELECT ?, email, platforms, locale, ?, ? FROM radar_email_confirmations WHERE ${match}
         ON CONFLICT(email) DO UPDATE SET
           platforms = excluded.platforms, locale = excluded.locale, confirmed_at = excluded.confirmed_at
       `,
         )
-        .bind(id, hash(token('unsubscribe', id)), timestamp, digest, timestamp),
+        .bind(id, hash(token('unsubscribe', id)), timestamp, ...args),
       db
         .prepare(
           `
         DELETE FROM radar_email_alerts WHERE finished_at IS NULL AND contact_id = (
-          SELECT c.id FROM radar_email_contacts c JOIN radar_email_confirmations p ON p.email = c.email
-          WHERE p.token_hash = ? AND p.expires_at > ?
+          SELECT id FROM radar_email_contacts WHERE email = (SELECT email FROM radar_email_confirmations WHERE ${match})
         )
       `,
         )
-        .bind(digest, timestamp),
+        .bind(...args),
       db
-        .prepare('DELETE FROM radar_email_confirmations WHERE token_hash = ?')
-        .bind(digest),
-    ]);
+        .prepare(`DELETE FROM radar_email_confirmations WHERE ${match}`)
+        .bind(...args),
+    ];
+    if ('email' in proof) {
+      statements.push(
+        db
+          .prepare(
+            `
+        UPDATE radar_email_confirmations SET code_failures = code_failures + 1
+        WHERE email = ? AND code_hash <> ? AND code_expires_at > ? AND code_failures < ?
+      `,
+          )
+          .bind(...args),
+      );
+    }
+    const [result] = await db.batch(statements);
     return result.meta.changes === 1;
+  }
+
+  async function confirm(value: string) {
+    const digest = tokenHash(value);
+    return digest ? activate({ tokenHash: digest }) : false;
+  }
+
+  async function confirmCode(input: string, code: unknown) {
+    const email = normalizeRadarEmail(input);
+    if (!email || typeof code !== 'string' || !/^\d{6}$/.test(code))
+      return false;
+    return activate({ email, codeHash: codeHash(email, code) });
   }
 
   async function unsubscribe(value: string) {
@@ -263,8 +310,10 @@ export function createRadarEmailStore(
     const samples = recentSamples(overview, timestamp);
     await db.batch([
       db
-        .prepare('DELETE FROM radar_email_confirmations WHERE expires_at <= ?')
-        .bind(timestamp),
+        .prepare(
+          'DELETE FROM radar_email_confirmations WHERE expires_at <= ? AND (code_expires_at IS NULL OR code_expires_at <= ?)',
+        )
+        .bind(timestamp, timestamp),
       db
         .prepare('DELETE FROM radar_email_alerts WHERE episode_at < ?')
         .bind(timestamp - MAX_AGE_MS),
@@ -402,6 +451,7 @@ export function createRadarEmailStore(
     requestConfirmation,
     discardConfirmation,
     confirm,
+    confirmCode,
     unsubscribe,
     dispatch,
   };

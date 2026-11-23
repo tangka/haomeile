@@ -104,7 +104,7 @@ export function createRadarEmail(
       body.locale,
     );
     if (confirmation) {
-      const { locale, token, idempotencyKey, platforms } = confirmation;
+      const { locale, token, code, idempotencyKey, platforms } = confirmation;
       const url = link(locale, '/email#confirm=' + token);
       const products = platforms
         .map((id) => RADAR_PLATFORM_NAMES[id])
@@ -115,11 +115,12 @@ export function createRadarEmail(
           : '确认订阅重置雷达邮件提醒';
       const text =
         locale === 'en'
-          ? `You requested email alerts for ${products}. Confirm your selection within 24 hours to receive an alert when a platform’s reset probability rises above 80%.\n\n${url}\n\nIf you didn’t request this, you can ignore this email.`
-          : `你申请订阅了 ${products} 的邮件提醒。请在 24 小时内打开链接确认，之后所选平台重置概率超过 80% 时，你会收到邮件。\n\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
+          ? `Your verification code is ${code}. Enter it on Reset Radar within 10 minutes to receive alerts when the reset probability for ${products} rises above 80%.\n\nYou can also confirm using this link. It expires 24 hours after it was first sent.\n${url}\n\nIf you didn’t request these alerts, ignore this email.`
+          : `你的验证码是 ${code}。请在 10 分钟内回到重置雷达输入验证码。确认后，${products} 的重置概率超过 80% 时，你会收到提醒。\n\n你也可以通过下面的链接确认，链接从首次发出起 24 小时内有效。\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
       const outcome = await send(email, subject, text, idempotencyKey);
       if (outcome !== 'sent') {
-        if (outcome === 'permanent') await store.discardConfirmation(token);
+        if (outcome === 'permanent')
+          await store.discardConfirmation(token, confirmation.requestedAt);
         throw new ApiError(
           'EMAIL_UNAVAILABLE',
           '确认邮件发送未完成，请稍后再试。',
@@ -128,6 +129,31 @@ export function createRadarEmail(
       }
     }
     return c.json({ ok: true }, 202);
+  });
+
+  routes.post('/confirm-code', async (c) => {
+    await reserveRate(
+      env.DB,
+      env.PEPPER,
+      c.req.header('CF-Connecting-IP') || null,
+      'radar_email_code_ip',
+      30,
+      true,
+    );
+    const body = await readJson(c.req.raw);
+    const email = normalizeRadarEmail(body.email);
+    if (email)
+      await reserveRate(
+        env.DB,
+        env.PEPPER,
+        email,
+        'radar_email_code_address',
+        15,
+        true,
+      );
+    if (!email || !(await store.confirmCode(email, body.code)))
+      throw new ApiError('INVALID_EMAIL_CODE', '验证码无效或已过期。', 410);
+    return c.json({ ok: true });
   });
 
   for (const action of ['confirm', 'unsubscribe'] as const) {
