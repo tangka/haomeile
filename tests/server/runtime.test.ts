@@ -142,7 +142,12 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       'false',
       true,
     );
-    const mail: { subject: string; to: string[]; text: string }[] = [];
+    const mail: {
+      from: string;
+      subject: string;
+      to: string[];
+      text: string;
+    }[] = [];
     const mock = spyOn(globalThis, 'fetch').mockImplementation(
       Object.assign(
         async (url: Parameters<typeof fetch>[0], options?: RequestInit) => {
@@ -184,6 +189,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       (await request(opened, '/api/radar/email/subscribe', signup)).status,
     ).toBe(202);
     expect(mail).toHaveLength(1);
+    expect(mail[0].from).toBe('Reset Radar <radar@example.test>');
     expect(mail[0].to).toEqual([signup.email]);
     const token = mail[0].text.match(/\/en\/radar\/email#confirm=([\w-]+)/)![1];
     const code = mail[0].text.match(/verification code is (\d{6})\./)![1];
@@ -214,6 +220,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     await opened.radarEmail.dispatch(snapshot);
     await opened.radarEmail.dispatch(snapshot);
     expect(mail).toHaveLength(2);
+    expect(mail[1].from).toBe('Reset Radar <radar@example.test>');
     expect(mail[1].subject).toContain('84%');
     const removal = mail[1].text.match(
       /\/en\/radar\/email#unsubscribe=([\w-]+)/,
@@ -225,6 +232,15 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
         })
       ).status,
     ).toBe(200);
+    expect(
+      (
+        await request(opened, '/api/radar/email/subscribe', {
+          ...signup,
+          locale: 'zh',
+        })
+      ).status,
+    ).toBe(202);
+    expect(mail.at(-1)?.from).toBe('重置雷达 <radar@example.test>');
   });
   test('rate-limits code verification by mailbox and IP even for unknown mailboxes', async () => {
     const { opened } = await runtime(
