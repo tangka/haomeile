@@ -19,10 +19,8 @@ export const EN_STATIC: Record<string, string> = {
     'User-submission figures and the 30-day chart use currently public, approved user submissions. Community summaries have a separate total. “Today” and “past 7 days” use Beijing time (UTC+8).',
   '号没了投稿说明：记录经过、保护隐私、保存凭据，并通过官方渠道申诉。':
     'Posting on 号没了: describe events, protect privacy, save your credentials and use official appeal channels.',
-  '记录 Claude、Codex 和 Antigravity 账号经历，收录用户投稿与公开社区整理。':
-    'Account stories about Claude, Codex and Antigravity, collected from user submissions and public community posts.',
-  '记录 Claude、Codex、Antigravity 账号经历。查看社区整理、匿名立碑、献花或制作墓志铭卡片。':
-    'Explore Claude, Codex and Antigravity account stories. Read community summaries, add an anonymous memorial, leave flowers or make epitaph cards.',
+  '查看 Claude、Codex 和 Antigravity 的封号与申诉经历，查找官方申诉入口，了解订阅扣费和套餐异常的处理步骤。':
+    'Read about Claude, Codex and Antigravity bans and appeals, find official appeal forms and troubleshoot subscription charges or plan issues.',
   'Claude、Codex 和 Antigravity 的账号经历、用户投稿与社区整理。':
     'Account stories, user submissions and community summaries about Claude, Codex and Antigravity.',
   '这里收录账号经历的用户投稿和社区整理。':
@@ -47,9 +45,10 @@ export const EN_STATIC: Record<string, string> = {
   文章导航: 'Article navigation',
   操作步骤: 'What to do',
   收录时浏览量: 'Views when selected',
-  '使用小技巧 · 号没了': 'Tips · 号没了',
-  '面向中国用户的账号开通长文，覆盖 Claude、ChatGPT 与 Google AI 的注册、付款和订阅确认。':
-    'Account setup guides for Chinese users, covering sign-up, payment and subscription confirmation for Claude, ChatGPT and Google AI.',
+  'AI 账号开通、订阅与扣费排查 · 号没了':
+    'AI account setup, subscriptions and billing · 号没了',
+  '面向中文读者的 Claude、ChatGPT 和 Google AI 开通与订阅指南，涵盖付款、续费和套餐异常排查。':
+    'Guides for Chinese-speaking readers on Claude, ChatGPT and Google AI account setup, subscriptions, payments, renewals and plan issues.',
   ...TIP_TRANSLATIONS,
   使用须知: 'Rules',
   提着灯笼的守墓小猫: 'A cemetery cat carrying a lantern',
@@ -128,10 +127,12 @@ export const EN_STATIC: Record<string, string> = {
   操作: 'Action',
   操作人: 'Moderator',
 
-  'Claude、Codex、Antigravity 官方申诉入口 · 号没了':
-    'Official appeals for Claude, Codex and Antigravity · 号没了',
-  'Claude、Codex 和 Antigravity 的官方账号申诉入口和填写建议。':
-    'Official account appeal links and guidance for Claude, Codex and Antigravity.',
+  'Claude、Codex、Antigravity 封号后怎么申诉 · 号没了':
+    'How to appeal a Claude, Codex or Antigravity suspension · 号没了',
+  'Claude、Codex 或 Antigravity 账号停用后，查看对应的官方申诉入口和填写时需要准备的信息。':
+    'Find the official appeal channel for a Claude, Codex or Antigravity suspension and get the details you need to file an appeal.',
+  'Claude 解封后还是 Free？查看 Google Play 的 Max 订阅排查步骤':
+    'Claude still shows Free after reinstatement? Check your Max subscription in Google Play',
   '用受限的 Claude 账号登录，在账号限制页提交申诉。':
     'Sign in with the affected Claude account to submit an appeal on the account restriction page.',
   'Claude 账号申诉': 'Appeal a Claude restriction',
@@ -185,11 +186,12 @@ export const EN_STATIC: Record<string, string> = {
     'The image includes haomeile.rip in the bottom-right corner.',
   小橘号: 'Little Orange',
 
-  '号没了 · AI 账号赛博公墓': '号没了 · An AI account cemetery',
+  '号没了 · Claude、Codex、Antigravity 封号与申诉记录':
+    '号没了 · Claude, Codex and Antigravity bans and appeals',
   'AI 账号赛博公墓': 'An AI account cemetery',
   '被封了、被停了、卡在验证了？': 'Banned, suspended or stuck in verification?',
-  'Claude、Codex、Antigravity，账号没了就来立一块碑。':
-    'Lost your Claude, Codex or Antigravity account? Leave it a memorial.',
+  这里收录: 'Stories about',
+  '的账号停用与申诉经历。': 'account suspensions and appeals.',
 
   '管理我的墓碑 · 号没了': 'Manage my memorial · 号没了',
   '用凭据查看审核结果、修改或撤回。':

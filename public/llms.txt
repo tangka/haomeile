@@ -11,15 +11,19 @@
 
 ## 主要页面
 
-- [纪念墙](https://haomeile.rip/): 最新收录的账号经历、投稿统计与近 30 天曲线
+- [纪念墙](https://haomeile.rip/): 最新收录的账号停用、验证和申诉经历
+- [Claude 封号记录](https://haomeile.rip/v/claude): Claude 账号或组织停用与申诉经历
+- [Codex 账号停用记录](https://haomeile.rip/v/codex): Codex 和相关 ChatGPT 账号的停用与恢复经历
+- [Antigravity 服务停用记录](https://haomeile.rip/v/antigravity): Antigravity 使用权限停用、403 与申诉经历
 - [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的官方申诉链接和填写建议
-- [使用小技巧](https://haomeile.rip/tips): 面向中国用户的 X 长文目录，覆盖 Claude、ChatGPT 与 Google AI 的注册、付款和订阅确认
+- [使用小技巧](https://haomeile.rip/tips): Claude、ChatGPT 与 Google AI 的开通、付款、续费和套餐异常处理步骤，附原文链接
+- [Claude 解封后仍显示 Free](https://haomeile.rip/tips/claude-max-google-play-recovery): 使用 Google Play 付款的 Max 订阅如何核对订单与联系支持
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
 
 ## 可选
 
-- [站点地图](https://haomeile.rip/sitemap.xml): 所有公开墓碑页的列表
+- [站点地图](https://haomeile.rip/sitemap.xml): 可索引的中文与英文公开页面
 - [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器里生成像素墓碑图片
 
 ## English

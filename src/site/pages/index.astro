@@ -5,6 +5,8 @@ import Tally from '../components/Tally.astro';
 import Wall from '../components/Wall.astro';
 import Timeline from '../components/Timeline.astro';
 import { siteOrigin } from '../../shared/site';
+const description =
+  '查看 Claude、Codex 和 Antigravity 的封号与申诉经历，查找官方申诉入口，了解订阅扣费和套餐异常的处理步骤。';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -13,15 +15,14 @@ const jsonLd = [
     alternateName: 'AI 账号赛博公墓',
     url: siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN) + '/',
     inLanguage: 'zh-CN',
-    description:
-      '记录 Claude、Codex 和 Antigravity 账号经历，收录用户投稿与公开社区整理。',
+    description,
   },
 ];
 ---
 
 <SiteLayout
-  title="号没了 · AI 账号赛博公墓"
-  description="记录 Claude、Codex、Antigravity 账号经历。查看社区整理、匿名立碑、献花或制作墓志铭卡片。"
+  title="号没了 · Claude、Codex、Antigravity 封号与申诉记录"
+  description={description}
   path="/"
   current="/"
   jsonLd={jsonLd}
