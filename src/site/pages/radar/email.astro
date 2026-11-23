@@ -12,26 +12,41 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
   <meta slot="head" name="referrer" content="no-referrer" />
   <main class="page" data-radar-email-manage>
     <div class="wrap">
-      <div class="page-head">
-        <h1>管理雷达邮件提醒</h1>
-        <p role="status" data-radar-email-status>
-          请打开邮件中的确认或退订链接。
-        </p>
-      </div>
-      <div class="actions">
-        <button
-          class="btn btn-primary"
-          type="button"
-          data-radar-email-action
-          hidden
-        >
-          确认订阅
-        </button>
-        <a href="/radar">返回重置雷达</a>
-      </div>
+      <section class="radar-email-card">
+        <div class="page-head">
+          <h1>管理雷达邮件提醒</h1>
+          <p role="status" data-radar-email-status>
+            请打开邮件中的确认或退订链接。
+          </p>
+        </div>
+        <div class="actions">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-radar-email-action
+            hidden
+          >
+            确认订阅
+          </button>
+          <a class="btn" href="/radar">返回重置雷达</a>
+        </div>
+      </section>
     </div>
   </main>
   <script>
     import '../../scripts/radar-email';
   </script>
 </SiteLayout>
+
+<style>
+  .radar-email-card {
+    max-width: 34rem;
+    padding: clamp(20px, 4vw, 34px);
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .radar-email-card .actions {
+    margin-top: 20px;
+  }
+</style>

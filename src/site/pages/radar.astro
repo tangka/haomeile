@@ -8,7 +8,20 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const subtitle =
   'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。';
 const description =
-  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，附各平台停用案例与官方申诉入口。';
+  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。';
+
+const faqs = [
+  {
+    question: '重置雷达的概率预测怎么看？是否代表厂商官方公告？',
+    answer:
+      '重置雷达每 30 分钟按社区观测信号刷新一次，展示 Codex、Claude Code 和 Antigravity 未来 24 小时发生额度重置的概率参考及近 24 小时变化趋势，不代表厂商官方通知。',
+  },
+  {
+    question: '怎么在 Codex、Claude Code 或 Antigravity 额度重置概率升高时收到提醒？',
+    answer:
+      '点击页面上的「订阅邮件提醒」，勾选关注的平台并填写邮箱，输入邮件里的 6 位验证码（或点击确认链接）即可生效。所选平台的新预测超过 80% 时会自动发邮件，连续高于 80% 期间每个平台只提醒一次，且可随时通过邮件链接退订。',
+  },
+];
 
 const jsonLd = [
   {
@@ -28,6 +41,19 @@ const jsonLd = [
       'Claude Code 24-hour quota reset probability',
       'Antigravity 24-hour quota reset probability',
     ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: 'zh-CN',
+    mainEntity: faqs.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer,
+      },
+    })),
   },
   {
     '@context': 'https://schema.org',
@@ -58,21 +84,26 @@ const jsonLd = [
   <main class="page radar-page">
     <div class="wrap">
       <header class="radar-intro">
-        <div>
+        <div class="radar-intro-copy">
           <h1>重置雷达</h1>
           <p>{subtitle}</p>
+          <div class="radar-cta">
+            <button
+              class="btn btn-primary radar-subscribe"
+              type="button"
+              aria-haspopup="dialog"
+              aria-controls="radar-email-dialog"
+              data-ssr="radar-email-signup"
+              hidden
+            >
+              订阅邮件提醒
+            </button>
+            <span class="radar-cta-hint">
+              预测超过 80% 自动发邮件提醒，免费且可随时退订
+            </span>
+          </div>
         </div>
-        <div class="radar-intro-mark">
-          <button
-            class="btn btn-primary radar-subscribe"
-            type="button"
-            aria-haspopup="dialog"
-            aria-controls="radar-email-dialog"
-            data-ssr="radar-email-signup"
-            hidden
-          >
-            订阅邮件提醒
-          </button>
+        <div class="radar-intro-mark" aria-hidden="true">
           <RadarMark />
         </div>
       </header>
@@ -164,6 +195,7 @@ const jsonLd = [
               />
               <p class="hint" id="radar-email-help">
                 验证邮箱后开始接收提醒，可随时退订。
+                <a href="/privacy#radar-email">查看邮件数据说明</a>
               </p>
             </div>
             <div class="actions">
@@ -215,7 +247,8 @@ const jsonLd = [
         <h2 id="radar-notes-title">说明与相关入口</h2>
         <p>
           百分比表示基于社区观测信号的未来 24
-          小时额度重置概率参考，不代表厂商官方通知。
+          小时额度重置概率参考，不代表厂商官方通知。订阅邮件提醒后，所选平台预测超过
+          80% 时会自动发信通知，连续高于 80% 期间每个平台只提醒一次。
         </p>
         <nav class="radar-links" aria-label="相关入口">
           <a href="/v/codex">查看 Codex 停用案例</a>
@@ -223,6 +256,7 @@ const jsonLd = [
           <a href="/v/antigravity">查看 Antigravity 停用案例</a>
           <a href="/appeal">官方申诉入口</a>
           <a href="/tips">使用小技巧</a>
+          <a href="/privacy#radar-email">邮件提醒隐私说明</a>
         </nav>
       </section>
     </div>
@@ -242,29 +276,49 @@ const jsonLd = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: clamp(20px, 5vw, 52px);
+    gap: 20px;
+    padding: clamp(20px, 5vw, 48px);
     border: 2px solid var(--sky-ink);
     background: var(--sky);
     color: var(--sky-ink);
     box-shadow: 5px 5px 0 var(--sky-ink);
   }
 
+  .radar-intro-copy {
+    min-width: 0;
+  }
+
   h1 {
     margin: 0 0 10px;
-    font: 900 clamp(34px, 6vw, 64px) / 1.12 var(--font-carve);
+    font: 900 clamp(34px, 6vw, 60px) / 1.12 var(--font-carve);
   }
 
   p {
     margin: 0;
   }
 
+  .radar-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 18px;
+  }
+
+  .radar-cta:has([data-ssr='radar-email-signup'][hidden]) {
+    display: none;
+  }
+
+  .radar-cta-hint {
+    font-size: var(--fs-xs);
+    opacity: 0.86;
+  }
+
   .radar-intro-mark {
-    --radar-mark-size: clamp(52px, 11vw, 130px);
+    --radar-mark-size: clamp(64px, 11vw, 126px);
     flex: none;
     display: grid;
-    justify-items: center;
-    gap: 14px;
+    place-items: center;
   }
 
   .radar-subscribe {
@@ -427,23 +481,70 @@ const jsonLd = [
     margin-top: 16px;
   }
 
+  .radar-email .seg label {
+    transition: background-color 100ms ease, color 100ms ease;
+  }
+
+  .radar-email .seg label:has(input:checked) {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .radar-email #radar-email-code {
+    letter-spacing: 0.32em;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: var(--fs-l);
+    text-align: center;
+  }
+
   .radar-email-status:empty {
     display: none;
   }
 
   .radar-email-status {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-inline-start: 4px solid var(--grass-deep);
+    background: color-mix(in srgb, var(--stone) 60%, transparent);
+    font-size: var(--fs-s);
     overflow-wrap: anywhere;
   }
 
   @media (max-width: 580px) {
     .radar-intro {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 14px;
+    }
+
+    .radar-intro-copy {
+      display: contents;
+    }
+
+    .radar-intro-copy h1 {
+      grid-column: 1;
+    }
+
+    .radar-intro-copy > p {
+      grid-column: 1;
     }
 
     .radar-intro-mark {
-      --radar-mark-size: 76px;
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      --radar-mark-size: 64px;
+    }
+
+    .radar-cta {
+      grid-column: 1 / -1;
+      margin-top: 6px;
+    }
+
+    .radar-subscribe {
+      width: 100%;
     }
   }
 

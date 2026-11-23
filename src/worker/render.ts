@@ -235,8 +235,8 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
       {
         href: '/radar',
         label: {
-          zh: '24 小时额度重置雷达',
-          en: '24h quota reset radar',
+          zh: '24 小时额度重置雷达（支持邮件提醒）',
+          en: '24h quota reset radar & email alerts',
         },
       },
     ],
@@ -272,8 +272,8 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
       {
         href: '/radar',
         label: {
-          zh: '24 小时额度重置雷达',
-          en: '24h quota reset radar',
+          zh: '24 小时额度重置雷达（支持邮件提醒）',
+          en: '24h quota reset radar & email alerts',
         },
       },
     ],
@@ -316,8 +316,8 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
       {
         href: '/radar',
         label: {
-          zh: '24 小时额度重置雷达',
-          en: '24h quota reset radar',
+          zh: '24 小时额度重置雷达（支持邮件提醒）',
+          en: '24h quota reset radar & email alerts',
         },
       },
     ],

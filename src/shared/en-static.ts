@@ -48,9 +48,25 @@ export const EN_STATIC: Record<string, string> = {
     'Reset Radar: 24-Hour Quota Reset Forecast for Codex, Claude Code & Antigravity · Haomeile',
   '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，附各平台停用案例与官方申诉入口。':
     'Live 24-hour quota reset probability forecasts and trend charts for Codex, Claude Code and Antigravity, with links to suspension cases and official appeal channels.',
+  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。':
+    'Live 24-hour quota reset probability forecasts and trend charts for Codex, Claude Code and Antigravity, with free email alerts when probability exceeds 80%, plus suspension cases and official appeal channels.',
+  '预测超过 80% 自动发邮件提醒，免费且可随时退订':
+    'Free email alerts above 80%; unsubscribe anytime',
+  '重置雷达的概率预测怎么看？是否代表厂商官方公告？':
+    'How should Reset Radar probabilities be read, and are they official announcements?',
+  '重置雷达每 30 分钟按社区观测信号刷新一次，展示 Codex、Claude Code 和 Antigravity 未来 24 小时发生额度重置的概率参考及近 24 小时变化趋势，不代表厂商官方通知。':
+    'Reset Radar refreshes every 30 minutes from community signals, showing 24-hour quota reset estimates and 24-hour trends for Codex, Claude Code and Antigravity. They are not official provider announcements.',
+  '怎么在 Codex、Claude Code 或 Antigravity 额度重置概率升高时收到提醒？':
+    'How can I get notified when Codex, Claude Code or Antigravity reset probability spikes?',
+  '点击页面上的「订阅邮件提醒」，勾选关注的平台并填写邮箱，输入邮件里的 6 位验证码（或点击确认链接）即可生效。所选平台的新预测超过 80% 时会自动发邮件，连续高于 80% 期间每个平台只提醒一次，且可随时通过邮件链接退订。':
+    'Select Get email alerts, choose the platforms you follow, enter your email and confirm with the 6-digit code or confirmation link. You receive one email per platform while new forecasts stay above 80%, and can unsubscribe anytime from any email.',
+  查看邮件数据说明: 'See email privacy details',
+  邮件提醒隐私说明: 'Email alert privacy',
   说明与相关入口: 'Methodology & related links',
   '百分比表示基于社区观测信号的未来 24 小时额度重置概率参考，不代表厂商官方通知。':
     'Percentages reflect community-signal estimates of quota resets over the next 24 hours. They are not official provider announcements.',
+  '百分比表示基于社区观测信号的未来 24 小时额度重置概率参考，不代表厂商官方通知。订阅邮件提醒后，所选平台预测超过 80% 时会自动发信通知，连续高于 80% 期间每个平台只提醒一次。':
+    'Percentages reflect community-signal estimates of quota resets over the next 24 hours and are not official provider announcements. With email alerts enabled, you receive one notification per selected platform whenever a new forecast exceeds 80%.',
   '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
   'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。':
     '24-hour quota reset estimates for Codex, Claude Code and Antigravity.',
