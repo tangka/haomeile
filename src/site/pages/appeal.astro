@@ -1,16 +1,23 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { siteOrigin } from '../../shared/site';
+
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 
 const channels = [
   {
+    id: 'claude',
     name: 'Claude',
     guidance: '用受限的 Claude 账号登录，在账号限制页提交申诉。',
     appeal: 'https://claude.ai/restricted',
     action: 'Claude 账号申诉',
     help: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
     helpLabel: 'Claude 申诉说明',
+    casesHref: '/v/claude',
+    casesLabel: '查看 Claude 停用案例',
   },
   {
+    id: 'codex',
     name: 'Codex',
     guidance:
       '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。',
@@ -18,51 +25,124 @@ const channels = [
     action: 'OpenAI 申诉表单',
     help: 'https://help.openai.com/',
     helpLabel: 'OpenAI 帮助中心',
+    casesHref: '/v/codex',
+    casesLabel: '查看 Codex 停用案例',
   },
   {
+    id: 'antigravity',
     name: 'Antigravity',
     guidance:
-      '个人账号遇到 Antigravity 服务停用时，用受影响的 Google 账号登录并提交申诉。',
+      '个人账号遇到 Antigravity 服务停用或 403 权限拒绝时，用受影响的 Google 账号登录并提交申诉。',
     appeal: 'https://forms.gle/hGzM9MEUv2azZsrb9',
     action: 'Antigravity 申诉表单',
     help: 'https://support.google.com/accounts/answer/40695',
     helpLabel: 'Google 账号停用说明',
+    casesHref: '/v/antigravity',
+    casesLabel: '查看 Antigravity 停用案例',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Claude 封号或组织停用后怎么申诉？解封后仍显示 Free 怎么办？',
+    answer:
+      '先登录受限的 Claude 账号访问 claude.ai/restricted 提交申诉；若仅弹出身份验证窗口，先确认所在地区并按官方指引完成证件验证。如果账号恢复后已付费的 Max 或 Pro 仍显示 Free，请核对 Apple、Google Play 或网页账单收据，并从 Claude 网页左下角「获取帮助」联系官方支持核对订单。',
+  },
+  {
+    question: 'Codex 或 ChatGPT 账号停用怎么申诉？401 报错一定是永久封号吗？',
+    answer:
+      '先查注册邮箱里的 OpenAI 通知邮件，优先使用邮件内的申诉链接；若账号永久停用且无法查看通知，再使用 OpenAI 官方申诉表单，未收到通知则通过 OpenAI 帮助中心联系支持。客户端出现 401 时，先核对网页端账号状态和登录凭据，社区案例中存在 401 与账号停用状态不一致的情况。',
+  },
+  {
+    question: 'Antigravity 出现 403 或服务停用怎么处理？付费后仍显示 Starter Quota 怎么办？',
+    answer:
+      '个人 Google 账号遇到 Antigravity 服务停用或 403 权限拒绝时，先核对所在地区与已授权的第三方连接，再使用受影响的 Google 账号提交官方申诉表单，并避免短时间重复提交。如果是已开通 Google AI Pro 或 Ultra 但客户端仍显示 Starter Quota，请先核对客户端登录邮箱、查看额度页是否提示年龄验证，验证后退出重新登录。',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: 'zh-CN',
+    mainEntity: faqs.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '纪念墙',
+        item: SITE + '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '官方申诉入口',
+      },
+    ],
   },
 ];
 ---
 
 <SiteLayout
   title="Claude、Codex、Antigravity 封号后怎么申诉 · 号没了"
-  description="Claude、Codex 或 Antigravity 账号停用后，查看对应的官方申诉入口和填写时需要准备的信息。"
+  description="Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。"
   path="/appeal"
   current="/appeal"
+  jsonLd={jsonLd}
 >
   <main class="page">
     <div class="wrap">
       <div class="page-head">
         <h1>官方申诉入口</h1>
+        <p>
+          汇总 Claude、Codex 与 Antigravity 的官方申诉渠道、常见报错区分和排查入口。所有链接均指向对应厂商官网或官方表单。
+        </p>
       </div>
 
       <div class="vendor-list">
-        {channels.map(({ name, guidance, appeal, action, help, helpLabel }) => (
-          <article class="vendor">
-            <h2>{name}</h2>
-            <p>{guidance}</p>
-            <div class="appeal-links">
-              <a
-                class="btn btn-primary"
-                href={appeal}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {action}
-              </a>
-              <a href={help} target="_blank" rel="noopener noreferrer">
-                {helpLabel}
-              </a>
-            </div>
-          </article>
-        ))}
+        {channels.map(
+          ({
+            id,
+            name,
+            guidance,
+            appeal,
+            action,
+            help,
+            helpLabel,
+            casesHref,
+            casesLabel,
+          }) => (
+            <article class="vendor" id={id}>
+              <h2>{name}</h2>
+              <p>{guidance}</p>
+              <div class="appeal-links">
+                <a
+                  class="btn btn-primary"
+                  href={appeal}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {action}
+                </a>
+                <a href={help} target="_blank" rel="noopener noreferrer">
+                  {helpLabel}
+                </a>
+                <a href={casesHref}>{casesLabel}</a>
+              </div>
+            </article>
+          ),
+        )}
       </div>
 
       <div class="doc">
@@ -71,12 +151,45 @@ const channels = [
           <li>出事的时间，以及你当时在做什么。</li>
           <li>你平时用它做什么，比如写代码、写论文、处理工作文档。</li>
           <li>收到的通知原文。</li>
+          <li>提交一次后保留工单或回执，避免短时间内重复提交多份表单。</li>
         </ul>
-        <p>
-          <a href="/tips/claude-max-google-play-recovery">
-            Claude 解封后还是 Free？查看 Google Play 的 Max 订阅排查步骤
-          </a>
-        </p>
+
+        <h2>分产品常见问题与排查</h2>
+        {faqs.map(({ question, answer }) => (
+          <section class="faq-item">
+            <h3>{question}</h3>
+            <p>{answer}</p>
+          </section>
+        ))}
+
+        <h2>相关实操指南</h2>
+        <ul>
+          <li>
+            <a href="/tips/claude-max-google-play-recovery">
+              Claude 解封后还是 Free？查看 Google Play 的 Max 订阅排查步骤
+            </a>
+          </li>
+          <li>
+            <a href="/tips/claude-sign-up-identity-verification">
+              Claude 注册或结账弹出身份验证时怎么核对
+            </a>
+          </li>
+          <li>
+            <a href="/tips/antigravity-paid-plan-starter-quota">
+              Antigravity 开通 Ultra 或 Pro 后仍显示 Starter Quota 的排查步骤
+            </a>
+          </li>
+          <li>
+            <a href="/tips/antigravity-first-install-google-ai-pro">
+              Antigravity 桌面端登录与 Google AI Pro 开通核对
+            </a>
+          </li>
+          <li>
+            <a href="/tips/chatgpt-plus-iphone-subscription">
+              ChatGPT Plus 与 Codex 账号订阅到账核对
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </main>
@@ -96,5 +209,15 @@ const channels = [
   .appeal-links a {
     word-break: normal;
     overflow-wrap: anywhere;
+  }
+  .faq-item {
+    margin-block-start: 16px;
+  }
+  .faq-item h3 {
+    margin-block: 0 6px;
+    font-size: var(--fs-m);
+  }
+  .faq-item p {
+    margin-block: 0;
   }
 </style>

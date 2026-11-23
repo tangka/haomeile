@@ -1,31 +1,64 @@
-# 号没了
+# 号没了 (Haomeile)
 
-> 号没了（haomeile.rip）是一个支持中英文的独立社区，记录 Claude、Codex 和 Antigravity 的账号经历。纪念墙收录用户投稿和公开社区原帖的编辑摘要，并提供献花与像素墓志铭卡片。
+> 号没了（haomeile.rip）是一个支持中英文的独立社区，记录 Claude、Codex 和 Antigravity 的账号停用、403/验证异常与申诉经历，汇总官方申诉入口与订阅排查步骤，并提供像素墓志铭卡片。
 
-## 内容与数据
+## 内容与数据边界
 
-- 用户投稿由用户提交，代号、署名、经过和墓志铭保持原文。
-- 社区整理由本站编辑公开原帖摘要，附来源链接和原帖发布日期，提供中英文摘要。
-- 投稿统计与近 30 天曲线来自当前公开、审核通过的用户投稿；社区整理显示独立总数。“今天”和“近 7 天”按北京时间计算。
-- 用户可以凭据管理自己的投稿；原帖作者可以通过对应记录详情页的“举报”请求更正或删除整理内容。
+- 用户投稿由用户自愿提交，代号、署名、经过和墓志铭保持原文。
+- 社区整理由本站编辑公开原帖摘要，附原帖链接与原帖发布日期，提供中英文摘要，不是对账号处置的独立事实核验。
+- 投稿统计与近 30 天曲线仅统计当前公开、审核通过的用户投稿；社区整理显示独立总数。“今天”和“近 7 天”按北京时间（UTC+8）计算。
+- 使用小技巧取材自近 30 天中文 X 原生长文并经官方支持文档复核操作步骤，保留原文链接、作者与原始发布时间。
+- 用户可凭据管理或撤回自己的投稿；原帖作者可通过对应记录详情页的“举报”请求更正或删除整理内容。
+
+## 官方申诉渠道摘要
+
+- **Claude**：登录受限账号访问 `https://claude.ai/restricted` 提交申诉；官方说明见 `https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals`。解封后若 Max 仍显示 Free，核对账单并从 Claude 网页左下角「获取帮助」联系支持。
+- **Codex / OpenAI**：优先使用 OpenAI 通知邮件内的申诉链接；账号永久停用且无法查看通知时使用 `https://openai.com/form/appeal/`；未收到通知则通过 `https://help.openai.com/` 联系支持。
+- **Antigravity**：个人 Google 账号遇到服务停用或 403 权限拒绝时，用受影响账号提交官方申诉表单 `https://forms.gle/hGzM9MEUv2azZsrb9`（避免重复提交）；Google 账号停用说明见 `https://support.google.com/accounts/answer/40695`。
 
 ## 主要页面
 
-- [纪念墙](https://haomeile.rip/): 最新收录的账号停用、验证和申诉经历
-- [Claude 封号记录](https://haomeile.rip/v/claude): Claude 账号或组织停用与申诉经历
-- [Codex 账号停用记录](https://haomeile.rip/v/codex): Codex 和相关 ChatGPT 账号的停用与恢复经历
-- [Antigravity 服务停用记录](https://haomeile.rip/v/antigravity): Antigravity 使用权限停用、403 与申诉经历
-- [官方申诉入口](https://haomeile.rip/appeal): Claude、Codex、Antigravity 的官方申诉链接和填写建议
-- [使用小技巧](https://haomeile.rip/tips): Claude、ChatGPT 与 Google AI 的开通、付款、续费和套餐异常处理步骤，附原文链接
-- [Claude 解封后仍显示 Free](https://haomeile.rip/tips/claude-max-google-play-recovery): 使用 Google Play 付款的 Max 订阅如何核对订单与联系支持
+- [纪念墙](https://haomeile.rip/): 最新收录的 Claude、Codex、Antigravity 账号停用、验证与申诉经历
+- [Claude 封号与停用记录](https://haomeile.rip/v/claude): Claude / Claude Code 账号停用、组织停用、验证与申诉案例
+- [Codex 账号停用记录](https://haomeile.rip/v/codex): OpenAI Codex 与关联 ChatGPT 账号停用、401 与恢复案例
+- [Antigravity 服务停用与 403 记录](https://haomeile.rip/v/antigravity): Google Antigravity 服务停用、403、地区限制与申诉案例
+- [官方申诉入口与常见排查](https://haomeile.rip/appeal): 三家官方申诉链接、填写清单与分产品问答
+- [使用小技巧目录](https://haomeile.rip/tips): Claude、ChatGPT/Codex 与 Google AI / Antigravity 的开通、付款、续费与套餐异常处理步骤
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
 
+## 使用小技巧与排查指南
+
+- [Antigravity 桌面端登录与 Google AI Pro 开通](https://haomeile.rip/tips/antigravity-first-install-google-ai-pro): 下载登录、订阅 Pro 与查看模型及用量入口
+- [Google AI Pro 月付切换年付实测](https://haomeile.rip/tips/google-ai-pro-switch-to-annual): 在 Google One 切年付并在 Google Play 核对收据与续费
+- [Antigravity 开通 Ultra 仍显示 Starter Quota 排查](https://haomeile.rip/tips/antigravity-paid-plan-starter-quota): 核对登录邮箱、年龄验证提示与重新登录步骤
+- [Claude 解封后 Max 仍显示 Free 恢复记录](https://haomeile.rip/tips/claude-max-google-play-recovery): 核对 Google Play 订单并联系 Claude 官方支持恢复权益
+- [Google AI Pro 领取 Google Cloud API 赠金](https://haomeile.rip/tips/google-ai-claim-cloud-credits): 在 AI Studio 兑换并在 Cloud Billing 核对赠金与预付余额
+- [Claude 注册与结账弹出身份验证处理](https://haomeile.rip/tips/claude-sign-up-identity-verification): 核对支持地区、官方证件要求与付款状态
+- [Google AI Pro 与 Ultra 套餐对比评估](https://haomeile.rip/tips/google-ai-ultra-plan-evaluation): 对照模型表、实际用量与云盘/Colab 权益后再升级
+- [Apple App Store 订阅被拦截审核处理](https://haomeile.rip/tips/apple-in-app-purchase-review): 遇到 Purchase Not Completed 时提交审核与联系 Apple 支持
+- [iPhone 开通 Google AI Ultra 核对步骤](https://haomeile.rip/tips/google-ai-ultra-iphone-subscription): 分别核对 Antigravity 地区、Google One 订阅与 Apple 内购账号
+- [iPhone 用 Apple 登录订阅 Claude Pro](https://haomeile.rip/tips/claude-pro-iphone-apple-sign-in): 查找 Apple 隐藏转发邮箱并在电脑端用同一账号登录 Claude Code
+- [Claude Pro 网页端银行卡订阅核对](https://haomeile.rip/tips/claude-pro-web-subscription): 核对支持地区、发卡行账单资料与扣款后账单状态
+- [iPhone 订阅 ChatGPT Plus 与 Codex 核对](https://haomeile.rip/tips/chatgpt-plus-iphone-subscription): 核对支持地区、Apple 礼品卡兑换、套餐到账与恢复购买
+- [安卓端通过 Google Play 订阅 Claude / ChatGPT](https://haomeile.rip/tips/android-subscriptions-google-play): 核对官方 App、付款 Google 账号与避免跨渠道重复续费
+
 ## 可选
 
-- [站点地图](https://haomeile.rip/sitemap.xml): 可索引的中文与英文公开页面
-- [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器里生成像素墓碑图片
+- [站点地图](https://haomeile.rip/sitemap.xml): 可索引的中文与英文公开页面（含 hreflang 与 lastmod）
+- [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器本地生成像素墓碑图片
 
 ## English
 
-The English interface is at https://haomeile.rip/en/. User submissions retain their original text. Community entries are editorial summaries of public posts, with source links and publication dates. These summaries are provided in Chinese and English. User-submission totals and 30-day charts use currently public, approved user posts. Community summaries have a separate count. Authors can request corrections or removal through Report on the relevant detail page.
+Haomeile (https://haomeile.rip/en/) is a bilingual independent community documenting Claude, Codex and Antigravity account suspensions, 403/verification errors, official appeal channels and subscription troubleshooting guides.
+
+- [Memorial wall (EN)](https://haomeile.rip/en/)
+- [Claude account bans & appeals (EN)](https://haomeile.rip/en/v/claude)
+- [Codex account deactivations & appeals (EN)](https://haomeile.rip/en/v/codex)
+- [Antigravity 403 & service suspensions (EN)](https://haomeile.rip/en/v/antigravity)
+- [Official appeal channels & FAQ (EN)](https://haomeile.rip/en/appeal)
+- [Tips & troubleshooting guides (EN)](https://haomeile.rip/en/tips)
+- [Claude Max still Free after reinstatement (EN)](https://haomeile.rip/en/tips/claude-max-google-play-recovery)
+- [Antigravity paid plan still showing Starter Quota (EN)](https://haomeile.rip/en/tips/antigravity-paid-plan-starter-quota)
+- [Data & privacy (EN)](https://haomeile.rip/en/privacy)
+- [About (EN)](https://haomeile.rip/en/about)

@@ -74,20 +74,21 @@ test.afterAll(() => {
 });
 test.beforeEach(async ({ page }) => languageSdk(page));
 
-test('Chinese browsers stay on the Chinese page without a language selector', async ({
+test('Chinese URLs stay in Chinese with an explicit English switch link', async ({
   page,
 }) => {
   await page.goto('/submit?mode=edit');
   await expect(page).toHaveURL(/\/submit\?mode=edit$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(page.locator('#submit-title')).toHaveText('修改墓碑');
-  await expect(
-    page.locator('[data-locale-switch], .locale-switch'),
-  ).toHaveCount(0);
+  const switcher = page.locator('[data-locale-switch]');
+  await expect(switcher).toHaveCount(1);
+  await expect(switcher).toHaveAttribute('href', '/en/submit');
+  await expect(switcher).toHaveText('English');
 });
 
 for (const locale of ['en-US', 'fr-FR']) {
-  test(`${locale} browsers automatically receive English and preserve edit queries`, async ({
+  test(`${locale} browsers can read Chinese URLs directly and switch to English via footer link`, async ({
     browser,
     baseURL,
   }) => {
@@ -95,24 +96,27 @@ for (const locale of ['en-US', 'fr-FR']) {
     try {
       const page = await context.newPage();
       await languageSdk(page);
-      const response = await page.goto('/submit?mode=edit');
-      const redirect = await response!.request().redirectedFrom()!.response();
-      expect(redirect!.status()).toBe(302);
-      expect(redirect!.headers()['cache-control']).toContain('no-store');
-      expect(redirect!.headers().vary).toMatch(/Accept-Language/i);
-      await expect(page).toHaveURL(/\/en\/submit\?mode=edit$/);
+      const response = await page.goto('/appeal');
+      expect(response!.request().redirectedFrom()).toBeNull();
+      await expect(page).toHaveURL(/\/appeal$/);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+      const switcher = page.locator('[data-locale-switch]');
+      await expect(switcher).toHaveAttribute('href', '/en/appeal');
+      await switcher.click();
+      await expect(page).toHaveURL(/\/en\/appeal$/);
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-      await expect(page.locator('#submit-title')).toHaveText('Edit memorial');
-      await expect(
-        page.locator('[data-locale-switch], .locale-switch'),
-      ).toHaveCount(0);
+      await expect(page.locator('[data-locale-switch]')).toHaveAttribute(
+        'href',
+        '/appeal',
+      );
+      await expect(page.locator('[data-locale-switch]')).toHaveText('中文');
     } finally {
       await context.close();
     }
   });
 }
 
-test('Traditional Chinese browsers receive Chinese automatically', async ({
+test('Traditional Chinese browsers receive Chinese directly', async ({
   browser,
   baseURL,
 }) => {
@@ -133,7 +137,7 @@ test('Traditional Chinese browsers receive Chinese automatically', async ({
   }
 });
 
-test('English browsers open shared memorial links automatically without translating user text', async ({
+test('English memorial links render English chrome without translating user text', async ({
   browser,
   baseURL,
 }) => {
@@ -141,7 +145,7 @@ test('English browsers open shared memorial links automatically without translat
   try {
     const page = await context.newPage();
     await languageSdk(page);
-    await page.goto(`/t/${fixtureId}?source=shared`);
+    await page.goto(`/en/t/${fixtureId}?source=shared`);
     await expect(page).toHaveURL(
       new RegExp(`/en/t/${fixtureId}\\?source=shared$`),
     );
@@ -362,9 +366,7 @@ for (const width of [375, 1440]) {
       }));
       expect(geometry.document, path).toBeLessThanOrEqual(geometry.viewport);
       expect(geometry.body, path).toBeLessThanOrEqual(geometry.viewport);
-      await expect(
-        page.locator('[data-locale-switch], .locale-switch'),
-      ).toHaveCount(0);
+      await expect(page.locator('[data-locale-switch]')).toHaveCount(1);
     }
     await page.screenshot({
       path: testInfo.outputPath('english-layout.png'),

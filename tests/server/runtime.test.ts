@@ -122,7 +122,7 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
-  test('renders Chinese and automatically routes English with valid metadata and native rewritten HTML', async () => {
+  test('renders Chinese and English routes with valid metadata, language switch links, and native rewritten HTML', async () => {
     const { opened } = await runtime();
     const chinese = await request(opened, '/', undefined, {
       'Accept-Language': 'zh-CN,zh;q=0.9',
@@ -135,14 +135,14 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(zh).toContain('这里还很安静');
     expect(zh).toContain('content="0xFAKE_RUNTIME_TEST_SITE_KEY"');
     expect(zh).not.toContain('static.cloudflareinsights.com');
-    expect(zh).not.toContain('data-locale-switch');
-    const redirect = await request(opened, '/submit?mode=edit', undefined, {
+    expect(zh).toContain('data-locale-switch');
+    expect(zh).toContain('href="/en/"');
+    const directChinese = await request(opened, '/submit?mode=edit', undefined, {
       'Accept-Language': 'en-US,en;q=0.9',
     });
-    expect(redirect.status).toBe(302);
-    expect(redirect.headers.get('Location')).toBe('/en/submit?mode=edit');
-    expect(redirect.headers.get('Cache-Control')).toContain('no-store');
-    expect(redirect.headers.get('Vary')).toBe('Accept-Language');
+    expect(directChinese.status).toBe(200);
+    expect(directChinese.headers.has('Location')).toBe(false);
+    expect(await directChinese.text()).toContain('<html lang="zh-CN">');
     const english = await request(opened, '/en/', undefined, {
       'Accept-Language': 'en-US',
     });
@@ -153,6 +153,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(en).toContain('href="https://haomeile.rip/en/"');
     expect(en).toContain('content="en_US"');
     expect(en).toContain('hreflang="zh-CN"');
+    expect(en).toContain('data-locale-switch');
     const structured =
       /<script type="application\/ld\+json">([^]*?)<\/script>/.exec(en);
     expect(structured).not.toBeNull();

@@ -12,7 +12,7 @@ import {
 import {
   basePath,
   localePath,
-  requestLocale,
+  routeLocale,
   tr,
   type Locale,
 } from '../shared/i18n';
@@ -184,6 +184,120 @@ function metadata(
     });
   }
 }
+function zhEventTitle(vendorName: string, eventLabel: string): string {
+  return eventLabel.startsWith('账号') || eventLabel.startsWith('组织')
+    ? `${vendorName} ${eventLabel}`
+    : `${vendorName} 账号${eventLabel}`;
+}
+
+interface VendorSeoConfig {
+  title: { zh: string; en: string };
+  description: (total: number, date: string) => { zh: string; en: string };
+  intro: { zh: string; en: string };
+  links: { href: string; label: { zh: string; en: string } }[];
+}
+
+const VENDOR_SEO: Record<string, VendorSeoConfig> = {
+  claude: {
+    title: {
+      zh: 'Claude 封号与账号停用记录、申诉入口与订阅排查 · 号没了',
+      en: 'Claude account bans, suspensions, appeals & billing recovery · Haomeile',
+    },
+    description: (total, date) => ({
+      zh: `收录 Claude / Claude Code 账号停用、组织停用、身份验证卡住与申诉结果（截至 ${date} 共 ${total} 条公开记录），附 Anthropic 官方申诉入口与 Max 订阅恢复指南。`,
+      en: `Public cases of Claude and Claude Code account bans, organization suspensions, ID verification and appeals (${total} records as of ${date}), with official Anthropic appeal links and billing guides.`,
+    }),
+    intro: {
+      zh: '收录 Claude 与 Claude Code 账号停用、组织暂停、身份验证与申诉结果的公开经历。如需申诉或核对解封后的 Max 订阅，可直接查看下方官方入口与排查指南。',
+      en: 'Public user submissions and community summaries covering Claude and Claude Code account bans, organization suspensions, ID verification and appeals, alongside official appeal and billing guides.',
+    },
+    links: [
+      {
+        href: '/appeal#claude',
+        label: { zh: 'Claude 官方申诉入口', en: 'Official Claude appeal' },
+      },
+      {
+        href: '/tips/claude-max-google-play-recovery',
+        label: {
+          zh: '解封后 Max 仍显示 Free 排查',
+          en: 'Claude Max still Free after appeal',
+        },
+      },
+      {
+        href: '/tips/claude-sign-up-identity-verification',
+        label: {
+          zh: '注册与结账身份验证说明',
+          en: 'Claude identity verification guide',
+        },
+      },
+    ],
+  },
+  codex: {
+    title: {
+      zh: 'Codex 账号停用与恢复记录、OpenAI 官方申诉入口 · 号没了',
+      en: 'Codex account deactivations, appeals & recovery cases · Haomeile',
+    },
+    description: (total, date) => ({
+      zh: `收录 OpenAI Codex 与关联 ChatGPT 账号停用、401 访问异常与申诉恢复经历（截至 ${date} 共 ${total} 条公开记录），附 OpenAI 官方申诉链接与帮助中心入口。`,
+      en: `Public cases of OpenAI Codex and ChatGPT account deactivations, 401 access errors and appeal outcomes (${total} records as of ${date}), with official OpenAI appeal channels.`,
+    }),
+    intro: {
+      zh: '收录 OpenAI Codex 与关联 ChatGPT 账号停用、401 验证异常及恢复结果的公开经历。收到停用通知时，优先使用 OpenAI 邮件内的申诉链接。',
+      en: 'Public user submissions and community summaries covering OpenAI Codex and ChatGPT account deactivations, 401 access issues and appeal outcomes. Start with the appeal link in your OpenAI email notice.',
+    },
+    links: [
+      {
+        href: '/appeal#codex',
+        label: { zh: 'Codex / OpenAI 官方申诉入口', en: 'Official OpenAI appeal' },
+      },
+      {
+        href: '/tips/chatgpt-plus-iphone-subscription',
+        label: {
+          zh: 'ChatGPT Plus 与 Codex 订阅核对',
+          en: 'ChatGPT Plus & Codex subscription guide',
+        },
+      },
+    ],
+  },
+  antigravity: {
+    title: {
+      zh: 'Antigravity 403、服务停用记录与官方申诉入口 · 号没了',
+      en: 'Antigravity 403 errors, service suspensions & official appeals · Haomeile',
+    },
+    description: (total, date) => ({
+      zh: `收录 Google Antigravity 403 报错、服务停用、地区限制与 Starter Quota 异常案例（截至 ${date} 共 ${total} 条公开记录），附官方申诉表单与订阅排查步骤。`,
+      en: `Public cases of Google Antigravity 403 errors, service suspensions, regional limits and Starter Quota issues (${total} records as of ${date}), with the official appeal form and setup guides.`,
+    }),
+    intro: {
+      zh: '收录 Google Antigravity 服务停用、403 权限拒绝、地区支持与付费额度异常的公开经历。个人账号停用请用受影响的 Google 账号提交官方申诉表单。',
+      en: 'Public user submissions and community summaries covering Google Antigravity service suspensions, 403 permission errors, regional availability and Starter Quota issues, with official appeal links.',
+    },
+    links: [
+      {
+        href: '/appeal#antigravity',
+        label: {
+          zh: 'Antigravity 官方申诉与 403 说明',
+          en: 'Antigravity official appeal & 403 help',
+        },
+      },
+      {
+        href: '/tips/antigravity-paid-plan-starter-quota',
+        label: {
+          zh: '付费后仍显示 Starter Quota 排查',
+          en: 'Paid plan still showing Starter Quota',
+        },
+      },
+      {
+        href: '/tips/antigravity-first-install-google-ai-pro',
+        label: {
+          zh: 'Antigravity 登录与 Pro 开通核对',
+          en: 'Antigravity install & Pro setup',
+        },
+      },
+    ],
+  },
+};
+
 export async function servePage(c: Context<AppEnv>): Promise<Response> {
   const url = new URL(c.req.url);
   const site = siteOrigin(c.env.SITE_ORIGIN);
@@ -194,7 +308,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       .replace(/\/index\.html$/, '/')
       .replace(/\.html$/, '')
       .replace(/\/$/, '') || '/';
-  const locale = requestLocale(c.req.raw);
+  const locale = routeLocale(url.pathname);
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
   const labels = getLabels(locale);
   const rewriter = languageRewriter(c.req.raw, site)
@@ -296,6 +410,20 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
     });
     if (path.startsWith('/v/') && vendor) {
       const name = label(labels.vendor, vendor);
+      const totalRecords = stats.total + (stats.community_total || 0);
+      const seo = VENDOR_SEO[vendor];
+      const pageTitle = seo
+        ? seo.title[locale]
+        : text(
+            `${name} 账号停用、封号经历 · 号没了`,
+            `${name} account suspensions · Haomeile`,
+          );
+      const pageDescription = seo
+        ? seo.description(totalRecords, stats.date)[locale]
+        : text(
+            `${name} 账号停用、地区限制、验证卡住等经历：共 ${totalRecords} 条公开记录，截至 ${stats.date}。`,
+            `${name} account suspensions, regional restrictions and verification problems: ${totalRecords} public records as of ${stats.date}.`,
+          );
       rewriter.on('[data-ssr="page-title"]', {
         element: (el) => {
           el.setInnerContent(
@@ -303,21 +431,46 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
           );
         },
       });
+      if (seo) {
+        rewriter.on('[data-ssr="vendor-intro"]', {
+          element: (el) => {
+            el.setInnerContent(seo.intro[locale]);
+          },
+        });
+        rewriter.on('[data-ssr="vendor-links"]', {
+          element: (el) => {
+            el.setInnerContent(
+              seo.links
+                .map(
+                  (item) =>
+                    `<a href="${escapeHtml(localePath(item.href, locale))}">${escapeHtml(item.label[locale])}</a>`,
+                )
+                .join(''),
+              { html: true },
+            );
+          },
+        });
+      }
       metadata(
         rewriter,
-        text(
-          `${name} 账号停用、封号经历 · 号没了`,
-          `${name} account suspensions · Haomeile`,
-        ),
-        text(
-          `${name} 账号停用、地区限制、验证卡住等经历：${stats.total} 份用户投稿，${stats.community_total || 0} 条社区整理，截至 ${stats.date}。`,
-          `${name} account suspensions, regional restrictions and verification problems: ${stats.total} user submissions and ${stats.community_total || 0} public community case summaries as of ${stats.date}.`,
-        ),
+        pageTitle,
+        pageDescription,
         localePath(`/v/${vendor}`, locale),
-        stats.total + (stats.community_total || 0) >= 5
-          ? undefined
-          : 'noindex,follow',
+        totalRecords >= 5 ? undefined : 'noindex,follow',
         [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: pageTitle.replace(/ · (?:号没了|Haomeile)$/, ''),
+            description: pageDescription,
+            url: site + localePath(`/v/${vendor}`, locale),
+            inLanguage: locale === 'en' ? 'en' : 'zh-CN',
+            isPartOf: {
+              '@type': 'WebSite',
+              name: locale === 'en' ? 'Haomeile' : '号没了',
+              url: site + localePath('/', locale),
+            },
+          },
           {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
@@ -363,14 +516,31 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         el.setInnerContent(renderTomb(tomb, true, locale), { html: true });
       },
     });
+    const vendorLabel = label(labels.vendor, tomb.vendor);
+    rewriter.on('[data-ssr="detail-related"]', {
+      element: (el) => {
+        const vendorHref = escapeHtml(localePath(`/v/${tomb.vendor}`, locale));
+        const appealHref = escapeHtml(
+          localePath(`/appeal#${tomb.vendor}`, locale),
+        );
+        const tipsHref = escapeHtml(localePath('/tips', locale));
+        el.setInnerContent(
+          `<a href="${vendorHref}">${escapeHtml(text(`更多 ${vendorLabel} 案例`, `More ${vendorLabel} cases`))}</a>` +
+            `<a href="${appealHref}">${escapeHtml(text(`${vendorLabel} 官方申诉入口`, `Official ${vendorLabel} appeal`))}</a>` +
+            `<a href="${tipsHref}">${escapeHtml(text('使用小技巧与排查指南', 'Tips & troubleshooting'))}</a>`,
+          { html: true },
+        );
+      },
+    });
     rewriter.on('[data-tomb-id]', {
       element: (el) => {
         el.setAttribute('data-tomb-id', tomb.id);
       },
     });
+    const eventShort = label(labels.event_type_short, tomb.event_type);
     const title = text(
-      `${view.codename}：${label(labels.vendor, tomb.vendor)} 账号${label(labels.event_type_short, tomb.event_type)} · 号没了`,
-      `${view.codename}: ${label(labels.vendor, tomb.vendor)} — ${label(labels.event_type_short, tomb.event_type)} · Haomeile`,
+      `${view.codename}：${zhEventTitle(vendorLabel, eventShort)} · 号没了`,
+      `${view.codename}: ${vendorLabel} — ${eventShort} · Haomeile`,
     );
     const jsonLd = [
       {
@@ -379,6 +549,10 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
         headline: title.replace(/ · (?:号没了|Haomeile)$/, ''),
         text: view.story,
         url: site + localePath(path, locale),
+        mainEntityOfPage: site + localePath(path, locale),
+        ...(view.community
+          ? { inLanguage: locale === 'en' ? 'en' : 'zh-CN' }
+          : {}),
         datePublished: tomb.approved_at,
         dateModified: tomb.updated_at,
         author: {
@@ -386,6 +560,11 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
           name: view.community
             ? 'Haomeile'
             : tomb.nickname || text('匿名用户', 'Anonymous user'),
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Haomeile',
+          url: site + '/',
         },
         ...(view.source
           ? { citation: view.source, isBasedOn: view.source }
@@ -409,7 +588,7 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
           {
             '@type': 'ListItem',
             position: 2,
-            name: label(labels.vendor, tomb.vendor),
+            name: vendorLabel,
             item: site + localePath(`/v/${tomb.vendor}`, locale),
           },
           { '@type': 'ListItem', position: 3, name: view.codename },
@@ -544,7 +723,7 @@ async function serveMissing(
   let asset = await c.env.ASSETS.fetch(new Request(url));
   if (!asset.ok)
     asset = await c.env.ASSETS.fetch(new Request(new URL('/404/', c.req.url)));
-  const locale = requestLocale(c.req.raw);
+  const locale = routeLocale(new URL(c.req.url).pathname);
   const rewriter = languageRewriter(c.req.raw, site);
   if (status === 410)
     rewriter

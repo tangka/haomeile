@@ -51,7 +51,7 @@ export const EN_DYNAMIC: Record<string, string> = {
     'This older record has no named tier. Choose one, or leave it as “Unknown or prefer not to say”.',
   '选填，不记得可以保持“不详或不想说”。':
     'Optional. If you do not remember, leave “Unknown or prefer not to say”.',
-  '修改墓碑 · 号没了': 'Edit memorial · 号没了',
+  '修改墓碑 · 号没了': 'Edit memorial · Haomeile',
   修改墓碑: 'Edit memorial',
   '修改后需要重新审核。审核通过前，墙上继续显示旧版本。':
     'Changes need another review. The current version stays on the wall until they are approved.',

@@ -3,13 +3,18 @@ interface TipCopy {
   en: string;
 }
 
+export type TipVendor = 'claude' | 'codex' | 'antigravity';
+
 interface TipArticle {
   slug: string;
   title: string;
   englishTitle: string;
   summary: TipCopy;
   experience: TipCopy;
-  steps: { text: TipCopy; link?: { href: string; label: TipCopy } }[];
+  steps: {
+    text: TipCopy;
+    link?: { href: string | TipCopy; label: TipCopy };
+  }[];
   source: `https://x.com/i/article/${string}`;
   sourceAuthor: string;
   sourcePublishedAt: string;
@@ -478,7 +483,10 @@ export const TIP_ARTICLES: TipArticle[] = [
           en: 'Sign into Antigravity with your personal Google Account on the free tier first. Then open Google One on your iPhone, verify the same email, and check the Pro or Ultra options under Settings → Change membership plan. If you already subscribe through Apple, open iPhone Settings → Apple Account → Subscriptions → Google One to see all plans.',
         },
         link: {
-          href: 'https://support.google.com/googleone/answer/16476748?co=GENIE.Platform%3DiOS&hl=zh-Hans',
+          href: {
+            zh: 'https://support.google.com/googleone/answer/16476748?co=GENIE.Platform%3DiOS&hl=zh-Hans',
+            en: 'https://support.google.com/googleone/answer/16476748?co=GENIE.Platform%3DiOS&hl=en',
+          },
           label: {
             zh: '打开 iPhone 订阅指引',
             en: 'Open the iPhone subscription instructions',
@@ -661,7 +669,10 @@ export const TIP_ARTICLES: TipArticle[] = [
           en: 'In the ChatGPT app, open the menu, tap your name and find the upgrade option in Settings. Check the current Plus price and use a payment method available to your Apple Account. If you already have an Apple gift card for that storefront, redeem it under App Store → profile → Redeem Gift Card or Code before returning to checkout.',
         },
         link: {
-          href: 'https://support.apple.com/zh-cn/118242',
+          href: {
+            zh: 'https://support.apple.com/zh-cn/118242',
+            en: 'https://support.apple.com/en-us/118242',
+          },
           label: {
             zh: '看 Apple 礼品卡兑换入口',
             en: 'Find Apple’s gift card redemption steps',
@@ -746,7 +757,10 @@ export const TIP_ARTICLES: TipArticle[] = [
           en: 'Check that Pro or Plus appears in the intended app account. Then open Google Play → profile → Payments & subscriptions → Subscriptions to check the order and next charge date. If switching to web billing, check when the original plan ends to avoid overlapping charges.',
         },
         link: {
-          href: 'https://support.google.com/googleplay/answer/7018481?hl=zh-Hans',
+          href: {
+            zh: 'https://support.google.com/googleplay/answer/7018481?hl=zh-Hans',
+            en: 'https://support.google.com/googleplay/answer/7018481?hl=en',
+          },
           label: {
             zh: '管理 Google Play 订阅',
             en: 'Manage Google Play subscriptions',
@@ -774,7 +788,31 @@ export function tipPublishedTime(iso: string): string {
 export function tipPageTitle(title: string, locale: 'zh' | 'en'): string {
   return locale === 'zh'
     ? `${title} · 使用小技巧 · 号没了`
-    : `${title} · Tips · 号没了`;
+    : `${title} · Tips · Haomeile`;
+}
+
+export function tipLinkHref(href: string | TipCopy, locale: 'zh' | 'en'): string {
+  return typeof href === 'string' ? href : href[locale];
+}
+
+const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'antigravity-first-install-google-ai-pro': ['antigravity'],
+  'google-ai-pro-switch-to-annual': ['antigravity'],
+  'antigravity-paid-plan-starter-quota': ['antigravity'],
+  'claude-max-google-play-recovery': ['claude'],
+  'google-ai-claim-cloud-credits': ['antigravity'],
+  'claude-sign-up-identity-verification': ['claude'],
+  'google-ai-ultra-plan-evaluation': ['antigravity'],
+  'apple-in-app-purchase-review': ['antigravity'],
+  'google-ai-ultra-iphone-subscription': ['antigravity'],
+  'claude-pro-iphone-apple-sign-in': ['claude'],
+  'claude-pro-web-subscription': ['claude'],
+  'chatgpt-plus-iphone-subscription': ['codex'],
+  'android-subscriptions-google-play': ['claude', 'codex'],
+};
+
+export function tipVendors(slug: string): TipVendor[] {
+  return TIP_VENDOR_MAP[slug] ?? [];
 }
 
 export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
@@ -782,6 +820,7 @@ export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
 export const TIP_TRANSLATIONS = Object.fromEntries(
   TIP_ARTICLES.flatMap(
     ({ title, englishTitle, summary, experience, steps }) => [
+      [title, englishTitle],
       ...[summary, experience].map(({ zh, en }) => [zh, en]),
       ...steps.flatMap(({ text, link }) => [
         [text.zh, text.en],

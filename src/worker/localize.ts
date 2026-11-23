@@ -1,7 +1,7 @@
 import {
   basePath,
   localePath,
-  requestLocale,
+  routeLocale,
   tr,
   type Locale,
 } from '../shared/i18n';
@@ -134,13 +134,14 @@ export function languageRewriter(
   configuredOrigin = DEFAULT_SITE_ORIGIN,
 ): HTMLRewriter {
   const site = siteOrigin(configuredOrigin);
-  const locale = requestLocale(request),
-    url = new URL(request.url);
+  const url = new URL(request.url),
+    locale = routeLocale(url.pathname);
   const path =
     basePath(url.pathname)
       .replace(/\/index\.html$/, '/')
       .replace(/\.html$/, '')
       .replace(/\/$/, '') || '/';
+  const alternateLocale: Locale = locale === 'en' ? 'zh' : 'en';
   return new HTMLRewriter()
     .on('html', {
       element: (el) => {
@@ -149,6 +150,30 @@ export function languageRewriter(
     })
     .on('a[href]', {
       element: (el) => {
+        if (el.hasAttribute('data-locale-switch')) {
+          el.setAttribute('href', localePath(path, alternateLocale));
+          el.setAttribute(
+            'hreflang',
+            alternateLocale === 'en' ? 'en' : 'zh-CN',
+          );
+          el.setAttribute('lang', alternateLocale === 'en' ? 'en' : 'zh-CN');
+          if (alternateLocale === 'zh') {
+            el.setAttribute('translate', 'no');
+            el.setInnerContent('中文');
+          } else {
+            el.removeAttribute('translate');
+            el.setInnerContent('English');
+          }
+          return;
+        }
+        const englishHref = el.getAttribute('data-en-href');
+        if (englishHref) {
+          el.removeAttribute('data-en-href');
+          if (locale === 'en') {
+            el.setAttribute('href', englishHref);
+            return;
+          }
+        }
         const href = el.getAttribute('href') || '';
         const internal = templateSiteUrl(href, site);
         el.setAttribute(
@@ -168,6 +193,11 @@ export function languageRewriter(
         el.setAttribute(attribute, site + localePath(path, locale));
       },
     })
+    .on('meta[property="og:site_name"]', {
+      element: (el) => {
+        el.setAttribute('content', locale === 'en' ? 'Haomeile' : '号没了');
+      },
+    })
     .on('meta[property="og:image"]', {
       element: (el) => {
         const original = el.getAttribute('content') || '';
@@ -182,6 +212,16 @@ export function languageRewriter(
     .on('meta[property="og:locale"]', {
       element: (el) => {
         el.setAttribute('content', locale === 'en' ? 'en_US' : 'zh_CN');
+      },
+    })
+    .on('[data-en-show]', {
+      element: (el) => {
+        if (locale === 'en') {
+          el.removeAttribute('hidden');
+          el.removeAttribute('data-en-show');
+        } else {
+          el.remove();
+        }
       },
     })
     .on('head', {

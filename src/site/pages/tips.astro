@@ -1,16 +1,59 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { TIP_ARTICLES, tipPublishedTime } from '../../shared/tips';
+import { siteOrigin } from '../../shared/site';
 
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const tips = [...TIP_ARTICLES].sort((a, b) =>
   b.sourcePublishedAt.localeCompare(a.sourcePublishedAt),
 );
+
+const description =
+  '面向中文读者的 Claude、ChatGPT 和 Google AI 开通与订阅指南，涵盖付款、续费和套餐异常排查。';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'AI 账号开通、订阅与扣费排查',
+    description,
+    url: SITE + '/tips',
+    inLanguage: 'zh-CN',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: tips.map((tip, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: tip.title,
+        url: SITE + '/tips/' + tip.slug,
+      })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '纪念墙',
+        item: SITE + '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '使用小技巧',
+      },
+    ],
+  },
+];
 ---
 
 <SiteLayout
   title="AI 账号开通、订阅与扣费排查 · 号没了"
-  description="面向中文读者的 Claude、ChatGPT 和 Google AI 开通与订阅指南，涵盖付款、续费和套餐异常排查。"
+  description={description}
   path="/tips"
+  jsonLd={jsonLd}
 >
   <main class="page">
     <div class="wrap">
@@ -25,12 +68,7 @@ const tips = [...TIP_ARTICLES].sort((a, b) =>
               href={'/tips/' + tip.slug}
               aria-labelledby={'tip-title-' + tip.slug}
             >
-              <span
-                id={'tip-title-' + tip.slug}
-                class="tip-title"
-                lang="zh-CN"
-                translate="no"
-              >
+              <span id={'tip-title-' + tip.slug} class="tip-title">
                 {tip.title}
               </span>
               <time datetime={tip.sourcePublishedAt} title="UTC+8">

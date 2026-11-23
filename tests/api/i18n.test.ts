@@ -5,7 +5,7 @@ import type { Bindings } from '../../src/worker/types';
 import { localizeTemplate } from '../../src/worker/localize';
 import { basePath, browserLocale, localePath, tr } from '../../src/shared/i18n';
 
-const template = `<!doctype html><html lang="zh-CN"><head><title>使用须知 · 号没了</title><link rel="canonical" href="https://haomeile.rip/submit"><meta property="og:locale" content="zh_CN"></head><body><nav><a href="/">纪念墙</a><a href="/submit">立碑</a></nav><h1>使用须知</h1><div data-ssr="tally"></div><div data-ssr="wall"></div><div data-ssr="detail"></div><div data-ssr="timeline"></div><a data-ssr="more" hidden>再看 20 块</a></body></html>`;
+const template = `<!doctype html><html lang="zh-CN"><head><title>使用须知 · 号没了</title><link rel="canonical" href="https://haomeile.rip/submit"><meta property="og:site_name" content="号没了"><meta property="og:locale" content="zh_CN"></head><body><nav><a href="/">纪念墙</a><a href="/submit">立碑</a></nav><h1>使用须知</h1><div data-ssr="tally"></div><div data-ssr="wall"></div><div data-ssr="detail"></div><div data-ssr="timeline"></div><a data-ssr="more" hidden>再看 20 块</a><footer><a data-locale-switch href="/en/" hreflang="en" lang="en">English</a></footer></body></html>`;
 const assets = {
   async fetch(request: Request) {
     const path = new URL(request.url).pathname;
@@ -55,29 +55,32 @@ describe('Chinese and English pages', () => {
   ])('selects browser language %s as %s', (header, expected) => {
     expect(browserLocale(header)).toBe(expected);
   });
-  it.each(['/', '/submit?mode=edit', '/t/ABCDEFGH22', '/v/claude'])(
-    'automatically redirects English browser visits to %s with a private varying response',
+  it.each(['/', '/submit?mode=edit', '/v/claude'])(
+    'serves Chinese URLs directly without Accept-Language 302 redirects and exposes an English switch link for %s',
     async (path) => {
       const response = await app.request(
         'https://haomeile.rip' + path,
         { headers: { 'Accept-Language': 'en-US,en;q=0.9' } },
         bindings,
       );
-      expect(response.status).toBe(302);
-      expect(response.headers.get('location')).toBe('/en' + path);
-      expect(response.headers.get('vary')).toBe('Accept-Language');
-      expect(response.headers.get('cache-control')).toBe('private, no-store');
+      expect(response.status).toBe(200);
+      expect(response.headers.has('location')).toBe(false);
       expect(response.headers.has('set-cookie')).toBe(false);
+      const html = await response.text();
+      expect(html).toContain('<html lang="zh-CN">');
+      const expectedSwitch = '/en' + path.split('?')[0];
+      expect(html).toContain(
+        `data-locale-switch href="${expectedSwitch}" hreflang="en" lang="en">English</a>`,
+      );
     },
   );
-  it('keeps Chinese browser visits in Chinese and does not redirect APIs, assets or explicit English pages', async () => {
+  it('keeps Chinese visits in Chinese and does not redirect APIs, assets or explicit English pages', async () => {
     const response = await app.request(
       'https://haomeile.rip/submit',
       { headers: { 'Accept-Language': 'zh-HK,en;q=0.8' } },
       bindings,
     );
     expect(response.status).toBe(200);
-    expect(response.headers.get('vary')).toBe('Accept-Language');
     expect(await response.text()).toContain('lang="zh-CN"');
     for (const path of [
       '/api/health',
@@ -141,7 +144,7 @@ describe('Chinese and English pages', () => {
     });
     expect(localizeTemplate(template, 'zh')).toBe(template);
   });
-  it('serves stable English pages with correct metadata and no language selector', async () => {
+  it('serves stable English pages with correct metadata and a Chinese language switch link', async () => {
     const response = await app.request(
       'https://haomeile.rip/en/submit?mode=edit',
       {},
@@ -152,11 +155,14 @@ describe('Chinese and English pages', () => {
     const html = await response.text();
     expect(html).toContain('<html lang="en">');
     expect(html).toContain('<h1>Rules</h1>');
-    expect(html).not.toContain('data-locale-switch');
+    expect(html).toContain(
+      'data-locale-switch href="/submit" hreflang="zh-CN" lang="zh-CN" translate="no">中文</a>',
+    );
     expect(html).toContain('href="/en/submit"');
     expect(html).toContain('href="https://haomeile.rip/en/submit"');
     expect(html).toContain('hreflang="zh-CN"');
     expect(html).toContain('content="en_US"');
+    expect(html).toContain('property="og:site_name" content="Haomeile"');
     expect(html).not.toContain('href="/en/en/');
   });
   it.each([

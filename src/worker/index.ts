@@ -8,13 +8,7 @@ import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
-import {
-  basePath,
-  localePath,
-  requestLocale,
-  routeLocale,
-  tr,
-} from '../shared/i18n';
+import { basePath, localePath, requestLocale, tr } from '../shared/i18n';
 
 export interface AppOptions {
   verifyAdministrator?: typeof verifyAccess;
@@ -81,16 +75,7 @@ export function createApp(options: AppOptions = {}) {
         302,
       );
     }
-    if (routeLocale(path) === 'en') return next();
-    c.header('Vary', 'Accept-Language');
-    if (requestLocale(c.req.raw) === 'en') {
-      c.header('Cache-Control', 'private, no-store');
-      return c.redirect(localePath(path, 'en') + url.search, 302);
-    }
     await next();
-    // The unprefixed URL negotiates language; caches must not reuse its Chinese
-    // response for visitors whose browsers request another language.
-    c.header('Vary', 'Accept-Language');
   });
   app.get('/api/health', (c) => c.json({ ok: true, data: { status: 'ok' } }));
   app.route('/api', publicRoutes);

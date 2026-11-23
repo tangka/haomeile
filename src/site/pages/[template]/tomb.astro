@@ -31,6 +31,7 @@ import ReportDialog from '../../components/ReportDialog.astro';
           举报
         </button>
       </div>
+      <nav class="detail-related" data-ssr="detail-related" aria-label="相关入口"></nav>
     </div>
   </main>
   <ReportDialog />
@@ -38,3 +39,18 @@ import ReportDialog from '../../components/ReportDialog.astro';
     import '../../scripts/detail';
   </script>
 </SiteLayout>
+
+<style>
+  .detail-related {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-block-start: 22px;
+    padding-block-start: 16px;
+    border-block-start: 1px solid var(--stone-shade);
+    font-size: var(--fs-s);
+  }
+  .detail-related:empty {
+    display: none;
+  }
+</style>

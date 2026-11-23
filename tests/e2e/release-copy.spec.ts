@@ -133,10 +133,16 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(page).toHaveURL(/\/tips$/);
 
   await page.goto('/en/tips');
-  await expect(page.locator('.tips .tip-title')).toHaveText(titles);
+  const englishTitles = articles.map((tip) => tip.englishTitle);
+  await expect(page.locator('.tips .tip-title')).toHaveText(englishTitles);
   await expect(
     page.locator(`.tips a[href="/en${creditsPath}"] time`),
   ).toHaveText('2026-11-17 20:48');
-  await page.getByRole('link', { name: title, exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+  const englishTitle =
+    'How I subscribed to Claude Pro myself without an iPhone, using a Mastercard';
+  await page.getByRole('link', { name: englishTitle, exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    englishTitle,
+  );
+  await expect(page.locator('.tip-original-title')).toContainText(title);
 });

@@ -76,6 +76,16 @@ describe('Worker renders Astro templates on the server', () => {
     expect(chinese).toContain('公开原帖的中文编辑摘要。');
     expect(chinese).toContain('查看原帖');
 
+    await seed('SUSPENDEDA', 'approved', '账号被停用后的申诉过程记录。', 'claude');
+    await env.DB.prepare(
+      "UPDATE tombstones SET event_type='suspended' WHERE id='SUSPENDEDA'",
+    ).run();
+    const suspendedHtml = await (
+      await app.request('https://haomeile.rip/t/SUSPENDEDA', {}, bindings)
+    ).text();
+    expect(suspendedHtml).toContain('：Claude 账号停用 · 号没了');
+    expect(suspendedHtml).not.toContain('账号账号停用');
+
     await seed('USERSTORYA', 'approved', '这段用户自述不应自动翻译。');
     await env.DB.prepare(
       "UPDATE tombstones SET story_en='Must not be shown' WHERE id='USERSTORYA'",

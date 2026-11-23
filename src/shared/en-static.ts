@@ -29,10 +29,10 @@ export const EN_STATIC: Record<string, string> = {
     'View an account story, its source and appeal status.',
 
   号没了: '号没了',
-  '这里什么也没有 · 号没了': 'Nothing here · 号没了',
+  '这里什么也没有 · 号没了': 'Nothing here · Haomeile',
   '可能地址写错了，也可能这块碑已经被撤回。':
     'The address may be wrong, or this memorial may have been withdrawn.',
-  '号没了：AI 账号赛博公墓': '号没了: An AI account cemetery',
+  '号没了：AI 账号赛博公墓': 'Haomeile: An AI account cemetery',
   跳到正文: 'Skip to content',
   主导航: 'Main navigation',
   纪念墙: 'Memorial wall',
@@ -43,10 +43,12 @@ export const EN_STATIC: Record<string, string> = {
   '阅读 X 长文': 'Read the full article on X',
   返回技巧目录: 'Back to tips',
   文章导航: 'Article navigation',
+  相关入口: 'Related links',
   操作步骤: 'What to do',
   收录时浏览量: 'Views when selected',
+  'AI 账号开通、订阅与扣费排查': 'AI account setup, subscriptions and billing',
   'AI 账号开通、订阅与扣费排查 · 号没了':
-    'AI account setup, subscriptions and billing · 号没了',
+    'AI account setup, subscriptions and billing · Haomeile',
   '面向中文读者的 Claude、ChatGPT 和 Google AI 开通与订阅指南，涵盖付款、续费和套餐异常排查。':
     'Guides for Chinese-speaking readers on Claude, ChatGPT and Google AI account setup, subscriptions, payments, renewals and plan issues.',
   ...TIP_TRANSLATIONS,
@@ -61,7 +63,7 @@ export const EN_STATIC: Record<string, string> = {
   语言: 'Language',
   中文: '中文',
 
-  '墓碑详情 · 号没了': 'Memorial details · 号没了',
+  '墓碑详情 · 号没了': 'Memorial details · Haomeile',
   复制这块碑的链接: 'Copy memorial link',
   做一张墓志铭卡片: 'Make an epitaph card',
   举报: 'Report',
@@ -79,7 +81,7 @@ export const EN_STATIC: Record<string, string> = {
   提交举报: 'Submit report',
   算了: 'Cancel',
 
-  '账号停用、封号经历 · 号没了': 'Account suspensions and bans · 号没了',
+  '账号停用、封号经历 · 号没了': 'Account suspensions and bans · Haomeile',
   账号的墓碑: 'Account memorials',
   纪念墙统计: 'Memorial wall statistics',
   统计口径: 'How we count',
@@ -99,7 +101,7 @@ export const EN_STATIC: Record<string, string> = {
   '近 30 天上报与事件发生数':
     'Reports and incident dates over the past 30 days',
 
-  '关于 · 号没了': 'About · 号没了',
+  '关于 · 号没了': 'About · Haomeile',
   '这里只记录 Claude、Codex 和 Antigravity 三个产品的账号经历。':
     'This site records account experiences with three products: Claude, Codex and Antigravity.',
   '需要更正内容、投诉或联系我们：':
@@ -109,7 +111,7 @@ export const EN_STATIC: Record<string, string> = {
     'To report inappropriate content, find the memorial on the ',
   '打开对应墓碑的详情页，点击“举报”。': ', open its details and choose Report.',
 
-  '审核后台 · 号没了': 'Moderation · 号没了',
+  '审核后台 · 号没了': 'Moderation · Haomeile',
   '号没了投稿、修改和举报审核后台。':
     'Moderation of 号没了 submissions, edits and reports.',
   后台导航: 'Admin navigation',
@@ -128,23 +130,35 @@ export const EN_STATIC: Record<string, string> = {
   操作人: 'Moderator',
 
   'Claude、Codex、Antigravity 封号后怎么申诉 · 号没了':
-    'How to appeal a Claude, Codex or Antigravity suspension · 号没了',
+    'How to appeal a Claude, Codex or Antigravity suspension · Haomeile',
   'Claude、Codex 或 Antigravity 账号停用后，查看对应的官方申诉入口和填写时需要准备的信息。':
     'Find the official appeal channel for a Claude, Codex or Antigravity suspension and get the details you need to file an appeal.',
+  'Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。':
+    'Official appeal channels, checklists and troubleshooting guides for Claude, Codex and Antigravity account suspensions, 403 errors, ID verification, Starter Quota and billing recovery.',
+  '汇总 Claude、Codex 与 Antigravity 的官方申诉渠道、常见报错区分和排查入口。所有链接均指向对应厂商官网或官方表单。':
+    'Official appeal channels, common error distinctions and troubleshooting guides for Claude, Codex and Antigravity. Every external link points to the provider’s official site or form.',
   'Claude 解封后还是 Free？查看 Google Play 的 Max 订阅排查步骤':
     'Claude still shows Free after reinstatement? Check your Max subscription in Google Play',
   '用受限的 Claude 账号登录，在账号限制页提交申诉。':
     'Sign in with the affected Claude account to submit an appeal on the account restriction page.',
   'Claude 账号申诉': 'Appeal a Claude restriction',
   'Claude 申诉说明': 'Claude appeal guidance',
+  '查看 Claude 停用案例': 'Browse Claude suspension cases',
+  'Claude 官方申诉入口': 'Official Claude appeal',
   '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。':
     'Start with the appeal link in your OpenAI notification email. For a permanent account closure, use the form below if you cannot access that email. If you received no notification, contact support through the Help Center.',
   'OpenAI 申诉表单': 'OpenAI appeal form',
   'OpenAI 帮助中心': 'OpenAI Help Center',
+  '查看 Codex 停用案例': 'Browse Codex suspension cases',
+  'Codex / OpenAI 官方申诉入口': 'Official OpenAI appeal',
   '个人账号遇到 Antigravity 服务停用时，用受影响的 Google 账号登录并提交申诉。':
     'If Antigravity access was suspended on a personal account, sign in with the affected Google Account and submit an appeal.',
+  '个人账号遇到 Antigravity 服务停用或 403 权限拒绝时，用受影响的 Google 账号登录并提交申诉。':
+    'If Antigravity access was suspended or returns a 403 permission error on a personal account, sign in with the affected Google Account and submit an appeal.',
   'Antigravity 申诉表单': 'Antigravity appeal form',
   'Google 账号停用说明': 'Disabled Google Account help',
+  '查看 Antigravity 停用案例': 'Browse Antigravity suspension cases',
+  'Antigravity 官方申诉入口': 'Official Antigravity appeal',
   Antigravity: 'Antigravity',
   申诉时可以写什么: 'What to include in an appeal',
   '出事的时间，以及你当时在做什么。':
@@ -152,9 +166,33 @@ export const EN_STATIC: Record<string, string> = {
   '你平时用它做什么，比如写代码、写论文、处理工作文档。':
     'What you normally use the product for, such as coding, academic writing or work documents.',
   '收到的通知原文。': 'The exact wording of any notice you received.',
+  '提交一次后保留工单或回执，避免短时间内重复提交多份表单。':
+    'Keep your ticket or confirmation after submitting once, and avoid sending duplicate forms in a short period.',
+  分产品常见问题与排查: 'Common questions by product',
+  'Claude 封号或组织停用后怎么申诉？解封后仍显示 Free 怎么办？':
+    'How do I appeal a Claude ban or org suspension, and what if my plan still shows Free afterward?',
+  '先登录受限的 Claude 账号访问 claude.ai/restricted 提交申诉；若仅弹出身份验证窗口，先确认所在地区并按官方指引完成证件验证。如果账号恢复后已付费的 Max 或 Pro 仍显示 Free，请核对 Apple、Google Play 或网页账单收据，并从 Claude 网页左下角「获取帮助」联系官方支持核对订单。':
+    'Sign in with the restricted Claude account and submit an appeal at claude.ai/restricted. If you only see an identity verification prompt, check supported regions and follow Anthropic’s ID verification flow. If a paid Max or Pro plan still shows Free after reinstatement, check your Apple, Google Play or web receipt and contact support through Get help in the lower left of Claude on the web.',
+  'Codex 或 ChatGPT 账号停用怎么申诉？401 报错一定是永久封号吗？':
+    'How do I appeal a Codex or ChatGPT deactivation, and does a 401 error always mean a permanent ban?',
+  '先查注册邮箱里的 OpenAI 通知邮件，优先使用邮件内的申诉链接；若账号永久停用且无法查看通知，再使用 OpenAI 官方申诉表单，未收到通知则通过 OpenAI 帮助中心联系支持。客户端出现 401 时，先核对网页端账号状态和登录凭据，社区案例中存在 401 与账号停用状态不一致的情况。':
+    'Check your account email for an OpenAI notice and start with the appeal link inside it. If the account was permanently deactivated and you cannot access the notice, use OpenAI’s official appeal form, or reach out via the Help Center if you received no notice. For a 401 error in the client, verify your web account status and credentials first—community reports show 401 responses do not always match a permanent ban.',
+  'Antigravity 出现 403 或服务停用怎么处理？付费后仍显示 Starter Quota 怎么办？':
+    'What should I do for an Antigravity 403 or service suspension, or when a paid plan still shows Starter Quota?',
+  '个人 Google 账号遇到 Antigravity 服务停用或 403 权限拒绝时，先核对所在地区与已授权的第三方连接，再使用受影响的 Google 账号提交官方申诉表单，并避免短时间重复提交。如果是已开通 Google AI Pro 或 Ultra 但客户端仍显示 Starter Quota，请先核对客户端登录邮箱、查看额度页是否提示年龄验证，验证后退出重新登录。':
+    'If a personal Google Account hits an Antigravity suspension or 403 permission error, check regional availability and third-party account connections first, then submit the official appeal form with the affected Google Account without filing duplicates. If you have an active Google AI Pro or Ultra plan but Antigravity still shows Starter Quota, check the signed-in email and any age verification prompt beneath the quota, then sign out and back in.',
+  相关实操指南: 'Related troubleshooting guides',
+  'Claude 注册或结账弹出身份验证时怎么核对':
+    'What to check when Claude asks for identity verification',
+  'Antigravity 开通 Ultra 或 Pro 后仍显示 Starter Quota 的排查步骤':
+    'Antigravity still shows Starter Quota on a paid Pro or Ultra plan',
+  'Antigravity 桌面端登录与 Google AI Pro 开通核对':
+    'Antigravity desktop sign-in and Google AI Pro setup',
+  'ChatGPT Plus 与 Codex 账号订阅到账核对':
+    'Checking ChatGPT Plus and Codex subscription activation',
 
-  '墓志铭卡片生成器 · 号没了': 'Epitaph card maker · 号没了',
-  '为 Claude、Codex 或 Antigravity的账号生成像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。':
+  '墓志铭卡片生成器 · 号没了': 'Epitaph card maker · Haomeile',
+  '为 Claude、Codex 或 Antigravity 的账号生成像素墓碑图。图片只在你的浏览器里生成，不会上传任何内容。':
     'Make a pixel memorial card for a Claude, Codex or Antigravity account. Images are generated entirely in your browser. Nothing is uploaded.',
   '给没了的账号做一张墓碑图，发给同样遭遇的朋友。图片只在你的浏览器里生成，不会上传。':
     'Make a memorial card for a lost account and share it with friends who understand. Images are generated in your browser and are never uploaded.',
@@ -187,13 +225,13 @@ export const EN_STATIC: Record<string, string> = {
   小橘号: 'Little Orange',
 
   '号没了 · Claude、Codex、Antigravity 封号与申诉记录':
-    '号没了 · Claude, Codex and Antigravity bans and appeals',
+    'Haomeile · Claude, Codex and Antigravity bans and appeals',
   'AI 账号赛博公墓': 'An AI account cemetery',
   '被封了、被停了、卡在验证了？': 'Banned, suspended or stuck in verification?',
   这里收录: 'Stories about',
   '的账号停用与申诉经历。': 'account suspensions and appeals.',
 
-  '管理我的墓碑 · 号没了': 'Manage my memorial · 号没了',
+  '管理我的墓碑 · 号没了': 'Manage my memorial · Haomeile',
   '用凭据查看审核结果、修改或撤回。':
     'Use your credentials to check moderation results, edit or withdraw your memorial.',
   '输入立碑时拿到的凭据，可以查看审核结果、修改或撤回。':
@@ -214,7 +252,7 @@ export const EN_STATIC: Record<string, string> = {
   撤回这块碑: 'Withdraw memorial',
   先不撤: 'Keep memorial',
 
-  '数据说明 · 号没了': 'Data & privacy · 号没了',
+  '数据说明 · 号没了': 'Data & privacy · Haomeile',
   '号没了公开哪些内容、不收集哪些信息、统计口径是什么，以及公开内容会被搜索引擎和 AI 服务抓取。':
     'What 号没了 makes public, what it does not collect, how statistics are counted, and how search engines and AI services may crawl public content.',
   更新于: 'Updated ',
@@ -272,7 +310,7 @@ export const EN_STATIC: Record<string, string> = {
   '不点名攻击任何个人，包括厂商的员工。':
     'Do not name and attack individuals, including the providers’ employees.',
 
-  '立一块碑 · 号没了': 'Add a memorial · 号没了',
+  '立一块碑 · 号没了': 'Add a memorial · Haomeile',
   '匿名记录你的 Claude、Codex 或 Antigravity 账号是怎么没的。':
     'Anonymously record what happened to your Claude, Codex or Antigravity account.',
   '写下账号是怎么没的。审核通过后会出现在纪念墙上，你随时可以修改或撤回。':

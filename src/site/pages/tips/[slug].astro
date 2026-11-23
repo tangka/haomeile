@@ -2,9 +2,13 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
   TIP_ARTICLES,
+  tipLinkHref,
   tipPageTitle,
   tipPublishedTime,
+  tipVendors,
+  type TipVendor,
 } from '../../../shared/tips';
+import { siteOrigin } from '../../../shared/site';
 
 export function getStaticPaths() {
   return TIP_ARTICLES.map((tip) => ({
@@ -17,7 +21,84 @@ interface Props {
   tip: (typeof TIP_ARTICLES)[number];
 }
 
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const { tip } = Astro.props;
+const pageUrl = `${SITE}/tips/${tip.slug}`;
+const relatedVendors = tipVendors(tip.slug);
+
+const vendorMeta: Record<TipVendor, { label: string; appealLabel: string }> = {
+  claude: {
+    label: '查看 Claude 停用案例',
+    appealLabel: 'Claude 官方申诉入口',
+  },
+  codex: {
+    label: '查看 Codex 停用案例',
+    appealLabel: 'Codex / OpenAI 官方申诉入口',
+  },
+  antigravity: {
+    label: '查看 Antigravity 停用案例',
+    appealLabel: 'Antigravity 官方申诉入口',
+  },
+};
+
+const citations = [
+  tip.source,
+  ...tip.steps
+    .map((step) => (step.link ? tipLinkHref(step.link.href, 'zh') : null))
+    .filter((href): href is string => Boolean(href)),
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: tip.title,
+    description: tip.summary.zh,
+    inLanguage: 'zh-CN',
+    url: pageUrl,
+    datePublished: tip.sourcePublishedAt,
+    author: {
+      '@type': 'Person',
+      name: tip.sourceAuthor,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Haomeile',
+      url: SITE + '/',
+    },
+    isBasedOn: tip.source,
+    citation: citations,
+    step: tip.steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      text: step.text.zh,
+      ...(step.link ? { url: tipLinkHref(step.link.href, 'zh') } : {}),
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '纪念墙',
+        item: SITE + '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '使用小技巧',
+        item: SITE + '/tips',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: tip.title,
+      },
+    ],
+  },
+];
 ---
 
 <SiteLayout
@@ -26,6 +107,8 @@ const { tip } = Astro.props;
   current="/tips"
   path={'/tips/' + tip.slug}
   ogType="article"
+  publishedTime={tip.sourcePublishedAt}
+  jsonLd={jsonLd}
 >
   <main class="page">
     <div class="wrap">
@@ -34,9 +117,7 @@ const { tip } = Astro.props;
           <a href="/tips">返回技巧目录</a>
         </nav>
         <div class="page-head">
-          <h1 lang="zh-CN" translate="no">
-            {tip.title}
-          </h1>
+          <h1>{tip.title}</h1>
           <p>{tip.summary.zh}</p>
         </div>
         <p>{tip.experience.zh}</p>
@@ -48,7 +129,14 @@ const { tip } = Astro.props;
               {link && (
                 <>
                   {' '}
-                  <a href={link.href}>{link.label.zh}</a>
+                  <a
+                    href={tipLinkHref(link.href, 'zh')}
+                    data-en-href={
+                      typeof link.href === 'string' ? undefined : link.href.en
+                    }
+                  >
+                    {link.label.zh}
+                  </a>
                 </>
               )}
             </li>
@@ -66,7 +154,25 @@ const { tip } = Astro.props;
             收录时浏览量{' '}
             <strong>{tip.sourceViews.toLocaleString('en-US')}</strong>
           </span>
+          <span
+            class="tip-original-title"
+            lang="zh-CN"
+            translate="no"
+            hidden
+            data-en-show
+          >
+            《{tip.title}》
+          </span>
         </p>
+        <nav class="tip-related" aria-label="相关入口">
+          {relatedVendors.map((vendor) => (
+            <>
+              <a href={'/v/' + vendor}>{vendorMeta[vendor].label}</a>
+              <a href={'/appeal#' + vendor}>{vendorMeta[vendor].appealLabel}</a>
+            </>
+          ))}
+          {relatedVendors.length === 0 && <a href="/appeal">官方申诉入口</a>}
+        </nav>
       </article>
     </div>
   </main>
@@ -90,6 +196,13 @@ const { tip } = Astro.props;
     margin-block-start: 28px;
     border-block-start: 1px solid var(--stone-shade);
     padding-block-start: 14px;
+    font-size: var(--fs-s);
+  }
+  .tip-related {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-block-start: 16px;
     font-size: var(--fs-s);
   }
 </style>
