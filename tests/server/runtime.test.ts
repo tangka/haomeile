@@ -157,6 +157,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
             probability: 0,
             judgementReason: 'private-judgement',
           },
+          { id: 'antigravity', probability: 63.6 },
           { id: 'grok', probability: 42 },
         ],
       });
@@ -258,6 +259,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(html).toContain(`data-ga4-measurement-id="${MEASUREMENT_ID}"`);
       expect(html).toContain('<h3>Codex</h3><strong>18%</strong>');
       expect(html).toContain('<h3>Claude Code</h3><strong>0%</strong>');
+      expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
       expect(html).toContain(`datetime="${generatedAt}"`);
       expect(html).not.toMatch(
         /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok|data-radar-verify/,

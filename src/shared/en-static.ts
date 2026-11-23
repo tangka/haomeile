@@ -43,8 +43,8 @@ export const EN_STATIC: Record<string, string> = {
   重置雷达: 'Reset Radar',
   '重置雷达 · 号没了': 'Reset Radar · Haomeile',
   '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
-  'Codex 和 Claude Code 未来 24 小时的额度重置概率。':
-    '24-hour quota reset estimates for Codex and Claude Code.',
+  'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。':
+    '24-hour quota reset estimates for Codex, Claude Code and Antigravity.',
   重置预测: 'Reset forecast',
   '通过人机验证后进入重置雷达。': 'Verify you are human to open Reset Radar.',
   '请完成人机验证后进入。': 'Complete the human verification to continue.',

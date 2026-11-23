@@ -2,7 +2,8 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import RadarMark from '../components/RadarMark.astro';
 
-const description = 'Codex 和 Claude Code 未来 24 小时的额度重置概率。';
+const description =
+  'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。';
 ---
 
 <SiteLayout title="重置雷达 · 号没了" description={description} path="/radar">
@@ -57,7 +58,7 @@ const description = 'Codex 和 Claude Code 未来 24 小时的额度重置概率
   }
 
   .radar-intro-mark {
-    --radar-mark-size: clamp(44px, 11vw, 130px);
+    --radar-mark-size: clamp(52px, 11vw, 130px);
     flex: none;
   }
 
@@ -86,6 +87,10 @@ const description = 'Codex 和 Claude Code 未来 24 小时的额度重置概率
     border-top-color: var(--mum);
   }
 
+  .radar-vitals :global(.radar-forecasts li:nth-child(3)) {
+    border-top-color: var(--focus);
+  }
+
   .radar-vitals :global(.radar-forecasts h3) {
     margin: 0;
     font-size: var(--fs-s);
@@ -100,5 +105,16 @@ const description = 'Codex 和 Claude Code 未来 24 小时的额度重置概率
   .radar-vitals :global(.radar-updated) {
     margin: 12px 0 0;
     font-size: var(--fs-xs);
+  }
+
+  @media (max-width: 450px) {
+    .radar-vitals :global(.radar-forecasts) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .radar-vitals :global(.radar-forecasts li:only-child),
+    .radar-vitals :global(.radar-forecasts li:nth-child(3):last-child) {
+      grid-column: 1 / -1;
+    }
   }
 </style>

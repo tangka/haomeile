@@ -6,7 +6,11 @@ const POLL_MS = 5 * 60_000;
 const STALE_MS = 45 * 60_000;
 const MAX_AGE_MS = 3 * 60 * 60_000;
 const MAX_RESPONSE_BYTES = 256 * 1024;
-const PLATFORM_NAMES = { codex: 'Codex', claude: 'Claude Code' } as const;
+const PLATFORM_NAMES = {
+  codex: 'Codex',
+  claude: 'Claude Code',
+  antigravity: 'Antigravity',
+} as const;
 
 function parseOverview(value: unknown): Omit<RadarOverview, 'stale'> | null {
   if (!value || typeof value !== 'object') return null;
@@ -72,10 +76,7 @@ async function readOverview(response: Response) {
 export function createRadarOverview(key?: string, url = SITE_OVERVIEW) {
   const credential = key?.trim();
   if (!credential) return undefined;
-  if (
-    !/^[A-Za-z0-9_-]{43,128}$/.test(credential) ||
-    url !== SITE_OVERVIEW
-  ) {
+  if (!/^[A-Za-z0-9_-]{43,128}$/.test(credential) || url !== SITE_OVERVIEW) {
     console.warn(
       'Reset Radar overview disabled: invalid credential or endpoint',
     );

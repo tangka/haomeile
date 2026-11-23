@@ -5,6 +5,7 @@
     width: var(--radar-mark-size, 52px);
     aspect-ratio: 1;
     position: relative;
+    overflow: hidden;
     border: 1px solid color-mix(in srgb, currentColor 44%, transparent);
     border-radius: 50%;
     background:
@@ -15,13 +16,21 @@
         transparent 0 18%,
         color-mix(in srgb, currentColor 22%, transparent) 19% 20%,
         transparent 21% 23%
-      ),
-      conic-gradient(
-        from -24deg,
-        transparent,
-        #5e9b4c70 62deg,
-        transparent 63deg
       );
+  }
+
+  .radar-mark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(
+      from -36deg,
+      transparent 0deg,
+      #5e9b4c80 60deg,
+      #38804ba8 64deg,
+      transparent 65deg
+    );
   }
 
   .radar-mark::after {
@@ -34,5 +43,17 @@
     border-radius: 50%;
     background: var(--mum);
     transform: translate(-50%, -50%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .radar-mark::before {
+      animation: radar-sweep 3.2s linear infinite;
+    }
+  }
+
+  @keyframes radar-sweep {
+    to {
+      transform: rotate(1turn);
+    }
   }
 </style>
