@@ -42,8 +42,13 @@ export const EN_STATIC: Record<string, string> = {
   使用小技巧: 'Tips',
   重置雷达: 'Reset Radar',
   '重置雷达 · 号没了': 'Reset Radar · Haomeile',
-  '关注 Codex 和 Claude Code 的额度动态，查看未来 24 小时的重置概率和研判依据。':
-    'Follow Codex and Claude Code quota updates, with 24-hour reset estimates and the signals behind them.',
+  '查看 Codex 和 Claude Code 未来 24 小时的额度重置概率，扫码进入重置雷达小程序。':
+    'See 24-hour quota reset estimates for Codex and Claude Code, or scan the code for the Reset Radar Mini Program.',
+  '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
+  '根据公开信号估算。': 'Estimates based on public signals.',
+  '暂未获取到额度重置预测。':
+    'Quota reset estimates are currently unavailable.',
+  在微信查看研判依据: 'See the signals behind the forecast in WeChat',
   '用微信扫码，或在微信小程序里搜索「重置雷达」。':
     'Scan with WeChat, or search for “重置雷达” in WeChat Mini Programs.',
   重置雷达微信小程序码: 'Reset Radar WeChat Mini Program code',

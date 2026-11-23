@@ -19,6 +19,7 @@ import {
 import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { tombPresentation } from '../shared/tomb-presentation';
+import type { ReadRadarOverview } from '../shared/radar';
 import {
   contentSecurityPolicy,
   REFERRER_POLICY,
@@ -298,7 +299,10 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
   },
 };
 
-export async function servePage(c: Context<AppEnv>): Promise<Response> {
+export async function servePage(
+  c: Context<AppEnv>,
+  readRadarOverview?: ReadRadarOverview,
+): Promise<Response> {
   const url = new URL(c.req.url);
   const site = siteOrigin(c.env.SITE_ORIGIN);
   const requestedPath = basePath(url.pathname);
@@ -339,6 +343,30 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
     /^\/tips\/[a-z0-9-]+$/.test(path)
   )
     assetPath = path + '/';
+  if (path === '/radar') {
+    const overview = readRadarOverview?.();
+    if (overview) {
+      const formattedAt = new Intl.DateTimeFormat(
+        locale === 'en' ? 'en-GB' : 'zh-CN',
+        { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Singapore' },
+      ).format(new Date(overview.generatedAt));
+      const label = overview.stale
+        ? text('最近一次预测', 'Last available forecast')
+        : text('预测更新时间', 'Forecast updated');
+      const cards = overview.platforms.map(
+        ({ name, probability }) =>
+          `<li><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong></li>`,
+      );
+      rewriter.on('[data-ssr="radar-overview"]', {
+        element: (el) => {
+          el.setInnerContent(
+            `<ul class="radar-forecasts" role="list">${cards.join('')}</ul><p class="radar-updated">${label} <time datetime="${escapeHtml(overview.generatedAt)}">${escapeHtml(formattedAt)} (UTC+8)</time></p>`,
+            { html: true },
+          );
+        },
+      });
+    }
+  }
   if (path === '/' || path.startsWith('/v/')) {
     const vendor = path.startsWith('/v/')
       ? path.slice(3)

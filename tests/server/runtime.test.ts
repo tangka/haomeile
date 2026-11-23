@@ -30,7 +30,11 @@ const runtimes: Runtime[] = [];
 const directories: string[] = [];
 const fetchSpies: ReturnType<typeof spyOn<typeof globalThis, 'fetch'>>[] = [];
 
-async function runtime(analyticsToken?: string, ga4MeasurementId?: string) {
+async function runtime(
+  analyticsToken?: string,
+  ga4MeasurementId?: string,
+  radarApiKey?: string,
+) {
   const data = await mkdtemp(join(tmpdir(), 'haomeile-runtime-test-'));
   directories.push(data);
   const values = {
@@ -46,6 +50,7 @@ async function runtime(analyticsToken?: string, ga4MeasurementId?: string) {
     TURNSTILE_SECRET: '0xFAKE_RUNTIME_TEST_SECRET',
     CLOUDFLARE_WEB_ANALYTICS_TOKEN: analyticsToken,
     GA4_MEASUREMENT_ID: ga4MeasurementId,
+    RADAR_OVERVIEW_API_KEY: radarApiKey,
     ADMIN_AUTH_MODE: 'basic',
     ADMIN_USERNAME: 'runtime-admin',
     ADMIN_PASSWORD_HASH: await hashSecret(PASSWORD, PEPPER),
@@ -87,6 +92,7 @@ function mockSiteverify() {
 }
 
 afterEach(async () => {
+  for (const item of runtimes) item.radar?.stop();
   for (const mock of fetchSpies.splice(0)) mock.mockRestore();
   for (const item of runtimes.splice(0)) item.database.close();
   for (const directory of directories.splice(0))
@@ -122,6 +128,66 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
+  test('serves a small radar snapshot without forwarding any visitor request or upstream response', async () => {
+    const key = 'fictional-integration-key-for-tests';
+    const generatedAt = new Date().toISOString();
+    const respond = async () =>
+      Response.json({
+        generatedAt,
+        diagnostics: 'private-upstream-diagnostics',
+        platforms: [
+          {
+            id: 'codex',
+            name: '<script>untrusted-name</script>',
+            probability: 17.8,
+          },
+          {
+            id: 'claude',
+            probability: 0,
+            judgementReason: 'private-judgement',
+          },
+          { id: 'grok', probability: 42 },
+        ],
+      });
+    const fetchMock = spyOn(globalThis, 'fetch').mockImplementation(
+      Object.assign(respond, { preconnect() {} }),
+    );
+    fetchSpies.push(fetchMock);
+    const { opened } = await runtime(undefined, undefined, key);
+    expect(opened.radar!.read()).toBeNull();
+    opened.radar!.start();
+    opened.radar!.start();
+    await Bun.sleep(0);
+
+    const [zh, en, direct] = await Promise.all([
+      request(opened, '/radar?url=https://example.invalid', undefined, {
+        Authorization: 'Bearer visitor-credential',
+      }),
+      request(opened, '/en/radar'),
+      request(opened, '/api/radar'),
+    ]);
+    expect(direct.status).toBe(404);
+    for (const response of [zh, en]) {
+      expect(response.status).toBe(200);
+      const html = await response.text();
+      expect(html).toContain('<h3>Codex</h3><strong>18%</strong>');
+      expect(html).toContain('<h3>Claude Code</h3><strong>0%</strong>');
+      expect(html).toContain(`datetime="${generatedAt}"`);
+      expect(html).not.toMatch(
+        /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok/,
+      );
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      'https://api.tangka.online/radar-api/member/v1/overview',
+    );
+    const options = fetchMock.mock.calls[0][1];
+    expect(options?.headers).toEqual({
+      Accept: 'application/json',
+      Authorization: `Bearer ${key}`,
+    });
+    expect(options?.redirect).toBe('error');
+  });
   test('renders Chinese and English routes with valid metadata, language switch links, and native rewritten HTML', async () => {
     const { opened } = await runtime();
     const chinese = await request(opened, '/', undefined, {

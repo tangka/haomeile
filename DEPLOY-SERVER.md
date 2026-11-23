@@ -72,6 +72,12 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 在 Google Analytics 中为 `https://haomeile.rip` 设置网站数据流，关闭增强型衡量，将衡量 ID（`G-` 开头）写入 `/etc/haomeile/haomeile.env` 的 `GA4_MEASUREMENT_ID` 并重启应用。打开线上首页后，可在 [Google Analytics](https://analytics.google.com/) 的「实时」报告中查看页面浏览。清空这一项并重启可关闭 GA4。
 
+## 重置雷达数据
+
+在 `/etc/haomeile/haomeile.env` 配置已分配给本站的只读凭据 `RADAR_OVERVIEW_API_KEY` 并重启应用。默认使用重置雷达会员概览接口。如果重置雷达已启用本站专用接口，可将 `RADAR_OVERVIEW_API_URL` 设为 `https://api.tangka.online/radar-api/integrations/haomeile/overview`。应用只向这两个固定的 HTTPS 地址发送授权头，拒绝跟随跳转。
+
+进程启动后主动获取快照，之后每五分钟刷新，遇到上游限流时延后。`/radar` 和 `/en/radar` 只从内存快照渲染 Codex、Claude Code 的概率和生成时间。若刷新失败或生成时间距今超过 45 分钟，页面标记为最近一次预测。超过三小时或没有有效快照时，页面显示数据暂不可用，仍可扫码进入小程序。
+
 ## 社区资料导入
 
 首批经复核的公开来源摘要位于 `docs/research/community-cases.json`，来源和证据边界见同目录 README。它们不是原作者向本站提交的投稿，按 `origin=community` 单独计数，不进入自愿上报及曲线。用户投稿仍不接受来源链接或自行提供的翻译字段。

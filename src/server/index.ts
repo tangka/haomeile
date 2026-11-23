@@ -10,6 +10,7 @@ import { createAssets } from './assets';
 import { openDatabase } from './database';
 import { createAdminVerifier, prepareRequest } from './auth';
 import { importCommunityCases } from './community';
+import { createRadarOverview } from './radar';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -69,6 +70,10 @@ export async function openRuntime(
 ) {
   process.umask(0o077);
   const config = serverConfig(values);
+  const radar = createRadarOverview(
+    values.RADAR_OVERVIEW_API_KEY,
+    values.RADAR_OVERVIEW_API_URL,
+  );
   const assets = createAssets(config.assets);
   await mkdir(config.data, { recursive: true, mode: 0o700 });
   const database = openDatabase(join(config.data, 'haomeile.sqlite'));
@@ -87,9 +92,10 @@ export async function openRuntime(
               passwordHash: config.passwordHash,
             }),
             basicChallenge: true,
+            readRadarOverview: radar?.read,
           })
-        : createApp();
-    return { config, database, env, app };
+        : createApp({ readRadarOverview: radar?.read });
+    return { config, database, env, app, radar };
   } catch (error) {
     database.close();
     throw error;
@@ -107,7 +113,7 @@ async function main() {
   const runtime = await openRuntime(process.env, {
     migrate: command === 'serve' || command === 'migrate',
   });
-  const { config, database, app, env } = runtime;
+  const { config, database, app, env, radar } = runtime;
   if (command !== 'serve') {
     try {
       if (command === 'import-community') {
@@ -179,11 +185,13 @@ async function main() {
       });
     },
   });
+  radar?.start();
   console.log(`Haomeile listening on loopback port ${server.port}`);
   let stopping = false;
   const stop = async () => {
     if (stopping) return;
     stopping = true;
+    radar?.stop();
     await server.stop();
     database.close();
   };

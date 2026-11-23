@@ -9,10 +9,12 @@ import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
 import { basePath, localePath, requestLocale, tr } from '../shared/i18n';
+import type { ReadRadarOverview } from '../shared/radar';
 
 export interface AppOptions {
   verifyAdministrator?: typeof verifyAccess;
   basicChallenge?: boolean;
+  readRadarOverview?: ReadRadarOverview;
 }
 /** Runtime-owned authentication strategy; Workers continue to require Access JWTs. */
 export function createApp(options: AppOptions = {}) {
@@ -112,7 +114,7 @@ export function createApp(options: AppOptions = {}) {
       404,
     ),
   );
-  app.get('*', servePage);
+  app.get('*', (c) => servePage(c, options.readRadarOverview));
   return app;
 }
 export const app = createApp();
