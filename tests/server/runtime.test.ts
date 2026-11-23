@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { openRuntime } from '../../src/server';
 import { hashSecret } from '../../src/worker/lib/crypto';
+import { decodeHtml } from '../../src/worker/localize';
 import type { TombstoneRow } from '../../src/worker/types';
 
 const SITE = 'https://haomeile.rip';
@@ -305,7 +306,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
 
   test('serves Radar and its analytics anonymously only when its human check is disabled', async () => {
     const key = 'fictional-integration-key-for-isolated-runtime-tests';
-    const generatedAt = new Date().toISOString();
+    const now = Date.now();
+    const generatedAt = new Date(now).toISOString();
+    const previousAt = new Date(now - 30 * 60_000).toISOString();
     const fetchMock = spyOn(globalThis, 'fetch').mockImplementation(
       Object.assign(
         async (target: Parameters<typeof fetch>[0]) => {
@@ -315,6 +318,25 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
           return Response.json({
             generatedAt,
             platforms: [{ id: 'antigravity', probability: 63.6 }],
+            probabilityHistory24h: {
+              codex: [{ timestamp: generatedAt, probability: 0 }],
+              claude: [{ timestamp: generatedAt, probability: 33 }],
+              antigravity: [
+                { timestamp: generatedAt, probability: 63.6 },
+                { timestamp: previousAt, probability: 62.1 },
+                { timestamp: previousAt, probability: 62.4 },
+                { timestamp: previousAt, probability: 101 },
+                {
+                  timestamp: new Date(now + 60_000).toISOString(),
+                  probability: 50,
+                },
+                {
+                  timestamp: new Date(now - 25 * 60 * 60_000).toISOString(),
+                  probability: 10,
+                },
+              ],
+              grok: [{ timestamp: generatedAt, probability: 97 }],
+            },
           });
         },
         { preconnect() {} },
@@ -337,6 +359,36 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(response.headers.has('set-cookie')).toBe(false);
       const html = await response.text();
       expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
+      const trendSection = html.match(
+        /<section[^>]*data-ssr="radar-history"[^>]*>/,
+      )?.[0];
+      expect(trendSection).toBeDefined();
+      expect(trendSection).not.toContain('hidden');
+      const trend = html.match(/data-radar-trend="([^"]+)"/)?.[1];
+      expect(trend).toBeDefined();
+      expect(JSON.parse(decodeHtml(trend!))).toEqual({
+        generatedAt,
+        series: [
+          {
+            id: 'codex',
+            name: 'Codex',
+            points: [{ time: now, probability: 0 }],
+          },
+          {
+            id: 'claude',
+            name: 'Claude Code',
+            points: [{ time: now, probability: 33 }],
+          },
+          {
+            id: 'antigravity',
+            name: 'Antigravity',
+            points: [
+              { time: Date.parse(previousAt), probability: 62.4 },
+              { time: now, probability: 63.6 },
+            ],
+          },
+        ],
+      });
       expect(html).not.toMatch(
         /data-radar-verify|fictional-integration|api\.tangka\.online/,
       );

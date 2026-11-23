@@ -250,7 +250,10 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     links: [
       {
         href: '/appeal#codex',
-        label: { zh: 'Codex / OpenAI 官方申诉入口', en: 'Official OpenAI appeal' },
+        label: {
+          zh: 'Codex / OpenAI 官方申诉入口',
+          en: 'Official OpenAI appeal',
+        },
       },
       {
         href: '/tips/chatgpt-plus-iphone-subscription',
@@ -375,6 +378,25 @@ export async function servePage(
           );
         },
       });
+      if (overview.history.length) {
+        rewriter
+          .on('[data-ssr="radar-history"]', {
+            element: (el) => {
+              el.removeAttribute('hidden');
+            },
+          })
+          .on('[data-radar-trend]', {
+            element: (el) => {
+              el.setAttribute(
+                'data-radar-trend',
+                safeJson({
+                  generatedAt: overview.generatedAt,
+                  series: overview.history,
+                }),
+              );
+            },
+          });
+      }
     }
   }
   if (path === '/' || path.startsWith('/v/')) {

@@ -1,4 +1,9 @@
-import type { RadarOverview } from '../shared/radar';
+import {
+  RADAR_PLATFORM_NAMES,
+  type RadarOverview,
+  type RadarPlatformId,
+  type RadarTrendPoint,
+} from '../shared/radar';
 
 const SITE_OVERVIEW =
   'https://api.tangka.online/radar-api/integrations/haomeile/overview';
@@ -6,41 +11,83 @@ const POLL_MS = 5 * 60_000;
 const STALE_MS = 45 * 60_000;
 const MAX_AGE_MS = 3 * 60 * 60_000;
 const MAX_RESPONSE_BYTES = 256 * 1024;
-const PLATFORM_NAMES = {
-  codex: 'Codex',
-  claude: 'Claude Code',
-  antigravity: 'Antigravity',
-} as const;
+const HISTORY_WINDOW_MS = 24 * 60 * 60_000;
+const MAX_HISTORY_POINTS = 49;
+const PLATFORM_IDS = Object.keys(RADAR_PLATFORM_NAMES) as RadarPlatformId[];
+
+function historyPoints(
+  values: unknown,
+  generatedAt: number,
+): RadarTrendPoint[] {
+  if (!Array.isArray(values)) return [];
+  const points = new Map<number, number>();
+  for (const value of values) {
+    if (!value || typeof value !== 'object') continue;
+    const { timestamp, probability } = value as Record<string, unknown>;
+    if (typeof timestamp !== 'string') continue;
+    const time = Date.parse(timestamp);
+    if (
+      Number.isFinite(time) &&
+      time >= generatedAt - HISTORY_WINDOW_MS &&
+      time <= generatedAt &&
+      typeof probability === 'number' &&
+      Number.isFinite(probability) &&
+      probability >= 0 &&
+      probability <= 100
+    )
+      points.set(time, probability);
+  }
+  return [...points]
+    .sort(([a], [b]) => a - b)
+    .slice(-MAX_HISTORY_POINTS)
+    .map(([time, probability]) => ({ time, probability }));
+}
 
 function parseOverview(value: unknown): Omit<RadarOverview, 'stale'> | null {
   if (!value || typeof value !== 'object') return null;
-  const { generatedAt, platforms } = value as Record<string, unknown>;
+  const { generatedAt, platforms, probabilityHistory24h } = value as Record<
+    string,
+    unknown
+  >;
   if (typeof generatedAt !== 'string' || !Array.isArray(platforms)) return null;
   const timestamp = Date.parse(generatedAt);
   if (!Number.isFinite(timestamp) || timestamp > Date.now() + 60_000)
     return null;
 
-  const publicPlatforms = Object.entries(PLATFORM_NAMES).flatMap(
-    ([id, name]) => {
-      const entry = platforms.find(
-        (item: unknown): item is Record<string, unknown> =>
-          !!item && typeof item === 'object' && 'id' in item && item.id === id,
-      );
-      const probability = entry?.probability;
-      return typeof probability === 'number' &&
-        Number.isFinite(probability) &&
-        probability >= 0 &&
-        probability <= 100
-        ? [{ name, probability: Math.round(probability) }]
-        : [];
-    },
-  );
-  return publicPlatforms.length
-    ? {
-        generatedAt: new Date(timestamp).toISOString(),
-        platforms: publicPlatforms,
-      }
-    : null;
+  const publicPlatforms = PLATFORM_IDS.flatMap((id) => {
+    const entry = platforms.find(
+      (item: unknown): item is Record<string, unknown> =>
+        !!item && typeof item === 'object' && 'id' in item && item.id === id,
+    );
+    const probability = entry?.probability;
+    return typeof probability === 'number' &&
+      Number.isFinite(probability) &&
+      probability >= 0 &&
+      probability <= 100
+      ? [
+          {
+            name: RADAR_PLATFORM_NAMES[id],
+            probability: Math.round(probability),
+          },
+        ]
+      : [];
+  });
+  if (!publicPlatforms.length) return null;
+  const rawHistory =
+    probabilityHistory24h && typeof probabilityHistory24h === 'object'
+      ? (probabilityHistory24h as Record<string, unknown>)
+      : {};
+  const history = PLATFORM_IDS.flatMap((id) => {
+    const points = historyPoints(rawHistory[id], timestamp);
+    return points.length
+      ? [{ id, name: RADAR_PLATFORM_NAMES[id], points }]
+      : [];
+  });
+  return {
+    generatedAt: new Date(timestamp).toISOString(),
+    platforms: publicPlatforms,
+    history,
+  };
 }
 
 async function readOverview(response: Response) {

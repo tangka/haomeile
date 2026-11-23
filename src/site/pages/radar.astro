@@ -27,8 +27,39 @@ const description =
           <p class="radar-updated">暂未获取到额度重置预测。</p>
         </div>
       </section>
+
+      <section
+        class="radar-history"
+        data-ssr="radar-history"
+        aria-labelledby="radar-trend-title"
+        hidden
+      >
+        <div class="radar-history-head">
+          <h2 id="radar-trend-title">近 24 小时趋势</h2>
+          <p>UTC+8</p>
+        </div>
+        <ul class="radar-trend-legend" data-radar-trend-legend></ul>
+        <canvas
+          data-radar-trend=""
+          role="img"
+          aria-label="额度重置概率趋势图"
+          aria-describedby="radar-trend-help"
+          tabindex="0"
+        ></canvas>
+        <p
+          data-radar-trend-readout
+          class="radar-trend-readout"
+          role="status"
+        ></p>
+        <p id="radar-trend-help" class="radar-trend-help">
+          指向、轻点或用方向键查看采样点。缺少数据的时段留空。
+        </p>
+      </section>
     </div>
   </main>
+  <script>
+    import '../scripts/radar-trend';
+  </script>
 </SiteLayout>
 
 <style>
@@ -105,6 +136,76 @@ const description =
   .radar-vitals :global(.radar-updated) {
     margin: 12px 0 0;
     font-size: var(--fs-xs);
+  }
+
+  .radar-history {
+    margin-top: 24px;
+    border: 2px solid var(--ink);
+    padding: clamp(12px, 3vw, 24px);
+  }
+
+  .radar-history-head,
+  .radar-trend-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+  }
+
+  .radar-history-head {
+    justify-content: space-between;
+  }
+
+  .radar-history h2 {
+    margin: 0;
+    font-size: var(--fs-l);
+    font-family: var(--font-carve);
+  }
+
+  .radar-trend-legend {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 6px;
+  }
+
+  .radar-trend-legend :global(li)::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    margin-inline-end: 6px;
+    vertical-align: middle;
+    background: var(--trend-color);
+  }
+
+  .radar-trend-legend :global([data-series='codex']) {
+    --trend-color: light-dark(#38774c, #86d39d);
+  }
+
+  .radar-trend-legend :global([data-series='claude']) {
+    --trend-color: light-dark(#93600f, #f7c557);
+  }
+
+  .radar-trend-legend :global([data-series='antigravity']) {
+    --trend-color: var(--focus);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: clamp(188px, 35vw, 312px);
+  }
+
+  .radar-history-head p,
+  .radar-trend-legend,
+  .radar-trend-readout,
+  .radar-trend-help {
+    font-size: var(--fs-xs);
+  }
+
+  .radar-trend-readout {
+    min-height: 1.6em;
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 450px) {

@@ -46,6 +46,10 @@ export const EN_STATIC: Record<string, string> = {
   'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。':
     '24-hour quota reset estimates for Codex, Claude Code and Antigravity.',
   重置预测: 'Reset forecast',
+  '近 24 小时趋势': 'Past 24 hours',
+  额度重置概率趋势图: 'Quota reset probability chart',
+  '指向、轻点或用方向键查看采样点。缺少数据的时段留空。':
+    'Hover, tap, or use the arrow keys to inspect samples. Gaps indicate missing data.',
   '通过人机验证后进入重置雷达。': 'Verify you are human to open Reset Radar.',
   '请完成人机验证后进入。': 'Complete the human verification to continue.',
   '请开启 JavaScript 完成验证。': 'Enable JavaScript to verify.',
