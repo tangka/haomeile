@@ -619,5 +619,41 @@
     "reviewed_at": "2026-11-23",
     "evidence": "The original X post was published at 2026-11-22T21:45:57Z. Two follow-ups by the same author (status IDs 2124621069327966617 and 2124621853163765964) confirm the guide and request for receipt. All three were checked against the official X embeds and describe one incident. The author did not give a plan tier, incident date or decision.",
     "status_as_of": "2026-11-23"
+  },
+  {
+    "key": "antigravity-forum-204333",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": "2026-11-23",
+    "appeal_status": "pending",
+    "source_url": "https://discuss.ai.google.dev/t/204333",
+    "source_platform": "Google AI Developers Forum",
+    "source_published_at": "2026-11-24",
+    "codename": "先碰到额度限制，几天后 Antigravity 提示停用",
+    "codename_en": "Antigravity hit a quota limit, then showed a suspension days later",
+    "story": "11 月 9 日，我的 Google 账号两次停用，两次都恢复了。15 日到 18 日，我还能用 Antigravity，遇到的是额度用完的 429 提示。到了 23 日，提示变成了 403，说我的账号因违反条款被停用。我撤掉了本地代理配置，填了官方申诉表，又去论坛请求人工复查。",
+    "story_en": "On November 9 my Google account was disabled twice and restored both times. From November 15 to 18 I could still use Antigravity. When I ran out of quota, I got a 429. On November 23 I got a different message: a 403 saying my access was disabled for a terms violation. I removed my local proxy setup, submitted the appeal form and asked for a manual review on the forum.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "The original topic was published at 2026-11-23T16:07:47Z (November 24 in Singapore). The author explicitly dates the earlier Google account restorations, the quota-only period and the new Antigravity suspension on November 23. They report filing the official appeal; no later decision or plan was disclosed.",
+    "status_as_of": "2026-11-24"
+  },
+  {
+    "key": "claude-x-2123369523524874334",
+    "vendor": "claude",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "pending",
+    "source_url": "https://x.com/JesunsWu/status/2123369523524874334",
+    "source_platform": "X",
+    "source_published_at": "2026-11-19",
+    "codename": "Claude 通知说有可疑信号，没说是哪次操作",
+    "codename_en": "My Claude suspension notice mentioned suspicious signals but gave no specifics",
+    "story": "我的付费 Claude 账号被停用了。通知里说发现了可疑信号，可我看完还是不知道是哪次操作出了问题。我提交了申诉，也要求退订阅费。11 月 20 日我又发了帖，申诉没能让我拿回账号，账号仍是永久停用。",
+    "story_en": "My paid Claude account was suspended. The notice mentioned suspicious signals, but I couldn’t tell what I’d done to trigger it. I filed an appeal and asked for my subscription fee back. On November 20 I posted again: appealing hadn’t got me back in, and my account was still permanently banned.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "Original post published at 2026-11-19T10:55:19Z. The author reported appealing, asking for a refund and receiving no specific reason. On November 20 the author described an unsuccessful appeal and continuing permanent suspension (X status 2123757292021772435), without quoting a formal appeal decision. A November 23 post (2124773691229933929) refers to several accounts. Those are not counted separately or used to infer this account’s tier. No incident date or refund result is given.",
+    "status_as_of": "2026-11-24"
   }
 ]
