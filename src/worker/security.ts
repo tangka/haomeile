@@ -8,10 +8,23 @@ export const WEB_ANALYTICS_BEACON =
   'https://static.cloudflareinsights.com/beacon.min.js';
 export const REFERRER_POLICY = 'strict-origin-when-cross-origin';
 
-export function contentSecurityPolicy(webAnalytics = false): string {
-  const scripts = webAnalytics ? ` ${WEB_ANALYTICS_BEACON}` : '';
-  const connections = webAnalytics ? ' https://cloudflareinsights.com' : '';
-  return `default-src 'self'; script-src 'self' https://challenges.cloudflare.com${scripts}; frame-src https://challenges.cloudflare.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'${connections}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`;
+export function contentSecurityPolicy({
+  webAnalytics = false,
+  googleAnalytics = false,
+} = {}): string {
+  const googleEndpoints = googleAnalytics
+    ? ' https://www.googletagmanager.com https://*.google-analytics.com'
+    : '';
+  const scripts = [
+    webAnalytics ? ` ${WEB_ANALYTICS_BEACON}` : '',
+    googleAnalytics ? ' https://www.googletagmanager.com/gtag/' : '',
+  ].join('');
+  const connections = [
+    webAnalytics ? ' https://cloudflareinsights.com' : '',
+    googleEndpoints,
+    googleAnalytics ? ' https://*.google.com' : '',
+  ].join('');
+  return `default-src 'self'; script-src 'self' https://challenges.cloudflare.com${scripts}; frame-src https://challenges.cloudflare.com; img-src 'self' data: blob:${googleEndpoints}; style-src 'self' 'unsafe-inline'; connect-src 'self'${connections}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`;
 }
 
 export const security: MiddlewareHandler<AppEnv> = async (c, next) => {

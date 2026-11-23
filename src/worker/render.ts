@@ -456,15 +456,19 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
   if (asset.status === 404) return serveMissing(c, 404);
   if (!asset.headers.get('Content-Type')?.includes('text/html')) return asset;
   const status = asset.status;
-  const analyticsToken =
+  const publicAnalyticsPage =
     status === 200 &&
     c.env.ENVIRONMENT === 'production' &&
     url.origin === DEFAULT_SITE_ORIGIN &&
     site === DEFAULT_SITE_ORIGIN &&
     (/^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
-      /^\/(?:v|t|tips)\/[^/]+$/.test(path))
-      ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
-      : undefined;
+      /^\/(?:v|t|tips)\/[^/]+$/.test(path));
+  const analyticsToken = publicAnalyticsPage
+    ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
+    : undefined;
+  const ga4MeasurementId = c.env.GA4_MEASUREMENT_ID?.trim() ?? '';
+  const googleAnalytics =
+    publicAnalyticsPage && /^G-[A-Z0-9]{10}$/.test(ga4MeasurementId);
   if (analyticsToken) {
     const beacon = escapeHtml(JSON.stringify({ token: analyticsToken }));
     rewriter.on('body', {
@@ -476,17 +480,39 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
       },
     });
   }
+  if (googleAnalytics) {
+    rewriter.on('head', {
+      element: (el) => {
+        el.append(
+          `<script defer src="/assets/ga4.js" data-ga4-measurement-id="${ga4MeasurementId}"></script>`,
+          { html: true },
+        );
+      },
+    });
+  }
+  const webAnalytics = Boolean(analyticsToken);
+  const analyticsEnabled = webAnalytics || googleAnalytics;
   if (path === '/privacy') {
     rewriter
       .on('[data-web-analytics-disclosure]', {
         element: (el) => {
-          if (analyticsToken) el.removeAttribute('hidden');
+          if (analyticsEnabled) el.removeAttribute('hidden');
           else el.remove();
+        },
+      })
+      .on('[data-cloudflare-analytics-disclosure]', {
+        element: (el) => {
+          if (!webAnalytics) el.remove();
+        },
+      })
+      .on('[data-ga4-disclosure]', {
+        element: (el) => {
+          if (!googleAnalytics) el.remove();
         },
       })
       .on('[data-web-analytics-disabled]', {
         element: (el) => {
-          if (analyticsToken) el.remove();
+          if (analyticsEnabled) el.remove();
         },
       });
   }
@@ -500,10 +526,10 @@ export async function servePage(c: Context<AppEnv>): Promise<Response> {
     'Cache-Control',
     path === '/admin' ? 'no-store' : 'public, max-age=60, s-maxage=300',
   );
-  if (analyticsToken) {
+  if (analyticsEnabled) {
     response.headers.set(
       'Content-Security-Policy',
-      contentSecurityPolicy(true),
+      contentSecurityPolicy({ webAnalytics, googleAnalytics }),
     );
     response.headers.set('Referrer-Policy', REFERRER_POLICY);
   }

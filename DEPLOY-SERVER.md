@@ -68,6 +68,8 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 统计脚本只在生产的公开内容页加载。立碑、编辑、制卡、管理、后台、API 和错误页面不加载。访问趋势与页面来源在 [Cloudflare Web Analytics](https://dash.cloudflare.com/?to=/:account/web-analytics) 查看。
 
+在 Google Analytics 中为 `https://haomeile.rip` 设置网站数据流，关闭增强型衡量，将衡量 ID（`G-` 开头）写入 `/etc/haomeile/haomeile.env` 的 `GA4_MEASUREMENT_ID` 并重启应用。打开线上首页后，可在 [Google Analytics](https://analytics.google.com/) 的「实时」报告中查看页面浏览。清空这一项并重启可关闭 GA4。
+
 ## 社区资料导入
 
 首批经复核的公开来源摘要位于 `docs/research/community-cases.json`，来源和证据边界见同目录 README。它们不是原作者向本站提交的投稿，按 `origin=community` 单独计数，不进入自愿上报及曲线。用户投稿仍不接受来源链接或自行提供的翻译字段。

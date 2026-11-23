@@ -2,6 +2,7 @@ import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { openRuntime } from '../../src/server';
 import { hashSecret } from '../../src/worker/lib/crypto';
 import type { TombstoneRow } from '../../src/worker/types';
@@ -10,6 +11,7 @@ const SITE = 'https://haomeile.rip';
 const PEPPER = 'runtime-test-only-pepper-never-used-by-a-deployment';
 const PASSWORD = 'runtime-test-only-administrator-password-32-plus';
 const TOKEN = 'runtime-production-like-non-dummy-token';
+const MEASUREMENT_ID = 'G-AB12CD34EF';
 const AUTHORIZATION = 'Basic ' + btoa('runtime-admin:' + PASSWORD);
 const originalStory = '写你看到了什么、做了什么。猜测请注明“猜测”。';
 const input = {
@@ -28,7 +30,7 @@ const runtimes: Runtime[] = [];
 const directories: string[] = [];
 const fetchSpies: ReturnType<typeof spyOn<typeof globalThis, 'fetch'>>[] = [];
 
-async function runtime(analyticsToken?: string) {
+async function runtime(analyticsToken?: string, ga4MeasurementId?: string) {
   const data = await mkdtemp(join(tmpdir(), 'haomeile-runtime-test-'));
   directories.push(data);
   const values = {
@@ -43,6 +45,7 @@ async function runtime(analyticsToken?: string) {
     TURNSTILE_SITE_KEY: '0xFAKE_RUNTIME_TEST_SITE_KEY',
     TURNSTILE_SECRET: '0xFAKE_RUNTIME_TEST_SECRET',
     CLOUDFLARE_WEB_ANALYTICS_TOKEN: analyticsToken,
+    GA4_MEASUREMENT_ID: ga4MeasurementId,
     ADMIN_AUTH_MODE: 'basic',
     ADMIN_USERNAME: 'runtime-admin',
     ADMIN_PASSWORD_HASH: await hashSecret(PASSWORD, PEPPER),
@@ -161,24 +164,37 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     });
   });
 
-  test('loads configured Cloudflare Web Analytics on public reading pages only', async () => {
+  test('loads configured analytics on public reading pages only', async () => {
     const token = '0123456789abcdef0123456789abcdef';
     const beacon = 'https://static.cloudflareinsights.com/beacon.min.js';
-    const { opened } = await runtime(token);
-    for (const path of ['/', '/en/', '/tips', '/en/privacy']) {
+    const { opened } = await runtime(token, MEASUREMENT_ID);
+    for (const path of ['/', '/en/', '/tips', '/privacy', '/en/privacy']) {
       const response = await request(opened, path);
       expect(response.status).toBe(200);
       const html = await response.text();
       expect(html.match(/data-cf-beacon=/g)).toHaveLength(1);
       expect(html).toContain(`src="${beacon}"`);
       expect(html).toContain(token);
+      expect(html.match(/data-ga4-measurement-id=/g)).toHaveLength(1);
+      expect(html).toContain(`data-ga4-measurement-id="${MEASUREMENT_ID}"`);
+      if (path === '/privacy') {
+        expect(html).toContain('公开浏览页面使用 Google Analytics 4');
+      }
       if (path === '/en/privacy') {
         expect(html).toContain('Public pages use Cloudflare Web Analytics');
+        expect(html).toContain('Public pages use Google Analytics 4');
+        expect(html).toContain('uses first-party cookies');
         expect(html).not.toContain('data-web-analytics-disabled');
       }
-      const policy = response.headers.get('Content-Security-Policy');
+      const policy = response.headers.get('Content-Security-Policy') || '';
       expect(policy).toContain(beacon);
       expect(policy).toContain('https://cloudflareinsights.com');
+      expect(policy).toContain('https://www.googletagmanager.com/gtag/');
+      expect(policy).toContain('https://*.google-analytics.com');
+      expect(policy.match(/(?:^|; )script-src [^;]*/)?.[0]).not.toContain(
+        'unsafe-inline',
+      );
+      expect(policy).not.toContain('doubleclick');
       expect(response.headers.get('Referrer-Policy')).toBe(
         'strict-origin-when-cross-origin',
       );
@@ -196,10 +212,13 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       const response = await request(opened, path, undefined, {
         Authorization: AUTHORIZATION,
       });
-      expect(await response.text()).not.toContain('data-cf-beacon');
-      expect(
-        response.headers.get('Content-Security-Policy') || '',
-      ).not.toContain(beacon);
+      const html = await response.text();
+      expect(html).not.toContain('data-cf-beacon');
+      expect(html).not.toContain('data-ga4-measurement-id');
+      const policy = response.headers.get('Content-Security-Policy') || '';
+      expect(policy).not.toContain(beacon);
+      expect(policy).not.toContain('googletagmanager.com');
+      expect(policy).not.toContain('google-analytics.com');
     }
 
     const development = {
@@ -207,11 +226,96 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       env: { ...opened.env, ENVIRONMENT: 'development' },
     };
     const local = await request(development, '/');
-    expect(await local.text()).not.toContain('data-cf-beacon');
+    const localHtml = await local.text();
+    expect(localHtml).not.toContain('data-cf-beacon');
+    expect(localHtml).not.toContain('data-ga4-measurement-id');
     const localPrivacy = await request(development, '/en/privacy');
-    expect(await localPrivacy.text()).not.toContain(
+    const localPrivacyHtml = await localPrivacy.text();
+    expect(localPrivacyHtml).not.toContain(
       'Public pages use Cloudflare Web Analytics',
     );
+    expect(localPrivacyHtml).not.toContain('Public pages use Google Analytics 4');
+    expect(localPrivacyHtml).toContain('data-web-analytics-disabled');
+  });
+
+  test('validates the GA4 ID independently of Cloudflare Web Analytics', async () => {
+    const { opened } = await runtime(undefined, MEASUREMENT_ID);
+    const ga4Only = await request(opened, '/en/privacy');
+    const ga4OnlyHtml = await ga4Only.text();
+    expect(ga4OnlyHtml).toContain('data-ga4-measurement-id');
+    expect(ga4OnlyHtml).toContain('Public pages use Google Analytics 4');
+    expect(ga4OnlyHtml).not.toContain('data-cf-beacon');
+    expect(ga4OnlyHtml).not.toContain(
+      'Public pages use Cloudflare Web Analytics',
+    );
+
+    const malformed = {
+      ...opened,
+      env: {
+        ...opened.env,
+        CLOUDFLARE_WEB_ANALYTICS_TOKEN: '0123456789abcdef0123456789abcdef',
+        GA4_MEASUREMENT_ID: `${MEASUREMENT_ID}"><script>`,
+      },
+    };
+    const cloudflareOnly = await request(malformed, '/en/privacy');
+    const cloudflareOnlyHtml = await cloudflareOnly.text();
+    expect(cloudflareOnlyHtml).toContain('data-cf-beacon');
+    expect(cloudflareOnlyHtml).toContain(
+      'Public pages use Cloudflare Web Analytics',
+    );
+    expect(cloudflareOnlyHtml).not.toContain('data-ga4-measurement-id');
+    expect(cloudflareOnlyHtml).not.toContain('Public pages use Google Analytics 4');
+    expect(cloudflareOnly.headers.get('Content-Security-Policy')).not.toContain(
+      'googletagmanager.com',
+    );
+  });
+
+  test('queues one GA4 page view with sanitized URL, referrer, and title', async () => {
+    const { opened } = await runtime(undefined, MEASUREMENT_ID);
+    const response = await request(opened, '/assets/ga4.js');
+    expect(response.ok).toBe(true);
+    const window = { dataLayer: [] as IArguments[] };
+    const scripts: { src: string }[] = [];
+    runInNewContext(await response.text(), {
+      window,
+      URL,
+      location: new URL(`${SITE}/t/ABC?hidden=secret#fragment`),
+      document: {
+        currentScript: { dataset: { ga4MeasurementId: MEASUREMENT_ID } },
+        title: 'User-supplied title',
+        referrer: `${SITE}/manage?hidden=secret#fragment`,
+        createElement: () => ({}),
+        head: { append: (script: { src: string }) => scripts.push(script) },
+      },
+    });
+    const commands = window.dataLayer.map((entry) => Array.from(entry));
+    expect(commands[0]).toEqual([
+      'consent',
+      'default',
+      {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      },
+    ]);
+    expect(commands[2]).toEqual([
+      'config',
+      MEASUREMENT_ID,
+      {
+        send_page_view: false,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+        page_location: `${SITE}/t/ABC`,
+        page_referrer: SITE,
+        page_title: '/t/ABC',
+      },
+    ]);
+    expect(commands.filter(([command]) => command === 'event')).toEqual([
+      ['event', 'page_view'],
+    ]);
+    expect(scripts.map(({ src }) => src)).toEqual([
+      `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`,
+    ]);
   });
 
   test('challenges anonymous and invalid administrators before serving any alias or queue data', async () => {
