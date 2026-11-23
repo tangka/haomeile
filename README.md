@@ -6,6 +6,8 @@
 
 网站已上线：<https://haomeile.rip>。应用运行在新加坡服务器，域名 `haomeile.rip` 在 Porkbun 管理；生产部署见 [DEPLOY-SERVER.md](DEPLOY-SERVER.md)。Cloudflare 提供免费正式 Turnstile，原 Workers 部署方案保留在 [DEPLOY.md](DEPLOY.md)。本地开发与测试命令不发布生产服务。
 
+搜索、AI 引用、访问统计及 AdSense 的上线记录与协作入口见 [SEO/GEO 交接](docs/SEO-GEO-HANDOFF.md)。
+
 ## 本地运行
 
 需要 Node.js **22.23.4 或更高版本**、pnpm **8.6.12**。在项目根目录运行：
@@ -76,8 +78,8 @@ Astro 采用静态输出。Worker 先处理请求，再用 HTMLRewriter 将 D1 �
 
 投稿套餐按产品联动：Claude 支持未知、免费、Pro、Max、Ultra；Codex 支持未知、免费、Go、Plus、Pro；Antigravity 支持未知、免费、Pro、Ultra。“未知”始终可选。旧 `paid_personal`、`paid_team`、`api` 保留原值供读取与存量审核；编辑时提示重选，不擅自归入具体档位。
 
-公开内容必须人工审核；修改审核期间保留旧的公开版本。撤回会清空内容及凭据哈希，之后旧凭据失效；原公开地址返回 410。应用不保存原始 IP、不设置 Cookie、不引入第三方追踪。后台登录由 Cloudflare Access 的独立管理会话承担。
+公开内容必须人工审核，修改审核期间保留旧的公开版本。撤回会清空内容及凭据哈希，旧凭据失效，原公开地址返回 410。应用不保存原始 IP。线上公开阅读页面使用 Cloudflare Web Analytics 和 Google Analytics 4，GA4 使用第一方统计 Cookie。 [数据说明](https://haomeile.rip/privacy)
 
-`/appeal` 的官方入口、`TODO_DATE` 和 `TODO_CONTACT_EMAIL` 等占位内容需要站长人工核对填写。不要把设计示例或测试夹具导入生产数据库，也不要把测试 Turnstile 密钥用于生产。生产操作、备份和回滚步骤见 [DEPLOY.md](DEPLOY.md)。
+`/appeal` 展示已核对的官方申诉入口。不要把设计示例或测试夹具导入生产数据库，也不要把测试 Turnstile 密钥用于生产。生产操作、备份和回滚见 [DEPLOY-SERVER.md](DEPLOY-SERVER.md)。
 
 服务器入口位于 `src/server/`，使用固定版本 Bun 原生 SQLite 与 HTMLRewriter；`pnpm test:server` 验证实际服务器适配层与完整审核链路。后台在服务器模式使用 HTTPS Basic 认证，默认 Worker 模式继续使用 Access。公开页面不会显示未配置邮箱或官方链接占位符；联系邮箱仅在显式设置 `PUBLIC_CONTACT_EMAIL` 后公开。
