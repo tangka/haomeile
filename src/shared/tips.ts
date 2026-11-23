@@ -18,6 +18,57 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'antigravity-first-install-google-ai-pro',
+    title:
+      'Google Antigravity 零基础教程：从下载安装到黑五 99 美元开 Pro，手把手一次讲清',
+    englishTitle:
+      'Google Antigravity for beginners: installation and the $99 Black Friday Pro plan',
+    summary: {
+      zh: '我开通了一年的 Google AI Pro。这篇记录了 Antigravity 桌面端怎么登录、在哪订阅，以及到哪里看可选模型和使用额度。',
+      en: 'I bought a year of Google AI Pro. Here’s where to sign in to the Antigravity desktop app, subscribe, and check which models and usage limits are available.',
+    },
+    experience: {
+      zh: '我订了一年的 Google AI Pro。我的 Google One 页面显示年付 99.99 美元、5 TB 存储。在 Antigravity 桌面端，我打开模型选择器看有哪些模型，再点「View Usage」查看额度。',
+      en: 'I subscribed to Google AI Pro for a year. My Google One page showed $99.99 per year and 5 TB of storage. In the Antigravity desktop app, I opened the model picker to see the available models and used View Usage to check my limits.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在 Antigravity 支持的地区，用自己的个人 Google 账号登录。从官网下载并打开桌面端，点「Continue with Google」，在浏览器完成授权后回到客户端。在「New Conversation → No Project」发一条简单消息，确认能收到回复。',
+          en: 'In a location where Antigravity is available, use your personal Google Account. Open the desktop app, select Continue with Google, and finish signing in through your browser. Return to the app, open New Conversation → No Project, and send a short message to check that it responds.',
+        },
+        link: {
+          href: 'https://antigravity.google/download',
+          label: { zh: '下载 Antigravity', en: 'Download Antigravity' },
+        },
+      },
+      {
+        text: {
+          zh: '用客户端里登录的同一个账号打开 Google One，选 Google AI Pro。按结账页显示的月付或年付选项订阅，付款前核对本次金额和下次续费日期，付完回 Google One 确认页面已显示 Pro。',
+          en: 'Open Google One with the same account you used in the desktop app and select Google AI Pro. Choose an available billing interval, then check the amount due and the renewal date at checkout. After payment, return to Google One and confirm that it shows Pro.',
+        },
+        link: {
+          href: 'https://one.google.com/about/google-ai-plans/',
+          label: { zh: '打开 Google AI 套餐页', en: 'View Google AI plans' },
+        },
+      },
+      {
+        text: {
+          zh: '回到 Antigravity，用已开通 Pro 的账号重新登录。打开输入框左下方的模型选择器，查看当前能选的模型，再点「View Usage」看额度。可以发一条测试消息，确认想用的模型能正常回复。',
+          en: 'Return to Antigravity and sign back in with the account that has Pro. Open the model picker below the prompt to see available models, then select View Usage to check your limits. Send a short test message with the model you want to use.',
+        },
+        link: {
+          href: 'https://antigravity.google/docs/models',
+          label: { zh: '查看模型选择说明', en: 'See how to choose a model' },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2124686504060399616',
+    sourceAuthor: '@xiaomovps',
+    sourcePublishedAt: '2026-11-23T02:10:31Z',
+    sourceViews: 14858,
+  },
+  {
     slug: 'google-ai-pro-switch-to-annual',
     title:
       '黑五 5 折 99.99 刀正规上车 Google AI Pro：美区白号不等 27 号两步升级实测',
