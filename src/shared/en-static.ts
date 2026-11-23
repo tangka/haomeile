@@ -65,7 +65,7 @@ export const EN_STATIC: Record<string, string> = {
   '请开启 JavaScript 完成验证。': 'Enable JavaScript to verify.',
   '暂未获取到额度重置预测。':
     'Quota reset estimates are currently unavailable.',
-  订阅邮件提醒: 'Email alerts',
+  订阅邮件提醒: 'Get email alerts',
   '所选平台的新预测超过 80% 时发邮件。连续高于 80% 期间，每个平台只提醒一次。':
     'Get an email when a new forecast for a selected platform exceeds 80%. You get one alert per platform while its forecast stays above 80%.',
   选择提醒的平台: 'Choose platforms',

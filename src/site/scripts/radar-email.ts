@@ -36,8 +36,11 @@ async function postEmail(
 }
 
 function bindSignup(form: HTMLFormElement): void {
-  const section = form.closest('section');
-  const verify = section?.querySelector<HTMLFormElement>(
+  const dialog = form.closest('dialog');
+  const trigger = document.querySelector<HTMLButtonElement>(
+    '[aria-controls="radar-email-dialog"]',
+  );
+  const verify = dialog?.querySelector<HTMLFormElement>(
     '[data-radar-email-verify]',
   );
   const code = verify?.querySelector<HTMLInputElement>('[name="code"]');
@@ -46,10 +49,12 @@ function bindSignup(form: HTMLFormElement): void {
   const edit = verify?.querySelector<HTMLButtonElement>('[data-edit-email]');
   const button = form.querySelector<HTMLButtonElement>('[type="submit"]');
   const address = form.querySelector<HTMLInputElement>('[name="email"]');
-  const status = section?.querySelector<HTMLElement>(
+  const status = dialog?.querySelector<HTMLElement>(
     '[data-radar-email-status]',
   );
   if (
+    !dialog ||
+    !trigger ||
     !verify ||
     !code ||
     !verifyButton ||
@@ -60,6 +65,14 @@ function bindSignup(form: HTMLFormElement): void {
   )
     return;
   let pendingEmail = '';
+  trigger.addEventListener('click', () => {
+    if (dialog.open) return;
+    dialog.showModal();
+    if (pendingEmail) code.focus();
+  });
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (button.disabled || form.hidden) return;

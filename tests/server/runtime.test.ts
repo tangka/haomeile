@@ -159,9 +159,16 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     );
     fetchSpies.push(mock);
     const html = await (await request(opened, '/en/radar')).text();
-    expect(
-      html.match(/<section[^>]*data-ssr="radar-email-signup"[^>]*>/)?.[0],
-    ).not.toContain('hidden');
+    const opener = html.match(
+      /<button[^>]*data-ssr="radar-email-signup"[^>]*>/,
+    )?.[0];
+    expect(opener).toContain('aria-controls="radar-email-dialog"');
+    expect(opener).not.toContain('hidden');
+    const dialog = html.match(
+      /<dialog[^>]*id="radar-email-dialog"[^>]*>[\s\S]*?<\/dialog>/,
+    )?.[0];
+    expect(dialog).toContain('data-radar-email-signup');
+    expect(dialog).toContain('data-radar-email-verify');
     const manage = await request(opened, '/en/radar/email');
     expect(manage.status).toBe(200);
     expect(manage.headers.get('Referrer-Policy')).toBe('no-referrer');
@@ -469,6 +476,10 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(response.headers.has('set-cookie')).toBe(false);
       const html = await response.text();
       expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
+      const opener = html.match(
+        /<button[^>]*data-ssr="radar-email-signup"[^>]*>/,
+      )?.[0];
+      expect(opener).toContain('hidden');
       const trendSection = html.match(
         /<section[^>]*data-ssr="radar-history"[^>]*>/,
       )?.[0];

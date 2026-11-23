@@ -63,6 +63,16 @@ const jsonLd = [
           <p>{subtitle}</p>
         </div>
         <div class="radar-intro-mark">
+          <button
+            class="btn btn-primary radar-subscribe"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="radar-email-dialog"
+            data-ssr="radar-email-signup"
+            hidden
+          >
+            订阅邮件提醒
+          </button>
           <RadarMark />
         </div>
       </header>
@@ -104,88 +114,102 @@ const jsonLd = [
         </p>
       </section>
 
-      <section
-        class="radar-email"
-        data-ssr="radar-email-signup"
+      <dialog
+        id="radar-email-dialog"
+        class="sheet radar-email"
         aria-labelledby="radar-email-title"
-        hidden
       >
-        <h2 id="radar-email-title">订阅邮件提醒</h2>
-        <p>
-          所选平台的新预测超过 80% 时发邮件。连续高于 80%
-          期间，每个平台只提醒一次。
-        </p>
-        <form class="form" method="post" data-radar-email-signup>
-          <fieldset class="field">
-            <legend>选择提醒的平台</legend>
-            <div class="seg">
-              {Object.entries(RADAR_PLATFORM_NAMES).map(([id, name]) => (
-                <label>
-                  <input type="checkbox" name="platform" value={id} />
-                  {name}
-                </label>
-              ))}
+        <div class="sheet-in">
+          <div class="radar-email-head">
+            <h2 id="radar-email-title" tabindex="-1" autofocus>
+              订阅邮件提醒
+            </h2>
+            <form method="dialog">
+              <button
+                class="btn radar-email-close"
+                type="submit"
+                aria-label="关闭"
+              >
+                ×
+              </button>
+            </form>
+          </div>
+          <p>
+            所选平台的新预测超过 80% 时发邮件。连续高于 80%
+            期间，每个平台只提醒一次。
+          </p>
+          <form class="form" method="post" data-radar-email-signup>
+            <fieldset class="field">
+              <legend>选择提醒的平台</legend>
+              <div class="seg">
+                {Object.entries(RADAR_PLATFORM_NAMES).map(([id, name]) => (
+                  <label>
+                    <input type="checkbox" name="platform" value={id} />
+                    {name}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <div class="field">
+              <label for="radar-email-address">邮箱地址</label>
+              <input
+                class="input"
+                id="radar-email-address"
+                name="email"
+                type="email"
+                autocomplete="email"
+                aria-describedby="radar-email-help"
+                maxlength="254"
+                required
+              />
+              <p class="hint" id="radar-email-help">
+                验证邮箱后开始接收提醒，可随时退订。
+              </p>
             </div>
-          </fieldset>
-          <div class="field">
-            <label for="radar-email-address">邮箱地址</label>
-            <input
-              class="input"
-              id="radar-email-address"
-              name="email"
-              type="email"
-              autocomplete="email"
-              aria-describedby="radar-email-help"
-              maxlength="254"
-              required
-            />
-            <p class="hint" id="radar-email-help">
-              验证邮箱后开始接收提醒，可随时退订。
-            </p>
-          </div>
-          <div class="actions">
-            <button class="btn btn-primary" type="submit">
-              发送验证码
-            </button>
-          </div>
-        </form>
-        <form class="form" method="post" data-radar-email-verify hidden>
-          <div class="field">
-            <label for="radar-email-code">邮箱验证码</label>
-            <input
-              class="input"
-              id="radar-email-code"
-              name="code"
-              type="text"
-              inputmode="numeric"
-              autocomplete="one-time-code"
-              pattern="[0-9]{6}"
-              maxlength="6"
-              aria-describedby="radar-code-help radar-email-status"
-              required
-            />
-            <p class="hint" id="radar-code-help">
-              请输入邮件里的 6 位验证码，10
-              分钟内有效。也可以点击邮件中的确认链接。
-            </p>
-          </div>
-          <div class="actions">
-            <button class="btn btn-primary" type="submit">
-              确认订阅
-            </button>
-            <button class="btn" type="button" data-edit-email>
-              修改邮箱或重新获取验证码
-            </button>
-          </div>
-        </form>
-        <p
-          id="radar-email-status"
-          class="radar-email-status"
-          role="status"
-          tabindex="-1"
-          data-radar-email-status
-        ></p>
-      </section>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">
+                发送验证码
+              </button>
+            </div>
+          </form>
+          <form class="form" method="post" data-radar-email-verify hidden>
+            <div class="field">
+              <label for="radar-email-code">邮箱验证码</label>
+              <input
+                class="input"
+                id="radar-email-code"
+                name="code"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                aria-describedby="radar-code-help radar-email-status"
+                required
+              />
+              <p class="hint" id="radar-code-help">
+                请输入邮件里的 6 位验证码，10
+                分钟内有效。也可以点击邮件中的确认链接。
+              </p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">
+                确认订阅
+              </button>
+              <button class="btn" type="button" data-edit-email>
+                修改邮箱或重新获取验证码
+              </button>
+            </div>
+          </form>
+          <p
+            id="radar-email-status"
+            class="radar-email-status"
+            role="status"
+            tabindex="-1"
+            data-radar-email-status
+          ></p>
+        </div>
+      </dialog>
 
       <section class="radar-notes" aria-labelledby="radar-notes-title">
         <h2 id="radar-notes-title">说明与相关入口</h2>
@@ -238,6 +262,13 @@ const jsonLd = [
   .radar-intro-mark {
     --radar-mark-size: clamp(52px, 11vw, 130px);
     flex: none;
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+  }
+
+  .radar-subscribe {
+    font-weight: 700;
   }
 
   .radar-vitals {
@@ -363,24 +394,57 @@ const jsonLd = [
   }
 
   .radar-email {
-    margin-top: 24px;
-    padding: clamp(14px, 3vw, 24px);
-    border: 2px solid var(--ink);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  :global(html:has(#radar-email-dialog[open])) {
+    overflow: hidden;
+  }
+
+  .radar-email-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
   .radar-email h2 {
-    margin: 0 0 8px;
-    font-family: var(--font-carve);
-    font-size: var(--fs-l);
+    margin: 0;
   }
 
-  .radar-email form {
+  .radar-email-close {
+    min-width: 44px;
+    padding: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .radar-email .form {
     gap: 14px;
     margin-top: 16px;
   }
 
   .radar-email-status:empty {
     display: none;
+  }
+
+  .radar-email-status {
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 580px) {
+    .radar-intro {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+    }
+
+    .radar-intro-mark {
+      --radar-mark-size: 76px;
+    }
   }
 
   .radar-history-head {
