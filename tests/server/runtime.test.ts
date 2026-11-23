@@ -128,11 +128,19 @@ const stored = (runtime: Runtime, id: string) =>
     .first<TombstoneRow>();
 
 describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () => {
-  test('serves a small radar snapshot without forwarding any visitor request or upstream response', async () => {
-    const key = 'fictional-integration-key-for-tests';
+  test('shows a small radar snapshot only after verifying a short-lived browser pass', async () => {
+    const key = 'fictional-integration-key-for-isolated-runtime-tests';
     const generatedAt = new Date().toISOString();
-    const respond = async () =>
-      Response.json({
+    const respond = async (...[target, options]: Parameters<typeof fetch>) => {
+      if (String(target) === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
+        const token = (options?.body as URLSearchParams).get('response');
+        return Response.json({
+          success: true,
+          action: token === TOKEN ? 'radar_gate' : 'submit',
+          hostname: 'haomeile.rip',
+        });
+      }
+      return Response.json({
         generatedAt,
         diagnostics: 'private-upstream-diagnostics',
         platforms: [
@@ -149,6 +157,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
           { id: 'grok', probability: 42 },
         ],
       });
+    };
     const fetchMock = spyOn(globalThis, 'fetch').mockImplementation(
       Object.assign(respond, { preconnect() {} }),
     );
@@ -159,16 +168,45 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     opened.radar!.start();
     await Bun.sleep(0);
 
-    const [zh, en, direct] = await Promise.all([
+    const [anonymous, forged, direct] = await Promise.all([
       request(opened, '/radar?url=https://example.invalid', undefined, {
         Authorization: 'Bearer visitor-credential',
       }),
-      request(opened, '/en/radar'),
+      request(opened, '/en/radar', undefined, { Cookie: '__Host-haomeile_radar=forged' }),
       request(opened, '/api/radar'),
     ]);
     expect(direct.status).toBe(404);
+    for (const response of [anonymous, forged]) {
+      expect(response.status).toBe(200);
+      expect(response.headers.get('cache-control')).toBe('private, no-store');
+      const html = await response.text();
+      expect(html).toContain('data-radar-verify');
+      expect(html).not.toContain('<strong>18%</strong>');
+    }
+    expect((await request(opened, '/api/radar/verify', { turnstile_token: 'wrong-action' })).status).toBe(400);
+    const verified = await request(opened, '/api/radar/verify', { turnstile_token: TOKEN });
+    expect(verified.status).toBe(200);
+    const replayed = await request(opened, '/api/radar/verify', { turnstile_token: TOKEN });
+    expect(replayed.status).toBe(400);
+    expect(replayed.headers.has('set-cookie')).toBe(false);
+    const cookie = verified.headers.get('set-cookie')!;
+    expect(cookie).toMatch(/HttpOnly/i);
+    expect(cookie).toMatch(/Secure/i);
+    expect(cookie).toMatch(/SameSite=(Lax|Strict)/i);
+    expect(cookie).toMatch(/Max-Age=900/i);
+    const headers = { Cookie: cookie.split(';')[0] };
+    const otherNetwork = await request(opened, '/radar', undefined, {
+      ...headers,
+      'CF-Connecting-IP': '198.51.100.19',
+    });
+    expect(await otherNetwork.text()).not.toContain('<strong>18%</strong>');
+    const [zh, en] = await Promise.all([
+      request(opened, '/radar', undefined, headers),
+      request(opened, '/en/radar/index.html', undefined, headers),
+    ]);
     for (const response of [zh, en]) {
       expect(response.status).toBe(200);
+      expect(response.headers.get('cache-control')).toBe('private, no-store');
       const html = await response.text();
       expect(html).toContain('<h3>Codex</h3><strong>18%</strong>');
       expect(html).toContain('<h3>Claude Code</h3><strong>0%</strong>');
@@ -177,9 +215,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
         /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok/,
       );
     }
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls.filter(([target]) => String(target).startsWith('https://api.tangka.online/'))).toHaveLength(1);
     expect(fetchMock.mock.calls[0][0]).toBe(
-      'https://api.tangka.online/radar-api/member/v1/overview',
+      'https://api.tangka.online/radar-api/integrations/haomeile/overview',
     );
     const options = fetchMock.mock.calls[0][1];
     expect(options?.headers).toEqual({

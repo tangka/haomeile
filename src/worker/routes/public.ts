@@ -11,6 +11,7 @@ import { ApiError } from '../lib/errors';
 import { detectGrayMarket } from '../lib/graymarket';
 import { readJson } from '../lib/json';
 import { checkPrivacy } from '../lib/privacy';
+import { verifyRadarAccess } from '../lib/radar-gate';
 import { reserveRate, releaseRate } from '../lib/ratelimit';
 import {
   auditStatement,
@@ -119,6 +120,7 @@ publicRoutes.get('/tombstones', async (c) =>
 publicRoutes.get('/stats', async (c) =>
   c.json({ ok: true, data: await getStats(c.env.DB, c.req.query('vendor')) }),
 );
+publicRoutes.post('/radar/verify', verifyRadarAccess);
 publicRoutes.get('/tombstones/:id', async (c) => {
   const tombstone = await findPublicTombstone(c.env.DB, c.req.param('id'));
   if (!tombstone) throw new ApiError('NOT_FOUND', '这里什么也没有。', 404);

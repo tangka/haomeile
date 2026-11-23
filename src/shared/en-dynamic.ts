@@ -63,6 +63,14 @@ export const EN_DYNAMIC: Record<string, string> = {
     'Incorrect ID or secret key. Please check them again.',
   '人机验证尚未配置，请稍后再来。':
     'Human verification is not configured yet. Please return later.',
+  重新验证: 'Verify again',
+  '正在验证…': 'Verifying…',
+  '请完成人机验证。': 'Complete the human verification check.',
+  '验证未完成，请重试。': 'Verification did not finish. Please try again.',
+  '验证请求过多，请稍后再试。':
+    'Too many verification requests. Please try again later.',
+  '请求过于频繁，请稍后再试。':
+    'Too many requests. Please try again later.',
   '没连上服务器。碑文还在，稍后再点一次提交。':
     'Could not reach the server. Your text is still here; try submitting again later.',
   '人机验证没能加载，请刷新页面。':

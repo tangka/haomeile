@@ -20,6 +20,7 @@ import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { tombPresentation } from '../shared/tomb-presentation';
 import type { ReadRadarOverview } from '../shared/radar';
+import { hasRadarPass } from './lib/radar-gate';
 import {
   contentSecurityPolicy,
   REFERRER_POLICY,
@@ -344,8 +345,22 @@ export async function servePage(
   )
     assetPath = path + '/';
   if (path === '/radar') {
+    c.header('Cache-Control', 'private, no-store');
     const overview = readRadarOverview?.();
-    if (overview) {
+    const showOverview = !overview || (await hasRadarPass(c));
+    if (showOverview) {
+      rewriter.on('[data-radar-verify]', {
+        element: (el) => {
+          el.setAttribute('hidden', '');
+        },
+      });
+      rewriter.on('[data-ssr="radar-overview"]', {
+        element: (el) => {
+          el.removeAttribute('hidden');
+        },
+      });
+    }
+    if (showOverview && overview) {
       const formattedAt = new Intl.DateTimeFormat(
         locale === 'en' ? 'en-GB' : 'zh-CN',
         { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Singapore' },
@@ -732,8 +747,13 @@ export async function servePage(
   );
   response.headers.set(
     'Cache-Control',
-    path === '/admin' ? 'no-store' : 'public, max-age=60, s-maxage=300',
+    path === '/radar'
+      ? 'private, no-store'
+      : path === '/admin'
+        ? 'no-store'
+        : 'public, max-age=60, s-maxage=300',
   );
+  if (path === '/radar') response.headers.append('Vary', 'Cookie');
   if (analyticsEnabled) {
     response.headers.set(
       'Content-Security-Policy',

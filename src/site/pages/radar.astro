@@ -15,7 +15,23 @@ const codeImage = '/assets/reset-radar-qr.jpg';
       <section class="radar-vitals" aria-labelledby="radar-forecast-title">
         <h2 id="radar-forecast-title">未来 24 小时额度重置概率</h2>
         <p>根据公开信号估算。</p>
-        <div data-ssr="radar-overview">
+        <div class="radar-verify" data-radar-verify>
+          <button
+            type="button"
+            class="btn btn-primary"
+            aria-controls="radar-challenge"
+            data-radar-start
+            hidden
+          >
+            验证后查看预测
+          </button>
+          <div id="radar-challenge" data-radar-challenge></div>
+          <p class="radar-status" data-radar-status role="status"></p>
+          <noscript>
+            开启 JavaScript 后完成验证，或在微信查看重置雷达。
+          </noscript>
+        </div>
+        <div data-ssr="radar-overview" hidden>
           <p class="radar-updated">暂未获取到额度重置预测。</p>
         </div>
       </section>
@@ -35,6 +51,9 @@ const codeImage = '/assets/reset-radar-qr.jpg';
       </section>
     </div>
   </main>
+  <script>
+    import '../scripts/radar';
+  </script>
 </SiteLayout>
 
 <style>
@@ -55,6 +74,16 @@ const codeImage = '/assets/reset-radar-qr.jpg';
 
   .radar-vitals > p,
   .radar-vitals :global(.radar-updated) {
+    font-size: var(--fs-s);
+  }
+
+  .radar-verify,
+  .radar-verify [data-radar-challenge]:not(:empty) {
+    margin-top: 12px;
+  }
+
+  .radar-status:not(:empty) {
+    margin-top: 6px;
     font-size: var(--fs-s);
   }
 

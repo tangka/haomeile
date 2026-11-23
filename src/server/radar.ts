@@ -1,7 +1,5 @@
 import type { RadarOverview } from '../shared/radar';
 
-const MEMBER_OVERVIEW =
-  'https://api.tangka.online/radar-api/member/v1/overview';
 const SITE_OVERVIEW =
   'https://api.tangka.online/radar-api/integrations/haomeile/overview';
 const POLL_MS = 5 * 60_000;
@@ -71,12 +69,12 @@ async function readOverview(response: Response) {
   return parseOverview(JSON.parse(json + decoder.decode()));
 }
 
-export function createRadarOverview(key?: string, url = MEMBER_OVERVIEW) {
+export function createRadarOverview(key?: string, url = SITE_OVERVIEW) {
   const credential = key?.trim();
   if (!credential) return undefined;
   if (
-    !/^[A-Za-z0-9._~-]{24,256}$/.test(credential) ||
-    (url !== MEMBER_OVERVIEW && url !== SITE_OVERVIEW)
+    !/^[A-Za-z0-9_-]{43,128}$/.test(credential) ||
+    url !== SITE_OVERVIEW
   ) {
     console.warn(
       'Reset Radar overview disabled: invalid credential or endpoint',

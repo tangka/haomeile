@@ -46,6 +46,9 @@ export const EN_STATIC: Record<string, string> = {
     'See 24-hour quota reset estimates for Codex and Claude Code, or scan the code for the Reset Radar Mini Program.',
   '未来 24 小时额度重置概率': 'Quota reset probability over the next 24 hours',
   '根据公开信号估算。': 'Estimates based on public signals.',
+  验证后查看预测: 'Verify to see predictions',
+  '开启 JavaScript 后完成验证，或在微信查看重置雷达。':
+    'Enable JavaScript to verify, or open Reset Radar in WeChat.',
   '暂未获取到额度重置预测。':
     'Quota reset estimates are currently unavailable.',
   在微信查看研判依据: 'See the signals behind the forecast in WeChat',

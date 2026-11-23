@@ -14,6 +14,7 @@ function isOfficialTestKey(value: string): boolean {
 export async function verifyTurnstile(
   token: unknown,
   env: Bindings,
+  expectedAction?: string,
 ): Promise<void> {
   if (typeof token !== 'string' || token.length === 0 || token.length > 2048)
     throw new ApiError('TURNSTILE_FAILED', FAILURE_MESSAGE);
@@ -77,7 +78,10 @@ export async function verifyTurnstile(
     !('success' in result) ||
     result.success !== true ||
     (!testMode &&
-      (!('hostname' in result) || result.hostname !== expectedHostname))
+      (!('hostname' in result) ||
+        result.hostname !== expectedHostname ||
+        (expectedAction !== undefined &&
+          (!('action' in result) || result.action !== expectedAction))))
   )
     throw new ApiError('TURNSTILE_FAILED', FAILURE_MESSAGE);
 }
