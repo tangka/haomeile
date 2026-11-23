@@ -79,7 +79,9 @@ describe('Reset Radar email ownership', () => {
         .first('code_failures'),
     ).toBe(5);
     expect(await store.confirmCode(email, pending.code)).toBe(false);
-    expect(await store.confirm(pending.token)).toBe(true);
+    expect(await store.confirm(pending.token)).toMatchObject({
+      contactId: expect.any(String),
+    });
     expect(await store.confirmCode(email, pending.code)).toBe(false);
   });
 
@@ -92,7 +94,9 @@ describe('Reset Radar email ownership', () => {
     const wrong = second.code === '000000' ? '000001' : '000000';
     for (let i = 0; i < 4; i++)
       expect(await store.confirmCode(email, wrong)).toBe(false);
-    expect(await store.confirmCode(email, second.code)).toBe(true);
+    expect(await store.confirmCode(email, second.code)).toMatchObject({
+      contactId: expect.any(String),
+    });
   });
 
   test('a code issued near the original link deadline gets its full ten minutes', async () => {
@@ -102,7 +106,9 @@ describe('Reset Radar email ownership', () => {
     clock += 6 * minute;
     expect(await store.confirm(first.token)).toBe(false);
     await store.dispatch(null, async () => 'sent');
-    expect(await store.confirmCode(email, recent.code)).toBe(true);
+    expect(await store.confirmCode(email, recent.code)).toMatchObject({
+      contactId: expect.any(String),
+    });
   });
 
   test('normalizes email, limits resends, and requires a one-time confirmation before preference changes', async () => {
@@ -142,9 +148,10 @@ describe('Reset Radar email ownership', () => {
     const resend = await store.requestConfirmation(email, ['codex'], 'en');
     expect(resend?.token).toBe(request!.token);
     expect(resend?.idempotencyKey).not.toBe(request?.idempotencyKey);
-    expect(await store.confirm(request!.token)).toBe(true);
+    expect(await store.confirm(request!.token)).toMatchObject({
+      contactId: expect.any(String),
+    });
     expect(await store.confirm(request!.token)).toBe(false);
-    expect(await store.requestConfirmation(email, ['codex'], 'en')).toBeNull();
 
     const change = await store.requestConfirmation(
       email,
@@ -157,8 +164,42 @@ describe('Reset Radar email ownership', () => {
         .prepare('SELECT platforms, locale FROM radar_email_contacts')
         .first();
     expect(await prefs()).toEqual({ platforms: 1, locale: 'en' });
-    expect(await store.confirm(change!.token)).toBe(true);
+    expect(await store.confirm(change!.token)).toMatchObject({
+      contactId: expect.any(String),
+      alreadySubscribed: true,
+      preferencesChanged: true,
+    });
     expect(await prefs()).toEqual({ platforms: 6, locale: 'zh' });
+  });
+
+  test('remembering an existing subscription keeps its identity, start time and queued alerts', async () => {
+    const pending = (await store.requestConfirmation(email, ['codex'], 'en'))!;
+    const activation = await store.confirm(pending.token);
+    if (!activation) throw new Error('first confirmation failed');
+    const { contactId } = activation;
+    expect(activation.alreadySubscribed).toBe(false);
+    const started = clock;
+    clock += minute;
+    const firstAlert = snapshot('codex', 85);
+    await store.dispatch(firstAlert, async () => 'retry');
+    const recovery = (await store.requestConfirmation(email, ['codex'], 'en'))!;
+    expect(recovery.alreadySubscribed).toBe(true);
+    expect(await store.confirmCode(email, recovery.code)).toEqual({
+      contactId,
+      alreadySubscribed: true,
+      preferencesChanged: false,
+    });
+    const row = await database.binding
+      .prepare('SELECT id, confirmed_at FROM radar_email_contacts')
+      .first();
+    expect(row).toEqual({ id: contactId, confirmed_at: started });
+    clock += minute;
+    const sent: string[] = [];
+    await store.dispatch(firstAlert, async ({ email }) => {
+      sent.push(email);
+      return 'sent';
+    });
+    expect(sent).toEqual([email]);
   });
 
   test('expired confirmations cannot activate an address', async () => {
@@ -172,14 +213,18 @@ describe('Reset Radar email ownership', () => {
     ).toBe(0);
     const retry = await store.requestConfirmation(email, ['codex'], 'zh');
     expect(retry?.token).not.toBe(request!.token);
-    expect(await store.confirm(retry!.token)).toBe(true);
+    expect(await store.confirm(retry!.token)).toMatchObject({
+      contactId: expect.any(String),
+    });
   });
 });
 
 describe('Reset Radar alert delivery', () => {
   async function subscribe(platforms: RadarPlatformId[] = ['codex']) {
     const request = await store.requestConfirmation(email, platforms, 'en');
-    expect(await store.confirm(request!.token)).toBe(true);
+    expect(await store.confirm(request!.token)).toMatchObject({
+      contactId: expect.any(String),
+    });
   }
 
   test('uses strictly above 80 and deduplicates high episodes without allowing a replay or unhiding a missing platform', async () => {
@@ -247,8 +292,8 @@ describe('Reset Radar alert delivery', () => {
       ['claude'],
       'en',
     );
-    expect(await restarted.unsubscribe(attempts[0].unsubscribeToken)).toBe(
-      true,
+    expect(await restarted.unsubscribe(attempts[0].unsubscribeToken)).toEqual(
+      expect.any(String),
     );
     expect(await restarted.unsubscribe(attempts[0].unsubscribeToken)).toBe(
       false,

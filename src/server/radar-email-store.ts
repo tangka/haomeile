@@ -24,6 +24,7 @@ interface ConfirmationRow {
   locale: Locale;
   nonce: string;
   requested_at: number;
+  already_subscribed: number;
 }
 
 interface AlertRow {
@@ -44,6 +45,12 @@ export interface RadarEmailAlert {
   locale: Locale;
   unsubscribeToken: string;
   idempotencyKey: string;
+}
+
+export interface ConfirmedRadarEmail {
+  contactId: string;
+  alreadySubscribed: boolean;
+  preferencesChanged: boolean;
 }
 
 export type RadarEmailOutcome = 'sent' | 'retry' | 'permanent';
@@ -81,6 +88,12 @@ function tokenHash(value: unknown) {
 
 const hasPlatform = (mask: number, index: number) =>
   (mask & (1 << index)) !== 0;
+
+const platformMask = (platforms: readonly RadarPlatformId[]) =>
+  PLATFORMS.reduce(
+    (mask, id, index) => (platforms.includes(id) ? mask | (1 << index) : mask),
+    0,
+  );
 
 function recentSamples(overview: RadarOverview | null, now: number) {
   if (!overview || overview.stale) return [];
@@ -149,11 +162,7 @@ export function createRadarEmailStore(
       platforms.some((id) => !PLATFORMS.includes(id))
     )
       return null;
-    const preferences = PLATFORMS.reduce(
-      (mask, id, index) =>
-        platforms.includes(id) ? mask | (1 << index) : mask,
-      0,
-    );
+    const preferences = platformMask(platforms);
     if (!preferences) return null;
     const timestamp = now();
     const nonce = randomUUID();
@@ -162,8 +171,7 @@ export function createRadarEmailStore(
       .prepare(
         `
       INSERT INTO radar_email_confirmations(email, platforms, locale, nonce, token_hash, requested_at, expires_at, code_hash, code_expires_at)
-      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
-      WHERE NOT EXISTS (SELECT 1 FROM radar_email_contacts WHERE email = ? AND platforms = ? AND locale = ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(email) DO UPDATE SET
         platforms = excluded.platforms,
         locale = excluded.locale,
@@ -176,7 +184,8 @@ export function createRadarEmailStore(
         expires_at = CASE WHEN platforms = excluded.platforms AND locale = excluded.locale
           AND expires_at > excluded.requested_at THEN expires_at ELSE excluded.expires_at END
       WHERE requested_at <= ?
-      RETURNING email, platforms, locale, nonce, requested_at
+      RETURNING email, platforms, locale, nonce, requested_at,
+        EXISTS (SELECT 1 FROM radar_email_contacts WHERE email = ?) AS already_subscribed
     `,
       )
       .bind(
@@ -189,10 +198,8 @@ export function createRadarEmailStore(
         timestamp + EXPIRY_MS,
         codeHash(email, code),
         timestamp + CODE_TTL_MS,
-        email,
-        preferences,
-        locale,
         timestamp - RECONFIRM_MS,
+        email,
       )
       .first<ConfirmationRow>();
     return (
@@ -204,6 +211,7 @@ export function createRadarEmailStore(
         locale: row.locale,
         token: token('confirmation', row.nonce),
         code,
+        alreadySubscribed: Boolean(row.already_subscribed),
         requestedAt: row.requested_at,
         idempotencyKey: `radar-confirm-${row.nonce}-${row.requested_at}`,
       }
@@ -224,7 +232,7 @@ export function createRadarEmailStore(
   // Both proofs consume the same pending preferences inside a single transaction.
   async function activate(
     proof: { tokenHash: string } | { email: string; codeHash: string },
-  ) {
+  ): Promise<ConfirmedRadarEmail | false> {
     const id = randomUUID();
     const timestamp = now();
     const match =
@@ -239,22 +247,37 @@ export function createRadarEmailStore(
       db
         .prepare(
           `
-        INSERT INTO radar_email_contacts(id, email, platforms, locale, unsubscribe_hash, confirmed_at)
-        SELECT ?, email, platforms, locale, ?, ? FROM radar_email_confirmations WHERE ${match}
-        ON CONFLICT(email) DO UPDATE SET
-          platforms = excluded.platforms, locale = excluded.locale, confirmed_at = excluded.confirmed_at
-      `,
+          SELECT (c.platforms <> p.platforms OR c.locale <> p.locale) AS changed FROM radar_email_contacts c
+          JOIN (SELECT email, platforms, locale FROM radar_email_confirmations WHERE ${match}) p
+            ON c.email = p.email
+        `,
         )
-        .bind(id, hash(token('unsubscribe', id)), timestamp, ...args),
+        .bind(...args),
       db
         .prepare(
           `
-        DELETE FROM radar_email_alerts WHERE finished_at IS NULL AND contact_id = (
-          SELECT id FROM radar_email_contacts WHERE email = (SELECT email FROM radar_email_confirmations WHERE ${match})
+        DELETE FROM radar_email_alerts WHERE finished_at IS NULL AND contact_id IN (
+          SELECT c.id FROM radar_email_contacts c
+          JOIN (SELECT email, platforms, locale FROM radar_email_confirmations WHERE ${match}) p
+            ON c.email = p.email
+          WHERE c.platforms <> p.platforms OR c.locale <> p.locale
         )
       `,
         )
         .bind(...args),
+      db
+        .prepare(
+          `
+        INSERT INTO radar_email_contacts(id, email, platforms, locale, unsubscribe_hash, confirmed_at)
+        SELECT ?, email, platforms, locale, ?, ? FROM radar_email_confirmations WHERE ${match}
+        ON CONFLICT(email) DO UPDATE SET
+          confirmed_at = CASE WHEN platforms = excluded.platforms AND locale = excluded.locale
+            THEN confirmed_at ELSE excluded.confirmed_at END,
+          platforms = excluded.platforms, locale = excluded.locale
+        RETURNING id
+      `,
+        )
+        .bind(id, hash(token('unsubscribe', id)), timestamp, ...args),
       db
         .prepare(`DELETE FROM radar_email_confirmations WHERE ${match}`)
         .bind(...args),
@@ -271,8 +294,18 @@ export function createRadarEmailStore(
           .bind(...args),
       );
     }
-    const [result] = await db.batch(statements);
-    return result.meta.changes === 1;
+    const [previous, , activation] = await db.batch<{
+      id?: string;
+      changed?: number;
+    }>(statements);
+    const contactId = activation.results[0]?.id;
+    return contactId
+      ? {
+          contactId,
+          alreadySubscribed: previous.results.length > 0,
+          preferencesChanged: Boolean(previous.results[0]?.changed),
+        }
+      : false;
   }
 
   async function confirm(value: string) {
@@ -290,7 +323,7 @@ export function createRadarEmailStore(
   async function unsubscribe(value: string) {
     const digest = tokenHash(value);
     if (!digest) return false;
-    const [, result] = await db.batch([
+    const [, result] = await db.batch<{ id: string }>([
       db
         .prepare(
           `DELETE FROM radar_email_confirmations WHERE email = (
@@ -299,10 +332,35 @@ export function createRadarEmailStore(
         )
         .bind(digest),
       db
-        .prepare('DELETE FROM radar_email_contacts WHERE unsubscribe_hash = ?')
+        .prepare(
+          'DELETE FROM radar_email_contacts WHERE unsubscribe_hash = ? RETURNING id',
+        )
         .bind(digest),
     ]);
-    return result.meta.changes === 1;
+    return result.results[0]?.id ?? false;
+  }
+
+  async function isSubscribed(id: string) {
+    return Boolean(
+      await db
+        .prepare('SELECT 1 FROM radar_email_contacts WHERE id = ?')
+        .bind(id)
+        .first(),
+    );
+  }
+
+  async function rememberedSubscription(
+    id: string,
+    email: string,
+    platforms: readonly RadarPlatformId[],
+    locale: Locale,
+  ) {
+    return db
+      .prepare(
+        'SELECT id, (platforms = ? AND locale = ?) AS matches FROM radar_email_contacts WHERE id = ? AND email = ?',
+      )
+      .bind(platformMask(platforms), locale, id, email)
+      .first<{ id: string; matches: number }>();
   }
 
   async function queue(overview: RadarOverview | null) {
@@ -453,6 +511,8 @@ export function createRadarEmailStore(
     confirm,
     confirmCode,
     unsubscribe,
+    isSubscribed,
+    rememberedSubscription,
     dispatch,
   };
 }

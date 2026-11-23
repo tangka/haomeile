@@ -11,7 +11,7 @@ await mkdir(configDir, { recursive: true });
 await writeFile(
   config,
   `name = "haomeile-e2e"
-main = ${JSON.stringify(path.join(root, 'src/worker/index.ts'))}
+main = ${JSON.stringify(path.join(root, 'tests/e2e/fixtures/worker.mjs'))}
 compatibility_date = "2026-11-20"
 compatibility_flags = ["nodejs_compat"]
 [assets]
@@ -29,6 +29,7 @@ migrations_dir = ${JSON.stringify(path.join(root, 'migrations'))}
 ENVIRONMENT = "development"
 SITE_ORIGIN = "http://127.0.0.1:8790"
 TURNSTILE_TEST_MODE = "true"
+RADAR_HUMAN_CHECK = "false"
 TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
 PEPPER = "local-e2e-only-never-use-for-production-storage"

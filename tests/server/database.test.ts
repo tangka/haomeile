@@ -241,7 +241,9 @@ describe('Bun SQLite D1 binding', () => {
     expect(await store.confirmCode('legacy@example.test', '000000')).toBe(
       false,
     );
-    expect(await store.confirm(link)).toBe(true);
+    expect(await store.confirm(link)).toMatchObject({
+      contactId: expect.any(String),
+    });
     expect(await store.confirm(link)).toBe(false);
   });
 

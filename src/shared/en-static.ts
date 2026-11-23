@@ -82,6 +82,13 @@ export const EN_STATIC: Record<string, string> = {
   '暂未获取到额度重置预测。':
     'Quota reset estimates are currently unavailable.',
   订阅邮件提醒: 'Get email alerts',
+  已订阅: 'Subscribed',
+  修改订阅: 'Edit subscription',
+  '这个邮箱已经订阅过了。': 'This email is already subscribed.',
+  '这个邮箱已经订阅过了。提醒设置已更新。':
+    'This email is already subscribed. Your alert settings have been updated.',
+  '这个邮箱已经订阅过了。请查看 {email} 的收件箱，输入验证码确认修改。':
+    'This email is already subscribed. Enter the code sent to {email} to confirm your changes.',
   '所选平台的新预测超过 80% 时发邮件。连续高于 80% 期间，每个平台只提醒一次。':
     'Get an email when a new forecast for a selected platform exceeds 80%. You get one alert per platform while its forecast stays above 80%.',
   选择提醒的平台: 'Choose platforms',
@@ -339,6 +346,8 @@ export const EN_STATIC: Record<string, string> = {
   '浏览和立碑不需要注册，也不要求邮箱、手机号或真实姓名。人机验证使用 Cloudflare Turnstile。':
     'Browsing and posting memorials require no registration, email address, phone number, or real name. Human verification uses Cloudflare Turnstile.',
   雷达邮件提醒: 'Radar email alerts',
+  '验证邮箱后，这个浏览器会用 Cookie 记住订阅。每次打开雷达，有效期延长到当天起 180 天。Cookie 中没有邮箱地址。':
+    'After you verify your email, this browser remembers your subscription with a cookie. Each visit to Radar renews it for 180 days. The cookie contains no email address.',
   '订阅时保存邮箱、所选平台、语言和确认状态，用于发送确认邮件和提醒。邮箱不会公开。你可以通过邮件内的链接退订。':
     'When you subscribe, we store your email address, selected platforms, language, and confirmation status to deliver confirmation messages and alerts. Your email address stays private. Use the link in your email to unsubscribe.',
   '本站不使用第三方统计、广告或追踪脚本。':

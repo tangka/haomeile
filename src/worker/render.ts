@@ -364,6 +364,7 @@ export async function servePage(
     [
       '/submit',
       '/manage',
+      '/radar/email',
       '/epitaph',
       '/appeal',
       '/tips',

@@ -3,6 +3,15 @@ import { currentLocale, tr } from '../../shared/i18n';
 type EmailAction = 'confirm' | 'unsubscribe';
 type EmailLink = { action: EmailAction; token: string };
 
+function subscriptionChannel() {
+  try {
+    return new BroadcastChannel('radar-email-subscription');
+  } catch {
+    // Returning to the tab also refreshes its status.
+    return undefined;
+  }
+}
+const updates = subscriptionChannel();
 const signup = document.querySelector<HTMLFormElement>(
   '[data-radar-email-signup]',
 );
@@ -16,7 +25,7 @@ async function postEmail(
     | { token: string }
     | { email: string; code: string }
     | { email: string; platforms: string[]; locale: 'en' | 'zh' },
-): Promise<number> {
+) {
   try {
     const response = await fetch('/api/radar/email/' + action, {
       method: 'POST',
@@ -29,16 +38,43 @@ async function postEmail(
       },
       body: JSON.stringify(body),
     });
-    return response.status;
+    const data = response.ok ? await response.json() : null;
+    return {
+      status: response.status,
+      alreadySubscribed: data?.alreadySubscribed === true,
+      preferencesChanged: data?.preferencesChanged === true,
+    };
   } catch {
-    return 0;
+    return { status: 0, alreadySubscribed: false, preferencesChanged: false };
   }
+}
+
+function confirmationMessage(result: {
+  alreadySubscribed: boolean;
+  preferencesChanged: boolean;
+}) {
+  if (result.preferencesChanged)
+    return tr('这个邮箱已经订阅过了。提醒设置已更新。');
+  return tr(
+    result.alreadySubscribed ? '这个邮箱已经订阅过了。' : '订阅已确认。',
+  );
 }
 
 function bindSignup(form: HTMLFormElement): void {
   const dialog = form.closest('dialog');
-  const trigger = document.querySelector<HTMLButtonElement>(
-    '[aria-controls="radar-email-dialog"]',
+  const cta = document.querySelector<HTMLElement>('[data-radar-email-cta]');
+  const trigger = cta?.querySelector<HTMLButtonElement>(
+    '[data-ssr="radar-email-signup"]',
+  );
+  const subscribed = cta?.querySelector<HTMLElement>(
+    '[data-radar-email-subscribed]',
+  );
+  const change = cta?.querySelector<HTMLButtonElement>(
+    '[data-radar-email-edit-subscription]',
+  );
+  const title = dialog?.querySelector<HTMLElement>('#radar-email-title');
+  const notice = document.querySelector<HTMLElement>(
+    '[data-radar-email-notice]',
   );
   const verify = dialog?.querySelector<HTMLFormElement>(
     '[data-radar-email-verify]',
@@ -54,7 +90,13 @@ function bindSignup(form: HTMLFormElement): void {
   );
   if (
     !dialog ||
+    !cta ||
+    !subscribed ||
+    !change ||
+    !title ||
+    !notice ||
     !trigger ||
+    trigger.hidden ||
     !verify ||
     !code ||
     !verifyButton ||
@@ -65,11 +107,79 @@ function bindSignup(form: HTMLFormElement): void {
   )
     return;
   let pendingEmail = '';
-  trigger.addEventListener('click', () => {
+  let statusVersion = 0;
+  const resetForms = () => {
+    pendingEmail = '';
+    verify.reset();
+    form.reset();
+    code.removeAttribute('aria-invalid');
+    verify.hidden = true;
+    form.hidden = false;
+    status.textContent = '';
+  };
+  const showState = (active: boolean) => {
+    const newlyRecognized = active && cta.dataset.state !== 'subscribed';
+    trigger.hidden = active;
+    change.hidden = subscribed.hidden = !active;
+    cta.dataset.state = active ? 'subscribed' : 'available';
+    if (!active) notice.textContent = '';
+    if (newlyRecognized && dialog.open) {
+      dialog.close();
+      resetForms();
+      subscribed.focus();
+    }
+  };
+  const refresh = async () => {
+    const version = ++statusVersion;
+    try {
+      const response = await fetch('/api/radar/email/status', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        redirect: 'error',
+        signal: AbortSignal.timeout(5000),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (
+          version === statusVersion &&
+          typeof data?.subscribed === 'boolean'
+        ) {
+          showState(data.subscribed);
+        }
+      }
+    } catch {
+      // Keep the last confirmed state if the network is unavailable.
+    } finally {
+      if (version === statusVersion && cta.dataset.state === 'loading')
+        showState(false);
+    }
+  };
+  void refresh();
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) void refresh();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void refresh();
+  });
+  updates?.addEventListener('message', () => void refresh());
+  const finish = (message: string) => {
+    ++statusVersion;
+    dialog.close();
+    resetForms();
+    showState(true);
+    subscribed.focus();
+    notice.textContent = message;
+    updates?.postMessage('changed');
+  };
+  const open = () => {
     if (dialog.open) return;
+    notice.textContent = '';
+    title.textContent = tr(trigger.hidden ? '修改订阅' : '订阅邮件提醒');
     dialog.showModal();
     if (pendingEmail) code.focus();
-  });
+  };
+  trigger.addEventListener('click', open);
+  change.addEventListener('click', open);
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
   });
@@ -91,18 +201,21 @@ function bindSignup(form: HTMLFormElement): void {
       platforms,
       locale: currentLocale(),
     });
-    if (result >= 200 && result < 300) {
+    if (result.status === 200 && result.alreadySubscribed) {
+      finish(confirmationMessage(result));
+    } else if (result.status === 202) {
       pendingEmail = email;
       form.hidden = true;
       verify.hidden = false;
-      status.textContent = tr('请查看 {email} 的收件箱。').replace(
-        '{email}',
-        () => email,
-      );
+      status.textContent = tr(
+        result.alreadySubscribed
+          ? '这个邮箱已经订阅过了。请查看 {email} 的收件箱，输入验证码确认修改。'
+          : '请查看 {email} 的收件箱。',
+      ).replace('{email}', () => email);
       code.focus();
     } else {
       status.textContent = tr(
-        result === 429
+        result.status === 429
           ? '请求过于频繁，请稍后再试。'
           : '提交未完成，请稍后再试。',
       );
@@ -130,22 +243,16 @@ function bindSignup(form: HTMLFormElement): void {
       email: pendingEmail,
       code: code.value,
     });
-    if (result >= 200 && result < 300) {
-      pendingEmail = '';
-      verify.reset();
-      form.reset();
-      verify.hidden = true;
-      form.hidden = false;
-      status.textContent = tr('订阅已确认。');
-      status.focus();
-    } else if (result === 410) {
+    if (result.status === 200) {
+      finish(confirmationMessage(result));
+    } else if (result.status === 410) {
       status.textContent = tr('验证码错误或已过期，请核对或重新获取。');
       code.setAttribute('aria-invalid', 'true');
       code.focus();
       code.select();
     } else {
       status.textContent = tr(
-        result === 429
+        result.status === 429
           ? '请求过于频繁，请稍后再试。'
           : '提交未完成，请稍后再试。',
       );
@@ -200,23 +307,25 @@ function bindManagement(page: HTMLElement): void {
     const link = pending;
     button.disabled = true;
     status.textContent = tr('正在提交…');
-    const code = await postEmail(link.action, { token: link.token });
+    const result = await postEmail(link.action, { token: link.token });
     button.disabled = false;
     if (pending !== link) return;
 
-    if (code >= 200 && code < 300) {
+    if (result.status === 200) {
       pending = undefined;
       button.hidden = true;
-      status.textContent = tr(
-        link.action === 'confirm' ? '订阅已确认。' : '已退订。',
-      );
-    } else if ([400, 404, 410].includes(code)) {
+      status.textContent =
+        link.action === 'unsubscribe'
+          ? tr('已退订。')
+          : confirmationMessage(result);
+      updates?.postMessage('changed');
+    } else if ([400, 404, 410].includes(result.status)) {
       pending = undefined;
       button.hidden = true;
       status.textContent = tr('链接无效或已失效，请使用最新邮件中的链接。');
     } else {
       status.textContent = tr(
-        code === 429
+        result.status === 429
           ? '请求过于频繁，请稍后再试。'
           : '提交未完成，请稍后再试。',
       );

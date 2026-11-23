@@ -1,4 +1,5 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
+import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie';
 import {
   RADAR_PLATFORM_NAMES,
   type RadarOverview,
@@ -13,7 +14,11 @@ import {
   createRadarEmailStore,
   normalizeRadarEmail,
   type RadarEmailOutcome,
+  type ConfirmedRadarEmail,
 } from './radar-email-store';
+
+const subscriptionCookie = 'haomeile_radar_subscription';
+const rememberSeconds = 180 * 24 * 60 * 60;
 
 export function createRadarEmail(
   env: Bindings,
@@ -24,6 +29,52 @@ export function createRadarEmail(
   const senderAddress = normalizeRadarEmail(sender);
   const ready = Boolean(senderAddress && apiKey?.startsWith('re_'));
   const routes = new Hono<AppEnv>();
+  const signingKey = env.PEPPER + '\0radar-email-read-only-v1';
+  const cookieOptions = {
+    httpOnly: true,
+    secure: env.SITE_ORIGIN.startsWith('https://'),
+    path: '/api/radar/email',
+    sameSite: 'Lax' as const,
+  };
+  function remember(c: Context<AppEnv>, contactId: string) {
+    const expiry = Math.floor(Date.now() / 1000) + rememberSeconds;
+    return setSignedCookie(
+      c,
+      subscriptionCookie,
+      `${contactId}:${expiry}`,
+      signingKey,
+      {
+        ...cookieOptions,
+        maxAge: rememberSeconds,
+      },
+    );
+  }
+  async function rememberedContact(c: Context<AppEnv>) {
+    const value = await getSignedCookie(c, signingKey, subscriptionCookie);
+    if (typeof value !== 'string') return null;
+    const [id, expiry] = value.split(':');
+    return Number(expiry) > Date.now() / 1000 ? id : null;
+  }
+  routes.get('/status', async (c) => {
+    c.header('Cache-Control', 'private, no-store');
+    c.header('Vary', 'Cookie');
+    const id = await rememberedContact(c);
+    if (!id || !(await store.isSubscribed(id)))
+      return c.json({ subscribed: false });
+    await remember(c, id);
+    return c.json({ subscribed: true });
+  });
+  async function confirmed(
+    c: Context<AppEnv>,
+    { contactId, alreadySubscribed, preferencesChanged }: ConfirmedRadarEmail,
+  ) {
+    await remember(c, contactId);
+    return c.json({
+      ok: true,
+      alreadySubscribed,
+      ...(preferencesChanged && { preferencesChanged }),
+    });
+  }
   const link = (locale: string, path: string) =>
     env.SITE_ORIGIN + (locale === 'en' ? '/en' : '') + '/radar' + path;
 
@@ -100,6 +151,19 @@ export function createRadarEmail(
     ) {
       throw new ApiError('INVALID_SUBSCRIPTION', '请检查邮箱地址和所选平台。');
     }
+    const knownId = await rememberedContact(c);
+    const existing = knownId
+      ? await store.rememberedSubscription(
+          knownId,
+          email,
+          body.platforms,
+          body.locale,
+        )
+      : null;
+    if (existing?.matches) {
+      await remember(c, existing.id);
+      return c.json({ ok: true, alreadySubscribed: true });
+    }
     await reserveRate(env.DB, env.PEPPER, email, 'radar_email_address', 3);
     const confirmation = await store.requestConfirmation(
       email,
@@ -116,11 +180,22 @@ export function createRadarEmail(
         locale === 'en'
           ? 'Confirm your Reset Radar email alerts'
           : '确认订阅重置雷达邮件提醒';
+      const existingNote = confirmation.alreadySubscribed
+        ? locale === 'en'
+          ? 'This email address is already subscribed.\n\n'
+          : '这个邮箱已经订阅过了。\n\n'
+        : '';
       const text =
         locale === 'en'
           ? `Your verification code is ${code}. Enter it on Reset Radar within 10 minutes to receive alerts when the reset probability for ${products} rises above 80%.\n\nYou can also confirm using this link. It expires 24 hours after it was first sent.\n${url}\n\nIf you didn’t request these alerts, ignore this email.`
           : `你的验证码是 ${code}。请在 10 分钟内回到重置雷达输入验证码。确认后，${products} 的重置概率超过 80% 时，你会收到提醒。\n\n你也可以通过下面的链接确认，链接从首次发出起 24 小时内有效。\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
-      const outcome = await send(locale, email, subject, text, idempotencyKey);
+      const outcome = await send(
+        locale,
+        email,
+        subject,
+        existingNote + text,
+        idempotencyKey,
+      );
       if (outcome !== 'sent') {
         if (outcome === 'permanent')
           await store.discardConfirmation(token, confirmation.requestedAt);
@@ -131,7 +206,10 @@ export function createRadarEmail(
         );
       }
     }
-    return c.json({ ok: true }, 202);
+    return c.json(
+      existing ? { ok: true, alreadySubscribed: true } : { ok: true },
+      202,
+    );
   });
 
   routes.post('/confirm-code', async (c) => {
@@ -154,25 +232,31 @@ export function createRadarEmail(
         15,
         true,
       );
-    if (!email || !(await store.confirmCode(email, body.code)))
+    const activation = email && (await store.confirmCode(email, body.code));
+    if (!activation)
       throw new ApiError('INVALID_EMAIL_CODE', '验证码无效或已过期。', 410);
-    return c.json({ ok: true });
+    return confirmed(c, activation);
   });
 
-  for (const action of ['confirm', 'unsubscribe'] as const) {
-    routes.post('/' + action, async (c) => {
-      const { token } = await readJson(c.req.raw);
-      const completed =
-        typeof token === 'string' && (await store[action](token));
-      if (!completed)
-        throw new ApiError(
-          'INVALID_EMAIL_LINK',
-          '这个链接已使用或已失效。',
-          410,
-        );
-      return c.json({ ok: true });
-    });
-  }
+  routes.post('/confirm', async (c) => {
+    const { token } = await readJson(c.req.raw);
+    const activation =
+      typeof token === 'string' && (await store.confirm(token));
+    if (!activation)
+      throw new ApiError('INVALID_EMAIL_LINK', '这个链接已使用或已失效。', 410);
+    return confirmed(c, activation);
+  });
+  routes.post('/unsubscribe', async (c) => {
+    const { token } = await readJson(c.req.raw);
+    const contactId =
+      typeof token === 'string' && (await store.unsubscribe(token));
+    if (!contactId)
+      throw new ApiError('INVALID_EMAIL_LINK', '这个链接已使用或已失效。', 410);
+    if ((await rememberedContact(c)) === contactId) {
+      deleteCookie(c, subscriptionCookie, cookieOptions);
+    }
+    return c.json({ ok: true });
+  });
   return {
     ready,
     routes,

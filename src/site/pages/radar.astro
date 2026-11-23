@@ -87,7 +87,7 @@ const jsonLd = [
         <div class="radar-intro-copy">
           <h1>重置雷达</h1>
           <p>{subtitle}</p>
-          <div class="radar-cta">
+          <div class="radar-cta" data-radar-email-cta data-state="loading">
             <button
               class="btn btn-primary radar-subscribe"
               type="button"
@@ -101,7 +101,17 @@ const jsonLd = [
             <span class="radar-cta-hint">
               预测超过 80% 自动发邮件提醒，免费且可随时退订
             </span>
+            <strong data-radar-email-subscribed tabindex="-1" hidden>已订阅</strong>
+            <button
+              class="btn btn-quiet"
+              type="button"
+              data-radar-email-edit-subscription
+              aria-haspopup="dialog"
+              aria-controls="radar-email-dialog"
+              hidden
+            >修改订阅</button>
           </div>
+          <p data-radar-email-notice role="status"></p>
         </div>
         <div class="radar-intro-mark" aria-hidden="true">
           <RadarMark />
@@ -305,13 +315,22 @@ const jsonLd = [
     margin-top: 18px;
   }
 
-  .radar-cta:has([data-ssr='radar-email-signup'][hidden]) {
+  .radar-cta[data-state='loading'] {
+    visibility: hidden;
+  }
+
+  .radar-cta[data-state='loading']:has([data-ssr='radar-email-signup'][hidden]),
+  .radar-cta[data-state='subscribed'] .radar-cta-hint {
     display: none;
   }
 
   .radar-cta-hint {
     font-size: var(--fs-xs);
     opacity: 0.86;
+  }
+
+  [data-radar-email-notice]:not(:empty) {
+    margin-top: 8px;
   }
 
   .radar-intro-mark {

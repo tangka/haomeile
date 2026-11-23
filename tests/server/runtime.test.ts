@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { openRuntime } from '../../src/server';
+import { createRadarEmailStore } from '../../src/server/radar-email-store';
 import { hashSecret } from '../../src/worker/lib/crypto';
 import { decodeHtml } from '../../src/worker/localize';
 import type { TombstoneRow } from '../../src/worker/types';
@@ -193,14 +194,15 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(mail[0].to).toEqual([signup.email]);
     const token = mail[0].text.match(/\/en\/radar\/email#confirm=([\w-]+)/)![1];
     const code = mail[0].text.match(/verification code is (\d{6})\./)![1];
-    expect(
-      (
-        await request(opened, '/api/radar/email/confirm-code', {
-          email: signup.email,
-          code,
-        })
-      ).status,
-    ).toBe(200);
+    const verified = await request(opened, '/api/radar/email/confirm-code', {
+      email: signup.email,
+      code,
+    });
+    expect(await verified.json()).toEqual({
+      ok: true,
+      alreadySubscribed: false,
+    });
+    const Cookie = verified.headers.get('Set-Cookie')!.split(';')[0];
     expect(
       (await request(opened, '/api/radar/email/confirm', { token })).status,
     ).toBe(410);
@@ -225,22 +227,179 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     const removal = mail[1].text.match(
       /\/en\/radar\/email#unsubscribe=([\w-]+)/,
     )![1];
-    expect(
-      (
-        await request(opened, '/api/radar/email/unsubscribe', {
-          token: removal,
-        })
-      ).status,
-    ).toBe(200);
-    expect(
-      (
-        await request(opened, '/api/radar/email/subscribe', {
-          ...signup,
-          locale: 'zh',
-        })
-      ).status,
-    ).toBe(202);
+    const knownRepeat = await request(
+      opened,
+      '/api/radar/email/subscribe',
+      signup,
+      { Cookie },
+    );
+    expect(await knownRepeat.json()).toEqual({
+      ok: true,
+      alreadySubscribed: true,
+    });
+    expect(knownRepeat.headers.has('Set-Cookie')).toBe(true);
+    expect(mail).toHaveLength(2);
+    const unknownRepeat = await request(
+      opened,
+      '/api/radar/email/subscribe',
+      signup,
+    );
+    expect(unknownRepeat.status).toBe(202);
+    expect(await unknownRepeat.json()).toEqual({ ok: true });
+    expect(unknownRepeat.headers.has('Set-Cookie')).toBe(false);
+    expect(mail[2].text).toContain('This email address is already subscribed.');
+    const repeatLink = mail[2].text.match(
+      /\/en\/radar\/email#confirm=([\w-]+)/,
+    )![1];
+    const repeatConfirmed = await request(opened, '/api/radar/email/confirm', {
+      token: repeatLink,
+    });
+    expect(await repeatConfirmed.json()).toEqual({
+      ok: true,
+      alreadySubscribed: true,
+    });
+    const edit = await request(
+      opened,
+      '/api/radar/email/subscribe',
+      {
+        ...signup,
+        locale: 'zh',
+      },
+      { Cookie },
+    );
+    expect(edit.status).toBe(202);
+    expect(await edit.json()).toEqual({ ok: true, alreadySubscribed: true });
+    const editedCode = mail.at(-1)!.text.match(/验证码是 (\d{6})/)![1];
+    expect(mail.at(-1)!.text).toContain('这个邮箱已经订阅过了。');
+    const edited = await request(opened, '/api/radar/email/confirm-code', {
+      email: signup.email,
+      code: editedCode,
+    });
+    expect(await edited.json()).toEqual({
+      ok: true,
+      alreadySubscribed: true,
+      preferencesChanged: true,
+    });
     expect(mail.at(-1)?.from).toBe('重置雷达 <radar@example.test>');
+    const other = 'other-reader@example.test';
+    const store = createRadarEmailStore(opened.env.DB, PEPPER);
+    const otherProof = (await store.requestConfirmation(
+      other,
+      ['codex'],
+      'en',
+    ))!;
+    await store.confirm(otherProof.token);
+    const otherBrowser = await request(
+      opened,
+      '/api/radar/email/subscribe',
+      { ...signup, email: other },
+      { Cookie },
+    );
+    expect(otherBrowser.status).toBe(202);
+    expect(await otherBrowser.json()).toEqual({ ok: true });
+    const unsubscribed = await request(
+      opened,
+      '/api/radar/email/unsubscribe',
+      { token: removal },
+      { Cookie },
+    );
+    expect(unsubscribed.status).toBe(200);
+    expect(unsubscribed.headers.get('Set-Cookie')).toContain('Max-Age=0');
+  });
+
+  test('remembers a verified subscription in this browser for 180 days after its last radar visit', async () => {
+    const { opened } = await runtime();
+    const store = createRadarEmailStore(opened.env.DB, PEPPER);
+    const signup = (email: string) =>
+      store.requestConfirmation(email, ['codex'], 'zh');
+    const status = (Cookie?: string) =>
+      request(
+        opened,
+        '/api/radar/email/status',
+        undefined,
+        Cookie ? { Cookie } : {},
+      );
+    const pending = (await signup('known@example.test'))!;
+    const verified = await request(opened, '/api/radar/email/confirm', {
+      token: pending.token,
+    });
+    const setCookie = verified.headers.get('Set-Cookie')!;
+    for (const flag of [
+      'Path=/api/radar/email',
+      'Secure',
+      'HttpOnly',
+      'SameSite=Lax',
+      'Max-Age=15552000',
+    ])
+      expect(setCookie.split('; ')).toContain(flag);
+    expect(setCookie).not.toMatch(/Domain=|known|example\.test/);
+    const original = setCookie.split(';')[0];
+    for (const cookie of [undefined, original + 'z']) {
+      const unknown = await status(cookie);
+      expect(await unknown.json()).toEqual({ subscribed: false });
+      expect(unknown.headers.has('Set-Cookie')).toBe(false);
+    }
+    let unsubscribeToken = '';
+    const started = Date.now();
+    await store.dispatch(
+      {
+        generatedAt: new Date(started).toISOString(),
+        stale: false,
+        platforms: [{ name: 'Codex', probability: 90 }],
+        history: [
+          {
+            id: 'codex',
+            name: 'Codex',
+            points: [{ time: started, probability: 90 }],
+          },
+        ],
+      },
+      async (alert) => {
+        unsubscribeToken = alert.unsubscribeToken;
+        return 'sent';
+      },
+    );
+    expect(unsubscribeToken).toBeTruthy();
+    const day = 86400000;
+    const clock = spyOn(Date, 'now').mockReturnValue(started + 179 * day);
+    try {
+      const visit = await status(original);
+      expect(await visit.json()).toEqual({ subscribed: true });
+      expect(visit.headers.get('Cache-Control')).toBe('private, no-store');
+      expect(visit.headers.get('Vary')).toContain('Cookie');
+      const renewed = visit.headers.get('Set-Cookie')!.split(';')[0];
+      expect(renewed).not.toBe(original);
+      clock.mockReturnValue(started + 350 * day);
+      expect(await (await status(original)).json()).toEqual({
+        subscribed: false,
+      });
+      expect(await (await status(renewed)).json()).toEqual({
+        subscribed: true,
+      });
+      const other = (await signup('other@example.test'))!;
+      const otherVerified = await request(opened, '/api/radar/email/confirm', {
+        token: other.token,
+      });
+      const otherCookie = otherVerified.headers
+        .get('Set-Cookie')!
+        .split(';')[0];
+      const removal = await request(
+        opened,
+        '/api/radar/email/unsubscribe',
+        { token: unsubscribeToken },
+        { Cookie: otherCookie },
+      );
+      expect(removal.status).toBe(200);
+      expect(removal.headers.has('Set-Cookie')).toBe(false);
+      expect(await (await status(otherCookie)).json()).toEqual({
+        subscribed: true,
+      });
+      const removed = await status(renewed);
+      expect(await removed.json()).toEqual({ subscribed: false });
+      expect(removed.headers.has('Set-Cookie')).toBe(false);
+    } finally {
+      clock.mockRestore();
+    }
   });
   test('rate-limits code verification by mailbox and IP even for unknown mailboxes', async () => {
     const { opened } = await runtime(
