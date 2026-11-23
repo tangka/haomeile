@@ -34,6 +34,7 @@ async function runtime(
   analyticsToken?: string,
   ga4MeasurementId?: string,
   radarApiKey?: string,
+  radarHumanCheck?: string,
 ) {
   const data = await mkdtemp(join(tmpdir(), 'haomeile-runtime-test-'));
   directories.push(data);
@@ -51,6 +52,7 @@ async function runtime(
     CLOUDFLARE_WEB_ANALYTICS_TOKEN: analyticsToken,
     GA4_MEASUREMENT_ID: ga4MeasurementId,
     RADAR_OVERVIEW_API_KEY: radarApiKey,
+    RADAR_HUMAN_CHECK: radarHumanCheck,
     ADMIN_AUTH_MODE: 'basic',
     ADMIN_USERNAME: 'runtime-admin',
     ADMIN_PASSWORD_HASH: await hashSecret(PASSWORD, PEPPER),
@@ -300,6 +302,63 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     });
     expect(options?.redirect).toBe('error');
   });
+
+  test('serves Radar and its analytics anonymously only when its human check is disabled', async () => {
+    const key = 'fictional-integration-key-for-isolated-runtime-tests';
+    const generatedAt = new Date().toISOString();
+    const fetchMock = spyOn(globalThis, 'fetch').mockImplementation(
+      Object.assign(
+        async (target: Parameters<typeof fetch>[0]) => {
+          expect(String(target)).toBe(
+            'https://api.tangka.online/radar-api/integrations/haomeile/overview',
+          );
+          return Response.json({
+            generatedAt,
+            platforms: [{ id: 'antigravity', probability: 63.6 }],
+          });
+        },
+        { preconnect() {} },
+      ),
+    );
+    fetchSpies.push(fetchMock);
+    const { opened } = await runtime(
+      'radar-analytics-test-token',
+      MEASUREMENT_ID,
+      key,
+      'false',
+    );
+    opened.radar!.start();
+    await Bun.sleep(0);
+
+    for (const path of ['/radar', '/en/radar/index.html']) {
+      const response = await request(opened, path);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('cache-control')).toBe('private, no-store');
+      expect(response.headers.has('set-cookie')).toBe(false);
+      const html = await response.text();
+      expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
+      expect(html).not.toMatch(
+        /data-radar-verify|fictional-integration|api\.tangka\.online/,
+      );
+      expect(html.match(/data-cf-beacon=/g)).toHaveLength(1);
+      expect(html.match(/data-ga4-measurement-id=/g)).toHaveLength(1);
+      expect(html).toContain(`data-ga4-measurement-id="${MEASUREMENT_ID}"`);
+    }
+
+    const verify = await request(opened, '/api/radar/verify', {
+      turnstile_token: TOKEN,
+    });
+    expect(verify.status).toBe(404);
+    expect(verify.headers.has('set-cookie')).toBe(false);
+    expect((await request(opened, '/api/radar')).status).toBe(404);
+    const submission = await request(opened, '/api/tombstones', input);
+    expect(submission.status).toBe(400);
+    expect(await submission.json()).toMatchObject({
+      error: { code: 'TURNSTILE_FAILED' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   test('renders Chinese and English routes with valid metadata, language switch links, and native rewritten HTML', async () => {
     const { opened } = await runtime();
     const chinese = await request(opened, '/', undefined, {

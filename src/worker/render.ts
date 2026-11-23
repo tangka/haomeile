@@ -333,7 +333,7 @@ export async function servePage(
       },
     });
   let assetPath = requestedPath;
-  let radarVerified = false;
+  let radarAccessible = false;
   // Fetch directory assets internally so their canonical redirects cannot drop form query parameters.
   if (
     [
@@ -351,9 +351,10 @@ export async function servePage(
     assetPath = path + '/';
   if (path === '/radar') {
     c.header('Cache-Control', 'private, no-store');
-    radarVerified = await hasRadarPass(c);
-    assetPath = radarVerified ? '/radar/' : '/_templates/radar-gate/';
-    const overview = radarVerified ? readRadarOverview?.() : null;
+    radarAccessible =
+      c.env.RADAR_HUMAN_CHECK === 'false' || (await hasRadarPass(c));
+    assetPath = radarAccessible ? '/radar/' : '/_templates/radar-gate/';
+    const overview = radarAccessible ? readRadarOverview?.() : null;
     if (overview) {
       const formattedAt = new Intl.DateTimeFormat(
         locale === 'en' ? 'en-GB' : 'zh-CN',
@@ -678,7 +679,7 @@ export async function servePage(
     c.env.ENVIRONMENT === 'production' &&
     url.origin === DEFAULT_SITE_ORIGIN &&
     site === DEFAULT_SITE_ORIGIN &&
-    ((path === '/radar' && radarVerified) ||
+    ((path === '/radar' && radarAccessible) ||
       /^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
       /^\/(?:v|t|tips)\/[^/]+$/.test(path));
   const analyticsToken = publicAnalyticsPage

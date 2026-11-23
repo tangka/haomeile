@@ -78,7 +78,9 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 进程启动后主动获取快照，之后每五分钟刷新，遇到上游限流时延后。`/radar` 和 `/en/radar` 只从内存快照渲染 Codex、Claude Code、Antigravity 的概率和生成时间。若刷新失败或生成时间距今超过 45 分钟，页面标记为最近一次预测。超过三小时或没有有效快照时，页面显示数据暂不可用。
 
-未验证的 `/radar` 和 `/en/radar` 只返回独立的全屏验证页。Cloudflare Turnstile 验证成功后，服务器校验域名和 `radar_gate` 动作，签发 15 分钟通行 Cookie。验证和读取均按网络限频，雷达 HTML 禁止共享缓存。只有验证后的页面包含预测和访问统计脚本。这个入口的验证仅适用于雷达页面。
+雷达人机验证开启时，未验证的 `/radar` 和 `/en/radar` 只返回独立的全屏验证页。服务器用 Cloudflare Turnstile 核对域名和 `radar_gate` 动作，签发 15 分钟通行 Cookie。验证和读取均按网络限频，雷达 HTML 禁止共享缓存。
+
+在 `/etc/haomeile/haomeile.env` 将 `RADAR_HUMAN_CHECK` 设为 `false` 并重启应用，可暂时开放雷达。开放期间，直接进入预测页的访问纳入现有统计。把配置设为 `true` 或移除这一项，再重启即可恢复雷达验证。这个开关仅适用于雷达页面。
 
 ## 社区资料导入
 

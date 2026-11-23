@@ -106,6 +106,7 @@ export interface Bindings {
   TURNSTILE_TEST_MODE?: string;
   CLOUDFLARE_WEB_ANALYTICS_TOKEN?: string;
   GA4_MEASUREMENT_ID?: string;
+  RADAR_HUMAN_CHECK?: string;
   ACCESS_AUD: string;
   ACCESS_TEAM_DOMAIN: string;
   ENVIRONMENT: string;

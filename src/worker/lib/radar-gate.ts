@@ -48,6 +48,8 @@ async function radarRate(
 }
 
 export async function verifyRadarAccess(c: Context<AppEnv>): Promise<Response> {
+  if (c.env.RADAR_HUMAN_CHECK === 'false')
+    throw new ApiError('NOT_FOUND', '没有这个接口。', 404);
   const body = await readJson(c.req.raw);
   const token =
     typeof body.turnstile_token === 'string' ? body.turnstile_token : '';
