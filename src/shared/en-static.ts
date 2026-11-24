@@ -257,6 +257,8 @@ export const EN_STATIC: Record<string, string> = {
   'Antigravity 申诉表单': 'Antigravity appeal form',
   'Google 账号停用说明': 'Disabled Google Account help',
   '查看 Antigravity 停用案例': 'Browse Antigravity suspension cases',
+  'Claude Code 提示组织停用怎么办': 'Claude Code organization disabled: what to do',
+  'Antigravity 403 或服务停用怎么办': 'Antigravity 403 or disabled: what to do',
   'Antigravity 官方申诉入口': 'Official Antigravity appeal',
   Antigravity: 'Antigravity',
   申诉时可以写什么: 'What to include in an appeal',

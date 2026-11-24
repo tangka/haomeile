@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import type { AppEnv, PublicTombstone, Stats } from './types';
+import type { AppEnv, PublicTombstone, Stats, Vendor } from './types';
 import { listTombstones, getStats, findPublicTombstone } from './lib/store';
 import { LABELS, getLabels } from '../site/scripts/labels';
 import {
@@ -19,6 +19,8 @@ import {
 import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { tombPresentation } from '../shared/tomb-presentation';
+import { VENDOR_ANSWERS } from '../shared/vendor-answers';
+import { renderVendorAnswer } from './vendor-answer';
 import type { ReadRadarOverview } from '../shared/radar';
 import { hasRadarPass } from './lib/radar-gate';
 import {
@@ -193,7 +195,7 @@ function zhEventTitle(vendorName: string, eventLabel: string): string {
 }
 
 interface VendorSeoConfig {
-  title: { zh: string; en: string };
+  title: (total: number) => { zh: string; en: string };
   description: (total: number, date: string) => { zh: string; en: string };
   intro: { zh: string; en: string };
   links: { href: string; label: { zh: string; en: string } }[];
@@ -201,12 +203,12 @@ interface VendorSeoConfig {
 
 const VENDOR_SEO: Record<string, VendorSeoConfig> = {
   claude: {
-    title: {
-      zh: 'Claude 封号与账号停用记录、申诉入口与订阅排查 · 号没了',
+    title: (total) => ({
+      zh: `Claude 封号、组织停用怎么办：${total >= 5 ? total + ' 条' : ''}公开记录与官方申诉入口 · 号没了`,
       en: 'Claude account bans, suspensions, appeals & billing recovery · Haomeile',
-    },
+    }),
     description: (total, date) => ({
-      zh: `收录 Claude / Claude Code 账号停用、组织停用、身份验证卡住与申诉结果（截至 ${date} 共 ${total} 条公开记录），附 Anthropic 官方申诉入口与 Max 订阅恢复指南。`,
+      zh: `Claude Code 提示组织已停用，先查旧的 ANTHROPIC_API_KEY；账号被停用再走官方申诉。附 ${total} 条账号停用、组织停用与申诉的公开记录（截至 ${date}）。`,
       en: `Public cases of Claude and Claude Code account bans, organization suspensions, ID verification and appeals (${total} records as of ${date}), with official Anthropic appeal links and billing guides.`,
     }),
     intro: {
@@ -242,10 +244,10 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     ],
   },
   codex: {
-    title: {
+    title: () => ({
       zh: 'Codex 账号停用与恢复记录、OpenAI 官方申诉入口 · 号没了',
       en: 'Codex account deactivations, appeals & recovery cases · Haomeile',
-    },
+    }),
     description: (total, date) => ({
       zh: `收录 OpenAI Codex 与关联 ChatGPT 账号停用、401 访问异常与申诉恢复经历（截至 ${date} 共 ${total} 条公开记录），附 OpenAI 官方申诉链接与帮助中心入口。`,
       en: `Public cases of OpenAI Codex and ChatGPT account deactivations, 401 access errors and appeal outcomes (${total} records as of ${date}), with official OpenAI appeal channels.`,
@@ -279,13 +281,13 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     ],
   },
   antigravity: {
-    title: {
-      zh: 'Antigravity 403、服务停用记录与官方申诉入口 · 号没了',
-      en: 'Antigravity 403 errors, service suspensions & official appeals · Haomeile',
-    },
+    title: () => ({
+      zh: 'Antigravity 403、服务停用怎么办：申诉步骤与等待时间 · 号没了',
+      en: 'Antigravity 403 or service disabled: appeal steps & wait times · Haomeile',
+    }),
     description: (total, date) => ({
-      zh: `收录 Google Antigravity 403 报错、服务停用、地区限制与 Starter Quota 异常案例（截至 ${date} 共 ${total} 条公开记录），附官方申诉表单与订阅排查步骤。`,
-      en: `Public cases of Google Antigravity 403 errors, service suspensions, regional limits and Starter Quota issues (${total} records as of ${date}), with the official appeal form and setup guides.`,
+      zh: `Antigravity 提示 403 或服务停用怎么处理：先查第三方授权，再提交一次官方申诉。分清地区限制、429 与 Starter Quota，附 ${total} 条公开记录（截至 ${date}）。`,
+      en: `What to do when Antigravity returns a 403 or says the service is disabled: check third-party access, then appeal once. Covers region limits, 429, Starter Quota and ${total} public records as of ${date}.`,
     }),
     intro: {
       zh: '收录 Google Antigravity 服务停用、403 权限拒绝、地区支持与付费额度异常的公开经历。个人账号停用请用受影响的 Google 账号提交官方申诉表单。',
@@ -509,7 +511,7 @@ export async function servePage(
       const totalRecords = stats.total + (stats.community_total || 0);
       const seo = VENDOR_SEO[vendor];
       const pageTitle = seo
-        ? seo.title[locale]
+        ? seo.title(totalRecords)[locale]
         : text(
             `${name} 账号停用、封号经历 · 号没了`,
             `${name} account suspensions · Haomeile`,
@@ -523,7 +525,8 @@ export async function servePage(
       rewriter.on('[data-ssr="page-title"]', {
         element: (el) => {
           el.setInnerContent(
-            text(`${name} 账号的墓碑`, `${name} account memorials`),
+            VENDOR_ANSWERS[vendor as Vendor]?.question[locale] ??
+              text(`${name} 账号的墓碑`, `${name} account memorials`),
           );
         },
       });
@@ -560,7 +563,7 @@ export async function servePage(
         const summaryCopy =
           locale === 'en'
             ? `Sample breakdown (${totalRecords} public records as of ${stats.date}): Event types — ${eventSummary}. Visible appeal outcomes — ${appealSummary}.`
-            : `公开样本分布（截至 ${stats.date} 共 ${totalRecords} 条，含社区整理与用户投稿）：事件类型为${eventSummary}；可见申诉状态为${appealSummary}。`;
+            : `公开样本分布（截至 ${stats.date} 共 ${totalRecords} 条${stats.total ? '，含社区整理与用户投稿' : '，均为社区整理'}，未经本站核实）：事件类型为${eventSummary}；可见申诉状态为${appealSummary}。`;
         rewriter.on('[data-ssr="vendor-summary"]', {
           element: (el) => {
             el.removeAttribute('hidden');
@@ -568,10 +571,32 @@ export async function servePage(
           },
         });
       }
+      const answer = VENDOR_ANSWERS[vendor as Vendor];
+      if (answer) {
+        const sources = answer.timeline?.rows.map((row) => row.source) ?? [];
+        const records = sources.length
+          ? await c.env.DB.prepare(
+              `SELECT id,source_url FROM tombstones WHERE status='approved' AND vendor=? AND source_url IN (${sources.map(() => '?').join(',')})`,
+            )
+              .bind(vendor, ...sources)
+              .all<{ id: string; source_url: string }>()
+          : null;
+        const answerHtml = renderVendorAnswer(
+          answer,
+          locale,
+          new Map(records?.results.map((row) => [row.source_url, row.id])),
+        );
+        rewriter.on('[data-ssr="vendor-answer"]', {
+          element: (el) => {
+            el.removeAttribute('hidden');
+            el.setInnerContent(answerHtml, { html: true });
+          },
+        });
+      }
       if (seo) {
         rewriter.on('[data-ssr="vendor-intro"]', {
           element: (el) => {
-            el.setInnerContent(seo.intro[locale]);
+            el.setInnerContent((answer?.lead ?? seo.intro)[locale]);
           },
         });
         rewriter.on('[data-ssr="vendor-links"]', {

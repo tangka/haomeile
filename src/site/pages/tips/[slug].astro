@@ -26,9 +26,15 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const { tip } = Astro.props;
 const pageUrl = `${SITE}/tips/${tip.slug}`;
 const relatedVendors = tipVendors(tip.slug);
+const heading = tipSeoTitle(tip, 'zh');
+const ownHeading = heading !== tip.title;
 
-const vendorMeta: Record<TipVendor, { label: string; appealLabel: string }> = {
+const vendorMeta: Record<
+  TipVendor,
+  { label: string; appealLabel: string; answer?: string }
+> = {
   claude: {
+    answer: 'Claude Code 提示组织停用怎么办',
     label: '查看 Claude 停用案例',
     appealLabel: 'Claude 官方申诉入口',
   },
@@ -37,6 +43,7 @@ const vendorMeta: Record<TipVendor, { label: string; appealLabel: string }> = {
     appealLabel: 'Codex / OpenAI 官方申诉入口',
   },
   antigravity: {
+    answer: 'Antigravity 403 或服务停用怎么办',
     label: '查看 Antigravity 停用案例',
     appealLabel: 'Antigravity 官方申诉入口',
   },
@@ -53,7 +60,7 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: tip.title,
+    name: heading,
     description: tip.summary.zh,
     inLanguage: 'zh-CN',
     url: pageUrl,
@@ -95,7 +102,7 @@ const jsonLd = [
       {
         '@type': 'ListItem',
         position: 3,
-        name: tip.title,
+        name: heading,
       },
     ],
   },
@@ -118,7 +125,7 @@ const jsonLd = [
           <a href="/tips">返回技巧目录</a>
         </nav>
         <div class="page-head">
-          <h1>{tip.title}</h1>
+          <h1>{heading}</h1>
           <p>{tip.summary.zh}</p>
         </div>
         <p>{tip.experience.zh}</p>
@@ -159,8 +166,8 @@ const jsonLd = [
             class="tip-original-title"
             lang="zh-CN"
             translate="no"
-            hidden
-            data-en-show
+            hidden={!ownHeading}
+            data-en-show={ownHeading ? undefined : ''}
           >
             《{tip.title}》
           </span>
@@ -168,6 +175,11 @@ const jsonLd = [
         <nav class="tip-related" aria-label="相关入口">
           {relatedVendors.map((vendor) => (
             <>
+              {vendorMeta[vendor].answer && (
+                <a href={'/v/' + vendor + '#answer'}>
+                  {vendorMeta[vendor].answer}
+                </a>
+              )}
               <a href={'/v/' + vendor}>{vendorMeta[vendor].label}</a>
               <a href={'/appeal#' + vendor}>{vendorMeta[vendor].appealLabel}</a>
             </>

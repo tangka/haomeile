@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import { app } from '../../src/worker';
 import type { Bindings } from '../../src/worker/types';
-const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><section data-ssr="tally-section" hidden><p data-ssr="tally"></p></section><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><section data-ssr="timeline-section" hidden><div data-ssr="timeline"></div></section></body></html>`;
+const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><section data-ssr="vendor-answer" hidden></section><section data-ssr="tally-section" hidden><p data-ssr="tally"></p></section><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><section data-ssr="timeline-section" hidden><div data-ssr="timeline"></div></section></body></html>`;
 const assets = {
   async fetch(request: Request) {
     if (new URL(request.url).pathname === '/submit')
@@ -111,11 +111,47 @@ describe('Worker renders Astro templates on the server', () => {
       );
       expect(response.status).toBe(200);
       const html = await response.text();
-      expect(html).toContain(name + ' 账号的墓碑');
+      expect(html).toContain(
+        vendor === 'codex'
+          ? name + ' 账号的墓碑'
+          : name + ' 提示 403 或服务停用，怎么办？',
+      );
       expect(html).toContain('href="https://haomeile.rip/v/' + vendor + '"');
       expect(html).toContain('/t/PRODUCTAAA');
     },
   );
+  it('answers the vendor question first and only lists timeline posts that are still public', async () => {
+    const add = async (id: string, status: string, source: string) => {
+      await seed(id, status, undefined, 'antigravity');
+      await env.DB.prepare(
+        "UPDATE tombstones SET origin='community',source_url=? WHERE id=?",
+      )
+        .bind(source, id)
+        .run();
+    };
+    await add('TIMELINEAA', 'approved', 'https://discuss.ai.google.dev/t/203618');
+    await add('TIMELINEBB', 'hidden', 'https://discuss.ai.google.dev/t/203919');
+    const page = async (path: string) =>
+      (await app.request('https://haomeile.rip' + path, {}, bindings)).text();
+
+    const zh = await page('/v/antigravity');
+    expect(zh).toContain('Antigravity 提示 403 或服务停用，怎么办？');
+    expect(zh).toContain('href="https://forms.gle/hGzM9MEUv2azZsrb9"');
+    expect(zh).toContain('href="/t/TIMELINEAA"');
+    expect(zh).not.toContain('/t/TIMELINEBB');
+    expect(zh).not.toContain('discuss.ai.google.dev/t/203919');
+    expect(zh).toContain('与任何 AI 厂商无隶属关系');
+
+    const en = await page('/en/v/antigravity');
+    expect(en).toContain('href="/en/t/TIMELINEAA"');
+    expect(en).toContain('href="/en/tips/antigravity-paid-plan-starter-quota"');
+    expect(en).not.toContain('别人等了多久');
+
+    const claude = await page('/v/claude');
+    expect(claude).toContain('ANTHROPIC_API_KEY');
+    expect(claude).not.toContain('id="wait"');
+    expect(await page('/v/codex')).not.toContain('id="answer"');
+  });
   it('hides unsupported historical rows and rejects their product landing pages', async () => {
     await seed('LEGACYAAAA', 'approved', undefined, 'grok');
     const response = await app.request('https://haomeile.rip/', {}, bindings);
@@ -238,7 +274,7 @@ describe('Worker renders Astro templates on the server', () => {
     const html = await (
       await app.request('https://haomeile.rip/v/claude', {}, bindings)
     ).text();
-    expect(html).toContain('Claude 账号的墓碑');
+    expect(html).toContain('Claude 账号或组织被停用，怎么办？');
     expect(html).toContain('content="noindex,follow"');
     expect(html).toContain('href="https://haomeile.rip/v/claude"');
     const image = await app.request(

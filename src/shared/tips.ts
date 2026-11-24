@@ -133,28 +133,38 @@ export const TIP_ARTICLES: TipArticle[] = [
     englishTitle:
       'A hands-on Antigravity guide: from Google AI Ultra setup to a bilingual short film',
     summary: {
-      zh: '我开通了 Ultra，Antigravity 却还显示 Starter Quota。排查时先核对登录账号，再看额度页提示。',
-      en: 'I had an active Ultra subscription, but Antigravity still showed Starter Quota. Start by checking the signed-in account and the message on the quota page.',
+      zh: '付费后 Antigravity 仍显示 Starter Quota，先核对订阅和客户端是不是同一个个人 Google 账号，再看额度页有没有年龄验证提示，最后退出重新登录。这不是停用，不用申诉。',
+      en: 'If Antigravity still shows Starter Quota after you pay, check that the plan and the app use the same personal Google Account, look for an age prompt on the quota page, then sign out and back in. This is not a suspension and needs no appeal.',
     },
     experience: {
-      zh: '当时 Google One 里已经显示 Ultra 5x 生效。我看到 Antigravity 的额度下面有一行提示，让我先验证年龄。我按提示验证，再退出客户端重新登录，付费额度就出来了。',
-      en: 'Google One showed that Ultra 5x was active. Under the quota in Antigravity, I saw a message asking me to verify my age. I followed the prompt, then signed out of the client and back in. The paid quota appeared.',
+      zh: '原文作者 @ElowenY20119 记录：Google One 已显示 Ultra 5x 生效，Antigravity 却仍是 Starter Quota，额度下方有一行提示要求先验证年龄。作者按提示验证，退出客户端重新登录后，付费额度出现了。',
+      en: 'The author of the original post, @ElowenY20119, reports that Google One showed Ultra 5x as active while Antigravity still showed Starter Quota, with a message below the quota asking for age verification. After verifying and signing back in, the paid quota appeared.',
     },
     steps: [
       {
         text: {
-          zh: '在 Google One 确认订阅档位和会员账号。打开 Antigravity 的「Settings → Account」，核对客户端邮箱是否和会员账号一致，同时查看当前额度档位。',
-          en: 'Check your plan and subscription email in Google One. In Antigravity, open Settings → Account and compare both the signed-in email and the quota tier.',
+          zh: '核对账号类型。官方 FAQ 说明，Google Workspace 等公司或学校账号的套餐不含 Antigravity 额度，默认只有有限的 Starter Quota；要用个人 Google 账号订阅的 Google AI Pro 或 Ultra。',
+          en: 'Check the account type. The official FAQ says Google Workspace plans do not include Antigravity rate limits and get a limited starter quota by default. Use a personal Google Account with Google AI Pro or Ultra.',
         },
         link: {
-          href: 'https://one.google.com/',
+          href: 'https://antigravity.google/docs/faq',
+          label: { zh: '查看官方 FAQ', en: 'Read the official FAQ' },
+        },
+      },
+      {
+        text: {
+          zh: '在 Google One 确认订阅档位、会员账号，以及是正式付费还是试用。打开 Antigravity 的「Settings → Account」，核对客户端邮箱是否和会员账号一致，同时查看当前额度档位。',
+          en: 'In Google One, check the plan, the subscribed account, and whether it is paid or a trial. In Antigravity, open Settings → Account and compare both the signed-in email and the quota tier.',
+        },
+        link: {
+          href: 'https://one.google.com/settings',
           label: { zh: '打开 Google One', en: 'Open Google One' },
         },
       },
       {
         text: {
-          zh: '如果免费额度下方明确提示验证年龄，用同一个 Google 账号打开官方验证页，选页面提供的验证方式，按提示提交。',
-          en: 'If the message beneath Starter Quota explicitly asks for age verification, open Google’s verification page with the same account and follow one of the options offered there.',
+          zh: '如果免费额度下方明确提示验证年龄，用同一个 Google 账号打开官方验证页，选页面提供的验证方式，按提示提交。未满 18 岁不能使用 Antigravity。',
+          en: 'If the message beneath Starter Quota explicitly asks for age verification, open Google’s verification page with the same account and follow one of the options offered there. Antigravity is unavailable to users under 18.',
         },
         link: {
           href: 'https://myaccount.google.com/age-verification',
@@ -166,8 +176,18 @@ export const TIP_ARTICLES: TipArticle[] = [
       },
       {
         text: {
-          zh: '完成后在 Antigravity 退出账号，用已开通订阅的账号重新登录。回到「Settings → Account」查看套餐及额度有没有更新。',
-          en: 'Sign out of Antigravity after verification, then sign back in with the subscribed account. Return to Settings → Account and check whether the tier and quota have updated.',
+          zh: '在 Antigravity 退出账号，用已开通订阅的账号重新登录。回到「Settings → Account」查看套餐及额度有没有更新，再新建一个对话试试。',
+          en: 'Sign out of Antigravity, then sign back in with the subscribed account. Return to Settings → Account to check whether the tier and quota have updated, then start a new conversation.',
+        },
+      },
+      {
+        text: {
+          zh: '如果是试用期内升级，带 Google 标识的论坛回复说，残留的试用记录可能让额度停在旧档，可联系 Google One 支持核对。这不是停用，不用提交 Antigravity 申诉表单。',
+          en: 'If you upgraded during a trial, a forum reply from a user labelled Google says a leftover trial record can keep the old quota, and suggests contacting Google One Support. This is not a suspension, so the Antigravity appeal form is not needed.',
+        },
+        link: {
+          href: 'https://discuss.ai.google.dev/t/202892',
+          label: { zh: '查看论坛回复', en: 'Read the forum reply' },
         },
       },
     ],
@@ -917,8 +937,8 @@ const TIP_SEO_TITLES: Record<string, TipCopy> = {
     en: 'Switch Google AI Pro from Monthly to Annual & Check Renewal',
   },
   'antigravity-paid-plan-starter-quota': {
-    zh: 'Antigravity 开通 Ultra / Pro 仍显示 Starter Quota 怎么办（年龄验证排查）',
-    en: 'Antigravity Paid Plan Still Shows Starter Quota: Age Verification Fix',
+    zh: 'Antigravity 付费后仍显示 Starter Quota 怎么办',
+    en: 'Antigravity Still Shows Starter Quota After Paying: What to Check',
   },
   'claude-max-google-play-recovery': {
     zh: 'Claude 解封后 Max 订阅仍显示 Free 怎么办（Google Play 订单恢复）',
@@ -971,7 +991,10 @@ export const TIP_TRANSLATIONS = Object.fromEntries(
       ]),
       [tipPageTitle(title, 'zh'), tipPageTitle(englishTitle, 'en')],
       ...(seoZh !== title
-        ? [[tipPageTitle(seoZh, 'zh'), tipPageTitle(seoEn, 'en')]]
+        ? [
+            [seoZh, seoEn],
+            [tipPageTitle(seoZh, 'zh'), tipPageTitle(seoEn, 'en')],
+          ]
         : []),
     ];
   }),
