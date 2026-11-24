@@ -77,3 +77,24 @@ curl -fsS https://haomeile.rip/ads.txt | cmp - public/ads.txt
 修改社区数据时运行 `pnpm exec bun test tests/server/community.test.ts`，导入后用公开 API 和详情核对原帖及编号。修改页面时在中英文线上地址核对标题、摘要、canonical、hreflang、实际正文、内链和抓取权限。日常应用发布用 [现有新加坡部署脚本](../DEPLOY-SERVER.md)，打包前提交待构建版本，本地保留一版发布包（`d7b92fc`）。每次交接写出提交号、测试结果、已上线地址和后台待处理状态。
 
 最近一次 SEO/GEO 发布（`901c790` + `f591079`，线上版本 `20261123074147-f591079`）通过类型检查、Lint、214 项 Worker 测试、48 项 Bun 服务端测试和 53 项端到端测试（`release-copy`、`responsive`、`i18n`）。线上 16 项回读检查及顶栏语言切换均已复核。下一步待处理：1）站长在 GSC 手动过一次 reCAPTCHA 为 `/appeal`、`/v/claude`、`/v/codex`、`/v/antigravity`、`/tips` 请求重抓；2）登录 Bing Webmaster Tools 验证并提交 `/sitemap.xml`（Cloudflare 已观测到 `cn.bing.com` 来访）；3）核对 AdSense「网站」列表状态与次日 GA4 `11-23` 标准报表；4）补齐 Codex 近期案例（当前仅 6 条，远低于 Claude/Antigravity 各 13 条）。
+
+## 第二轮记录（2026-11-24，Claude）
+
+分工：`main` 是唯一主线。开工前先取 `origin/main`，各自在自己的分支改，测完合回 `main`，部署只用 `main`。`claude/seo-geo-2` 由 Claude 使用；其他 AI 不要再从 `codex/implement-haomeile` 部署，否则会覆盖这一轮内容。
+
+| 项 | 状态 | 提交 |
+| --- | --- | --- |
+| S1 | 16 篇技巧已改成本站转述，有出处行、`isBasedOn` 和测试。**39 条以上社区案例、`/t/*` 出处行与 JSON-LD、线上已有记录的更新命令还没做** | `117e652` |
+| S2 | 页脚、关于页、`llms.txt` 的独立声明；隐私页写明广告 Cookie | `32a31b3` |
+| S3 | `/v/antigravity`、`/v/claude` 首屏答案和 Starter Quota 页。`/v/codex` 没做。常见通知只写核对过的官方页面和原帖，没有统计“通知原文” | `60adc09` |
+| S4、S7、S9 | 没做 | |
+| S5 | 只有部分声明；Organization 标记、关于页三节没做 | |
+| S6 | 雷达公开说明直出，标明非官方、只算额外重置、没有命中率数据 | `71b3c1d`、`93c32f3` |
+| S8 | 没有新增 FAQ / HowTo 标记 | |
+| 测试 | 导入测试原来会用正式网址通知 IndexNow 和 WebSub，已改 | `f5ad51d` |
+| 发布 | `scripts/auto-release.mjs` 与 `deploy-haomeile` skill；打包不再夹带 macOS `._` 文件 | `19b95f3`、`4cabdbf`、`8e66887` |
+
+- 没有新的数据库迁移。
+- 合并 `codex/implement-haomeile` 后 e2e 75 项通过；第二批技巧后再次 75 项通过。之后只改了发布脚本和文档。
+- 待站长：Search Console 给改过的页面请求重抓，并确认网站纳入生成式 AI 功能；GA4 渠道组和时区；关于页的处理时限、复查周期、最近一次更正日期；是否不显示三篇技巧的原标题。
+- GA4 的浏览次数疑似重复计数，原因未查明，浏览量先看 Cloudflare。

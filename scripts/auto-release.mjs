@@ -17,7 +17,7 @@ import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const BASE = 'codex/implement-haomeile';
+export const BASE = 'main';
 export const RELEASE = 'release/local';
 export const SOURCE = 'claude/seo-geo-2';
 const SITE = 'https://haomeile.rip';

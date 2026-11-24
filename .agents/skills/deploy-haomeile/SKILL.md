@@ -9,7 +9,7 @@ description: Release haomeile.rip (号没了) from the machine that holds the de
 
 ## 平时更新
 
-1. 在仓库里切到 `codex/implement-haomeile`（或专用的 `release/local`），确认工作区干净。有别的改动就停下，告诉站长。
+1. 在仓库里切到 `main`（或专用的 `release/local`），确认工作区干净。有别的改动就停下，告诉站长。
 2. 先看要发什么（不会部署）：
 
    ```text
@@ -22,7 +22,7 @@ description: Release haomeile.rip (号没了) from the machine that holds the de
    node scripts/auto-release.mjs --deploy
    ```
 
-脚本依次：快进合并 `claude/seo-geo-2`、全部检查和测试、打包、备份数据库并部署、核对线上页面。加 `--push-base` 才会把 `codex/implement-haomeile` 推回 GitHub，要站长同意。任何一步失败都不会继续往下走。应用不健康时，部署脚本会恢复上一版。
+脚本依次：快进合并 `claude/seo-geo-2`、全部检查和测试、打包、备份数据库并部署、核对线上页面。加 `--push-base` 才会把 `main` 推回 GitHub，要站长同意。任何一步失败都不会继续往下走。应用不健康时，部署脚本会恢复上一版。
 
 ## 脚本停下时
 
