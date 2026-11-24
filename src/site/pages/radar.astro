@@ -364,16 +364,16 @@ const jsonLd = [
 
   /* The centre only marks 0%, so it stays smaller than the three blips. */
   .radar-intro-mark > :global(.radar-mark::after) {
-    width: 4%;
+    width: 3%;
   }
 
   .radar-dots :global(.radar-dot) {
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--platform-accent);
-    box-shadow: 0 0 6px 1px var(--platform-accent);
+    box-shadow: 0 0 4px 0 var(--platform-accent);
     translate: -50% -50%;
   }
 
@@ -402,14 +402,14 @@ const jsonLd = [
   @keyframes radar-blip {
     0% {
       opacity: 1;
-      scale: 1.35;
-      box-shadow: 0 0 10px 4px var(--platform-accent);
+      scale: 1.25;
+      box-shadow: 0 0 6px 1px var(--platform-accent);
     }
 
     25% {
       opacity: 1;
       scale: 1;
-      box-shadow: 0 0 6px 1px var(--platform-accent);
+      box-shadow: 0 0 4px 0 var(--platform-accent);
     }
 
     75%,
@@ -421,8 +421,8 @@ const jsonLd = [
 
     100% {
       opacity: 1;
-      scale: 1.35;
-      box-shadow: 0 0 10px 4px var(--platform-accent);
+      scale: 1.25;
+      box-shadow: 0 0 6px 1px var(--platform-accent);
     }
   }
 
