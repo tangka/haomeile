@@ -212,8 +212,6 @@ export const EN_STATIC: Record<string, string> = {
   社区整理: 'Community summaries',
   '社区整理提供中英文编辑摘要，原文请看原帖。本站不会自动翻译用户提交的代号、署名、经过或墓志铭。':
     'Community summaries are edited in Chinese and English; read the original posts for the source text. We do not automatically translate aliases, display names, stories or epitaphs submitted by users.',
-  '如果你是原帖作者，希望更正或移除整理内容，请打开对应记录的详情页，使用“举报”说明情况。':
-    'Original authors can request corrections or removal through Report on the relevant entry’s detail page.',
   '社区整理另显示来源链接、原帖发布日期和编辑摘要。未注明的套餐或发生日期不会补写。原帖作者可通过对应详情页的“举报”请求更正或删除。':
     'Community summaries also show a source link, post date and editorial summary. Unknown plans or incident dates are not filled in. Original authors can request corrections or deletion through Report on the relevant detail page.',
   '投稿和修改由 OpenAI Codex 初审，通过后公开。站长通过飞书私聊收到审核结果，可以改判。':
@@ -228,12 +226,41 @@ export const EN_STATIC: Record<string, string> = {
   '关于 · 号没了': 'About · Haomeile',
   '这里只记录 Claude、Codex 和 Antigravity 三个产品的账号经历。':
     'This site records account experiences with three products: Claude, Codex and Antigravity.',
-  '需要更正内容、投诉或联系我们：':
-    'For corrections, complaints or other enquiries:',
-  '更正或撤回自己的碑文：': 'To correct or withdraw your memorial: ',
-  '要举报不当内容，请从':
-    'To report inappropriate content, find the memorial on the ',
-  '打开对应墓碑的详情页，点击“举报”。': ', open its details and choose Report.',
+
+  '收录标准':
+    'What we publish',
+  '用户投稿写本人账号遇到的封停、验证、访问或付费异常，不要求附截图。审核只看内容是否符合使用须知，不核实账号处置的原因。':
+    'User submissions describe bans, verification, access or billing problems on the author’s own account. Screenshots are not required. Review checks a submission against the posting rules and does not verify why an account was restricted.',
+  '社区整理只选能公开打开的原帖，用第三人称写，并附原帖链接和发布日期。作者的猜测会写明是猜测，原帖没写的套餐和日期不补。申诉和恢复结果以整理时看到的原帖更新为准，不代表账号现在的状态。':
+    'Community summaries come only from publicly accessible posts. They are written in the third person, with a link to the original and its post date. An author’s guesses are labeled as guesses, and plans or dates missing from the post are left out. Appeal and recovery results follow the post as it stood when summarized and may not reflect the account’s current status.',
+  '使用小技巧根据公开文章整理，每篇标明原文作者、发布日期和原文链接。':
+    'Tips are based on public articles. Each one names the original author, publication date and source link.',
+  '以下内容不收：':
+    'We do not publish:',
+  '买卖账号、拼车合租、中转代理、代充代付、翻墙节点、防封技巧和解封服务的推广或教程。':
+    'Promotion of, or instructions for, account sales, shared subscriptions, relay services, third-party top-ups, proxy nodes, ban evasion or unban services.',
+  '联系方式、密码、API Key、订单号、证件号码等隐私信息。':
+    'Private information such as contact details, passwords, API keys, order numbers or ID numbers.',
+  '点名攻击个人的内容。':
+    'Attacks on named individuals.',
+  '更正与下架':
+    'Corrections and removal',
+  '自己的投稿：用立碑时拿到的凭据，在':
+    'Your own submission: use the credentials you received when posting to edit or withdraw it in',
+  '修改或撤回。修改要重新审核，撤回后立即下架。':
+    '. Edits are reviewed again. Withdrawn memorials come down immediately.',
+  '社区整理：如果你是原帖作者或当事人，打开对应记录的详情页，点“举报”说明要更正或移除的内容。举报需要审核，不会立刻隐藏。':
+    'Community summaries: if you wrote the original post or are the person concerned, open the entry’s detail page and choose Report to explain what should be corrected or removed. Reports are reviewed before anything is hidden.',
+  '别人的投稿涉及你的隐私或有不当内容：同样在详情页点“举报”。':
+    'Someone else’s submission that exposes your private information or contains inappropriate content: choose Report on its detail page.',
+  '使用小技巧有错，或者不方便用上面的方式，请写信并附上页面链接：':
+    'If a tip is wrong, or the options above do not work for you, send an email with the page link:',
+  '与厂商的关系':
+    'Relationship with AI companies',
+  '本站不是 Anthropic、OpenAI 或 Google 的官方网站，不能处理账号申诉，也不能恢复账号。申诉请走厂商自己的渠道：':
+    'This is not an official Anthropic, OpenAI or Google site. We cannot handle appeals or restore accounts. Appeal through the company’s own channel:',
+  '重置雷达显示的是本站的非官方估计。':
+    'The reset radar shows this site’s unofficial estimates.',
 
   '审核后台 · 号没了': 'Moderation · Haomeile',
   '号没了投稿、修改和举报审核后台。':

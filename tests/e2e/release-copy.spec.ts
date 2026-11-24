@@ -47,6 +47,11 @@ test('public release information has no configuration placeholders', async ({
         );
       }
       if (route === '/about') {
+        await expect(page.locator('#about h2')).toHaveText(
+          prefix
+            ? ['What we publish', 'Corrections and removal', 'Relationship with AI companies']
+            : ['收录标准', '更正与下架', '与厂商的关系'],
+        );
         const contact = page.getByRole('main').getByRole('link', { name: 'contact@haomeile.rip' });
         await expect(contact).toBeVisible();
         await expect(contact).toHaveAttribute('href', 'mailto:contact@haomeile.rip');
