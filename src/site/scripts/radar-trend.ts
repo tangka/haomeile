@@ -1,5 +1,5 @@
 import { currentLocale } from '../../shared/i18n';
-import type { RadarTrendData } from '../../shared/radar';
+import { RADAR_PLATFORM_NAMES, type RadarTrendData } from '../../shared/radar';
 
 const HOUR = 60 * 60 * 1000;
 const locale = currentLocale() === 'en' ? 'en-GB' : 'zh-CN';
@@ -31,7 +31,7 @@ function mountTrend(
   canvas: HTMLCanvasElement,
   legend: HTMLUListElement,
   readout: HTMLElement,
-  { generatedAt, series }: RadarTrendData,
+  { generatedAt, series, resetEvents = [] }: RadarTrendData,
 ): void {
   const context = canvas.getContext('2d');
   const end = Date.parse(generatedAt);
@@ -42,7 +42,10 @@ function mountTrend(
       points: entry.points.filter(({ time }) => time >= start && time <= end),
     }))
     .filter(({ points }) => points.length > 0);
-  if (!context || visibleSeries.length === 0) return;
+  const markers = resetEvents.filter(
+    ({ time }) => time >= start && time <= end,
+  );
+  if (!context || (!visibleSeries.length && !markers.length)) return;
 
   const entries = visibleSeries.map((entry) => {
     const item = document.createElement('li');
@@ -51,9 +54,6 @@ function mountTrend(
     legend.append(item);
     return { ...entry, item };
   });
-  const times = [
-    ...new Set(entries.flatMap(({ points }) => points.map(({ time }) => time))),
-  ].sort((a, b) => a - b);
   const date = new Intl.DateTimeFormat(locale, {
     month: 'short',
     day: 'numeric',
@@ -70,6 +70,29 @@ function mountTrend(
     minute: '2-digit',
     hourCycle: 'h23',
   });
+  const eventsAt = new Map<number, { label: string; item: HTMLLIElement }[]>();
+  for (const { platform, kind, time } of markers) {
+    const action =
+      locale === 'zh-CN'
+        ? { reset: '额度重置', card: '重置卡' }[kind]
+        : { reset: 'quota reset', card: 'reset card' }[kind];
+    const label = `${RADAR_PLATFORM_NAMES[platform]} ${action}`;
+    const eventItem = document.createElement('li');
+    eventItem.dataset.radarPlatform = platform;
+    eventItem.dataset.radarEvent = kind;
+    eventItem.textContent = `${label} · ${timestamp.format(time)}`;
+    legend.append(eventItem);
+    eventsAt.set(time, [
+      ...(eventsAt.get(time) ?? []),
+      { label, item: eventItem },
+    ]);
+  }
+  const times = [
+    ...new Set([
+      ...entries.flatMap(({ points }) => points.map(({ time }) => time)),
+      ...eventsAt.keys(),
+    ]),
+  ].sort((a, b) => a - b);
   let selected: number | undefined;
   const left = 40;
   const right = 30;
@@ -152,6 +175,24 @@ function mountTrend(
         context.fill();
       }
     }
+    context.lineWidth = 2;
+    for (const [time, events] of eventsAt) {
+      // Coincident resets share one timestamp. Alternate their colored dashes.
+      context.setLineDash([6, 10 * events.length - 6]);
+      events.forEach(({ item }, index) => {
+        context.strokeStyle = getComputedStyle(
+          item,
+          '::before',
+        ).borderLeftColor;
+        context.lineDashOffset = -index * 10;
+        context.beginPath();
+        context.moveTo(x(time), top);
+        context.lineTo(x(time), bottom);
+        context.stroke();
+      });
+    }
+    context.setLineDash([]);
+    context.lineDashOffset = 0;
   };
 
   const select = (index?: number): void => {
@@ -164,7 +205,12 @@ function mountTrend(
         const point = points.find((point) => point.time === time);
         return point ? [`${name} ${point.probability}%`] : [];
       });
-      readout.textContent = [timestamp.format(time), ...samples].join(' · ');
+      const events = (eventsAt.get(time) ?? []).map(({ label }) => label);
+      readout.textContent = [
+        timestamp.format(time),
+        ...events,
+        ...samples,
+      ].join(' · ');
     }
     draw();
   };
@@ -174,11 +220,17 @@ function mountTrend(
     const pointer = event.clientX - bounds.left;
     let nearest: number | undefined;
     let distance = 24;
+    let markerHit = false;
     times.forEach((time, index) => {
       const offset = Math.abs(timeX(time, bounds.width) - pointer);
-      if (offset < distance) {
+      const onMarker = eventsAt.has(time) && offset <= 5;
+      if (
+        (onMarker && !markerHit) ||
+        (onMarker === markerHit && offset < distance)
+      ) {
         nearest = index;
         distance = offset;
+        markerHit = onMarker;
       }
     });
     select(nearest);

@@ -558,6 +558,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       }
       return Response.json({
         generatedAt,
+        naturalCycle: 'exclude',
         diagnostics: 'private-upstream-diagnostics',
         platforms: [
           {
@@ -716,6 +717,30 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     expect(options?.redirect).toBe('error');
   });
 
+  test.each(['include', undefined])(
+    'rejects Radar forecasts with cycle mode %s',
+    async (naturalCycle) => {
+      const fetchMock = spyOn(globalThis, 'fetch').mockResolvedValue(
+        Response.json({
+          naturalCycle,
+          generatedAt: new Date().toISOString(),
+          platforms: [{ id: 'codex', probability: 72 }],
+        }),
+      );
+      fetchSpies.push(fetchMock);
+      const { opened } = await runtime(
+        undefined,
+        undefined,
+        'fictional-integration-key-for-isolated-runtime-tests',
+        'false',
+      );
+      opened.radar!.start();
+      await Bun.sleep(0);
+      expect(fetchMock).toHaveBeenCalled();
+      expect(opened.radar!.read()).toBeNull();
+    },
+  );
+
   test('serves Radar and its analytics anonymously only when its human check is disabled', async () => {
     const key = 'fictional-integration-key-for-isolated-runtime-tests';
     const now = Date.now();
@@ -729,7 +754,20 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
           );
           return Response.json({
             generatedAt,
+            naturalCycle: 'exclude',
             platforms: [{ id: 'antigravity', probability: 63.6 }],
+            resetEvents24h: {
+              codex: [{ timestamp: previousAt, kind: 'card' }],
+              antigravity: [
+                { timestamp: generatedAt, kind: 'reset', source: 'private-proof' },
+                { timestamp: generatedAt, kind: 'reset' },
+                { timestamp: generatedAt, kind: 'natural' },
+                { timestamp: 'invalid', kind: 'reset' },
+                { timestamp: new Date(now + 1).toISOString(), kind: 'reset' },
+                { timestamp: new Date(now - 24 * 3_600_000 - 1).toISOString(), kind: 'reset' },
+              ],
+              grok: [{ timestamp: generatedAt, kind: 'reset' }],
+            },
             probabilityHistory24h: {
               codex: [{ timestamp: generatedAt, probability: 0 }],
               claude: [{ timestamp: generatedAt, probability: 33 }],
@@ -786,6 +824,10 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(trend).toBeDefined();
       expect(JSON.parse(decodeHtml(trend!))).toEqual({
         generatedAt,
+        resetEvents: [
+          { platform: 'codex', time: Date.parse(previousAt), kind: 'card' },
+          { platform: 'antigravity', time: now, kind: 'reset' },
+        ],
         series: [
           {
             id: 'codex',

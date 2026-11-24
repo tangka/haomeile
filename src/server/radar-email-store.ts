@@ -386,6 +386,7 @@ export function createRadarEmailStore(
           ON CONFLICT(platform) DO UPDATE SET observed_at = excluded.observed_at,
             episode_at = CASE WHEN excluded.episode_at IS NULL THEN NULL ELSE COALESCE(episode_at, excluded.episode_at) END
           WHERE excluded.observed_at > observed_at
+             OR (excluded.observed_at = observed_at AND excluded.episode_at IS NULL AND episode_at IS NOT NULL)
         `,
           )
           .bind(id, sampleAt, probability > THRESHOLD ? sampleAt : null),
@@ -410,7 +411,9 @@ export function createRadarEmailStore(
           ),
       ]),
     ]);
-    return samples.map(({ id }) => id);
+    return samples
+      .filter(({ probability }) => probability > THRESHOLD)
+      .map(({ id }) => id);
   }
 
   async function claim(platforms: RadarPlatformId[]) {

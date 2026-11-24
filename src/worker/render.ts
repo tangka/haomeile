@@ -399,7 +399,7 @@ export async function servePage(
         ? text('最近一次预测', 'Last available forecast')
         : text('预测更新时间', 'Forecast updated');
       const subLabel = escapeHtml(
-        text('未来 24 小时重置概率', '24h reset probability'),
+        text('未来 24 小时额外重置概率', 'Chance of an extra reset in 24h'),
       );
       const cards = overview.platforms.map(({ id, name, probability }) => {
         const pct = Math.max(0, Math.min(100, Number(probability) || 0));
@@ -413,7 +413,7 @@ export async function servePage(
           );
         },
       });
-      if (overview.history.length) {
+      if (overview.history.length || overview.resetEvents?.length) {
         rewriter
           .on('[data-ssr="radar-history"]', {
             element: (el) => {
@@ -427,6 +427,7 @@ export async function servePage(
                 safeJson({
                   generatedAt: overview.generatedAt,
                   series: overview.history,
+                  resetEvents: overview.resetEvents ?? [],
                 }),
               );
             },

@@ -31,13 +31,13 @@ export async function llmsFullResponse(
     `> Source: ${site}/ (Chinese) and ${site}/en/ (English)`,
     `> Sitemap: ${site}/sitemap.xml | Atom Feeds: ${site}/feed.xml , ${site}/en/feed.xml`,
     '',
-    'Haomeile documents firsthand Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and 24-hour quota reset probability forecasts (Reset Radar).',
+    'Haomeile documents firsthand Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and 24-hour extra quota reset probability forecasts (Reset Radar).',
     '',
   ];
 
   const radar = readRadarOverview?.();
   if (radar) {
-    lines.push('## Live Reset Radar (24-Hour Quota Reset Forecast)');
+    lines.push('## Live Reset Radar (24-Hour Extra Quota Reset Forecast)');
     lines.push(`- URL: ${site}/radar (EN: ${site}/en/radar)`);
     lines.push(`- Updated: ${radar.generatedAt}`);
     for (const p of radar.platforms) {
