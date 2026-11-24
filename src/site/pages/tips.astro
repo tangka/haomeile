@@ -24,7 +24,7 @@ const jsonLd = [
       itemListElement: tips.map((tip, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        name: tip.title,
+        name: tip.heading.zh,
         url: SITE + '/tips/' + tip.slug,
       })),
     },
@@ -69,7 +69,7 @@ const jsonLd = [
               aria-labelledby={'tip-title-' + tip.slug}
             >
               <span id={'tip-title-' + tip.slug} class="tip-title">
-                {tip.title}
+                {tip.heading.zh}
               </span>
               <time datetime={tip.sourcePublishedAt} title="UTC+8">
                 {tipPublishedTime(tip.sourcePublishedAt)}

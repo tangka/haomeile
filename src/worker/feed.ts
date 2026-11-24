@@ -1,6 +1,6 @@
 import { localePath, type Locale } from '../shared/i18n';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
-import { TIP_ARTICLES, tipSeoTitle } from '../shared/tips';
+import { TIP_ARTICLES } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
 import type { ReadRadarOverview } from '../shared/radar';
 import { getLabels } from '../site/scripts/labels';
@@ -61,13 +61,13 @@ export async function feedResponse(
 
   for (const tip of TIP_ARTICLES) {
     const url = site + localePath(`/tips/${tip.slug}`, locale);
-    const published = isoDate(tip.sourcePublishedAt, fallbackTime);
+    const published = isoDate(tip.publishedAt, fallbackTime);
     entries.push({
       id: url,
       url,
-      title: tipSeoTitle(tip, locale),
+      title: tip.heading[locale],
       summary: tip.summary[locale],
-      updated: published,
+      updated: isoDate(tip.modifiedAt, published),
       published,
     });
   }

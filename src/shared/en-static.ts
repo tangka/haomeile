@@ -158,7 +158,9 @@ export const EN_STATIC: Record<string, string> = {
   文章导航: 'Article navigation',
   相关入口: 'Related links',
   操作步骤: 'What to do',
-  收录时浏览量: 'Views when selected',
+  '本站根据 {author} 于 {date} 发布的原文整理，非原文作者撰写。':
+    'Compiled by this site from the original posted by {author} on {date}. Not written by the original author.',
+  查看原文: 'Read the original',
   'AI 账号开通、订阅与扣费排查': 'AI account setup, subscriptions and billing',
   'AI 账号开通、订阅与扣费排查 · 号没了':
     'AI account setup, subscriptions and billing · Haomeile',

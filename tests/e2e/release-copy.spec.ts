@@ -88,7 +88,7 @@ test('the tips directory lists articles by date in one column and links to detai
   const articles = [...TIP_ARTICLES].sort((a, b) =>
     b.sourcePublishedAt.localeCompare(a.sourcePublishedAt),
   );
-  const titles = articles.map((tip) => tip.title);
+  const titles = articles.map((tip) => tip.heading.zh);
   const list = main.locator('.tips');
   await expect(list).toHaveCount(1);
   await expect(main.getByRole('link')).toHaveCount(titles.length);
@@ -118,7 +118,8 @@ test('the tips directory lists articles by date in one column and links to detai
     expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom);
   }
 
-  const title =
+  const title = 'Claude Pro 网页端银行卡订阅：付款前后核对什么';
+  const originalTitle =
     '拒绝代充！没有 iPhone 也能自己开通 Claude Pro，一张 Mastercard 亲测跑通';
   await main.getByRole('link', { name: title, exact: true }).click();
   await expect(page).toHaveURL(/\/tips\/claude-pro-web-subscription$/);
@@ -129,7 +130,9 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(
     page.getByRole('link', { name: '打开 Claude 升级页' }),
   ).toHaveAttribute('href', 'https://claude.ai/upgrade');
-  await expect(page.locator('article')).toContainText('@alin_zone');
+  await expect(page.locator('.tip-provenance')).toContainText(
+    '本站根据 @alin_zone 于 2026-11-02 发布的原文整理，非原文作者撰写。',
+  );
   await expect(page.getByRole('link', { name: '阅读 X 长文' })).toHaveAttribute(
     'href',
     'https://x.com/i/article/2117217865128636416',
@@ -138,18 +141,20 @@ test('the tips directory lists articles by date in one column and links to detai
   await expect(page).toHaveURL(/\/tips$/);
 
   await page.goto('/en/tips');
-  const englishTitles = articles.map((tip) => tip.englishTitle);
+  const englishTitles = articles.map((tip) => tip.heading.en);
   await expect(page.locator('.tips .tip-title')).toHaveText(englishTitles);
   await expect(
     page.locator(`.tips a[href="/en${creditsPath}"] time`),
   ).toHaveText('2026-11-17 20:48');
   const englishTitle =
-    'How I subscribed to Claude Pro myself without an iPhone, using a Mastercard';
+    'Paying for Claude Pro on the web by card: what to check before and after';
   await page.getByRole('link', { name: englishTitle, exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     englishTitle,
   );
-  await expect(page.locator('.tip-original-title')).toContainText(title);
+  await expect(page.locator('.tip-original-title')).toContainText(
+    originalTitle,
+  );
 });
 
 test('tip details share one centered reading column on desktop and fit mobile', async ({

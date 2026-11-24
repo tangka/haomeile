@@ -1,5 +1,5 @@
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
-import { TIP_ARTICLES, tipLinkHref, tipSeoTitle } from '../shared/tips';
+import { TIP_ARTICLES, tipLinkHref } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
 import type { ReadRadarOverview } from '../shared/radar';
 import { LABELS } from '../site/scripts/labels';
@@ -31,7 +31,7 @@ export async function llmsFullResponse(
     `> Source: ${site}/ (Chinese) and ${site}/en/ (English)`,
     `> Sitemap: ${site}/sitemap.xml | Atom Feeds: ${site}/feed.xml , ${site}/en/feed.xml`,
     '',
-    'Haomeile documents firsthand Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and unofficial 24-hour extra quota reset estimates (Reset Radar). Not affiliated with any AI company.',
+    'Haomeile compiles public accounts of Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and unofficial 24-hour extra quota reset estimates (Reset Radar). Not affiliated with any AI company.',
     '',
   ];
 
@@ -80,10 +80,10 @@ export async function llmsFullResponse(
     b.sourcePublishedAt.localeCompare(a.sourcePublishedAt),
   );
   for (const tip of sortedTips) {
-    lines.push(`### ${tipSeoTitle(tip, 'zh')} / ${tipSeoTitle(tip, 'en')}`);
+    lines.push(`### ${tip.heading.zh} / ${tip.heading.en}`);
     lines.push(`- URL: ${site}/tips/${tip.slug} (EN: ${site}/en/tips/${tip.slug})`);
     lines.push(
-      `- Source: ${tip.source} (${tip.sourceAuthor}, ${tip.sourcePublishedAt.slice(0, 10)})`,
+      `- Compiled by this site, not written by the original author. Source: ${tip.source} (${tip.sourceAuthor}, ${tip.sourcePublishedAt.slice(0, 10)})`,
     );
     lines.push(`- Summary (ZH): ${tip.summary.zh}`);
     lines.push(`- Summary (EN): ${tip.summary.en}`);

@@ -5,7 +5,6 @@ import {
   tipLinkHref,
   tipPageTitle,
   tipPublishedTime,
-  tipSeoTitle,
   tipVendors,
   type TipVendor,
 } from '../../../shared/tips';
@@ -26,8 +25,8 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const { tip } = Astro.props;
 const pageUrl = `${SITE}/tips/${tip.slug}`;
 const relatedVendors = tipVendors(tip.slug);
-const heading = tipSeoTitle(tip, 'zh');
-const ownHeading = heading !== tip.title;
+const heading = tip.heading.zh;
+const sourceDate = tipPublishedTime(tip.sourcePublishedAt).slice(0, 10);
 
 const vendorMeta: Record<
   TipVendor,
@@ -64,17 +63,24 @@ const jsonLd = [
     description: tip.summary.zh,
     inLanguage: 'zh-CN',
     url: pageUrl,
-    datePublished: tip.sourcePublishedAt,
+    datePublished: tip.publishedAt,
+    dateModified: tip.modifiedAt,
     author: {
-      '@type': 'Person',
-      name: tip.sourceAuthor,
+      '@type': 'Organization',
+      name: '号没了',
+      url: SITE + '/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Haomeile',
       url: SITE + '/',
     },
-    isBasedOn: tip.source,
+    isBasedOn: {
+      '@type': 'CreativeWork',
+      url: tip.source,
+      author: { '@type': 'Person', name: tip.sourceAuthor },
+      datePublished: tip.sourcePublishedAt,
+    },
     citation: citations,
     step: tip.steps.map((step, index) => ({
       '@type': 'HowToStep',
@@ -110,12 +116,13 @@ const jsonLd = [
 ---
 
 <SiteLayout
-  title={tipPageTitle(tipSeoTitle(tip, 'zh'), 'zh')}
+  title={tipPageTitle(heading, 'zh')}
   description={tip.summary.zh}
   current="/tips"
   path={'/tips/' + tip.slug}
   ogType="article"
-  publishedTime={tip.sourcePublishedAt}
+  publishedTime={tip.publishedAt}
+  modifiedTime={tip.modifiedAt}
   jsonLd={jsonLd}
 >
   <main class="page">
@@ -128,6 +135,12 @@ const jsonLd = [
           <h1>{heading}</h1>
           <p>{tip.summary.zh}</p>
         </div>
+        <p class="tip-provenance">
+          {`本站根据 ${tip.sourceAuthor} 于 ${sourceDate} 发布的原文整理，非原文作者撰写。`}
+          <a href={tip.source} target="_blank" rel="noopener noreferrer">
+            查看原文
+          </a>
+        </p>
         <p>{tip.experience.zh}</p>
         <h2>操作步骤</h2>
         <ol>
@@ -158,18 +171,12 @@ const jsonLd = [
           <time datetime={tip.sourcePublishedAt} title="UTC+8">
             {tipPublishedTime(tip.sourcePublishedAt)}
           </time>
-          <span>
-            收录时浏览量{' '}
-            <strong>{tip.sourceViews.toLocaleString('en-US')}</strong>
-          </span>
           <span
             class="tip-original-title"
             lang="zh-CN"
             translate="no"
-            hidden={!ownHeading}
-            data-en-show={ownHeading ? undefined : ''}
           >
-            《{tip.title}》
+            《{tip.sourceTitle}》
           </span>
         </p>
         <nav class="tip-related" aria-label="相关入口">
@@ -200,6 +207,9 @@ const jsonLd = [
     flex-wrap: wrap;
     gap: 8px 16px;
     align-items: baseline;
+  }
+  .tip-provenance {
+    font-size: var(--fs-s);
   }
   .tip-crumbs {
     margin-block-end: 22px;

@@ -7,7 +7,7 @@
 - 用户投稿由用户自愿提交，代号、署名、经过和墓志铭保持原文。
 - 社区整理由本站编辑公开原帖摘要，附原帖链接与原帖发布日期，提供中英文摘要，不是对账号处置的独立事实核验。
 - 投稿统计与近 30 天曲线仅统计当前公开、审核通过的用户投稿；社区整理显示独立总数。“今天”和“近 7 天”按北京时间（UTC+8）计算。
-- 使用小技巧取材自近 30 天中文 X 原生长文并经官方支持文档复核操作步骤，保留原文链接、作者与原始发布时间。
+- 使用小技巧由本站根据中文 X 原生长文整理，并对照官方支持文档复核操作步骤；非原文作者撰写，保留原文链接、作者与原始发布时间。
 - 用户可凭据管理或撤回自己的投稿；原帖作者可通过对应记录详情页的“举报”请求更正或删除整理内容。
 
 ## 官方申诉渠道摘要
@@ -30,6 +30,7 @@
 
 ## 使用小技巧与排查指南
 
+- [Google AI Pro 每月赠金与结算账号更换](https://haomeile.rip/tips/google-ai-pro-change-credit-billing-account): 在开发者福利页领取赠金并更换失效的结算账号
 - [Antigravity 桌面端登录与 Google AI Pro 开通](https://haomeile.rip/tips/antigravity-first-install-google-ai-pro): 下载登录、订阅 Pro 与查看模型及用量入口
 - [Google AI Pro 月付切换年付实测](https://haomeile.rip/tips/google-ai-pro-switch-to-annual): 在 Google One 切年付并在 Google Play 核对收据与续费
 - [Antigravity 开通 Ultra 仍显示 Starter Quota 排查](https://haomeile.rip/tips/antigravity-paid-plan-starter-quota): 核对登录邮箱、年龄验证提示与重新登录步骤
