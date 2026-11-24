@@ -31,15 +31,18 @@ export async function llmsFullResponse(
     `> Source: ${site}/ (Chinese) and ${site}/en/ (English)`,
     `> Sitemap: ${site}/sitemap.xml | Atom Feeds: ${site}/feed.xml , ${site}/en/feed.xml`,
     '',
-    'Haomeile documents firsthand Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and 24-hour quota reset probability forecasts (Reset Radar).',
+    'Haomeile documents firsthand Claude, Codex, and Antigravity account suspensions, 403/verification issues, official appeal channels, subscription troubleshooting guides, and unofficial 24-hour quota reset estimates (Reset Radar). Not affiliated with any AI company.',
     '',
   ];
 
   const radar = readRadarOverview?.();
   if (radar) {
-    lines.push('## Live Reset Radar (24-Hour Quota Reset Forecast)');
+    lines.push('## Reset Radar (Unofficial 24-Hour Quota Reset Estimate)');
     lines.push(`- URL: ${site}/radar (EN: ${site}/en/radar)`);
-    lines.push(`- Updated: ${radar.generatedAt}`);
+    lines.push(`- Generated: ${radar.generatedAt}`);
+    lines.push(
+      '- Unofficial estimate by this site from community signals, not information from OpenAI, Anthropic or Google. No hit-rate data is available.',
+    );
     for (const p of radar.platforms) {
       lines.push(`- ${p.name}: ${p.probability}%`);
     }

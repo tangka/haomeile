@@ -1,0 +1,66 @@
+<section class="radar-about" aria-labelledby="radar-about-title">
+  <h2 id="radar-about-title">这个估计怎么看</h2>
+  <ul>
+    <li>这是本站的非官方估计，不是 OpenAI、Anthropic 或 Google 发布的信息。</li>
+    <li>
+      估计基于社区观测信号，每 30 分钟一轮，覆盖 Codex、Claude Code 和
+      Antigravity 未来 24 小时发生额度重置的可能。
+    </li>
+    <li>目前没有可公布的命中率数据，请只当参考。</li>
+    <li>你自己的额度和恢复时间，以各应用里的用量页为准。</li>
+    <li>
+      可以订阅邮件提醒：所选平台的估计超过 80% 时发信，连续高于 80%
+      期间每个平台只提醒一次，随时可以退订。
+    </li>
+  </ul>
+  <h2>额度用完，不等于封号</h2>
+  <p>
+    提示额度用完或 429 时，等额度恢复即可。提示 403、服务停用或组织停用时，才需要查下面的处理步骤。
+  </p>
+  <nav class="radar-links" aria-label="相关入口">
+    <a href="/v/antigravity#answer">Antigravity 403 或服务停用怎么办</a>
+    <a href="/v/claude#answer">Claude 账号或组织停用怎么办</a>
+    <a href="/v/codex">查看 Codex 停用案例</a>
+    <a href="/tips/antigravity-paid-plan-starter-quota">付费后仍显示 Starter Quota</a>
+    <a href="/appeal">官方申诉入口</a>
+    <a href="/privacy#radar-email">邮件提醒隐私说明</a>
+  </nav>
+</section>
+
+<style>
+  .radar-about {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--stone-shade);
+  }
+  .radar-about h2 {
+    margin: 18px 0 8px;
+    font: 900 var(--fs-l) / 1.3 var(--font-carve);
+  }
+  .radar-about ul {
+    margin: 0;
+    padding-left: 1.3em;
+  }
+  .radar-about li {
+    margin-bottom: 6px;
+  }
+  .radar-about p {
+    margin: 0 0 12px;
+  }
+  .radar-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    font-size: var(--fs-xs);
+  }
+  .radar-links a {
+    padding: 5px 10px;
+    border: 1.5px solid var(--ink);
+    text-decoration: none;
+  }
+  .radar-links a:hover,
+  .radar-links a:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+  }
+</style>

@@ -4,12 +4,12 @@ import { TIP_TRANSLATIONS } from './tips';
 export const EN_STATIC: Record<string, string> = {
   '条。': 'entries.',
   '新收录的记录在前面。': 'Newest additions first.',
-  '号没了，一个记录 AI 账号经历的独立社区。':
-    '号没了 is an independent community for AI account stories.',
+  '号没了，一个记录 AI 账号经历的独立社区，与任何 AI 厂商无隶属关系。文中提及的产品名称和商标归各自所有者。':
+    'Haomeile is an independent community for AI account stories. Not affiliated with any AI company. Product names and trademarks belong to their owners.',
   '号没了记录 Claude、Codex 和 Antigravity 账号经历，提供用户投稿、社区整理和像素墓志铭卡片。':
     '号没了 records Claude, Codex and Antigravity account stories, with user submissions, community summaries and pixel epitaph cards.',
-  '号没了是一个记录 AI 账号经历的独立社区。':
-    '号没了 is an independent community for AI account stories.',
+  '号没了是一个记录 AI 账号经历的独立社区，与任何 AI 厂商无隶属关系。':
+    'Haomeile is an independent community for AI account stories. Not affiliated with any AI company.',
   '内容来自本站用户投稿和公开社区原帖。社区整理附原帖链接，摘要由本站编辑。':
     'Content comes from user submissions and public community posts. Community summaries link to the originals and are edited by this site.',
   '了解号没了展示的内容、数据保存方式、统计定义与撤回流程。':
@@ -46,15 +46,36 @@ export const EN_STATIC: Record<string, string> = {
   官方申诉入口: 'Official appeals',
   使用小技巧: 'Tips',
   重置雷达: 'Reset Radar',
+  '重置雷达：Codex、Claude Code、Antigravity 额度重置估计 · 号没了': 'Reset Radar: unofficial quota reset estimates for Codex, Claude Code & Antigravity · Haomeile',
+  '重置雷达每 30 分钟估计一次 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置的可能，非官方，基于社区观测信号。支持超过 80% 时邮件提醒。': 'Reset Radar estimates every 30 minutes how likely a Codex, Claude Code or Antigravity quota reset is in the next 24 hours. Unofficial, based on community signals, with email alerts above 80%.',
+  '估计 Codex、Claude Code 和 Antigravity 未来 24 小时发生额度重置的可能。这是非官方估计。': 'How likely a Codex, Claude Code or Antigravity quota reset is in the next 24 hours. This is an unofficial estimate.',
+  '查看当前估计': 'See the current estimate',
+  '这个估计怎么看': 'How to read this estimate',
+  '这是本站的非官方估计，不是 OpenAI、Anthropic 或 Google 发布的信息。': 'This is an unofficial estimate by this site, not information from OpenAI, Anthropic or Google.',
+  '估计基于社区观测信号，每 30 分钟一轮，覆盖 Codex、Claude Code 和 Antigravity 未来 24 小时发生额度重置的可能。': 'It uses community signals, runs every 30 minutes, and covers the chance of a Codex, Claude Code or Antigravity quota reset in the next 24 hours.',
+  '目前没有可公布的命中率数据，请只当参考。': 'There is no hit-rate data to publish yet, so treat it as a reference only.',
+  '你自己的额度和恢复时间，以各应用里的用量页为准。': 'For your own quota and reset time, rely on the usage page in each app.',
+  '可以订阅邮件提醒：所选平台的估计超过 80% 时发信，连续高于 80% 期间每个平台只提醒一次，随时可以退订。': 'Email alerts are available: you get one when a chosen platform passes 80%, once per platform while it stays above 80%. Unsubscribe any time.',
+  '额度用完，不等于封号': 'Out of quota is not a ban',
+  '提示额度用完或 429 时，等额度恢复即可。提示 403、服务停用或组织停用时，才需要查下面的处理步骤。': 'If you see a quota message or 429, wait for the quota to return. Use the steps below only for a 403, a disabled service or a disabled organization.',
+  'Claude 账号或组织停用怎么办': 'Claude account or organization disabled: what to do',
+  '付费后仍显示 Starter Quota': 'Paid plan still shows Starter Quota',
+  '广告': 'Ads',
+  '本站目前不加载广告，已申请 Google AdSense。': 'This site does not load ads at present. It has applied to Google AdSense.',
+  '启用广告后，Google 等第三方供应商会使用 Cookie，根据你访问本站或其他网站的记录投放广告。Google 及其合作伙伴可以凭广告 Cookie 向你展示广告。': 'Once ads are enabled, third-party vendors including Google use cookies to serve ads based on your visits to this and other sites. Advertising cookies let Google and its partners show you ads.',
+  '你可以在': 'You can turn off personalized ads in',
+  'Google 广告设置': 'Google Ads Settings',
+  '关闭个性化广告，也可以到': ', or visit',
+  '关闭部分第三方供应商的个性化广告 Cookie。启用广告时，本页会同步更新。': 'to opt out of some third-party vendors’ personalized advertising cookies. This page will be updated when ads are enabled.',
   '重置雷达 · 号没了': 'Reset Radar · Haomeile',
   '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率':
     'Reset Radar: 24-Hour Quota Reset Forecast for Codex, Claude Code & Antigravity',
   '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率 · 号没了':
     'Reset Radar: 24-Hour Quota Reset Forecast for Codex, Claude Code & Antigravity · Haomeile',
   '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，附各平台停用案例与官方申诉入口。':
-    'Live 24-hour quota reset probability forecasts and trend charts for Codex, Claude Code and Antigravity, with links to suspension cases and official appeal channels.',
+    'Unofficial 24-hour quota reset estimates and trend charts for Codex, Claude Code and Antigravity, with links to suspension cases and official appeal channels.',
   '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。':
-    'Live 24-hour quota reset probability forecasts and trend charts for Codex, Claude Code and Antigravity, with free email alerts when probability exceeds 80%, plus suspension cases and official appeal channels.',
+    'Unofficial 24-hour quota reset estimates and trend charts for Codex, Claude Code and Antigravity, with free email alerts when probability exceeds 80%, plus suspension cases and official appeal channels.',
   '预测超过 80% 自动发邮件提醒，免费且可随时退订':
     'Free email alerts above 80%; unsubscribe anytime',
   '重置雷达的概率预测怎么看？是否代表厂商官方公告？':

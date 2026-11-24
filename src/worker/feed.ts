@@ -49,12 +49,12 @@ export async function feedResponse(
       url: site + localePath('/radar', locale),
       title:
         locale === 'en'
-          ? 'Reset Radar — 24h Quota Reset Forecast'
-          : '重置雷达 — 未来 24 小时额度重置概率',
+          ? 'Reset Radar — Unofficial 24h Quota Reset Estimate'
+          : '重置雷达 — 未来 24 小时额度重置估计（非官方）',
       summary:
         locale === 'en'
-          ? `Latest 24-hour quota reset estimates: ${summary}. Free email alerts available above 80%.`
-          : `最新未来 24 小时额度重置概率参考：${summary}。支持超过 80% 时免费邮件提醒。`,
+          ? `Latest unofficial 24-hour quota reset estimates: ${summary}. Free email alerts available above 80%.`
+          : `最新未来 24 小时额度重置的非官方估计：${summary}。支持超过 80% 时免费邮件提醒。`,
       updated: isoDate(radar.generatedAt, fallbackTime),
     });
   }

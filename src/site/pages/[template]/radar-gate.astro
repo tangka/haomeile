@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import RadarMark from '../../components/RadarMark.astro';
+import RadarAbout from '../../components/RadarAbout.astro';
 
 export function getStaticPaths() {
   return [{ params: { template: '_templates' } }];
@@ -8,37 +9,39 @@ export function getStaticPaths() {
 ---
 
 <SiteLayout
-  title="重置雷达 · 号没了"
-  description="通过人机验证后进入重置雷达。"
+  title="重置雷达：Codex、Claude Code、Antigravity 额度重置估计 · 号没了"
+  description="重置雷达每 30 分钟估计一次 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置的可能，非官方，基于社区观测信号。支持超过 80% 时邮件提醒。"
   path="/radar"
-  standalone
+  current="/radar"
 >
-  <main class="gate">
-    <section
-      class="gate-card"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="radar-gate-title"
-      data-radar-verify
-    >
-      <div class="gate-mark">
-        <RadarMark />
+  <main class="page">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>重置雷达</h1>
+        <p>
+          估计 Codex、Claude Code 和 Antigravity 未来 24
+          小时发生额度重置的可能。这是非官方估计。
+        </p>
       </div>
-      <h1 id="radar-gate-title">重置雷达</h1>
-      <p>请完成人机验证后进入。</p>
-      <div class="gate-challenge" data-radar-challenge></div>
-      <p class="gate-status" data-radar-status role="status"></p>
-      <noscript>请开启 JavaScript 完成验证。</noscript>
-      <button class="btn btn-primary" type="button" data-radar-start hidden>
-        重新验证
-      </button>
-      <div class="gate-footer">
-        <a href="/">回到纪念墙</a>
-        <a data-locale-switch href="/en/radar" hreflang="en" lang="en">
-          English
-        </a>
-      </div>
-    </section>
+      <section
+        class="gate-card"
+        aria-labelledby="radar-gate-title"
+        data-radar-verify
+      >
+        <div class="gate-mark">
+          <RadarMark />
+        </div>
+        <h2 id="radar-gate-title">查看当前估计</h2>
+        <p>请完成人机验证后进入。</p>
+        <div class="gate-challenge" data-radar-challenge></div>
+        <p class="gate-status" data-radar-status role="status"></p>
+        <noscript>请开启 JavaScript 完成验证。</noscript>
+        <button class="btn btn-primary" type="button" data-radar-start hidden>
+          重新验证
+        </button>
+      </section>
+      <RadarAbout />
+    </div>
   </main>
   <script>
     import '../../scripts/radar';
@@ -46,19 +49,9 @@ export function getStaticPaths() {
 </SiteLayout>
 
 <style>
-  .gate {
-    min-height: 100svh;
-    display: grid;
-    place-items: center;
-    padding: 24px 12px;
-    color: var(--sky-ink);
-    background:
-      radial-gradient(circle at 72% 26%, var(--sky) 0, transparent 62%),
-      color-mix(in srgb, var(--paper) 75%, var(--sky));
-  }
-
   .gate-card {
-    width: min(100%, 28rem);
+    width: min(100%, 32rem);
+    color: var(--sky-ink);
     padding: clamp(14px, 4vw, 36px);
     border: 2px solid var(--sky-ink);
     background: var(--paper);
@@ -70,12 +63,12 @@ export function getStaticPaths() {
     margin-bottom: 12px;
   }
 
-  h1 {
+  .gate-card h2 {
     margin: 0 0 8px;
-    font: 900 clamp(32px, 6vw, 46px) / 1.12 var(--font-carve);
+    font: 900 var(--fs-l) / 1.2 var(--font-carve);
   }
 
-  p {
+  .gate-card p {
     margin: 0;
   }
 
@@ -97,19 +90,5 @@ export function getStaticPaths() {
 
   button[hidden] {
     display: none;
-  }
-
-  .gate-footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 14px;
-    border-top: 1px solid color-mix(in srgb, var(--sky-ink) 23%, transparent);
-    font-size: var(--fs-xs);
-  }
-
-  .gate-footer a {
-    text-underline-offset: 3px;
   }
 </style>
