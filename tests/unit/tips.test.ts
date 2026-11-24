@@ -24,6 +24,12 @@ describe('guides compiled from other people’s posts', () => {
     },
   );
 
+  it('does not repeat titles about evading reviews or region rules', () => {
+    for (const tip of TIP_ARTICLES)
+      if (/防封|风控|美区 Apple 礼品卡/.test(tip.sourceTitle))
+        expect(tip.hideSourceTitle, tip.slug).toBe(true);
+  });
+
   it('keeps unique headings and valid dates', () => {
     expect(new Set(TIP_ARTICLES.map((tip) => tip.heading.zh)).size).toBe(
       TIP_ARTICLES.length,

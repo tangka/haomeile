@@ -171,13 +171,11 @@ const jsonLd = [
           <time datetime={tip.sourcePublishedAt} title="UTC+8">
             {tipPublishedTime(tip.sourcePublishedAt)}
           </time>
-          <span
-            class="tip-original-title"
-            lang="zh-CN"
-            translate="no"
-          >
-            《{tip.sourceTitle}》
-          </span>
+          {!tip.hideSourceTitle && (
+            <span class="tip-original-title" lang="zh-CN" translate="no">
+              《{tip.sourceTitle}》
+            </span>
+          )}
         </p>
         <nav class="tip-related" aria-label="相关入口">
           {relatedVendors.map((vendor) => (

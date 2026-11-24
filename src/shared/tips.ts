@@ -10,6 +10,8 @@ interface TipArticle {
   /** Written by this site; the author's own title appears only as a citation. */
   heading: TipCopy;
   sourceTitle: string;
+  /** Link to the post without repeating a title this site does not want to carry. */
+  hideSourceTitle?: true;
   summary: TipCopy;
   experience: TipCopy;
   steps: {
@@ -450,6 +452,7 @@ export const TIP_ARTICLES: TipArticle[] = [
       en: 'Claude Identity Verification at Sign-Up or Checkout: What to Check',
     },
     sourceTitle: '封了20多个号换来的全网Claude防封分流保姆级教程全网整合版',
+    hideSourceTitle: true,
     summary: {
       zh: '身份验证窗口可能出现在刚注册完，也可能在结账时。先分清提示要的是验证身份还是处理付款，再从原账号按官方要求完成，最后核对有没有扣款。',
       en: 'The identity prompt can appear right after sign-up or at checkout. Check whether it asks for identity or payment, complete it from the original account, then confirm whether you were charged.',
@@ -572,6 +575,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     },
     sourceTitle:
       '外区苹果内购被风控怎么破？8 步挖出隐藏真人客服：实测拿下土区 Google AI Ultra，通杀一切订阅拦截',
+    hideSourceTitle: true,
     summary: {
       zh: 'iPhone 内购提示「Purchase Not Completed」时，先从弹窗提交审核请求，再查这笔交易有没有成功，需要时联系 Apple 支持。',
       en: 'If an iPhone purchase shows “Purchase Not Completed”, request a review from the prompt, check whether the purchase went through, and contact Apple Support if needed.',
@@ -863,6 +867,7 @@ export const TIP_ARTICLES: TipArticle[] = [
     },
     sourceTitle:
       '支付宝购买美区 Apple 礼品卡并订阅 ChatGPT：保姆级20张图文教程',
+    hideSourceTitle: true,
     summary: {
       zh: '先看自己的 App Store 能不能内购，结账前核对价格，付完分别查 Apple 订单和 ChatGPT 套餐。',
       en: 'Check whether your App Store offers in-app purchase, review the price, then verify both the Apple order and the ChatGPT plan.',
