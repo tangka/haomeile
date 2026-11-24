@@ -133,7 +133,7 @@ describe('Worker renders Astro templates on the server', () => {
       const html = await response.text();
       expect(html).toContain(
         vendor === 'codex'
-          ? name + ' 账号的墓碑'
+          ? 'Codex 或 ChatGPT 账号被停用，怎么办？'
           : name + ' 提示 403 或服务停用，怎么办？',
       );
       expect(html).toContain('href="https://haomeile.rip/v/' + vendor + '"');
@@ -199,7 +199,9 @@ describe('Worker renders Astro templates on the server', () => {
     const claude = await page('/v/claude');
     expect(claude).toContain('ANTHROPIC_API_KEY');
     expect(claude).not.toContain('id="wait"');
-    expect(await page('/v/codex')).not.toContain('id="answer"');
+    const codex = await page('/v/codex');
+    expect(codex).toContain('https://openai.com/form/appeal/');
+    expect(codex).toContain('不要填完整卡号或安全码');
   });
   it('hides unsupported historical rows and rejects their product landing pages', async () => {
     await seed('LEGACYAAAA', 'approved', undefined, 'grok');

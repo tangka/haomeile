@@ -159,6 +159,13 @@ export const EN_STATIC: Record<string, string> = {
   相关入口: 'Related links',
   操作步骤: 'What to do',
   下一步: 'Next steps',
+  '你遇到的是哪一种？': 'What happened to you?',
+  'Antigravity 提示 403 或服务停用': 'Antigravity says 403 or service disabled',
+  'Claude 账号或组织被停用': 'Claude account or organization disabled',
+  'Codex 或 ChatGPT 账号被停用': 'Codex or ChatGPT account deactivated',
+  '解封后 Max 显示 Free': 'Max shows Free after reinstatement',
+  '额度什么时候可能重置': 'When quota might reset',
+  '记录 AI 账号停用与申诉经历的独立社区，与任何 AI 厂商无隶属关系。': 'An independent community recording AI account suspensions and appeals. Not affiliated with any AI company.',
   '本站根据 {author} 于 {date} 发布的原文整理，非原文作者撰写。':
     'Compiled by this site from the original posted by {author} on {date}. Not written by the original author.',
   查看原文: 'Read the original',

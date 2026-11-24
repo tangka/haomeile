@@ -1,21 +1,35 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
+import QuickAnswers from '../components/QuickAnswers.astro';
 import Tally from '../components/Tally.astro';
 import Wall from '../components/Wall.astro';
 import Timeline from '../components/Timeline.astro';
 import { siteOrigin } from '../../shared/site';
 const description =
   '查看 Claude、Codex 和 Antigravity 的封号与申诉经历，查找官方申诉入口，了解订阅扣费和套餐异常的处理步骤。';
+const site = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: '号没了',
     alternateName: 'AI 账号赛博公墓',
-    url: siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN) + '/',
+    url: site + '/',
+    publisher: { '@id': site + '/#org' },
     inLanguage: 'zh-CN',
     description,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': site + '/#org',
+    name: '号没了',
+    alternateName: ['Haomeile', 'haomeile.rip'],
+    url: site + '/',
+    logo: site + '/icon-512.png',
+    description:
+      '记录 AI 账号停用与申诉经历的独立社区，与任何 AI 厂商无隶属关系。',
   },
 ];
 ---
@@ -39,6 +53,7 @@ const jsonLd = [
   />
   <main>
     <HeroScene />
+    <QuickAnswers />
     <Tally />
     <Wall />
     <Timeline />

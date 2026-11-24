@@ -280,11 +280,11 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
   },
   codex: {
     title: () => ({
-      zh: 'Codex 账号停用与恢复记录、OpenAI 官方申诉入口 · 号没了',
+      zh: 'Codex / ChatGPT 账号停用怎么办：申诉步骤与公开记录 · 号没了',
       en: 'Codex account deactivations, appeals & recovery cases · Haomeile',
     }),
     description: (total, date) => ({
-      zh: `收录 OpenAI Codex 与关联 ChatGPT 账号停用、401 访问异常与申诉恢复经历（截至 ${date} 共 ${total} 条公开记录），附 OpenAI 官方申诉链接与帮助中心入口。`,
+      zh: `Codex 或 ChatGPT 账号被停用，先用 OpenAI 通知邮件里的申诉链接，看不到邮件再用官方表单。分清警告、限时停用、验证未完成和 401，附 ${total} 条公开记录（截至 ${date}）。`,
       en: `Public cases of OpenAI Codex and ChatGPT account deactivations, 401 access errors and appeal outcomes (${total} records as of ${date}), with official OpenAI appeal channels.`,
     }),
     intro: {

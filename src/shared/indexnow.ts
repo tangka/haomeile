@@ -1,7 +1,7 @@
 import { localePath } from './i18n';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from './site';
 
-export const INDEXNOW_KEY = 'f4c8a91e7b2d4065a31c9e8d7420b6f1';
+export const INDEXNOW_KEY = '054c21195d544e2ebed6055242e97091';
 export const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 export const WEBSUB_HUB = 'https://pubsubhubbub.appspot.com/';
 export const BAIDU_PUSH_ENDPOINT = 'http://data.zz.baidu.com/urls';

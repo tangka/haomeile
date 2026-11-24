@@ -35,6 +35,8 @@ export interface VendorAnswer {
 const FAQ = 'https://antigravity.google/docs/faq';
 const ANTIGRAVITY_FORM = 'https://forms.gle/hGzM9MEUv2azZsrb9';
 const FORUM_REPLY = 'https://discuss.ai.google.dev/t/203618';
+const OPENAI_ACCOUNT_HELP =
+  'https://help.openai.com/en/articles/10562188-openai-account-warnings-safety-suspensions-and-closures';
 const CLAUDE_APPEALS =
   'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals';
 const CLAUDE_CODE_ERRORS =
@@ -230,6 +232,132 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           appealed: '2026-10-21',
           seen: '2026-10-29',
           status: { zh: '未恢复', en: 'Not restored' },
+        },
+      ],
+    },
+    checkedOn: '2026-11-24',
+  },
+  codex: {
+    question: {
+      zh: 'Codex 或 ChatGPT 账号被停用，怎么办？',
+      en: 'Codex or ChatGPT account deactivated: what to do',
+    },
+    lead: {
+      zh: '先找 OpenAI 发来的通知邮件，用邮件里的申诉链接申请复核。OpenAI 官方说明：看不到那封邮件时，用官方申诉表单；进不去账号又没收到邮件时，从帮助中心联系支持。申请复核不保证账号会恢复。',
+      en: 'Find the notification email from OpenAI and use its appeal link. OpenAI’s help page says: if you cannot access that email, use the appeal form; if you lost access without an email, contact support through the Help Center. Requesting a review does not guarantee the account will be restored.',
+    },
+    stepsTitle: { zh: '按这个顺序处理', en: 'Do this in order' },
+    steps: [
+      {
+        text: {
+          zh: '看通知写的是哪一种：警告、限时停用，还是永久关闭。警告不等于账号被停用。',
+          en: 'Check which notice you have: a warning, a temporary suspension or a closure. A warning by itself does not mean the account is suspended.',
+        },
+        links: [
+          {
+            href: OPENAI_ACCOUNT_HELP,
+            label: { zh: 'OpenAI 官方说明', en: 'OpenAI help page' },
+          },
+        ],
+      },
+      {
+        text: {
+          zh: '用对应邮件里的申诉链接申请复核。收到多封通知时，用你想复核的那一封。看不到邮件时，用官方申诉表单。',
+          en: 'Use the appeal link in the matching email. If you got several notices, use the one for the decision you want reviewed. If you cannot access the email, use the appeal form.',
+        },
+        links: [
+          {
+            href: 'https://openai.com/form/appeal/',
+            label: { zh: 'OpenAI 申诉表单', en: 'OpenAI appeal form' },
+          },
+        ],
+      },
+      {
+        text: {
+          zh: '写上用户 ID 和组织 ID（有的话）、账号平时怎么用、为什么认为是误判。怀疑被盗用，就写可疑的时间段和已采取的措施。不要填完整卡号或安全码。',
+          en: 'Include your user ID and organization ID if you have them, how the account was used, and why you think it was a mistake. If you suspect unauthorized access, add the dates and what you did. Do not include a full card number or security code.',
+        },
+      },
+      {
+        text: {
+          zh: '没收到邮件又进不去账号，从帮助中心联系支持。限时停用期间的退款和取消，官方写的是发邮件到 support@openai.com。',
+          en: 'If you lost access without an email, contact support through the Help Center. For refunds or cancellation during a temporary suspension, OpenAI lists support@openai.com.',
+        },
+        links: [
+          {
+            href: 'https://help.openai.com/',
+            label: { zh: 'OpenAI 帮助中心', en: 'OpenAI Help Center' },
+          },
+        ],
+      },
+    ],
+    sections: [
+      {
+        title: { zh: '先分清是哪一种情况', en: 'Which situation is it?' },
+        items: [
+          {
+            term: { zh: '限时停用', en: 'Temporary suspension' },
+            text: {
+              zh: '到期前访问受限，不等于永久关闭。官方说明，只有部分涉及暴力或儿童安全的停用是 24 或 48 小时，以通知为准。',
+              en: 'Access is limited for a time; it is not a permanent closure. Only certain suspensions related to violence or child safety last 24 or 48 hours, so follow your notice.',
+            },
+          },
+          {
+            term: { zh: '安全限制', en: 'Security restriction' },
+            text: {
+              zh: '怀疑别人用过账号，先改密码，更换泄露的 API 密钥，再联系支持。',
+              en: 'If someone else may have used the account, change your password, rotate exposed API keys, and contact support.',
+            },
+          },
+          {
+            term: { zh: '没做完验证', en: 'Verification not completed' },
+            text: {
+              zh: '身份或年龄验证没完成，账号可能先被停用，按页面提示和期限补做。',
+              en: 'An account may be disabled until a required identity or age check is completed. Follow the instructions and deadline shown.',
+            },
+          },
+          {
+            term: { zh: 'Codex CLI 报 401', en: 'Codex CLI returns 401' },
+            text: {
+              zh: '先确认登录状态：运行 codex login status，需要时 codex logout 再 codex login。网页端也进不去，再按上面的步骤申诉。',
+              en: 'Check sign-in first: run codex login status, then codex logout and codex login if needed. If the web is also blocked, follow the steps above.',
+            },
+            links: [
+              {
+                href: 'https://learn.chatgpt.com/docs/auth',
+                label: { zh: 'Codex 登录官方说明', en: 'Codex sign-in docs' },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    timeline: {
+      title: { zh: '别人等到了什么结果', en: 'What others reported' },
+      intro: {
+        zh: '下面只列原帖写明的日期，没写的标为“未写明”。都是作者自述，未经本站核实，条数很少，不能当作成功率。',
+        en: 'Only dates stated in each post are listed. These are unverified personal accounts and too few to indicate a success rate.',
+      },
+      rows: [
+        {
+          source: 'https://community.openai.com/t/1384852',
+          suspended: '2026-06-25',
+          appealed: null,
+          seen: '2026-07-03',
+          status: {
+            zh: '可以重新访问，但套餐显示 Free',
+            en: 'Access returned, but the plan showed Free',
+          },
+        },
+        {
+          source: 'https://community.openai.com/t/1383153',
+          suspended: '2026-06-09',
+          appealed: null,
+          seen: '2026-06-14',
+          status: {
+            zh: '论坛支持回复：申诉在等专门团队处理',
+            en: 'Forum support: the appeal was with a specialist team',
+          },
         },
       ],
     },
