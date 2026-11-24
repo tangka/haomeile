@@ -115,3 +115,24 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 订阅者选择平台后，网站先发送一封验证邮件。订阅者可在页面输入邮件中的六位验证码（10 分钟有效），也可在 24 小时内打开同一封邮件中的链接并点击「确认订阅」。完成其中一种验证后，该邮箱才会加入所选平台的提醒名单。
 
 服务端检查最新预测，某平台重置概率超过 80% 时，同一连续高位只向已确认关注该平台的邮箱提醒一次。概率回到 80% 或以下后再次超过门槛可重新提醒。提醒邮件含退订链接。服务商临时失败时会限时重试，退订后删除订阅及其排队中的提醒。
+
+### 纪念墙飞书审核（站长的 Mac）
+
+本机服务用 Codex 判断新投稿和修改，调用网站审核接口，再向站长的飞书私聊发送结果卡。站长可以保留或改判，遇到需要复核的投稿可以直接选「通过」或「不通过」。
+
+首次安装时，在已登录站长飞书账号的 macOS 用户会话中运行。第一条只验证依赖、身份和 GitHub `main` 的程序，第二条启动服务。
+
+```sh
+python3 scripts/install-memorial-review.py --bind-current-user
+python3 scripts/install-memorial-review.py --bind-current-user --install
+```
+
+以后更新运行 `python3 scripts/install-memorial-review.py --install`。安装器从 `tangka/haomeile` 已推送的 `main` 读取三个模块，按提交号存放到 `~/Library/Application Support/haomeile-review/releases/`。同一目录的 `config.json` 绑定首次安装时的飞书应用和站长，引用本仓库 `artifacts/private/haomeile-admin.txt`。更新沿用现有投递记录与绑定。Mac 登录后服务自动启动，需要网络连接。
+
+```sh
+launchctl print "gui/$(id -u)/rip.haomeile.memorial-review"
+tail -n 20 "$HOME/Library/Application Support/haomeile-review/worker.log"
+tail -n 20 "$HOME/Library/Application Support/haomeile-review/worker.err"
+```
+
+`worker.log` 出现 `Feishu review callbacks ready` 表示监听已连接。站长实际点击后，从飞书卡片结果和站点审核记录核对操作。

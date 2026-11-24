@@ -47,7 +47,7 @@ test('public release information has no configuration placeholders', async ({
         );
       }
       if (route === '/about') {
-        const contact = page.getByRole('link', { name: 'contact@haomeile.rip' });
+        const contact = page.getByRole('main').getByRole('link', { name: 'contact@haomeile.rip' });
         await expect(contact).toBeVisible();
         await expect(contact).toHaveAttribute('href', 'mailto:contact@haomeile.rip');
       }
@@ -62,6 +62,11 @@ test('public release information has no configuration placeholders', async ({
         );
     }
     await page.goto(prefix + '/');
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.getByText(prefix ? 'Contact the webmaster' : '站长邮箱')).toBeVisible();
+    await expect(footer.getByRole('link', { name: 'contact@haomeile.rip' })).toHaveAttribute(
+      'href', 'mailto:contact@haomeile.rip',
+    );
     const appealLink = `a[href="${prefix}/appeal"]`;
     await expect(page.getByRole('banner').locator(appealLink)).toHaveCount(0);
     await expect(

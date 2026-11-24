@@ -510,3 +510,189 @@ describe('authenticated moderation', () => {
       expect((await request(`/queue?type=${type}`)).status).toBe(400);
   });
 });
+
+describe('versioned review and Feishu decisions', () => {
+  async function revision(id: string, kind: 'new' | 'patch' = 'new') {
+    const { data } = (await (await request('/queue?type=' + kind)).json()) as {
+      data: { items: { id: string; review_version: string }[] };
+    };
+    const version = data.items.find((item) => item.id === id)?.review_version;
+    expect(version).toMatch(/^[0-9a-f]{64}$/);
+    return version!;
+  }
+  function decide(
+    id: string,
+    kind: string,
+    version: string,
+    action: string,
+    reviewer: string,
+  ) {
+    return request(`/review/${id}/${kind}/${action}`, {
+      expected_review_version: version,
+      reviewer,
+    });
+  }
+
+  it.each([
+    ['approve', 'reject', 'rejected'],
+    ['reject', 'approve', 'approved'],
+  ])(
+    'lets the owner reverse an AI %s, supports replay, and never lets AI overwrite the owner',
+    async (auto, human, status) => {
+      const { id } = await create();
+      const version = await revision(id);
+      expect((await decide(id, 'new', version, auto, 'ai')).status).toBe(200);
+      expect((await decide(id, 'new', version, auto, 'ai')).status).toBe(200);
+      expect((await decide(id, 'new', version, human, 'human')).status).toBe(
+        200,
+      );
+      expect((await row(id))?.status).toBe(status);
+      expect((await decide(id, 'new', version, human, 'human')).status).toBe(
+        200,
+      );
+      expect((await decide(id, 'new', version, auto, 'ai')).status).toBe(409);
+      expect((await decide(id, 'new', version, auto, 'human')).status).toBe(
+        409,
+      );
+      const count = await bindings.DB.prepare(
+        'SELECT COUNT(*) n FROM audit_log WHERE tombstone_id=?',
+      )
+        .bind(id)
+        .first('n');
+      expect(count).toBe(2);
+    },
+  );
+
+  it('prioritizes the human over a simultaneous AI verdict on the same revision', async () => {
+    const { id } = await create();
+    const version = await revision(id);
+    const [ai, human] = await Promise.all([
+      decide(id, 'new', version, 'approve', 'ai'),
+      decide(id, 'new', version, 'reject', 'human'),
+    ]);
+    expect([200, 409]).toContain(ai.status);
+    expect(human.status).toBe(200);
+    expect((await row(id))?.status).toBe('rejected');
+    expect((await decide(id, 'new', version, 'approve', 'ai')).status).toBe(
+      409,
+    );
+  });
+
+  it.each(['approve', 'reject'])(
+    'allows a human to reverse an AI %s for edits without losing either version',
+    async (auto) => {
+      const { id, input } = await create('approved');
+      const previous = await row(id);
+      const proposal = {
+        ...input,
+        story: '这是一段修改后经过，记录原账号后续的申诉情况。',
+        codename: '后来记录',
+      };
+      await bindings.DB.prepare(
+        'UPDATE tombstones SET pending_patch=? WHERE id=?',
+      )
+        .bind(JSON.stringify(proposal), id)
+        .run();
+      const version = await revision(id, 'patch');
+      expect((await decide(id, 'patch', version, auto, 'ai')).status).toBe(200);
+      expect((await row(id))?.story).toBe(
+        auto === 'approve' ? proposal.story : input.story,
+      );
+      const human = auto === 'approve' ? 'reject' : 'approve';
+      expect((await decide(id, 'patch', version, human, 'human')).status).toBe(
+        200,
+      );
+      const updated = await row(id);
+      expect(updated).toMatchObject({
+        status: 'approved',
+        pending_patch: null,
+        approved_at: previous?.approved_at,
+        story: human === 'approve' ? proposal.story : input.story,
+        codename: human === 'approve' ? proposal.codename : input.codename,
+      });
+      expect(
+        await bindings.DB.prepare(
+          'SELECT patch_snapshot FROM submission_reviews WHERE tombstone_id=?',
+        )
+          .bind(id)
+          .first('patch_snapshot'),
+      ).toBeNull();
+    },
+  );
+
+  it('confirming the same decision preserves published content, time and user reactions', async () => {
+    const { id, input } = await create();
+    await bindings.DB.prepare(
+      'UPDATE tombstones SET pending_patch=? WHERE id=?',
+    )
+      .bind(JSON.stringify(input), id)
+      .run();
+    const version = await revision(id, 'patch');
+    expect((await decide(id, 'patch', version, 'approve', 'ai')).status).toBe(
+      200,
+    );
+    const before = await row(id);
+    await bindings.DB.prepare(
+      'UPDATE tombstones SET flowers=flowers+1 WHERE id=?',
+    )
+      .bind(id)
+      .run();
+    expect(
+      (await decide(id, 'patch', version, 'approve', 'human')).status,
+    ).toBe(200);
+    expect(await row(id)).toMatchObject({
+      approved_at: before?.approved_at,
+      updated_at: before?.updated_at,
+      flowers: 1,
+    });
+  });
+
+  it('expires a card after a later edit, manual hiding or withdrawal, scrubbing the discarded proposal', async () => {
+    const { id, input } = await create('approved');
+    async function edit(story: string) {
+      await bindings.DB.prepare(
+        'UPDATE tombstones SET pending_patch=? WHERE id=?',
+      )
+        .bind(JSON.stringify({ ...input, story }), id)
+        .run();
+      return revision(id, 'patch');
+    }
+    const old = await edit('这是用户第一次提交的完整修改记录。');
+    const latest = await edit(
+      '这是第二次更新的修改内容，只有这个版本需要审核。',
+    );
+    expect((await decide(id, 'patch', old, 'approve', 'ai')).status).toBe(409);
+    expect((await decide(id, 'patch', latest, 'approve', 'ai')).status).toBe(
+      200,
+    );
+    await request(`/tombstones/${id}/hide`, {});
+    expect((await decide(id, 'patch', latest, 'reject', 'human')).status).toBe(
+      409,
+    );
+    const hidden = await edit(
+      '这是隐藏状态下提交的修改，审核不得让它重新上墙。',
+    );
+    await decide(id, 'patch', hidden, 'reject', 'ai');
+    expect((await decide(id, 'patch', hidden, 'approve', 'human')).status).toBe(
+      200,
+    );
+    expect((await row(id))?.status).toBe('hidden');
+    const last = await edit('撤回素材之后，这份内容及其审核备份应被清空。');
+    await decide(id, 'patch', last, 'approve', 'ai');
+    await bindings.DB.prepare(
+      "UPDATE tombstones SET status='withdrawn' WHERE id=?",
+    )
+      .bind(id)
+      .run();
+    expect(
+      await bindings.DB.prepare(
+        'SELECT tombstone_id FROM submission_reviews WHERE tombstone_id=?',
+      )
+        .bind(id)
+        .first(),
+    ).toBeNull();
+    expect((await decide(id, 'patch', last, 'reject', 'human')).status).toBe(
+      404,
+    );
+  });
+});

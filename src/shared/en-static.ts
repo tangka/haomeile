@@ -173,6 +173,7 @@ export const EN_STATIC: Record<string, string> = {
   这里什么也没有: 'Nothing here',
   回到纪念墙: 'Back to the memorial wall',
   页脚: 'Footer navigation',
+  站长邮箱: 'Contact the webmaster',
   数据说明: 'Data & privacy',
   关于: 'About',
   管理我的墓碑: 'Manage my memorial',
@@ -208,8 +209,8 @@ export const EN_STATIC: Record<string, string> = {
     'Original authors can request corrections or removal through Report on the relevant entry’s detail page.',
   '社区整理另显示来源链接、原帖发布日期和编辑摘要。未注明的套餐或发生日期不会补写。原帖作者可通过对应详情页的“举报”请求更正或删除。':
     'Community summaries also show a source link, post date and editorial summary. Unknown plans or incident dates are not filled in. Original authors can request corrections or deletion through Report on the relevant detail page.',
-  '用户投稿和修改都由站长人工审核，通过后才公开。审核中的内容不会出现在墙上和统计里。':
-    'The site owner manually reviews user submissions and edits before publication. Submissions awaiting review do not appear on the wall or in statistics.',
+  '投稿和修改由 OpenAI Codex 初审，通过后公开。站长通过飞书私聊收到审核结果，可以改判。':
+    'OpenAI Codex reviews submissions and edits. Approved content is published. The site owner receives the result in a private Feishu message and can change the decision.',
   '这里还很安静。第一块碑，要不要由你来立？':
     'It’s quiet here. Will you add the first memorial?',
   立一块碑: 'Add a memorial',

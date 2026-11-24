@@ -1,10 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-const configuredContact = import.meta.env.PUBLIC_CONTACT_EMAIL?.trim() || '';
-const contactEmail =
-  /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(configuredContact)
-    ? configuredContact
-    : '';
+import { contactEmail } from '../contact';
 ---
 
 <SiteLayout

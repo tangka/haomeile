@@ -276,6 +276,7 @@ describe('Bun SQLite D1 binding', () => {
       '0005_radar_email.sql',
       '0006_radar_email_codes.sql',
       '0007_radar_email_providers.sql',
+      '0008_submission_reviews.sql',
     ]);
     expect(
       await db.binding

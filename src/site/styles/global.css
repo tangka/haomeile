@@ -821,6 +821,22 @@ a {
   font-size: var(--fs-xs);
   padding: 26px 0 34px;
 }
+.footer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 16px;
+}
+.footer-contact span {
+  font-size: var(--fs-s);
+}
+.footer-contact a {
+  font-size: var(--fs-l);
+  font-weight: 700;
+  text-underline-offset: 0.16em;
+  overflow-wrap: anywhere;
+}
 .footer p {
   margin: 0 0 6px;
   max-width: 46em;

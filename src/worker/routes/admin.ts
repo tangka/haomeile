@@ -5,8 +5,10 @@ import { validateStoredTombInput } from '../lib/validate';
 import { checkPrivacy } from '../lib/privacy';
 import { detectGrayMarket } from '../lib/graymarket';
 import { readJson } from '../lib/json';
+import { reviewVersion, versionedReviews } from './versioned-review';
 
 const adminRoutes = new Hono<AppEnv>();
+adminRoutes.route('/review', versionedReviews);
 
 interface ReportRow {
   id: string;
@@ -86,7 +88,7 @@ adminRoutes.get('/queue', async (c) => {
       `SELECT * FROM tombstones WHERE ${predicates[type]}
     ORDER BY (flags IS NOT NULL AND flags!='[]') DESC,created_at,id LIMIT 100`,
     )
-    .all<TombstoneRow>();
+    .all<TombstoneRow & { review_epoch: number }>();
   const counts: Record<string, number> = {};
   for (const [key, predicate] of Object.entries(predicates)) {
     counts[key] =
@@ -108,12 +110,17 @@ adminRoutes.get('/queue', async (c) => {
       'SELECT id,tombstone_id,action,actor,detail,created_at FROM audit_log ORDER BY created_at DESC,id DESC LIMIT 20',
     )
     .all();
-  const items = rows.results.map((row) => ({
-    ...safeRow(row),
-    reports: allReports.results.filter(
-      (report) => report.tombstone_id === row.id,
-    ),
-  }));
+  const items = await Promise.all(
+    rows.results.map(async (row) => ({
+      ...(row.origin === 'submission' && type !== 'reported'
+        ? { review_version: await reviewVersion(row, type) }
+        : {}),
+      ...safeRow(row),
+      reports: allReports.results.filter(
+        (report) => report.tombstone_id === row.id,
+      ),
+    })),
+  );
   c.header('Cache-Control', 'no-store');
   return c.json({
     ok: true,
