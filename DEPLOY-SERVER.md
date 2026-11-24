@@ -58,6 +58,8 @@ Caddy 自动申请和续期证书；只追加或替换带 `HAOMEILE MANAGED SITE
 
 ## 更新、备份和回滚
 
+日常更新在持有部署密钥的机器上运行 `node scripts/auto-release.mjs`（只看计划）和 `node scripts/auto-release.mjs --deploy`（检查、打包、部署、核对线上）。停下时怎么处理见 [deploy-haomeile skill](.agents/skills/deploy-haomeile/SKILL.md)。
+
 更新前对当前 SQLite 调用一致性备份，再切换发布代码；`backup` 与 `cleanup` 命令不会隐式执行新迁移。迁移按文件哈希追踪，已应用迁移不能原地改写；失败的单次迁移会回滚。
 
 脚本在应用健康失败且存在上一发布时自动恢复旧 `current` 链接。手动回退也应先检查旧代码与当前数据库结构兼容，再原子切换 `current` 并重启本项目服务；不要自动回退或覆盖数据库。

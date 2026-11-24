@@ -1,0 +1,240 @@
+/**
+ * One-command release, for the machine that already holds the deploy key.
+ *   node scripts/auto-release.mjs            show what would be released
+ *   node scripts/auto-release.mjs --deploy   check, build, deploy, verify, push
+ * Flags: --reviewed (a person has read the sensitive changes), --skip-e2e
+ */
+import { execFileSync } from 'node:child_process';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  rmdirSync,
+} from 'node:fs';
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export const BASE = 'codex/implement-haomeile';
+export const SOURCE = 'claude/seo-geo-2';
+const SITE = 'https://haomeile.rip';
+// A change here can alter how production runs, so it never ships unattended.
+const SENSITIVE =
+  /^(?:\.env|ops\/|scripts\/|package\.json$|pnpm-lock\.yaml$|migrations\/|\.agents\/|\.claude\/)/;
+const LIVE_PAGES = [
+  ['/', '号没了'],
+  ['/v/antigravity', 'id="answer"'],
+  ['/v/claude', 'id="answer"'],
+  ['/tips', '使用小技巧'],
+  ['/radar', '非官方'],
+  ['/privacy', 'id="ads"'],
+  ['/about', '与任何 AI 厂商无隶属关系'],
+];
+
+export class Stop extends Error {}
+
+export function git(root, ...args) {
+  return execFileSync('git', args, {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim();
+}
+const contains = (root, ancestor, commit) => {
+  try {
+    git(root, 'merge-base', '--is-ancestor', ancestor, commit);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Read-only apart from `git fetch`. Throws Stop when a person must decide.
+ * @param {string} root
+ * @param {{ reviewed?: boolean, deployed?: string }} [options]
+ */
+export function planRelease(root, { reviewed = false, deployed } = {}) {
+  if (git(root, 'status', '--porcelain'))
+    throw new Stop('The working tree has uncommitted or untracked files.');
+  if (git(root, 'branch', '--show-current') !== BASE)
+    throw new Stop(`Check out ${BASE} first.`);
+  git(root, 'fetch', '--quiet', 'origin', BASE, SOURCE);
+  const base = git(root, 'rev-parse', `origin/${BASE}`);
+  const source = git(root, 'rev-parse', `origin/${SOURCE}`);
+  const local = git(root, 'rev-parse', 'HEAD');
+  if (!contains(root, local, base))
+    throw new Stop(`Local ${BASE} has commits that are not on origin.`);
+  let target;
+  if (contains(root, source, base)) target = base;
+  else if (contains(root, base, source)) target = source;
+  else
+    throw new Stop(
+      `${BASE} and ${SOURCE} have diverged. Merge them on ${SOURCE} first.`,
+    );
+  if (!deployed)
+    throw new Stop('The deployed revision is unknown; deploy once by hand.');
+  const from = git(root, 'rev-parse', '--verify', `${deployed}^{commit}`);
+  if (from === target) return { target, from, upToDate: true, files: [] };
+  if (!contains(root, from, target))
+    throw new Stop('The deployed revision is not part of the new history.');
+  const changes = git(
+    root,
+    'diff',
+    '--name-status',
+    '--no-renames',
+    from,
+    target,
+  )
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => line.split('\t'));
+  const rewritten = changes.filter(
+    ([status, file]) => file.startsWith('migrations/') && status !== 'A',
+  );
+  if (rewritten.length)
+    throw new Stop(
+      'Existing migrations were changed: ' +
+        rewritten.map(([, file]) => file).join(', '),
+    );
+  const files = changes.map(([, file]) => file);
+  const sensitive = files.filter((file) => SENSITIVE.test(file));
+  if (sensitive.length && !reviewed)
+    throw new Stop(
+      'A person must review these, then rerun with --reviewed: ' +
+        sensitive.join(', '),
+    );
+  return { target, from, upToDate: false, files, sensitive };
+}
+
+/** The last release this machine put live, as recorded by deploy-server.py. */
+export function deployedRevision(root) {
+  try {
+    const { release } = JSON.parse(
+      readFileSync(join(root, 'artifacts/private/deployment-app.json'), 'utf8'),
+    );
+    return /^\d{14}-([a-f0-9]{7,40})$/.exec(release)?.[1];
+  } catch {
+    return undefined;
+  }
+}
+
+/** Packaging without this file would create a new PEPPER and lock everyone out. */
+export function requireDeployMachine(root, home = homedir()) {
+  for (const file of [
+    join(home, '.ssh/haomeile-deploy-sg'),
+    join(root, 'artifacts/private/haomeile.env'),
+  ])
+    if (!existsSync(file))
+      throw new Stop('This is not the deploy machine (deploy files missing).');
+}
+
+export async function verifyLive(fetchImpl = fetch) {
+  const problems = [];
+  const read = async (path) => {
+    const response = await fetchImpl(SITE + path, {
+      signal: AbortSignal.timeout(15_000),
+    });
+    return { status: response.status, body: await response.text() };
+  };
+  for (const [path, marker] of [['/api/health', '"ok":true'], ...LIVE_PAGES]) {
+    try {
+      const { status, body } = await read(path);
+      if (status !== 200) problems.push(`${path} returned ${status}`);
+      else if (!body.includes(marker)) problems.push(`${path} lacks ${marker}`);
+    } catch {
+      problems.push(`${path} could not be read`);
+    }
+  }
+  return problems;
+}
+
+async function main() {
+  const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
+  const flags = new Set(process.argv.slice(2));
+  for (const flag of flags)
+    if (!['--deploy', '--reviewed', '--skip-e2e'].includes(flag))
+      throw new Stop(`Unknown option ${flag}`);
+  const run = (command, ...args) =>
+    execFileSync(command, args, { cwd: root, stdio: 'inherit' });
+  if (flags.has('--deploy')) requireDeployMachine(root);
+  const plan = planRelease(root, {
+    reviewed: flags.has('--reviewed'),
+    deployed: deployedRevision(root),
+  });
+  if (plan.upToDate) return console.log('Nothing new to release.');
+  console.log(
+    `Release ${plan.from.slice(0, 7)} -> ${plan.target.slice(0, 7)}, ${plan.files.length} files:`,
+  );
+  console.log(git(root, 'log', '--oneline', `${plan.from}..${plan.target}`));
+  if (!flags.has('--deploy')) return console.log('Run again with --deploy.');
+
+  const lock = join(root, 'artifacts/.release-lock');
+  mkdirSync(join(root, 'artifacts'), { recursive: true });
+  try {
+    mkdirSync(lock);
+  } catch {
+    throw new Stop(`Another release is running (${lock}).`);
+  }
+  try {
+    run('git', 'merge', '--ff-only', plan.target);
+    run('pnpm', 'install', '--frozen-lockfile');
+    for (const task of ['check', 'lint', 'test', 'build', 'test:server'])
+      run('pnpm', task);
+    if (!flags.has('--skip-e2e')) run('pnpm', 'test:e2e');
+    run('pnpm', 'build');
+    run(
+      'pnpm',
+      'exec',
+      'bun',
+      'build',
+      'src/server/index.ts',
+      '--compile',
+      '--target=bun-linux-x64-baseline',
+      '--no-compile-autoload-dotenv',
+      '--no-compile-autoload-bunfig',
+      '--outfile=artifacts/haomeile-server-linux-x64',
+    );
+    if (
+      git(root, 'status', '--porcelain') ||
+      git(root, 'rev-parse', 'HEAD') !== plan.target
+    )
+      throw new Stop(
+        'The source changed while building; nothing was deployed.',
+      );
+    const { archive } = JSON.parse(
+      execFileSync('node', ['scripts/prepare-server-release.mjs'], {
+        cwd: root,
+        encoding: 'utf8',
+      })
+        .trim()
+        .split('\n')
+        .at(-1),
+    );
+    // Backs up the database first and restores the old release if unhealthy.
+    run('python3', 'scripts/deploy-server.py', 'app', '--archive', archive);
+    const problems = await verifyLive();
+    if (problems.length)
+      throw new Stop(
+        'Deployed, but check the live site: ' + problems.join('; '),
+      );
+    run('git', 'push', 'origin', `HEAD:refs/heads/${BASE}`);
+    console.log(`Live and verified: ${plan.target.slice(0, 7)}`);
+  } finally {
+    rmdirSync(lock);
+  }
+}
+
+if (
+  process.argv[1] &&
+  realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
+)
+  main().catch((error) => {
+    console.error(
+      error instanceof Stop
+        ? `Stopped: ${error.message}`
+        : 'Release step failed; see the output above. Nothing further was run.',
+    );
+    process.exitCode = error instanceof Stop ? 3 : 1;
+  });
