@@ -9,7 +9,7 @@ description: Release haomeile.rip (号没了) from the machine that holds the de
 
 ## 平时更新
 
-1. 在仓库里切到 `main`（或专用的 `release/local`），确认工作区干净。有别的改动就停下，告诉站长。
+1. 开发从最新的 `origin/main` 建工作分支，测试通过后合入 GitHub 的 `tangka/haomeile:main`。部署机切到干净的 `main`。
 2. 先看要发什么（不会部署）：
 
    ```text
@@ -22,14 +22,14 @@ description: Release haomeile.rip (号没了) from the machine that holds the de
    node scripts/auto-release.mjs --deploy
    ```
 
-脚本依次：快进合并 `claude/seo-geo-2`、全部检查和测试、打包、备份数据库并部署、核对线上页面。加 `--push-base` 才会把 `main` 推回 GitHub，要站长同意。任何一步失败都不会继续往下走。应用不健康时，部署脚本会恢复上一版。
+脚本读取 GitHub 上的 `origin/main`，发布时将本地 `main` 快进到该提交，再运行检查、测试和打包。上传前再次核对提交，然后备份数据库、部署并核对线上页面。应用不健康时，部署脚本会恢复上一版。
 
 ## 脚本停下时
 
 | 提示 | 怎么办 |
 | --- | --- |
 | `working tree has uncommitted` | 不要清理或提交别人的改动，告诉站长 |
-| `have diverged` | 不要在这里解决冲突，请开发机先合并到 `claude/seo-geo-2` |
+| `not on origin/main` | 把本地提交保存在工作分支，按正常流程合入 GitHub 的 `main` 后重试 |
 | `A person must review` | 列出文件给站长看。站长明确同意后，才加 `--reviewed` |
 | `Existing migrations were changed` | 绝不放行，告诉站长 |
 | `did not accept this machine’s deploy key` | 这台的公钥还没加到服务器，告诉站长 |
@@ -44,7 +44,7 @@ description: Release haomeile.rip (号没了) from the machine that holds the de
 30 2 * * * cd /仓库的绝对路径 && /node的绝对路径 scripts/auto-release.mjs --deploy >> artifacts/auto-release.log 2>&1
 ```
 
-定时环境里要能找到 `node`、`pnpm`、`python3`（带 paramiko）和 `git` 的登录。没有新内容时脚本直接退出。**能推送 `claude/seo-geo-2` 的人就能让内容上线**，所以这个分支只给信得过的账号。
+定时环境里要能找到 `node`、`pnpm`、`python3`（带 paramiko）和 `git` 的登录。没有新内容时脚本直接退出。每轮以 GitHub 上已合入 `main` 的提交为准。
 
 ## 不要做
 

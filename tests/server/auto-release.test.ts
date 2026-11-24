@@ -4,11 +4,11 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import {
   BASE,
-  SOURCE,
   parseRevision,
   git,
   planRelease,
   requireDeployMachine,
+  verifyReleaseSource,
   verifyLive,
 } from '../../scripts/auto-release.mjs';
 
@@ -38,15 +38,15 @@ function repository() {
     return git(root, 'rev-parse', 'HEAD');
   };
   const deployed = commit('migrations/0001.sql', 'first');
-  git(root, 'push', '--quiet', 'origin', `HEAD:${BASE}`, `HEAD:${SOURCE}`);
-  const onSource = (file: string, body: string) => {
-    git(root, 'switch', '--quiet', '--detach', `origin/${SOURCE}`);
+  git(root, 'push', '--quiet', 'origin', BASE);
+  const publish = (file: string, body: string, branch = BASE) => {
+    git(root, 'switch', '--quiet', '--detach', `origin/${BASE}`);
     const id = commit(file, body);
-    git(root, 'push', '--quiet', 'origin', `HEAD:${SOURCE}`);
+    git(root, 'push', '--quiet', 'origin', `HEAD:refs/heads/${branch}`);
     git(root, 'switch', '--quiet', BASE);
     return id;
   };
-  return { home, root, deployed, commit, onSource };
+  return { home, root, deployed, commit, publish };
 }
 
 test('does nothing when the deployed revision is current', () => {
@@ -55,8 +55,8 @@ test('does nothing when the deployed revision is current', () => {
 });
 
 test('plans an ordinary fast-forward without changing the checkout', () => {
-  const { root, deployed, onSource } = repository();
-  const target = onSource('src/page.ts', 'new page');
+  const { root, deployed, publish } = repository();
+  const target = publish('src/page.ts', 'new page');
   const plan = planRelease(root, { deployed: deployed.slice(0, 7) });
   expect(plan).toMatchObject({
     target,
@@ -66,8 +66,20 @@ test('plans an ordinary fast-forward without changing the checkout', () => {
   expect(git(root, 'rev-parse', 'HEAD')).toBe(deployed);
 });
 
+test('waits for a feature commit to reach main before planning a release', () => {
+  const { root, deployed, publish } = repository();
+  const feature = publish(
+    'src/pending.ts',
+    'feature',
+    'codex/implement-haomeile',
+  );
+  expect(planRelease(root, { deployed }).upToDate).toBe(true);
+  git(root, 'push', '--quiet', 'origin', `${feature}:refs/heads/main`);
+  expect(planRelease(root, { deployed }).target).toBe(feature);
+});
+
 test('stops for review of sensitive files and never accepts a rewritten migration', () => {
-  const { root, deployed, onSource } = repository();
+  const { root, deployed, publish } = repository();
   for (const file of [
     'ops/a',
     '.env.production',
@@ -75,14 +87,14 @@ test('stops for review of sensitive files and never accepts a rewritten migratio
     'migrations/0002.sql',
     'package.json',
   ]) {
-    const { root, deployed, onSource } = repository();
-    onSource(file, 'changed');
+    const { root, deployed, publish } = repository();
+    publish(file, 'changed');
     expect(() => planRelease(root, { deployed })).toThrow('must review');
     expect(planRelease(root, { deployed, reviewed: true }).files).toEqual([
       file,
     ]);
   }
-  onSource('migrations/0001.sql', 'rewritten');
+  publish('migrations/0001.sql', 'rewritten');
   expect(() => planRelease(root, { deployed, reviewed: true })).toThrow(
     'Existing migrations were changed',
   );
@@ -94,10 +106,11 @@ test('stops on local edits, diverged branches, unknown history and the wrong bra
   expect(() => planRelease(dirty.root, dirty)).toThrow('working tree');
 
   const diverged = repository();
-  diverged.onSource('src/a.ts', 'a');
+  diverged.publish('src/a.ts', 'a');
   diverged.commit('src/b.ts', 'b');
-  git(diverged.root, 'push', '--quiet', 'origin', `HEAD:${BASE}`);
-  expect(() => planRelease(diverged.root, diverged)).toThrow('diverged');
+  expect(() => planRelease(diverged.root, diverged)).toThrow(
+    'not on origin/main',
+  );
 
   const unpushed = repository();
   unpushed.commit('src/local.ts', 'local');
@@ -105,8 +118,21 @@ test('stops on local edits, diverged branches, unknown history and the wrong bra
 
   const unknown = repository();
   expect(() => planRelease(unknown.root)).toThrow('unknown');
-  git(unknown.root, 'switch', '--quiet', '-c', 'other');
-  expect(() => planRelease(unknown.root, unknown)).toThrow(BASE);
+  for (const branch of ['codex/implement-haomeile', 'release/local']) {
+    git(unknown.root, 'switch', '--quiet', '-c', branch);
+    expect(() => planRelease(unknown.root, unknown)).toThrow(BASE);
+  }
+});
+
+test('checks the release against the current checkout and latest remote main before uploading', () => {
+  const { root, deployed, publish } = repository();
+  const target = publish('src/one.ts', 'one');
+  expect(() => verifyReleaseSource(root, target)).toThrow('no longer matches');
+  git(root, 'merge', '--ff-only', target);
+  expect(() => verifyReleaseSource(root, target)).not.toThrow();
+  publish('src/two.ts', 'two');
+  expect(() => verifyReleaseSource(root, target)).toThrow('no longer matches');
+  expect(planRelease(root, { deployed }).target).not.toBe(target);
 });
 
 test('refuses to run without the deploy key and reads the live release name', () => {

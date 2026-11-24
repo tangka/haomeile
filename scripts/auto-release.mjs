@@ -1,9 +1,8 @@
 /**
  * One-command release, for the machine that already holds the deploy key.
  *   node scripts/auto-release.mjs            show what would be released
- *   node scripts/auto-release.mjs --deploy   check, build, deploy, verify, push
- * Flags: --reviewed (a person has read the sensitive changes), --skip-e2e,
- *        --push-base (also move the base branch on GitHub after a good release)
+ *   node scripts/auto-release.mjs --deploy   check, build, deploy, verify
+ * Flags: --reviewed (a person has read the sensitive changes), --skip-e2e
  */
 import { execFileSync } from 'node:child_process';
 import {
@@ -18,8 +17,6 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const BASE = 'main';
-export const RELEASE = 'release/local';
-export const SOURCE = 'claude/seo-geo-2';
 const SITE = 'https://haomeile.rip';
 // A change here can alter how production runs, so it never ships unattended.
 const SENSITIVE =
@@ -52,29 +49,36 @@ const contains = (root, ancestor, commit) => {
   }
 };
 
+function publishedMain(root) {
+  git(
+    root,
+    'fetch',
+    '--quiet',
+    '--no-tags',
+    'origin',
+    'refs/heads/main:refs/remotes/origin/main',
+  );
+  return git(root, 'rev-parse', 'refs/remotes/origin/main');
+}
+
+function requireCleanMain(root) {
+  if (git(root, 'branch', '--show-current') !== BASE)
+    throw new Stop(`Check out ${BASE} first.`);
+  if (git(root, 'status', '--porcelain'))
+    throw new Stop('The working tree has uncommitted or untracked files.');
+}
+
 /**
  * Read-only apart from `git fetch`. Throws Stop when a person must decide.
  * @param {string} root
  * @param {{ reviewed?: boolean, deployed?: string }} [options]
  */
 export function planRelease(root, { reviewed = false, deployed } = {}) {
-  if (git(root, 'status', '--porcelain'))
-    throw new Stop('The working tree has uncommitted or untracked files.');
-  if (![BASE, RELEASE].includes(git(root, 'branch', '--show-current')))
-    throw new Stop(`Check out ${BASE} or ${RELEASE} first.`);
-  git(root, 'fetch', '--quiet', 'origin', BASE, SOURCE);
-  const base = git(root, 'rev-parse', `origin/${BASE}`);
-  const source = git(root, 'rev-parse', `origin/${SOURCE}`);
+  requireCleanMain(root);
+  const target = publishedMain(root);
   const local = git(root, 'rev-parse', 'HEAD');
-  if (!contains(root, local, base) && !contains(root, local, source))
-    throw new Stop('The local branch has commits that are not on origin.');
-  let target;
-  if (contains(root, source, base)) target = base;
-  else if (contains(root, base, source)) target = source;
-  else
-    throw new Stop(
-      `${BASE} and ${SOURCE} have diverged. Merge them on ${SOURCE} first.`,
-    );
+  if (!contains(root, local, target))
+    throw new Stop('The local branch has commits that are not on origin/main.');
   if (!deployed)
     throw new Stop('The deployed revision is unknown; deploy once by hand.');
   const from = git(root, 'rev-parse', '--verify', `${deployed}^{commit}`);
@@ -108,6 +112,17 @@ export function planRelease(root, { reviewed = false, deployed } = {}) {
         sensitive.join(', '),
     );
   return { target, from, upToDate: false, files, sensitive };
+}
+
+export function verifyReleaseSource(root, target) {
+  requireCleanMain(root);
+  if (
+    git(root, 'rev-parse', 'HEAD') !== target ||
+    publishedMain(root) !== target
+  )
+    throw new Stop(
+      'The release no longer matches origin/main. Rerun the release.',
+    );
 }
 
 /** The live server is the only truth when more than one machine can deploy. */
@@ -171,7 +186,7 @@ async function main() {
   const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
   const flags = new Set(process.argv.slice(2));
   for (const flag of flags)
-    if (!['--deploy', '--reviewed', '--skip-e2e', '--push-base'].includes(flag))
+    if (!['--deploy', '--reviewed', '--skip-e2e'].includes(flag))
       throw new Stop(`Unknown option ${flag}`);
   const run = (command, ...args) =>
     execFileSync(command, args, { cwd: root, stdio: 'inherit' });
@@ -213,13 +228,6 @@ async function main() {
       '--no-compile-autoload-bunfig',
       '--outfile=artifacts/haomeile-server-linux-x64',
     );
-    if (
-      git(root, 'status', '--porcelain') ||
-      git(root, 'rev-parse', 'HEAD') !== plan.target
-    )
-      throw new Stop(
-        'The source changed while building; nothing was deployed.',
-      );
     const { archive } = JSON.parse(
       execFileSync(
         'node',
@@ -230,6 +238,7 @@ async function main() {
         .split('\n')
         .at(-1),
     );
+    verifyReleaseSource(root, plan.target);
     // Backs up the database first and restores the old release if unhealthy.
     run('python3', 'scripts/deploy-server.py', 'app', '--archive', archive);
     const problems = await verifyLive();
@@ -237,8 +246,6 @@ async function main() {
       throw new Stop(
         'Deployed, but check the live site: ' + problems.join('; '),
       );
-    if (flags.has('--push-base'))
-      run('git', 'push', 'origin', `HEAD:refs/heads/${BASE}`);
     console.log(`Live and verified: ${plan.target.slice(0, 7)}`);
   } finally {
     rmdirSync(lock);

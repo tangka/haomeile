@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Deploy only Haomeile to the existing Singapore host; never replace other sites."""
 import argparse
+from contextlib import ExitStack
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -8,6 +9,8 @@ from pathlib import Path
 import re
 import shlex
 import stat
+import subprocess
+import tarfile
 import time
 import paramiko
 
@@ -36,21 +39,47 @@ def upload(sftp, source, target, mode=0o644):
     sftp.posix_rename(temp, target)
 
 
-def install_app(client, sftp, archive):
-    version = archive.name.removesuffix('.tar.gz')
-    if not re.fullmatch(r'\d{14}-[a-f0-9]{7,40}', version):
+def release_from_main(archive, package):
+    match = re.fullmatch(r'(\d{14}-([a-f0-9]{7,40}))\.tar\.gz', archive.name)
+    if not match:
         raise RuntimeError('Invalid release archive name')
+    version, revision = match.groups()
+
+    def git(*args):
+        return subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
+
+    if git('branch', '--show-current') != 'main' or git('status', '--porcelain'):
+        raise RuntimeError('Deploy from a clean checkout of main')
+    main = git('ls-remote', '--exit-code', 'origin', 'refs/heads/main').split()[0]
+    if git('rev-parse', 'HEAD') != main or git('rev-parse', '--verify', revision + '^{commit}') != main:
+        raise RuntimeError('The checkout and release must both match the current origin/main')
+
+    metadata = None
+    with tarfile.open(fileobj=package, mode='r|gz') as bundle:
+        for member in bundle:
+            if member.name in ('release.json', './release.json'):
+                if metadata is not None or not member.isfile():
+                    raise RuntimeError('Expected one regular release.json in the archive')
+                metadata = json.load(bundle.extractfile(member))
+                if not isinstance(metadata, dict):
+                    raise RuntimeError('Invalid release metadata')
+    if (metadata is None or metadata.get('revision') != revision
+            or metadata.get('version') != version or not isinstance(metadata.get('builtAt'), str)):
+        raise RuntimeError('Archive metadata does not match the release')
+    package.seek(0)
+    return metadata
+
+
+def install_app(client, sftp, package, release_metadata):
+    version = release_metadata['version']
     base = '/opt/haomeile'
     release = base + '/releases/' + version
-    remote_archive = base + '/releases/' + archive.name
-    # Snapshot the metadata and keep the archive open while a newer build may prune it.
-    with archive.open('rb') as package:
-        release_metadata = json.loads((archive.parent / version / 'release.json').read_text())
-        digest = hashlib.sha256(package.read()).hexdigest()
-        package.seek(0)
-        execute(client, "getent passwd haomeile >/dev/null || useradd --system --home-dir /var/lib/haomeile --no-create-home --shell /usr/sbin/nologin haomeile")
-        execute(client, 'install -d -m 0755 /opt/haomeile/releases; install -d -m 0750 /etc/haomeile; install -d -m 0700 -o haomeile -g haomeile /var/lib/haomeile /var/backups/haomeile')
-        sftp.putfo(package, remote_archive)
+    remote_archive = release + '.tar.gz'
+    digest = hashlib.sha256(package.read()).hexdigest()
+    package.seek(0)
+    execute(client, "getent passwd haomeile >/dev/null || useradd --system --home-dir /var/lib/haomeile --no-create-home --shell /usr/sbin/nologin haomeile")
+    execute(client, 'install -d -m 0755 /opt/haomeile/releases; install -d -m 0750 /etc/haomeile; install -d -m 0700 -o haomeile -g haomeile /var/lib/haomeile /var/backups/haomeile')
+    sftp.putfo(package, remote_archive)
     actual = execute(client, 'sha256sum ' + shlex.quote(remote_archive)).split()[0]
     if actual != digest:
         raise RuntimeError('Uploaded release checksum mismatch')
@@ -77,7 +106,7 @@ def install_app(client, sftp, archive):
         sftp.chmod(pending_env, 0o600)
         sftp.posix_rename(pending_env, env_path)
     for name in ['haomeile.service', 'haomeile-maintenance.service', 'haomeile-maintenance.timer']:
-        upload(sftp, ROOT / 'ops/systemd' / name, '/etc/systemd/system/' + name)
+        execute(client, 'install -m 0644 ' + shlex.quote(release + '/ops/systemd/' + name) + ' /etc/systemd/system/' + name)
     previous = execute(client, 'readlink -f /opt/haomeile/current 2>/dev/null || true').strip()
     execute(client, 'ln -s ' + shlex.quote(release) + ' /opt/haomeile/current.next; mv -Tf /opt/haomeile/current.next /opt/haomeile/current; systemctl daemon-reload; systemctl enable haomeile.service haomeile-maintenance.timer; systemctl start haomeile-maintenance.timer; systemctl restart haomeile.service')
     healthy = False
@@ -173,21 +202,22 @@ def main():
     args = parser.parse_args()
     if args.phase == 'app' and (not args.archive or not args.archive.is_file()):
         parser.error('app phase requires a prepared release archive')
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.RejectPolicy())
-    client.connect(HOST, username='root', key_filename=str(KEY), look_for_keys=False, allow_agent=False, timeout=10)
-    try:
+    with ExitStack() as resources:
+        if args.phase == 'app':
+            package = resources.enter_context(args.archive.open('rb'))
+            metadata = release_from_main(args.archive, package)
+        client = resources.enter_context(paramiko.SSHClient())
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.RejectPolicy())
+        client.connect(HOST, username='root', key_filename=str(KEY), look_for_keys=False, allow_agent=False, timeout=10)
         with client.open_sftp() as sftp:
-            receipt = install_app(client, sftp, args.archive) if args.phase == 'app' else configure_caddy(client, sftp, args.phase)
+            receipt = install_app(client, sftp, package, metadata) if args.phase == 'app' else configure_caddy(client, sftp, args.phase)
             receipt.update({'phase': args.phase, 'observedAt': datetime.now(timezone.utc).isoformat(), 'hostRegion': 'Singapore'})
             PRIVATE.mkdir(parents=True, exist_ok=True)
             file = PRIVATE / ('deployment-' + args.phase + '.json')
             file.write_text(json.dumps(receipt, indent=2) + '\n')
             file.chmod(0o600)
             print(json.dumps(receipt))
-    finally:
-        client.close()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 # 号没了 · SEO / GEO 第二轮（给 Codex / Antigravity 执行）
 
-适用分支：`codex/implement-haomeile`（核对时为 `8825e08`）。
+本轮方案最初核对的提交为 `8825e08`。后续开发从最新 `origin/main` 开始，测试后合入 `main`。
 背景：Codex 和 Antigravity 已经完成了基础工作（见 `docs/SEO-GEO-HANDOFF.md`）：Search Console 和 Bing 验证、sitemap、hreflang、IndexNow、Atom 订阅源、`llms.txt` / `llms-full.txt`、厂商页、结构化数据、统计。**本轮不重复这些，只做会影响排名和 AI 引用的部分。**
 
 按编号顺序做；可以分给 Codex 和 Antigravity 并行，S1、S2 由同一方先完成，其余各项互不依赖。每项完成后跑 `pnpm check && pnpm lint && pnpm test`，提交信息以 `S<n>:` 开头。S1、S2 先做：它们是风险，不做的话后面的优化可能白费。
