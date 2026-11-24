@@ -9,7 +9,10 @@ import { siteOrigin } from '../shared/site';
 import { createAssets } from './assets';
 import { openDatabase } from './database';
 import { createAdminVerifier, prepareRequest } from './auth';
-import { importCommunityCasesDetailed } from './community';
+import {
+  importCommunityCasesDetailed,
+  updateCommunityCases,
+} from './community';
 import { createRadarOverview } from './radar';
 import { createRadarEmail } from './radar-email';
 import {
@@ -133,6 +136,7 @@ async function main() {
       'cleanup',
       'backup',
       'import-community',
+      'update-community',
       'notify-search',
     ].includes(command)
   )
@@ -164,7 +168,7 @@ async function main() {
         console.log(JSON.stringify(summary));
         return;
       }
-      if (command === 'import-community') {
+      if (command === 'import-community' || command === 'update-community') {
         const source = process.argv[3];
         if (
           !source ||
@@ -182,6 +186,16 @@ async function main() {
               '.sqlite',
           ),
         );
+        if (command === 'update-community') {
+          const { updated, unchanged, updatedPaths } =
+            await updateCommunityCases(env.DB, input);
+          if (updated > 0)
+            await notifySearchEngines(updatedPaths, pushOptions).catch(
+              () => {},
+            );
+          console.log(JSON.stringify({ updated, unchanged }));
+          return;
+        }
         const { inserted, skipped, insertedPaths } =
           await importCommunityCasesDetailed(env.DB, input);
         if (inserted > 0) {

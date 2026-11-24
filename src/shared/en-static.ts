@@ -158,6 +158,7 @@ export const EN_STATIC: Record<string, string> = {
   文章导航: 'Article navigation',
   相关入口: 'Related links',
   操作步骤: 'What to do',
+  下一步: 'Next steps',
   '本站根据 {author} 于 {date} 发布的原文整理，非原文作者撰写。':
     'Compiled by this site from the original posted by {author} on {date}. Not written by the original author.',
   查看原文: 'Read the original',

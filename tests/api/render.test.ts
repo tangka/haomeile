@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import { app } from '../../src/worker';
 import type { Bindings } from '../../src/worker/types';
-const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><section data-ssr="vendor-answer" hidden></section><section data-ssr="tally-section" hidden><p data-ssr="tally"></p></section><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><a data-ssr="more" hidden>再看 20 块</a><section data-ssr="timeline-section" hidden><div data-ssr="timeline"></div></section></body></html>`;
+const shell = `<!doctype html><html><head><title>号没了</title><meta name="description" content=""><meta name="robots" content="index,follow"><link rel="canonical" href="https://haomeile.rip/"><meta property="og:title" content=""><meta property="og:description" content=""><meta property="og:url" content=""><meta property="og:type" content="website"><meta name="turnstile-site-key" content=""></head><body><h1 data-ssr="page-title">这里什么也没有</h1><section data-ssr="vendor-answer" hidden></section><section data-ssr="tally-section" hidden><p data-ssr="tally"></p></section><div data-ssr="wall"></div><div data-ssr="detail" data-tomb-id=""></div><section data-ssr="next-steps"></section><a data-ssr="more" hidden>再看 20 块</a><section data-ssr="timeline-section" hidden><div data-ssr="timeline"></div></section></body></html>`;
 const assets = {
   async fetch(request: Request) {
     if (new URL(request.url).pathname === '/submit')
@@ -75,8 +75,28 @@ describe('Worker renders Astro templates on the server', () => {
     ).text();
     expect(chinese).toContain('公开原帖的中文编辑摘要。');
     expect(chinese).toContain('查看原帖');
+    expect(chinese).toContain(
+      '本站根据 GitHub 原帖（2026-06-10）整理，非原文作者撰写。',
+    );
+    const based = JSON.parse(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+        chinese,
+      )![1],
+    )[0];
+    expect(based.author.name).toBe('号没了');
+    expect(based.isBasedOn).toEqual({
+      '@type': 'CreativeWork',
+      url: 'https://github.com/anthropics/claude-code/issues/67069',
+      datePublished: '2026-06-10',
+    });
+    expect(chinese).toContain('content="noindex,follow"');
 
-    await seed('SUSPENDEDA', 'approved', '账号被停用后的申诉过程记录。', 'claude');
+    await seed(
+      'SUSPENDEDA',
+      'approved',
+      '账号被停用后的申诉过程记录。',
+      'claude',
+    );
     await env.DB.prepare(
       "UPDATE tombstones SET event_type='suspended' WHERE id='SUSPENDEDA'",
     ).run();
@@ -120,6 +140,31 @@ describe('Worker renders Astro templates on the server', () => {
       expect(html).toContain('/t/PRODUCTAAA');
     },
   );
+  it('points every record to what to do next and to similar records', async () => {
+    for (const id of ['NEXTAAAAAA', 'NEXTBBBBBB', 'NEXTCCCCCC', 'NEXTDDDDDD'])
+      await seed(id, 'approved', undefined, 'antigravity');
+    await seed('NEXTEEEEEE', 'hidden', undefined, 'antigravity');
+    await seed('NEXTFFFFFF', 'approved', undefined, 'claude');
+    const section = (html: string) =>
+      /<section data-ssr="next-steps">([\s\S]*?)<\/section>/.exec(html)![1];
+    const zh = section(
+      await (
+        await app.request('https://haomeile.rip/t/NEXTAAAAAA', {}, bindings)
+      ).text(),
+    );
+    expect(zh.match(/href="\/t\//g)).toHaveLength(3);
+    expect(zh).not.toMatch(/NEXTAAAAAA|NEXTEEEEEE|NEXTFFFFFF/);
+    expect(zh).toContain('href="/v/antigravity#answer"');
+    expect(zh).toContain('href="/appeal#antigravity"');
+    expect(zh).toContain('/tips/antigravity-paid-plan-starter-quota');
+    const en = section(
+      await (
+        await app.request('https://haomeile.rip/en/t/NEXTAAAAAA', {}, bindings)
+      ).text(),
+    );
+    expect(en).toContain('Similar records');
+    expect(en).toContain('href="/en/v/antigravity"');
+  });
   it('answers the vendor question first and only lists timeline posts that are still public', async () => {
     const add = async (id: string, status: string, source: string) => {
       await seed(id, status, undefined, 'antigravity');
@@ -129,7 +174,11 @@ describe('Worker renders Astro templates on the server', () => {
         .bind(source, id)
         .run();
     };
-    await add('TIMELINEAA', 'approved', 'https://discuss.ai.google.dev/t/203618');
+    await add(
+      'TIMELINEAA',
+      'approved',
+      'https://discuss.ai.google.dev/t/203618',
+    );
     await add('TIMELINEBB', 'hidden', 'https://discuss.ai.google.dev/t/203919');
     const page = async (path: string) =>
       (await app.request('https://haomeile.rip' + path, {}, bindings)).text();

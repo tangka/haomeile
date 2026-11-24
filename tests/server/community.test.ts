@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { safeCommunitySource } from '../../src/shared/community';
 import {
   importCommunityCases,
+  updateCommunityCases,
   validateCommunityCases,
 } from '../../src/server/community';
 import { openDatabase, type LocalDatabase } from '../../src/server/database';
@@ -336,6 +337,77 @@ describe('transactional editorial import', () => {
       last7: 0,
       community_total: count,
     });
+  });
+
+  test('every shipped summary retells the post in the third person', async () => {
+    const cases = JSON.parse(
+      await readFile(
+        resolve(import.meta.dir, '../../docs/research/community-cases.json'),
+        'utf8',
+      ),
+    );
+    expect(validateCommunityCases(cases)).toHaveLength(cases.length);
+    for (const { key, codename, codename_en, story, story_en } of cases) {
+      expect(`${key} ${codename} ${story}`).not.toContain('我');
+      expect(story).toStartWith('原帖作者说，');
+      expect(`${codename_en} ${story_en}`).not.toMatch(
+        /\b(?:I|I[’'](?:m|d|ve|ll)|my|mine|me)\b/i,
+      );
+      expect(story_en).toStartWith('The original poster says');
+    }
+  });
+
+  test('updates only the wording of existing community records', async () => {
+    const db = await database();
+    await importCommunityCases(db.binding, [fixture]);
+    const read = () =>
+      db.binding
+        .prepare(
+          'SELECT id,status,story,story_en,codename,flowers,approved_at,source_url,updated_at FROM tombstones',
+        )
+        .first<Record<string, unknown>>();
+    const before = (await read())!;
+    const rewritten = {
+      ...fixture,
+      codename: '改写后的标题',
+      story: '原帖作者说，这是改写后的测试摘要，没有新增事实。',
+      story_en: 'The original poster says this is the rewritten test summary.',
+    };
+    const later = new Date(Date.now() + 60_000);
+    const first = await updateCommunityCases(db.binding, [rewritten], later);
+    expect(first).toMatchObject({ updated: 1, unchanged: 0 });
+    expect(first.updatedPaths).toContain(`/t/${before.id}`);
+    expect((await read())!).toEqual({
+      ...before,
+      codename: rewritten.codename,
+      story: rewritten.story,
+      story_en: rewritten.story_en,
+      updated_at: later.toISOString(),
+    });
+    expect(
+      await db.binding
+        .prepare(
+          "SELECT COUNT(*) n FROM audit_log WHERE action='community_update'",
+        )
+        .first('n'),
+    ).toBe(1);
+
+    expect(
+      await updateCommunityCases(db.binding, [rewritten], later),
+    ).toMatchObject({ updated: 0, unchanged: 1, updatedPaths: [] });
+    const unknown = {
+      ...rewritten,
+      source_url: 'https://github.com/a/b/issues/9',
+    };
+    expect(
+      (await updateCommunityCases(db.binding, [unknown], later)).updated,
+    ).toBe(0);
+
+    await db.binding.prepare("UPDATE tombstones SET status='withdrawn'").run();
+    expect(
+      (await updateCommunityCases(db.binding, [fixture], later)).updated,
+    ).toBe(0);
+    expect((await read())!).toMatchObject({ status: 'withdrawn', story: null });
   });
 
   test('CLI backs up first, imports without migration, and prints only counts', async () => {

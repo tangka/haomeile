@@ -1,5 +1,6 @@
 import { VENDORS } from './types';
 import { SUPPORTED_VENDOR_FILTER } from './lib/store';
+import { isThinCommunity } from '../shared/community';
 import { localePath } from '../shared/i18n';
 import { TIP_PATHS } from '../shared/tips';
 
@@ -135,10 +136,19 @@ export async function sitemapResponse(
     )
     .bind(SITEMAP_PAGE_SIZE, (page - 1) * SITEMAP_PAGE_SIZE)
     .all<TombEntry>();
-  const tombEntries = results.map((row) => ({
-    path: '/t/' + encodeURIComponent(row.id),
-    modified: row.updated_at,
-  }));
+  // A product's only record has nothing similar beside it; see servePage.
+  const { results: lone } = await db
+    .prepare(
+      `SELECT id,origin,story FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} GROUP BY vendor HAVING COUNT(*)=1`,
+    )
+    .all<{ id: string; origin: string; story: string | null }>();
+  const thin = new Set(lone.filter(isThinCommunity).map((row) => row.id));
+  const tombEntries = results
+    .filter((row) => !thin.has(row.id))
+    .map((row) => ({
+      path: '/t/' + encodeURIComponent(row.id),
+      modified: row.updated_at,
+    }));
   return xmlResponse(
     urlset(root ? [...staticEntries, ...tombEntries] : tombEntries, site),
   );

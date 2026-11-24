@@ -195,6 +195,62 @@ export async function importCommunityCasesDetailed(
   return { inserted, skipped: cases.length - inserted, insertedPaths };
 }
 
+/**
+ * Rewrites the editor's own summary of records that already exist. It never adds
+ * a record, changes its status, or touches a submission or a withdrawn record.
+ */
+export async function updateCommunityCases(
+  db: D1Database,
+  value: unknown,
+  now = new Date(),
+): Promise<{ updated: number; unchanged: number; updatedPaths: string[] }> {
+  const cases = validateCommunityCases(value, beijingDay(now));
+  const timestamp = now.toISOString();
+  const statements = cases.flatMap((item) => [
+    db
+      .prepare(
+        `UPDATE tombstones SET codename=?1,codename_en=?2,story=?3,story_en=?4,updated_at=?5
+      WHERE origin='community' AND status IN ('approved','hidden') AND source_url=?6
+      AND (codename IS NOT ?1 OR codename_en IS NOT ?2 OR story IS NOT ?3 OR story_en IS NOT ?4)`,
+      )
+      .bind(
+        item.codename,
+        item.codename_en,
+        item.story,
+        item.story_en,
+        timestamp,
+        item.source_url,
+      ),
+    db
+      .prepare(
+        "INSERT INTO audit_log(id,tombstone_id,action,actor,detail,created_at) SELECT ?,id,'community_update','community-editor',NULL,? FROM tombstones WHERE changes()=1 AND origin='community' AND source_url=?",
+      )
+      .bind(crypto.randomUUID(), timestamp, item.source_url),
+    db
+      .prepare(
+        "SELECT id,vendor FROM tombstones WHERE origin='community' AND status='approved' AND updated_at=? AND source_url=?",
+      )
+      .bind(timestamp, item.source_url),
+  ]);
+  const result = await db.batch<{ id: string; vendor: string }>(statements);
+  const paths = new Set<string>();
+  let updated = 0;
+  cases.forEach((_, index) => {
+    if (!Number(result[index * 3]?.meta.changes || 0)) return;
+    updated++;
+    for (const row of result[index * 3 + 2]!.results) {
+      paths.add(`/t/${row.id}`);
+      paths.add(`/v/${row.vendor}`);
+    }
+  });
+  if (paths.size) paths.add('/').add('/llms-full.txt');
+  return {
+    updated,
+    unchanged: cases.length - updated,
+    updatedPaths: [...paths],
+  };
+}
+
 /** Offline operator import: no HTTP endpoint, owner credential or test CAPTCHA. */
 export async function importCommunityCases(
   db: D1Database,

@@ -61,3 +61,14 @@ export function safeCommunitySource(
   }
   return null;
 }
+
+/** A short editor summary needs other records beside it to be worth indexing. */
+export function isThinCommunity(tomb: {
+  origin?: string;
+  story: string | null;
+}): boolean {
+  return (
+    tomb.origin === 'community' &&
+    (tomb.story?.match(/[\u4e00-\u9fff]/g)?.length ?? 0) < 120
+  );
+}

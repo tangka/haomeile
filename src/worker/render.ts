@@ -20,6 +20,8 @@ import { languageRewriter, localizeTemplate } from './localize';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { tombPresentation } from '../shared/tomb-presentation';
 import { VENDOR_ANSWERS } from '../shared/vendor-answers';
+import { isThinCommunity } from '../shared/community';
+import { TIP_ARTICLES } from '../shared/tips';
 import { renderVendorAnswer } from './vendor-answer';
 import type { ReadRadarOverview } from '../shared/radar';
 import { hasRadarPass } from './lib/radar-gate';
@@ -96,11 +98,20 @@ export function renderTomb(
   const provenance = view.source
     ? `<p class="tomb-source"><a href="${e(view.source)}" target="_blank" rel="noopener noreferrer nofollow">${text('查看原帖', 'Read original post')} · ${e(t.source_platform)}</a>${t.source_published_at ? ` · <time datetime="${e(t.source_published_at)}">${e(fmtDate(t.source_published_at, locale))}</time>` : ''}</p>`
     : '';
+  const compiled =
+    detail && view.source && t.source_published_at
+      ? `<p class="tomb-compiled">${e(
+          text(
+            `本站根据 ${t.source_platform} 原帖（${t.source_published_at}）整理，非原文作者撰写。`,
+            `Compiled by this site from a ${t.source_platform} post (${t.source_published_at}). Not written by the original author.`,
+          ),
+        )}</p>`
+      : '';
   const facts = detail
     ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
     : '';
   const flower = flowerPresentation(t.flowers, locale);
-  return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${number}${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
+  return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${number}${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}${compiled}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
 }
 export function renderTimeline(stats: Stats, locale: Locale = 'zh'): string {
   const text = (zh: string, en: string) => (locale === 'en' ? en : zh);
@@ -192,6 +203,30 @@ function zhEventTitle(vendorName: string, eventLabel: string): string {
   return eventLabel.startsWith('账号') || eventLabel.startsWith('组织')
     ? `${vendorName} ${eventLabel}`
     : `${vendorName} 账号${eventLabel}`;
+}
+
+// Up to two guides that actually help with each product's account problems.
+const NEXT_GUIDES: Record<string, string[]> = {
+  claude: [
+    'claude-portal-suspension-review',
+    'claude-max-google-play-recovery',
+  ],
+  codex: ['chatgpt-plus-iphone-subscription'],
+  antigravity: [
+    'antigravity-paid-plan-starter-quota',
+    'antigravity-first-install-google-ai-pro',
+  ],
+};
+
+/** Same product and event first, then the product, newest first. */
+async function similarTombs(db: D1Database, tomb: PublicTombstone) {
+  const { results } = await db
+    .prepare(
+      "SELECT id,codename,codename_en,origin,died_at FROM tombstones WHERE status='approved' AND vendor=? AND id<>? ORDER BY event_type=? DESC, approved_at DESC, id LIMIT 3",
+    )
+    .bind(tomb.vendor, tomb.id, tomb.event_type)
+    .all<Pick<PublicTombstone, 'id' | 'codename' | 'codename_en' | 'origin'>>();
+  return results;
 }
 
 interface VendorSeoConfig {
@@ -680,17 +715,47 @@ export async function servePage(
       },
     });
     const vendorLabel = label(labels.vendor, tomb.vendor);
-    rewriter.on('[data-ssr="detail-related"]', {
+    const similar = await similarTombs(c.env.DB, tomb);
+    rewriter.on('[data-ssr="next-steps"]', {
       element: (el) => {
-        const vendorHref = escapeHtml(localePath(`/v/${tomb.vendor}`, locale));
-        const appealHref = escapeHtml(
-          localePath(`/appeal#${tomb.vendor}`, locale),
+        const link = (href: string, title: string) =>
+          `<li><a href="${escapeHtml(localePath(href, locale))}">${escapeHtml(title)}</a></li>`;
+        const list = (title: string, items: string[]) =>
+          items.length
+            ? `<h2>${escapeHtml(title)}</h2><ul>${items.join('')}</ul>`
+            : '';
+        const answer = VENDOR_ANSWERS[tomb.vendor as Vendor];
+        const guides = (NEXT_GUIDES[tomb.vendor] ?? []).flatMap((slug) =>
+          TIP_ARTICLES.filter((tip) => tip.slug === slug),
         );
-        const tipsHref = escapeHtml(localePath('/tips', locale));
         el.setInnerContent(
-          `<a href="${vendorHref}">${escapeHtml(text(`更多 ${vendorLabel} 案例`, `More ${vendorLabel} cases`))}</a>` +
-            `<a href="${appealHref}">${escapeHtml(text(`${vendorLabel} 官方申诉入口`, `Official ${vendorLabel} appeal`))}</a>` +
-            `<a href="${tipsHref}">${escapeHtml(text('使用小技巧与排查指南', 'Tips & troubleshooting'))}</a>`,
+          list(text('这类问题怎么处理', 'What to do about this'), [
+            ...(answer
+              ? [link(`/v/${tomb.vendor}#answer`, answer.question[locale])]
+              : []),
+            link(
+              `/appeal#${tomb.vendor}`,
+              text(
+                `${vendorLabel} 官方申诉入口`,
+                `Official ${vendorLabel} appeal`,
+              ),
+            ),
+            ...guides.map((tip) =>
+              link(`/tips/${tip.slug}`, tip.heading[locale]),
+            ),
+          ]) +
+            list(
+              text('同类记录', 'Similar records'),
+              similar.map((row) =>
+                link(
+                  `/t/${row.id}`,
+                  (row.origin === 'community' && locale === 'en'
+                    ? row.codename_en || row.codename
+                    : row.codename) || text('无名氏', 'Unnamed'),
+                ),
+              ),
+            ) +
+            `<p><a href="${escapeHtml(localePath(`/v/${tomb.vendor}`, locale))}">${escapeHtml(text(`${vendorLabel} 的全部记录`, `All ${vendorLabel} records`))}</a></p>`,
           { html: true },
         );
       },
@@ -721,7 +786,7 @@ export async function servePage(
         author: {
           '@type': view.community ? 'Organization' : 'Person',
           name: view.community
-            ? 'Haomeile'
+            ? text('号没了', 'Haomeile')
             : tomb.nickname || text('匿名用户', 'Anonymous user'),
         },
         publisher: {
@@ -730,7 +795,16 @@ export async function servePage(
           url: site + '/',
         },
         ...(view.source
-          ? { citation: view.source, isBasedOn: view.source }
+          ? {
+              citation: view.source,
+              isBasedOn: {
+                '@type': 'CreativeWork',
+                url: view.source,
+                ...(tomb.source_published_at && {
+                  datePublished: tomb.source_published_at,
+                }),
+              },
+            }
           : {}),
         interactionStatistic: {
           '@type': 'InteractionCounter',
@@ -774,7 +848,9 @@ export async function servePage(
           .join('')}…`,
       ),
       localePath(path, locale),
-      'index,follow,noarchive,max-image-preview:large',
+      isThinCommunity(tomb) && !similar.length
+        ? 'noindex,follow'
+        : 'index,follow,noarchive,max-image-preview:large',
       jsonLd,
       site,
     );
