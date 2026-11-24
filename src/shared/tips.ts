@@ -28,6 +28,68 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'antigravity-ultra-check-credit-usage',
+    heading: {
+      zh: 'Google AI Ultra 怎么查 Flow 扣点和 Antigravity 剩余额度',
+      en: 'Check Flow credit charges and remaining Antigravity quota on Google AI Ultra',
+    },
+    sourceTitle: '精选 12 篇文章帮你榨干 Google AI Ultra 账号价值',
+    summary: {
+      zh: 'Google One 列出账号的订阅权益。想查一次生成花了多少点，可以对照 Flow 的余额和点数明细。想查还能用哪些模型，就在 Antigravity 里看各组额度。',
+      en: 'Google One lists the benefits on your account. To check the cost of a generation, compare your Flow balance with the charge in your credit history. For model limits, check the remaining quota in Antigravity.',
+    },
+    experience: {
+      zh: '原文作者 @cgnot996 自费订了 Google AI Ultra 5x，在 Google One 福利页看到六项权益。作者在 Flow 生成前看了扣点提示，生成后再点头像，余额从 10,050 降到 10,045，这一次花了 5 点。随后又在 Antigravity 终端查看了不同模型组的余量。',
+      en: 'After paying for Google AI Ultra 5x, @cgnot996 found six benefits listed in Google One. The author checked the cost shown before generating in Flow, then opened the profile menu afterward. The balance had dropped from 10,050 to 10,045 credits, a charge of five for that run. In Antigravity, the author checked the remaining quota for each model group.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用订阅 Ultra 的 Google 账号打开 Google One，进入「福利」，查看该账号可以使用的项目。',
+          en: 'Sign in to Google One with the Google Account that holds the Ultra subscription. Open Benefits to see which items are available.',
+        },
+        link: {
+          href: 'https://one.google.com/benefits',
+          label: {
+            zh: '打开 Google One 福利页',
+            en: 'Open Google One benefits',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在 Flow 点右上角头像记下余额。下次生成前，在输入框右上角的设置里看所选模型的点数。生成后再查余额，打开 Google One 的点数活动，按生成时间找到 Google Flow 的那一行，核对实际扣点。',
+          en: 'Open your profile at the top right of Flow and note your balance. Before generating, check the cost for your model in the prompt box settings. Afterward, check your balance again and open credit activity in Google One. Find the Google Flow entry for that time to see the amount charged.',
+        },
+        link: {
+          href: 'https://support.google.com/flow/answer/16526234',
+          label: {
+            zh: '查看 Flow 余额和点数明细说明',
+            en: 'See how to check Flow balances and credit activity',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在终端运行 agy models，查看当前可用的模型。在 Antigravity 命令行会话中输入 /usage，找到准备使用的模型组，查看它的剩余额度。',
+          en: 'Run agy models in your terminal to list available models. In an Antigravity CLI session, enter /usage and find the group for the model you want to use to check its remaining quota.',
+        },
+        link: {
+          href: 'https://antigravity.google/docs/cli/tutorial',
+          label: {
+            zh: '查看 Antigravity 命令说明',
+            en: 'See the Antigravity CLI commands',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2124120697572294658',
+    sourceAuthor: '@cgnot996',
+    sourcePublishedAt: '2026-11-22T09:29:31Z',
+    publishedAt: '2026-11-24T15:12:00Z',
+    modifiedAt: '2026-11-24T15:12:00Z',
+  },
+  {
     slug: 'google-ai-pro-change-credit-billing-account',
     heading: {
       zh: 'Google AI Pro 每月 10 美元赠金怎么领，结算账号失效怎么换',
@@ -1030,6 +1092,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'antigravity-ultra-check-credit-usage': ['antigravity'],
   'google-ai-pro-change-credit-billing-account': ['antigravity'],
   'antigravity-first-install-google-ai-pro': ['antigravity'],
   'google-ai-pro-switch-to-annual': ['antigravity'],
