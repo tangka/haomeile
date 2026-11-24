@@ -23,6 +23,66 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-pro-change-credit-billing-account',
+    title:
+      'Google AI Pro 每月免费领 $10 Cloud & AI 赠金保姆级教程（附旧结算账号失效换绑招行 Visa 实操）',
+    englishTitle:
+      'How I claimed the $10 Google AI Pro monthly Cloud credit after switching to a China Merchants Bank Visa',
+    summary: {
+      zh: '朋友提醒我，Google AI Pro 每个月还有 10 美元开发者赠金。我打开 AI Studio 却只看到预付款提示，旧结算账号也用不了了。',
+      en: 'A friend told me my Google AI Pro plan included a $10 monthly developer credit. AI Studio showed me a top-up prompt, and my old billing account no longer worked.',
+    },
+    experience: {
+      zh: '我用同一个 Google 账号，在 Cloud Billing 里给新的结算账号绑上自己的招行 Visa。回到开发者福利页，选中这个结算账号，卡片上才显示剩余赠金 10 美元。',
+      en: 'I stayed signed in to the same Google Account and linked my China Merchants Bank Visa to a new Cloud Billing account. After I selected that account on the developer benefits page, the card showed $10 remaining.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用订阅 Google AI Pro 的账号打开开发者福利页，在「福利 → 高级」找到每月赠金卡片。AI Studio 的「立即支付」会给预付费余额充值。',
+          en: 'Sign in with the Google Account that pays for AI Pro. On your developer benefits page, open Premium and find the monthly credit. The Pay now button in AI Studio adds prepaid funds.',
+        },
+        link: {
+          href: 'https://developers.google.com/program/my-benefits',
+          label: {
+            zh: '打开开发者福利',
+            en: 'Open developer benefits',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果原结算账号已失效，在 Cloud Billing 的「管理结算账号」里新建结算账号，按提示添加本人的付款方式。回到开发者福利页，在赠金卡片中选中新账号。想让以后的赠金也进这个账号，可以勾选「始终使用此结算账号」。',
+          en: 'If your old billing account is inactive, open Manage billing accounts in Cloud Billing, create a billing account, and add your own payment method when prompted. Go back to the developer benefits page and select that account as the destination for the monthly credit. To use the same account for future credits, select Always use this billing account.',
+        },
+        link: {
+          href: 'https://console.cloud.google.com/billing',
+          label: {
+            zh: '核对结算账号',
+            en: 'Check billing accounts',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在同一结算账号的「抵用金」里查看到账金额和有效期。要跟踪当月花费，可以在「预算与提醒」设定金额和邮件提醒比例，达到阈值时会收到通知。',
+          en: 'In Credits for the same billing account, check the amount and expiration date. To track monthly spending, open Budgets & alerts, set an amount and choose the thresholds for email notifications.',
+        },
+        link: {
+          href: 'https://docs.cloud.google.com/billing/docs/how-to/budgets',
+          label: {
+            zh: '设置预算提醒',
+            en: 'Set a budget alert',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2125099208315404288',
+    sourceAuthor: '@cybssky',
+    sourcePublishedAt: '2026-11-24T05:46:46Z',
+    sourceViews: 246,
+  },
+  {
     slug: 'antigravity-first-install-google-ai-pro',
     title:
       'Google Antigravity 零基础教程：从下载安装到黑五 99 美元开 Pro，手把手一次讲清',
@@ -886,6 +946,7 @@ export function tipLinkHref(href: string | TipCopy, locale: 'zh' | 'en'): string
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-pro-change-credit-billing-account': ['antigravity'],
   'antigravity-first-install-google-ai-pro': ['antigravity'],
   'google-ai-pro-switch-to-annual': ['antigravity'],
   'antigravity-paid-plan-starter-quota': ['antigravity'],

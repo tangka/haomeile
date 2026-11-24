@@ -727,5 +727,41 @@
     "reviewed_at": "2026-11-24",
     "evidence": "Original X post published at 2026-11-24T00:18:04Z (08:18 in Singapore). The original post and official X embed confirm the sequence and the unsuccessful manual appeal concerning the Apple ID. The author did not state a reason, tier, incident date or outcome of a Claude account appeal. The timing alone does not establish what caused the Apple ID block.",
     "status_as_of": "2026-11-24"
+  },
+  {
+    "key": "claude-github-111884",
+    "vendor": "claude",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": null,
+    "appeal_status": "pending",
+    "source_url": "https://github.com/anthropics/claude-code/issues/111884",
+    "source_platform": "GitHub",
+    "source_published_at": "2026-11-24",
+    "codename": "用 Claude Code 写雨景渲染器时被停用",
+    "codename_en": "My account was suspended while I was building a rain renderer",
+    "story": "我在用 Claude Code 写一个 C++ 和 CUDA 的雨景渲染器，写到一半账号被停用了。我在 10 月 25 日提交申诉，到 11 月 23 日还在等。我换了一个编程助手继续做，也想给原申诉补一段项目说明，但一直没找到入口。",
+    "story_en": "I was building a rain renderer in C++ and CUDA with Claude Code when my account was suspended. I filed an appeal on October 25 and was still waiting on November 23. I switched to another coding assistant to keep working. I wanted to explain the project to the reviewer, but I couldn’t find a way to add that context to my existing appeal.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "Original GitHub issue published 2026-11-23T20:18:20Z (November 24 in Singapore). The feature request includes a firsthand suspension, appeal date and dated status. No incident date or subscription tier stated; no comments at review.",
+    "status_as_of": "2026-11-24"
+  },
+  {
+    "key": "antigravity-x-2125074914147479752",
+    "vendor": "antigravity",
+    "event_type": "suspended",
+    "plan": "unknown",
+    "event_date": "2026-11-24",
+    "appeal_status": "none",
+    "source_url": "https://x.com/lmafwo/status/2125074914147479752",
+    "source_platform": "X",
+    "source_published_at": "2026-11-24",
+    "codename": "用了三天 Antigravity，再登录发现账号被停用",
+    "codename_en": "Three days into using Antigravity, I found my account suspended",
+    "story": "11 月 24 日早上打开 Antigravity，页面提示登录失效，再登录才发现账号被停用了。我刚用了三天，手机号已经验证过，也开了两步验证。我试着申诉，流程却反复卡住，只好去 X 上向 Google 求助。",
+    "story_en": "On the morning of November 24, Antigravity asked me to sign in again. That was when I found out my account had been suspended. I’d only used it for three days. My phone number was verified and two-step verification was on, but I kept getting stuck when I tried to file an appeal. I asked Google for help on X.",
+    "reviewed_at": "2026-11-24",
+    "evidence": "Chinese original posted 2026-11-24T03:51:56Z. Same-day clarification by the same account at https://x.com/lmafwo/status/2125077708178969005 (04:03:02Z). Both official embeds were checked. The date denotes discovery; no successful appeal submission, outcome or plan tier was reported.",
+    "status_as_of": "2026-11-24"
   }
 ]
