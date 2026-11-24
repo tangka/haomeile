@@ -59,46 +59,7 @@ async function pruneExistingReleases() {
   console.log(JSON.stringify({ version: newest }));
 }
 
-async function prepareRelease() {
-  const origin = 'https://haomeile.rip';
-  const revision = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
-    encoding: 'utf8',
-  }).trim();
-  const timestamp = new Date().toISOString();
-  const version =
-    timestamp.replace(/[^0-9]/g, '').slice(0, 14) + '-' + revision;
-  const release = join(releasesRoot, version);
-  const archive = release + '.tar.gz';
-  const stagedRelease = join(staging, version);
-  const stagedArchive = stagedRelease + '.tar.gz';
-  const privateRoot = resolve('artifacts/private');
-  await mkdir(stagedRelease);
-  await mkdir(privateRoot, { recursive: true, mode: 0o700 });
-  await cp('dist', join(stagedRelease, 'dist'), { recursive: true });
-  await cp('migrations', join(stagedRelease, 'migrations'), {
-    recursive: true,
-  });
-  await cp('ops', join(stagedRelease, 'ops'), { recursive: true });
-  await cp(
-    'artifacts/haomeile-server-linux-x64',
-    join(stagedRelease, 'haomeile-server'),
-  );
-  await chmod(join(stagedRelease, 'haomeile-server'), 0o755);
-  await writeFile(
-    join(stagedRelease, 'release.json'),
-    JSON.stringify(
-      {
-        version,
-        revision,
-        builtAt: timestamp,
-        siteOrigin: origin,
-        runtime: 'Bun 1.4.5 compiled Linux x64 baseline',
-      },
-      null,
-      2,
-    ) + '\n',
-  );
-  const configFile = join(privateRoot, 'haomeile.env');
+async function privateConfiguration(configFile, privateRoot, origin) {
   let existing = '';
   try {
     existing = await readFile(configFile, 'utf8');
@@ -143,15 +104,53 @@ async function prepareRelease() {
       { mode: 0o600, flag: 'wx' },
     );
   }
-  const configured =
-    existing
-      .replace(/^APP_VERSION=.*\n?/gm, '')
-      .replace(/^BUILD_TIMESTAMP=.*\n?/gm, '') +
-    'APP_VERSION=' +
-    JSON.stringify(version) +
-    '\nBUILD_TIMESTAMP=' +
-    JSON.stringify(timestamp) +
-    '\n';
+  return existing;
+}
+
+async function prepareRelease() {
+  const origin = 'https://haomeile.rip';
+  const revision = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+    encoding: 'utf8',
+  }).trim();
+  const timestamp = new Date().toISOString();
+  const version =
+    timestamp.replace(/[^0-9]/g, '').slice(0, 14) + '-' + revision;
+  const release = join(releasesRoot, version);
+  const archive = release + '.tar.gz';
+  const stagedRelease = join(staging, version);
+  const stagedArchive = stagedRelease + '.tar.gz';
+  const privateRoot = resolve('artifacts/private');
+  await mkdir(stagedRelease);
+  await mkdir(privateRoot, { recursive: true, mode: 0o700 });
+  await cp('dist', join(stagedRelease, 'dist'), { recursive: true });
+  await cp('migrations', join(stagedRelease, 'migrations'), {
+    recursive: true,
+  });
+  await cp('ops', join(stagedRelease, 'ops'), { recursive: true });
+  await cp(
+    'artifacts/haomeile-server-linux-x64',
+    join(stagedRelease, 'haomeile-server'),
+  );
+  await chmod(join(stagedRelease, 'haomeile-server'), 0o755);
+  await writeFile(
+    join(stagedRelease, 'release.json'),
+    JSON.stringify(
+      {
+        version,
+        revision,
+        builtAt: timestamp,
+        siteOrigin: origin,
+        runtime: 'Bun 1.4.5 compiled Linux x64 baseline',
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+  // A machine that only updates an already configured server needs no secrets.
+  const configFile = join(privateRoot, 'haomeile.env');
+  let configured = '';
+  if (!process.argv.includes('--server-configured'))
+    configured = await privateConfiguration(configFile, privateRoot, origin);
   execFileSync('tar', ['-czf', stagedArchive, '-C', stagedRelease, '.']);
   await rename(stagedRelease, release);
   try {
@@ -160,16 +159,29 @@ async function prepareRelease() {
     await rm(release, { recursive: true });
     throw error;
   }
-  await writeFile(configFile, configured, { mode: 0o600 });
-  await chmod(configFile, 0o600);
+  if (configured) {
+    const labelled =
+      configured
+        .replace(/^APP_VERSION=.*\n?/gm, '')
+        .replace(/^BUILD_TIMESTAMP=.*\n?/gm, '') +
+      'APP_VERSION=' +
+      JSON.stringify(version) +
+      '\nBUILD_TIMESTAMP=' +
+      JSON.stringify(timestamp) +
+      '\n';
+    await writeFile(configFile, labelled, { mode: 0o600 });
+    await chmod(configFile, 0o600);
+  }
   await pruneReleases(version, await releaseFiles());
   console.log(
     JSON.stringify({
       version,
       release,
       archive,
-      privateConfiguration: configFile,
-      privateAdministratorFile: join(privateRoot, 'haomeile-admin.txt'),
+      ...(configured && {
+        privateConfiguration: configFile,
+        privateAdministratorFile: join(privateRoot, 'haomeile-admin.txt'),
+      }),
     }),
   );
 }

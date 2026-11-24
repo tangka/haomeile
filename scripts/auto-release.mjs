@@ -2,7 +2,8 @@
  * One-command release, for the machine that already holds the deploy key.
  *   node scripts/auto-release.mjs            show what would be released
  *   node scripts/auto-release.mjs --deploy   check, build, deploy, verify, push
- * Flags: --reviewed (a person has read the sensitive changes), --skip-e2e
+ * Flags: --reviewed (a person has read the sensitive changes), --skip-e2e,
+ *        --push-base (also move the base branch on GitHub after a good release)
  */
 import { execFileSync } from 'node:child_process';
 import {
@@ -17,6 +18,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const BASE = 'codex/implement-haomeile';
+export const RELEASE = 'release/local';
 export const SOURCE = 'claude/seo-geo-2';
 const SITE = 'https://haomeile.rip';
 // A change here can alter how production runs, so it never ships unattended.
@@ -58,14 +60,14 @@ const contains = (root, ancestor, commit) => {
 export function planRelease(root, { reviewed = false, deployed } = {}) {
   if (git(root, 'status', '--porcelain'))
     throw new Stop('The working tree has uncommitted or untracked files.');
-  if (git(root, 'branch', '--show-current') !== BASE)
-    throw new Stop(`Check out ${BASE} first.`);
+  if (![BASE, RELEASE].includes(git(root, 'branch', '--show-current')))
+    throw new Stop(`Check out ${BASE} or ${RELEASE} first.`);
   git(root, 'fetch', '--quiet', 'origin', BASE, SOURCE);
   const base = git(root, 'rev-parse', `origin/${BASE}`);
   const source = git(root, 'rev-parse', `origin/${SOURCE}`);
   const local = git(root, 'rev-parse', 'HEAD');
-  if (!contains(root, local, base))
-    throw new Stop(`Local ${BASE} has commits that are not on origin.`);
+  if (!contains(root, local, base) && !contains(root, local, source))
+    throw new Stop('The local branch has commits that are not on origin.');
   let target;
   if (contains(root, source, base)) target = base;
   else if (contains(root, base, source)) target = source;
@@ -108,26 +110,41 @@ export function planRelease(root, { reviewed = false, deployed } = {}) {
   return { target, from, upToDate: false, files, sensitive };
 }
 
-/** The last release this machine put live, as recorded by deploy-server.py. */
-export function deployedRevision(root) {
+/** The live server is the only truth when more than one machine can deploy. */
+export function parseRevision(release) {
+  return /(?:^|\/)\d{14}-([a-f0-9]{7,40})$/.exec(release.trim())?.[1];
+}
+function deployedRevision() {
+  const host = /^HOST = '([0-9.]+)'$/m.exec(
+    readFileSync(new URL('./deploy-server.py', import.meta.url), 'utf8'),
+  )?.[1];
   try {
-    const { release } = JSON.parse(
-      readFileSync(join(root, 'artifacts/private/deployment-app.json'), 'utf8'),
+    return parseRevision(
+      execFileSync(
+        'ssh',
+        [
+          '-i',
+          join(homedir(), '.ssh/haomeile-deploy-sg'),
+          ...[
+            'BatchMode=yes',
+            'IdentitiesOnly=yes',
+            'StrictHostKeyChecking=yes',
+            'ConnectTimeout=10',
+          ].flatMap((option) => ['-o', option]),
+          `root@${host}`,
+          'readlink -f /opt/haomeile/current',
+        ],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+      ),
     );
-    return /^\d{14}-([a-f0-9]{7,40})$/.exec(release)?.[1];
   } catch {
-    return undefined;
+    throw new Stop('The server did not accept this machine’s deploy key.');
   }
 }
 
-/** Packaging without this file would create a new PEPPER and lock everyone out. */
-export function requireDeployMachine(root, home = homedir()) {
-  for (const file of [
-    join(home, '.ssh/haomeile-deploy-sg'),
-    join(root, 'artifacts/private/haomeile.env'),
-  ])
-    if (!existsSync(file))
-      throw new Stop('This is not the deploy machine (deploy files missing).');
+export function requireDeployMachine(home = homedir()) {
+  if (!existsSync(join(home, '.ssh/haomeile-deploy-sg')))
+    throw new Stop('This is not the deploy machine (no deploy key).');
 }
 
 export async function verifyLive(fetchImpl = fetch) {
@@ -154,14 +171,14 @@ async function main() {
   const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
   const flags = new Set(process.argv.slice(2));
   for (const flag of flags)
-    if (!['--deploy', '--reviewed', '--skip-e2e'].includes(flag))
+    if (!['--deploy', '--reviewed', '--skip-e2e', '--push-base'].includes(flag))
       throw new Stop(`Unknown option ${flag}`);
   const run = (command, ...args) =>
     execFileSync(command, args, { cwd: root, stdio: 'inherit' });
-  if (flags.has('--deploy')) requireDeployMachine(root);
+  requireDeployMachine();
   const plan = planRelease(root, {
     reviewed: flags.has('--reviewed'),
-    deployed: deployedRevision(root),
+    deployed: deployedRevision(),
   });
   if (plan.upToDate) return console.log('Nothing new to release.');
   console.log(
@@ -204,10 +221,11 @@ async function main() {
         'The source changed while building; nothing was deployed.',
       );
     const { archive } = JSON.parse(
-      execFileSync('node', ['scripts/prepare-server-release.mjs'], {
-        cwd: root,
-        encoding: 'utf8',
-      })
+      execFileSync(
+        'node',
+        ['scripts/prepare-server-release.mjs', '--server-configured'],
+        { cwd: root, encoding: 'utf8' },
+      )
         .trim()
         .split('\n')
         .at(-1),
@@ -219,7 +237,8 @@ async function main() {
       throw new Stop(
         'Deployed, but check the live site: ' + problems.join('; '),
       );
-    run('git', 'push', 'origin', `HEAD:refs/heads/${BASE}`);
+    if (flags.has('--push-base'))
+      run('git', 'push', 'origin', `HEAD:refs/heads/${BASE}`);
     console.log(`Live and verified: ${plan.target.slice(0, 7)}`);
   } finally {
     rmdirSync(lock);

@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import {
   BASE,
   SOURCE,
-  deployedRevision,
+  parseRevision,
   git,
   planRelease,
   requireDeployMachine,
@@ -109,18 +109,13 @@ test('stops on local edits, diverged branches, unknown history and the wrong bra
   expect(() => planRelease(unknown.root, unknown)).toThrow(BASE);
 });
 
-test('refuses to run without the deploy files and reads the recorded release', () => {
-  const { home, root } = repository();
-  expect(() => requireDeployMachine(root, home)).toThrow(
-    'not the deploy machine',
+test('refuses to run without the deploy key and reads the live release name', () => {
+  const { home } = repository();
+  expect(() => requireDeployMachine(home)).toThrow('not the deploy machine');
+  expect(parseRevision('/opt/haomeile/releases/20261124080000-117e652\n')).toBe(
+    '117e652',
   );
-  expect(deployedRevision(root)).toBeUndefined();
-  mkdirSync(join(root, 'artifacts/private'), { recursive: true });
-  writeFileSync(
-    join(root, 'artifacts/private/deployment-app.json'),
-    JSON.stringify({ release: '20261124080000-117e652' }),
-  );
-  expect(deployedRevision(root)).toBe('117e652');
+  expect(parseRevision('/opt/haomeile/current')).toBeUndefined();
 });
 
 test('reports live pages that fail or lack their marker', async () => {
