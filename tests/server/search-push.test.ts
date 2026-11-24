@@ -20,9 +20,9 @@ function sampleOverview(
     generatedAt: '2026-11-24T00:00:00.000Z',
     stale,
     platforms: [
-      { name: 'Codex', probability: codex },
-      { name: 'Claude Code', probability: claude },
-      { name: 'Antigravity', probability: antigravity },
+      { id: 'codex', name: 'Codex', probability: codex },
+      { id: 'claude', name: 'Claude Code', probability: claude },
+      { id: 'antigravity', name: 'Antigravity', probability: antigravity },
     ],
     history: [],
   };

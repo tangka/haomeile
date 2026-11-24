@@ -184,7 +184,7 @@ const jsonLd = [
               <legend>选择提醒的平台</legend>
               <div class="seg">
                 {Object.entries(RADAR_PLATFORM_NAMES).map(([id, name]) => (
-                  <label>
+                  <label data-radar-platform={id}>
                     <input type="checkbox" name="platform" value={id} />
                     {name}
                   </label>
@@ -294,6 +294,19 @@ const jsonLd = [
     padding-top: clamp(18px, 5vw, 54px);
   }
 
+  /* Match the Reset Radar mini program's probability-history palette. */
+  .radar-page :global([data-radar-platform='codex']) {
+    --platform-accent: #6f76f6;
+  }
+
+  .radar-page :global([data-radar-platform='claude']) {
+    --platform-accent: light-dark(#d16e4b, #de7753);
+  }
+
+  .radar-page :global([data-radar-platform='antigravity']) {
+    --platform-accent: #4285f4;
+  }
+
   .radar-intro {
     display: flex;
     align-items: center;
@@ -370,22 +383,13 @@ const jsonLd = [
   }
 
   .radar-vitals :global(.radar-forecasts li) {
-    --card-accent: var(--grass-deep);
     display: grid;
     gap: 10px;
     padding: clamp(14px, 2.5vw, 24px);
     border: 2px solid var(--ink);
-    border-top: 5px solid var(--card-accent);
+    border-top: 5px solid var(--platform-accent);
     background: var(--paper);
     box-shadow: 4px 4px 0 var(--ink);
-  }
-
-  .radar-vitals :global(.radar-forecasts li:nth-child(2)) {
-    --card-accent: var(--mum);
-  }
-
-  .radar-vitals :global(.radar-forecasts li:nth-child(3)) {
-    --card-accent: var(--focus);
   }
 
   .radar-vitals :global(.radar-forecasts h3) {
@@ -402,14 +406,14 @@ const jsonLd = [
   .radar-vitals :global(.radar-bar) {
     height: 8px;
     border: 1.5px solid var(--ink);
-    background: color-mix(in srgb, var(--stone) 70%, transparent);
+    background: var(--paper);
     overflow: hidden;
   }
 
   .radar-vitals :global(.radar-bar span) {
     display: block;
     height: 100%;
-    background: var(--card-accent);
+    background: var(--platform-accent);
   }
 
   .radar-vitals :global(.radar-sub) {
@@ -521,9 +525,13 @@ const jsonLd = [
   }
 
   .radar-email .seg label:has(input:checked) {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: color-mix(in srgb, var(--platform-accent) 12%, var(--paper));
+    color: var(--ink);
+    border-color: var(--platform-accent);
+  }
+
+  .radar-email .seg input {
+    accent-color: var(--platform-accent);
   }
 
   .radar-email #radar-email-code {
@@ -606,19 +614,7 @@ const jsonLd = [
     height: 3px;
     margin-inline-end: 6px;
     vertical-align: middle;
-    background: var(--trend-color);
-  }
-
-  .radar-trend-legend :global([data-series='codex']) {
-    --trend-color: light-dark(#38774c, #86d39d);
-  }
-
-  .radar-trend-legend :global([data-series='claude']) {
-    --trend-color: light-dark(#93600f, #f7c557);
-  }
-
-  .radar-trend-legend :global([data-series='antigravity']) {
-    --trend-color: var(--focus);
+    background: var(--platform-accent);
   }
 
   canvas {

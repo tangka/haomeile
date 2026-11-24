@@ -37,7 +37,7 @@ function snapshot(
   const name = RADAR_PLATFORM_NAMES[id];
   return {
     generatedAt: new Date(clock).toISOString(),
-    platforms: [{ name, probability }],
+    platforms: [{ id, name, probability }],
     history: [{ id, name, points: [{ time, probability }] }],
     stale: false,
   };

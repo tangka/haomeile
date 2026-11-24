@@ -200,7 +200,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     const sample = (probability: number, time: number) => ({
       generatedAt: new Date(time).toISOString(),
       stale: false,
-      platforms: [{ name: 'Codex', probability }],
+      platforms: [{ id: 'codex' as const, name: 'Codex', probability }],
       history: [
         {
           id: 'codex' as const,
@@ -297,7 +297,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     const snapshot = {
       generatedAt: new Date(now).toISOString(),
       stale: false,
-      platforms: [{ name: 'Codex', probability: 84 }],
+      platforms: [{ id: 'codex' as const, name: 'Codex', probability: 84 }],
       history: [
         {
           id: 'codex' as const,
@@ -463,7 +463,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       {
         generatedAt: new Date(started).toISOString(),
         stale: false,
-        platforms: [{ name: 'Codex', probability: 90 }],
+        platforms: [{ id: 'codex', name: 'Codex', probability: 90 }],
         history: [
           {
             id: 'codex',
@@ -672,7 +672,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(html).toContain(`data-ga4-measurement-id="${MEASUREMENT_ID}"`);
       expect(html).toContain('<h3>Codex</h3><strong>18%</strong>');
       expect(html).toContain('<h3>Claude Code</h3><strong>0%</strong>');
-      expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
+      expect(html).toContain(
+        '<li data-radar-platform="antigravity"><h3>Antigravity</h3><strong>64%</strong>',
+      );
       expect(html).toContain(`datetime="${generatedAt}"`);
       expect(html).not.toMatch(
         /fictional-integration|api\.tangka\.online|visitor-credential|untrusted-name|private-upstream|private-judgement|<h3>Grok|data-radar-verify/,
@@ -768,7 +770,9 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
       expect(response.headers.get('cache-control')).toBe('private, no-store');
       expect(response.headers.has('set-cookie')).toBe(false);
       const html = await response.text();
-      expect(html).toContain('<h3>Antigravity</h3><strong>64%</strong>');
+      expect(html).toContain(
+        '<li data-radar-platform="antigravity"><h3>Antigravity</h3><strong>64%</strong>',
+      );
       const opener = html.match(
         /<button[^>]*data-ssr="radar-email-signup"[^>]*>/,
       )?.[0];

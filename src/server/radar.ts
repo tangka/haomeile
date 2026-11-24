@@ -66,6 +66,7 @@ function parseOverview(value: unknown): Omit<RadarOverview, 'stale'> | null {
       probability <= 100
       ? [
           {
+            id,
             name: RADAR_PLATFORM_NAMES[id],
             probability: Math.round(probability),
           },

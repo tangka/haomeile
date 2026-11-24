@@ -401,9 +401,9 @@ export async function servePage(
       const subLabel = escapeHtml(
         text('未来 24 小时重置概率', '24h reset probability'),
       );
-      const cards = overview.platforms.map(({ name, probability }) => {
+      const cards = overview.platforms.map(({ id, name, probability }) => {
         const pct = Math.max(0, Math.min(100, Number(probability) || 0));
-        return `<li><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong><div class="radar-bar" aria-hidden="true"><span style="width:${pct}%"></span></div><span class="radar-sub">${subLabel}</span></li>`;
+        return `<li data-radar-platform="${escapeHtml(id)}"><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong><div class="radar-bar" aria-hidden="true"><span style="width:${pct}%"></span></div><span class="radar-sub">${subLabel}</span></li>`;
       });
       rewriter.on('[data-ssr="radar-overview"]', {
         element: (el) => {

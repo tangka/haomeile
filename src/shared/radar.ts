@@ -24,7 +24,7 @@ export interface RadarTrendData {
 
 export interface RadarOverview {
   generatedAt: string;
-  platforms: { name: string; probability: number }[];
+  platforms: { id: RadarPlatformId; name: string; probability: number }[];
   history: RadarTrendSeries[];
   stale: boolean;
 }

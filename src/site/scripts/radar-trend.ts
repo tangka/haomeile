@@ -46,7 +46,7 @@ function mountTrend(
 
   const entries = visibleSeries.map((entry) => {
     const item = document.createElement('li');
-    item.dataset.series = entry.id;
+    item.dataset.radarPlatform = entry.id;
     item.textContent = entry.name;
     legend.append(item);
     return { ...entry, item };
