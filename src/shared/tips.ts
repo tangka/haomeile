@@ -28,6 +28,59 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-colab-check-units-stop-session',
+    heading: {
+      zh: 'Google AI 订阅里的 Colab 算力怎么查，任务结束怎么关掉 GPU',
+      en: 'Check Colab compute units on Google AI and shut down a GPU session',
+    },
+    sourceTitle:
+      '别让会员白送的显卡吃灰！榨干 Colab 算力的 8 种神仙用法（Pro 每月也送 200）',
+    summary: {
+      zh: '用订阅 Google AI 的账号查看 Colab 计算单元余额和当前消耗速率。任务完成后，保存结果，关闭对应的 GPU 会话，再查实际用量。',
+      en: 'Use the account with the Google AI subscription to check the Colab compute-unit balance and current usage rate. When a job is done, save the output, stop its GPU session and check the final charge.',
+    },
+    experience: {
+      zh: '原文作者 @linlin454136 用 Google AI Ultra 5x 账号在一台 L4 上跑了约两小时。开始时余额是 1,000 个计算单元，关机结算后剩 996.24。本次共用了 3.76 个单元，其中 0.16 个在关机时才计入。作者最后查了会话列表，确认运行中的会话已经清零。',
+      en: 'In the original article, @linlin454136 reported using an L4 GPU for about two hours on a Google AI Ultra 5x account. The balance went from 1,000 compute units to 996.24. Of the 3.76 units used on that run, 0.16 appeared at shutdown. The author checked the session list afterward and found no sessions still running.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在 Google One 的套餐页核对自己的订阅是否包含 Colab 计算单元。按官方说明安装 Google Colab CLI，首次使用时选同一个 Google 账号授权。先运行 colab usage，记下开机前的余额。',
+          en: 'Check whether your Google One plan includes Colab compute units. Install the official Google Colab CLI and authorize it with the same Google Account when prompted. Before starting the GPU, run colab usage and note the balance.',
+        },
+        link: {
+          href: 'https://github.com/googlecolab/google-colab-cli#installation',
+          label: { zh: '查看 Colab CLI 安装说明', en: 'Install the Colab CLI' },
+        },
+      },
+      {
+        text: {
+          zh: 'GPU 任务运行时，再执行 colab usage 查看当前每小时消耗。运行 colab sessions，记下本次任务的会话名，这样结束时就能选对要关的机器。',
+          en: 'While the GPU job is running, run colab usage again to see the current rate in compute units per hour. Run colab sessions and note the name of the session for this job.',
+        },
+      },
+      {
+        text: {
+          zh: '先把运行时里的输出下载到本地或保存到云盘。运行 colab stop -s NAME，把 NAME 换成刚才记下的会话名。再运行 colab sessions 确认该会话已消失，最后用 colab usage 对照开机前的余额。',
+          en: 'Download the output or save it to Drive before stopping the runtime. Run colab stop -s NAME with the session name you noted. Use colab sessions to check that it has disappeared, then compare the balance from colab usage with your starting balance.',
+        },
+        link: {
+          href: 'https://github.com/googlecolab/google-colab-cli#command-index',
+          label: {
+            zh: '核对会话和用量命令',
+            en: 'See session and usage commands',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2125257469140123649',
+    sourceAuthor: '@linlin454136',
+    sourcePublishedAt: '2026-11-24T16:22:42Z',
+    publishedAt: '2026-11-24T19:10:15Z',
+    modifiedAt: '2026-11-24T19:10:15Z',
+  },
+  {
     slug: 'antigravity-ultra-check-credit-usage',
     heading: {
       zh: 'Google AI Ultra 怎么查 Flow 扣点和 Antigravity 剩余额度',
@@ -1092,6 +1145,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-colab-check-units-stop-session': ['antigravity'],
   'antigravity-ultra-check-credit-usage': ['antigravity'],
   'google-ai-pro-change-credit-billing-account': ['antigravity'],
   'antigravity-first-install-google-ai-pro': ['antigravity'],
