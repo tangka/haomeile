@@ -7,7 +7,7 @@ import { siteOrigin } from '../../shared/site';
 
 const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const subtitle =
-  'Codex、Claude Code 和 Antigravity 在未来 24 小时内发生额外额度重置的概率。';
+  '未来 24 小时内，Codex、Claude Code 和 Antigravity 发生额外额度重置的概率，不算平时到点的恢复。';
 const description =
   '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额外重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。';
 
@@ -396,6 +396,25 @@ const jsonLd = [
     overflow: hidden;
   }
 
+  .radar-vitals :global(.radar-bar) {
+    position: relative;
+  }
+
+  .radar-vitals :global(.radar-bar::after) {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 80%;
+    border-left: 2px solid var(--ink);
+  }
+
+  .radar-vitals :global(.radar-confirmed) {
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    font-size: var(--fs-s);
+  }
+
   .radar-vitals :global(.radar-bar span) {
     display: block;
     height: 100%;
@@ -557,14 +576,26 @@ const jsonLd = [
   .radar-trend-legend :global(li)::before {
     content: '';
     display: inline-block;
-    width: 14px;
-    height: 3px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
     margin-inline-end: 6px;
     vertical-align: middle;
     background: var(--platform-accent);
   }
 
+  .radar-trend-legend :global([data-radar-platform='claude'])::before {
+    border-radius: 0;
+  }
+
+  .radar-trend-legend :global([data-radar-platform='antigravity'])::before {
+    border-radius: 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
   .radar-trend-legend :global([data-radar-event])::before {
+    border-radius: 0;
+    clip-path: none;
     width: 0;
     height: 1em;
     border-left: 2px dashed var(--platform-accent);

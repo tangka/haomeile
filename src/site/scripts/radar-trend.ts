@@ -3,8 +3,9 @@ import { RADAR_PLATFORM_NAMES, type RadarTrendData } from '../../shared/radar';
 
 const HOUR = 60 * 60 * 1000;
 const locale = currentLocale() === 'en' ? 'en-GB' : 'zh-CN';
-const updated = document.querySelector<HTMLTimeElement>('.radar-updated time');
-if (updated) {
+for (const updated of document.querySelectorAll<HTMLTimeElement>(
+  '.radar-updated time, .radar-confirmed time',
+)) {
   updated.textContent = new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -100,6 +101,25 @@ function mountTrend(
   const timeX = (time: number, width: number): number =>
     left + ((time - start) / (24 * HOUR)) * (width - left - right);
 
+  // Codex and Antigravity are both blue, so every platform also has a shape.
+  const mark = (
+    platform: string | undefined,
+    cx: number,
+    cy: number,
+    size: number,
+  ): void => {
+    context.beginPath();
+    if (platform === 'claude')
+      context.rect(cx - size, cy - size, size * 2, size * 2);
+    else if (platform === 'antigravity') {
+      context.moveTo(cx, cy - size * 1.2);
+      context.lineTo(cx + size * 1.1, cy + size);
+      context.lineTo(cx - size * 1.1, cy + size);
+      context.closePath();
+    } else context.arc(cx, cy, size, 0, 2 * Math.PI);
+    context.fill();
+  };
+
   const draw = (): void => {
     const { width, height } = canvas.getBoundingClientRect();
     if (width <= left + right || height <= 40) return;
@@ -133,6 +153,22 @@ function mountTrend(
       context.stroke();
       context.globalAlpha = 1;
     }
+    context.globalAlpha = 0.6;
+    context.setLineDash([2, 3]);
+    context.beginPath();
+    context.moveTo(left, y(80));
+    context.lineTo(width - right, y(80));
+    context.stroke();
+    context.setLineDash([]);
+    context.textAlign = 'left';
+    context.textBaseline = 'bottom';
+    context.fillText(
+      locale === 'zh-CN' ? '80% 提醒线' : '80% alert',
+      left + 4,
+      y(80) - 2,
+    );
+    context.textBaseline = 'middle';
+    context.globalAlpha = 1;
     context.textAlign = 'center';
     const hourOffsets = width < 400 ? [24, 12, 0] : [24, 18, 12, 6, 0];
     for (const hours of hourOffsets) {
@@ -164,15 +200,12 @@ function mountTrend(
       });
       context.stroke();
       for (const { time, probability } of points) {
-        context.beginPath();
-        context.arc(
+        mark(
+          item.dataset.radarPlatform,
           x(time),
           y(probability),
-          time === activeTime ? 4 : 2,
-          0,
-          2 * Math.PI,
+          time === activeTime ? 5 : 3,
         );
-        context.fill();
       }
     }
     context.lineWidth = 2;

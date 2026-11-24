@@ -1,7 +1,13 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { TIP_ARTICLES, tipPublishedTime } from '../../shared/tips';
+import { TIP_ARTICLES, tipPublishedTime, tipVendors } from '../../shared/tips';
 import { siteOrigin } from '../../shared/site';
+
+const vendorNames = {
+  claude: 'Claude',
+  codex: 'ChatGPT / Codex',
+  antigravity: 'Google AI / Antigravity',
+};
 
 const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const tips = [...TIP_ARTICLES].sort((a, b) =>
@@ -71,6 +77,11 @@ const jsonLd = [
               <span id={'tip-title-' + tip.slug} class="tip-title">
                 {tip.heading.zh}
               </span>
+              <span class="tip-vendor">
+                {tipVendors(tip.slug)
+                  .map((vendor) => vendorNames[vendor])
+                  .join(' · ')}
+              </span>
               <time datetime={tip.sourcePublishedAt} title="UTC+8">
                 {tipPublishedTime(tip.sourcePublishedAt)}
               </time>
@@ -91,7 +102,7 @@ const jsonLd = [
   }
   .tip-preview {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) max-content;
+    grid-template-columns: minmax(0, 1fr) max-content max-content;
     align-items: center;
     gap: 12px;
     min-height: 54px;
@@ -112,12 +123,27 @@ const jsonLd = [
     text-decoration: underline;
     text-underline-offset: 4px;
   }
+  .tip-vendor {
+    padding: 2px 8px;
+    border: 1px solid var(--stone-shade);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+  }
   .tip-preview time {
     font-size: var(--fs-xs);
     font-variant-numeric: tabular-nums;
     text-align: end;
     white-space: nowrap;
     opacity: 0.8;
+  }
+  @media (max-width: 720px) {
+    .tip-preview {
+      grid-template-columns: minmax(0, 1fr) max-content;
+    }
+    .tip-vendor {
+      grid-row: 2;
+      justify-self: start;
+    }
   }
   @media (max-width: 520px) {
     .tip-preview time {

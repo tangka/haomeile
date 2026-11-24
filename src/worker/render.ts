@@ -23,7 +23,7 @@ import { VENDOR_ANSWERS } from '../shared/vendor-answers';
 import { isThinCommunity } from '../shared/community';
 import { TIP_ARTICLES } from '../shared/tips';
 import { renderVendorAnswer } from './vendor-answer';
-import type { ReadRadarOverview } from '../shared/radar';
+import { RADAR_PLATFORM_NAMES, type ReadRadarOverview } from '../shared/radar';
 import { hasRadarPass } from './lib/radar-gate';
 import {
   contentSecurityPolicy,
@@ -442,10 +442,28 @@ export async function servePage(
         const pct = Math.max(0, Math.min(100, Number(probability) || 0));
         return `<li data-radar-platform="${escapeHtml(id)}"><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong><div class="radar-bar" aria-hidden="true"><span style="width:${pct}%"></span></div><span class="radar-sub">${subLabel}</span></li>`;
       });
+      // An older feed sends no list at all, which is not the same as no events.
+      const events = overview.resetEvents;
+      const confirmed = !events
+        ? ''
+        : `<p class="radar-confirmed"><strong>${escapeHtml(text('近 24 小时已确认：', 'Confirmed in 24 hours: '))}</strong>${
+            events.length
+              ? events
+                  .map(({ platform, time, kind }) => {
+                    const action =
+                      kind === 'card'
+                        ? text('重置卡', 'reset card')
+                        : text('额度重置', 'quota reset');
+                    const iso = new Date(time).toISOString();
+                    return `<span data-radar-platform="${escapeHtml(platform)}">${escapeHtml(`${RADAR_PLATFORM_NAMES[platform]} ${action}`)} <time datetime="${iso}">${iso.slice(0, 16).replace('T', ' ')} UTC</time></span>`;
+                  })
+                  .join(text('；', '; '))
+              : escapeHtml(text('没有记录到', 'none recorded'))
+          }</p>`;
       rewriter.on('[data-ssr="radar-overview"]', {
         element: (el) => {
           el.setInnerContent(
-            `<ul class="radar-forecasts" role="list">${cards.join('')}</ul><p class="radar-updated">${label} <time datetime="${escapeHtml(overview.generatedAt)}">${escapeHtml(relativeTime)}</time></p>`,
+            `<ul class="radar-forecasts" role="list">${cards.join('')}</ul>${confirmed}<p class="radar-updated">${label} <time datetime="${escapeHtml(overview.generatedAt)}">${escapeHtml(relativeTime)}</time> · ${escapeHtml(text('条上的竖线是 80%，超过时发邮件提醒', 'The line on each bar marks 80%, the email alert level'))}</p>`,
             { html: true },
           );
         },

@@ -95,8 +95,8 @@ export const EN_STATIC: Record<string, string> = {
     'Percentages reflect community-signal estimates of extra quota resets over the next 24 hours and are not official provider announcements. With email alerts enabled, you receive one notification per selected platform whenever a new forecast exceeds 80%.',
   '未来 24 小时额外重置概率':
     'Chance of an extra quota reset in the next 24 hours',
-  'Codex、Claude Code 和 Antigravity 在未来 24 小时内发生额外额度重置的概率。':
-    '24-hour extra quota reset estimates for Codex, Claude Code and Antigravity.',
+  '未来 24 小时内，Codex、Claude Code 和 Antigravity 发生额外额度重置的概率，不算平时到点的恢复。':
+    'Chance of an extra quota reset for Codex, Claude Code and Antigravity in the next 24 hours, not counting scheduled recovery.',
   重置预测: 'Reset forecast',
   '近 24 小时额外重置趋势': 'Extra reset forecasts over the past 24 hours',
   '每 30 分钟一轮': '30-minute intervals',
