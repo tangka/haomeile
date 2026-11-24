@@ -151,7 +151,10 @@ async function prepareRelease() {
   let configured = '';
   if (!process.argv.includes('--server-configured'))
     configured = await privateConfiguration(configFile, privateRoot, origin);
-  execFileSync('tar', ['-czf', stagedArchive, '-C', stagedRelease, '.']);
+  // Without this, macOS adds a "._" companion for every file, even migrations.
+  execFileSync('tar', ['-czf', stagedArchive, '-C', stagedRelease, '.'], {
+    env: { ...process.env, COPYFILE_DISABLE: '1' },
+  });
   await rename(stagedRelease, release);
   try {
     await rename(stagedArchive, archive);
