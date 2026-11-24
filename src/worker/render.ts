@@ -25,6 +25,7 @@ import { TIP_ARTICLES } from '../shared/tips';
 import { renderVendorAnswer } from './vendor-answer';
 import { RADAR_PLATFORM_NAMES, type ReadRadarOverview } from '../shared/radar';
 import { hasRadarPass } from './lib/radar-gate';
+import { renderRadarDots } from './radar-dots';
 import {
   contentSecurityPolicy,
   REFERRER_POLICY,
@@ -441,6 +442,19 @@ export async function servePage(
       const cards = overview.platforms.map(({ id, name, probability }) => {
         const pct = Math.max(0, Math.min(100, Number(probability) || 0));
         return `<li data-radar-platform="${escapeHtml(id)}"><h3>${escapeHtml(name)}</h3><strong>${probability}%</strong><div class="radar-bar" aria-hidden="true"><span style="width:${pct}%"></span></div><span class="radar-sub">${subLabel}</span></li>`;
+      });
+      const dots = renderRadarDots(overview.platforms, locale);
+      rewriter.on('.radar-intro-mark', {
+        element: (el) => {
+          el.removeAttribute('aria-hidden');
+          el.setAttribute('role', 'img');
+          el.setAttribute('aria-label', dots.label);
+        },
+      });
+      rewriter.on('[data-ssr="radar-dots"]', {
+        element: (el) => {
+          el.setInnerContent(dots.html, { html: true });
+        },
       });
       // An older feed sends no list at all, which is not the same as no events.
       const events = overview.resetEvents;

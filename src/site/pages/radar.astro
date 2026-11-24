@@ -116,6 +116,7 @@ const jsonLd = [
         </div>
         <div class="radar-intro-mark" aria-hidden="true">
           <RadarMark />
+          <span class="radar-dots" data-ssr="radar-dots"></span>
         </div>
       </header>
 
@@ -345,10 +346,84 @@ const jsonLd = [
   }
 
   .radar-intro-mark {
-    --radar-mark-size: clamp(64px, 11vw, 126px);
+    --radar-mark-size: clamp(84px, 14vw, 168px);
     flex: none;
     display: grid;
     place-items: center;
+  }
+
+  .radar-intro-mark > :global(*) {
+    grid-area: 1 / 1;
+  }
+
+  .radar-dots {
+    position: relative;
+    width: var(--radar-mark-size);
+    aspect-ratio: 1;
+  }
+
+  /* The centre only marks 0%, so it stays smaller than the three blips. */
+  .radar-intro-mark > :global(.radar-mark::after) {
+    width: 4%;
+  }
+
+  .radar-dots :global(.radar-dot) {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--platform-accent);
+    box-shadow: 0 0 6px 1px var(--platform-accent);
+    translate: -50% -50%;
+  }
+
+  /*
+   * Same 3.2s turn as the sweep in RadarMark. Its bright edge starts at 28deg,
+   * so each delay lights a blip as the edge passes 0, 120 or 240deg.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .radar-dots :global(.radar-dot) {
+      animation: radar-blip 3.2s linear infinite;
+    }
+
+    .radar-dots :global([data-radar-platform='codex']) {
+      animation-delay: -0.249s;
+    }
+
+    .radar-dots :global([data-radar-platform='claude']) {
+      animation-delay: -2.382s;
+    }
+
+    .radar-dots :global([data-radar-platform='antigravity']) {
+      animation-delay: -1.316s;
+    }
+  }
+
+  @keyframes radar-blip {
+    0% {
+      opacity: 1;
+      scale: 1.35;
+      box-shadow: 0 0 10px 4px var(--platform-accent);
+    }
+
+    25% {
+      opacity: 1;
+      scale: 1;
+      box-shadow: 0 0 6px 1px var(--platform-accent);
+    }
+
+    75%,
+    98% {
+      opacity: 0.3;
+      scale: 0.85;
+      box-shadow: 0 0 0 0 var(--platform-accent);
+    }
+
+    100% {
+      opacity: 1;
+      scale: 1.35;
+      box-shadow: 0 0 10px 4px var(--platform-accent);
+    }
   }
 
   .radar-subscribe {
@@ -544,7 +619,7 @@ const jsonLd = [
     .radar-intro-mark {
       grid-column: 2;
       grid-row: 1 / span 2;
-      --radar-mark-size: 64px;
+      --radar-mark-size: 84px;
     }
 
     .radar-cta {
