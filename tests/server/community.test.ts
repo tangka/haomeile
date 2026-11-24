@@ -357,7 +357,8 @@ describe('transactional editorial import', () => {
         env: {
           PATH: process.env.PATH,
           ENVIRONMENT: 'production',
-          SITE_ORIGIN: 'https://haomeile.rip',
+          // Only the live origin notifies search engines; a test must never be it.
+          SITE_ORIGIN: 'https://haomeile.test',
           DATA_DIR: data,
           BACKUP_DIR: backups,
           ASSET_ROOT: resolve(import.meta.dir, '../../dist'),
