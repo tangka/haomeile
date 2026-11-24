@@ -216,8 +216,8 @@ export function createRadarEmail(
         : '';
       const text =
         locale === 'en'
-          ? `Your verification code is ${code}. Enter it on Reset Radar within 10 minutes to receive alerts when the reset probability for ${products} rises above 80%.\n\nYou can also confirm using this link. It expires 24 hours after it was first sent.\n${url}\n\nIf you didn’t request these alerts, ignore this email.`
-          : `你的验证码是 ${code}。请在 10 分钟内回到重置雷达输入验证码。确认后，${products} 的重置概率超过 80% 时，你会收到提醒。\n\n你也可以通过下面的链接确认，链接从首次发出起 24 小时内有效。\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
+          ? `Your verification code is ${code}. Enter it on Reset Radar within 10 minutes to receive alerts when the chance of an extra quota reset for ${products} rises above 80%.\n\nYou can also confirm using this link. It expires 24 hours after it was first sent.\n${url}\n\nIf you didn’t request these alerts, ignore this email.`
+          : `你的验证码是 ${code}。请在 10 分钟内回到重置雷达输入验证码。确认后，${products} 的额外重置概率超过 80% 时，你会收到提醒。\n\n你也可以通过下面的链接确认，链接从首次发出起 24 小时内有效。\n${url}\n\n如果你没有申请订阅，忽略这封邮件即可。`;
       const outcome = await send('confirmation', {
         to: email,
         subject,
@@ -307,12 +307,12 @@ export function createRadarEmail(
         );
         const subject =
           locale === 'en'
-            ? `${name} reset probability reached ${probability}%`
-            : `${name} 额度重置概率已达 ${probability}%`;
+            ? `${name} extra reset probability reached ${probability}%`
+            : `${name} 额外重置概率已达 ${probability}%`;
         const text =
           locale === 'en'
-            ? `Reset Radar estimates a ${probability}% chance of a ${name} quota reset in the next 24 hours.\n\nView the forecast: ${radar}\n\nUnsubscribe: ${unsubscribe}`
-            : `重置雷达预计，${name} 在未来 24 小时内重置额度的概率为 ${probability}%。\n\n查看趋势 ${radar}\n\n退订提醒 ${unsubscribe}`;
+            ? `Reset Radar estimates a ${probability}% chance of an extra quota reset for ${name} in the next 24 hours.\n\nView the forecast: ${radar}\n\nUnsubscribe: ${unsubscribe}`
+            : `重置雷达预计，${name} 在未来 24 小时内发生额外重置的概率为 ${probability}%。\n\n查看趋势 ${radar}\n\n退订提醒 ${unsubscribe}`;
         const outcome = await send('alert', {
           to: email,
           subject,

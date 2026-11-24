@@ -49,12 +49,12 @@ export async function feedResponse(
       url: site + localePath('/radar', locale),
       title:
         locale === 'en'
-          ? 'Reset Radar — Unofficial 24h Quota Reset Estimate'
-          : '重置雷达 — 未来 24 小时额度重置估计（非官方）',
+          ? 'Reset Radar — Unofficial 24h Extra Quota Reset Estimate'
+          : '重置雷达 — 未来 24 小时额外重置估计（非官方）',
       summary:
         locale === 'en'
-          ? `Latest unofficial 24-hour quota reset estimates: ${summary}. Free email alerts available above 80%.`
-          : `最新未来 24 小时额度重置的非官方估计：${summary}。支持超过 80% 时免费邮件提醒。`,
+          ? `Latest unofficial 24-hour extra quota reset estimates: ${summary}. Free email alerts available above 80%.`
+          : `最新未来 24 小时额外重置的非官方估计：${summary}。支持超过 80% 时免费邮件提醒。`,
       updated: isoDate(radar.generatedAt, fallbackTime),
     });
   }
@@ -103,7 +103,7 @@ export async function feedResponse(
   const feedSubtitle =
     locale === 'en'
       ? 'Latest account suspension stories, official appeal guides, subscription troubleshooting and Reset Radar forecasts.'
-      : '最新收录的 AI 账号停用与申诉经历、实用排查指南及 24 小时额度重置概率更新。';
+      : '最新收录的 AI 账号停用与申诉经历、实用排查指南及 24 小时额外重置概率更新。';
 
   const xmlEntries = top
     .map((entry) => {

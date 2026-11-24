@@ -46,6 +46,11 @@ test('public release information has no configuration placeholders', async ({
           prefix ? 'do not automatically translate' : '不会自动翻译用户提交',
         );
       }
+      if (route === '/about') {
+        const contact = page.getByRole('link', { name: 'contact@haomeile.rip' });
+        await expect(contact).toBeVisible();
+        await expect(contact).toHaveAttribute('href', 'mailto:contact@haomeile.rip');
+      }
       if (route === '/privacy')
         await expect(page.locator('#stats + p')).toContainText(
           prefix ? 'Beijing time' : '北京时间',
@@ -53,7 +58,7 @@ test('public release information has no configuration placeholders', async ({
       if (route === '/privacy')
         await expect(page.locator('.updated time')).toHaveAttribute(
           'datetime',
-          '2026-11-23',
+          '2026-11-24',
         );
     }
     await page.goto(prefix + '/');

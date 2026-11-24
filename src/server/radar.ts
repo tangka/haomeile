@@ -2,6 +2,7 @@ import {
   RADAR_PLATFORM_NAMES,
   type RadarOverview,
   type RadarPlatformId,
+  type RadarResetEvent,
   type RadarTrendPoint,
 } from '../shared/radar';
 
@@ -43,13 +44,47 @@ function historyPoints(
     .map(([time, probability]) => ({ time, probability }));
 }
 
+function parseResetEvents(
+  value: unknown,
+  generatedAt: number,
+): RadarResetEvent[] {
+  if (!value || typeof value !== 'object') return [];
+  const events = new Map<string, RadarResetEvent>();
+  for (const platform of PLATFORM_IDS) {
+    const records = (value as Record<string, unknown>)[platform];
+    if (!Array.isArray(records)) continue;
+    for (const record of records) {
+      if (!record || typeof record !== 'object') continue;
+      const { timestamp, kind } = record as Record<string, unknown>;
+      if (
+        typeof timestamp !== 'string' ||
+        (kind !== 'card' && kind !== 'reset')
+      )
+        continue;
+      const time = Date.parse(timestamp);
+      if (time >= generatedAt - HISTORY_WINDOW_MS && time <= generatedAt) {
+        events.set(`${platform}/${time}/${kind}`, { platform, time, kind });
+      }
+    }
+  }
+  return [...events.values()].sort((a, b) => a.time - b.time);
+}
+
 function parseOverview(value: unknown): Omit<RadarOverview, 'stale'> | null {
   if (!value || typeof value !== 'object') return null;
-  const { generatedAt, platforms, probabilityHistory24h } = value as Record<
-    string,
-    unknown
-  >;
-  if (typeof generatedAt !== 'string' || !Array.isArray(platforms)) return null;
+  const {
+    naturalCycle,
+    generatedAt,
+    platforms,
+    probabilityHistory24h,
+    resetEvents24h,
+  } = value as Record<string, unknown>;
+  if (
+    naturalCycle !== 'exclude' ||
+    typeof generatedAt !== 'string' ||
+    !Array.isArray(platforms)
+  )
+    return null;
   const timestamp = Date.parse(generatedAt);
   if (!Number.isFinite(timestamp) || timestamp > Date.now() + 60_000)
     return null;
@@ -88,6 +123,7 @@ function parseOverview(value: unknown): Omit<RadarOverview, 'stale'> | null {
     generatedAt: new Date(timestamp).toISOString(),
     platforms: publicPlatforms,
     history,
+    resetEvents: parseResetEvents(resetEvents24h, timestamp),
   };
 }
 

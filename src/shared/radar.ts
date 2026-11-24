@@ -17,15 +17,23 @@ export interface RadarTrendSeries {
   points: RadarTrendPoint[];
 }
 
+export interface RadarResetEvent {
+  platform: RadarPlatformId;
+  time: number;
+  kind: 'reset' | 'card';
+}
+
 export interface RadarTrendData {
   generatedAt: string;
   series: RadarTrendSeries[];
+  resetEvents: RadarResetEvent[];
 }
 
 export interface RadarOverview {
   generatedAt: string;
   platforms: { id: RadarPlatformId; name: string; probability: number }[];
   history: RadarTrendSeries[];
+  resetEvents?: RadarResetEvent[];
   stale: boolean;
 }
 

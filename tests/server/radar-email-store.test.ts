@@ -333,4 +333,24 @@ describe('Reset Radar alert delivery', () => {
     await restarted.dispatch(snapshot('codex', 100), send);
     expect(attempts).toHaveLength(2);
   });
+
+  test('a downward correction at the same sample time stops retries until a newer high', async () => {
+    await subscribe();
+    clock += minute;
+    const sampleAt = clock;
+    const attempts: RadarEmailAlert[] = [];
+    const send = async (message: RadarEmailAlert) => {
+      attempts.push(message);
+      return attempts.length === 1 ? 'retry' : 'sent';
+    };
+    await store.dispatch(snapshot('codex', 91, sampleAt), send);
+    clock += minute;
+    await store.dispatch(snapshot('codex', 80, sampleAt), send);
+    await store.dispatch(snapshot('codex', 91, sampleAt), send);
+    expect(attempts.map(({ probability }) => probability)).toEqual([91]);
+
+    await store.dispatch(snapshot('codex', 82), send);
+    expect(attempts.map(({ probability }) => probability)).toEqual([91, 82]);
+    expect(attempts[1].idempotencyKey).not.toBe(attempts[0].idempotencyKey);
+  });
 });

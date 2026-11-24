@@ -7,20 +7,20 @@ import { siteOrigin } from '../../shared/site';
 
 const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const subtitle =
-  'Codex、Claude Code 和 Antigravity 未来 24 小时的额度重置概率。';
+  'Codex、Claude Code 和 Antigravity 在未来 24 小时内发生额外额度重置的概率。';
 const description =
-  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额度重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。';
+  '查看 Codex、Claude Code 和 Antigravity 未来 24 小时额外重置概率预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒，附各平台停用案例与官方申诉入口。';
 
 const faqs = [
   {
     question: '重置雷达的概率预测怎么看？是否代表厂商官方公告？',
     answer:
-      '重置雷达每 30 分钟按社区观测信号刷新一次，展示 Codex、Claude Code 和 Antigravity 未来 24 小时发生额度重置的概率参考及近 24 小时变化趋势，不代表厂商官方通知。',
+      '重置雷达每 30 分钟按社区观测信号刷新一次，展示 Codex、Claude Code 和 Antigravity 未来 24 小时发生额外重置的概率参考及近 24 小时变化趋势，不代表厂商官方通知。',
   },
   {
     question: '怎么在 Codex、Claude Code 或 Antigravity 额度重置概率升高时收到提醒？',
     answer:
-      '点击页面上的「订阅邮件提醒」，勾选关注的平台并填写邮箱，输入邮件里的 6 位验证码（或点击确认链接）即可生效。所选平台的新预测超过 80% 时会自动发邮件，连续高于 80% 期间每个平台只提醒一次，且可随时通过邮件链接退订。',
+      '点击页面上的「订阅邮件提醒」，勾选关注的平台并填写邮箱，输入邮件里的 6 位验证码（或点击确认链接）即可生效。所选平台的额外重置概率超过 80% 时会自动发邮件，连续高于 80% 期间每个平台只提醒一次，且可随时通过邮件链接退订。',
   },
 ];
 
@@ -28,7 +28,7 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: '重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率',
+    name: '重置雷达：Codex、Claude Code、Antigravity 24 小时额外重置概率',
     description,
     url: SITE + '/radar',
     inLanguage: 'zh-CN',
@@ -38,9 +38,9 @@ const jsonLd = [
       url: SITE + '/',
     },
     variableMeasured: [
-      'Codex 24-hour quota reset probability',
-      'Claude Code 24-hour quota reset probability',
-      'Antigravity 24-hour quota reset probability',
+      'Codex 24-hour extra quota reset probability',
+      'Claude Code 24-hour extra quota reset probability',
+      'Antigravity 24-hour extra quota reset probability',
     ],
   },
   {
@@ -77,7 +77,7 @@ const jsonLd = [
 ---
 
 <SiteLayout
-  title="重置雷达：Codex、Claude Code、Antigravity 24 小时额度重置概率 · 号没了"
+  title="重置雷达：Codex、Claude Code、Antigravity 24 小时额外重置概率 · 号没了"
   description={description}
   path="/radar"
   jsonLd={jsonLd}
@@ -135,14 +135,14 @@ const jsonLd = [
         hidden
       >
         <div class="radar-history-head">
-          <h2 id="radar-trend-title">近 24 小时趋势</h2>
+          <h2 id="radar-trend-title">近 24 小时额外重置趋势</h2>
           <p>每 30 分钟一轮</p>
         </div>
         <ul class="radar-trend-legend" data-radar-trend-legend></ul>
         <canvas
           data-radar-trend=""
           role="img"
-          aria-label="额度重置概率趋势图"
+          aria-label="额外重置概率趋势图"
           aria-describedby="radar-trend-help"
           tabindex="0"
         ></canvas>
@@ -177,7 +177,7 @@ const jsonLd = [
             </form>
           </div>
           <p>
-            所选平台的新预测超过 80% 时发邮件。连续高于 80%
+            所选平台的额外重置概率超过 80% 时发邮件。连续高于 80%
             期间，每个平台只提醒一次。
           </p>
           <form class="form" method="post" data-radar-email-signup>
@@ -562,6 +562,13 @@ const jsonLd = [
     margin-inline-end: 6px;
     vertical-align: middle;
     background: var(--platform-accent);
+  }
+
+  .radar-trend-legend :global([data-radar-event])::before {
+    width: 0;
+    height: 1em;
+    border-left: 2px dashed var(--platform-accent);
+    background: transparent;
   }
 
   canvas {
