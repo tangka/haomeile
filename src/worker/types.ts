@@ -107,6 +107,7 @@ export interface Bindings {
   CLOUDFLARE_WEB_ANALYTICS_TOKEN?: string;
   GA4_MEASUREMENT_ID?: string;
   RADAR_HUMAN_CHECK?: string;
+  BAIDU_PUSH_TOKEN?: string;
   ACCESS_AUD: string;
   ACCESS_TEAM_DOMAIN: string;
   ENVIRONMENT: string;
@@ -114,5 +115,9 @@ export interface Bindings {
 }
 export interface AppEnv {
   Bindings: Bindings;
-  Variables: { actor: string; locale: Locale };
+  Variables: {
+    actor: string;
+    locale: Locale;
+    onPublishPaths?: (paths: string[]) => void;
+  };
 }

@@ -193,6 +193,18 @@ export function languageRewriter(
         el.setAttribute(attribute, site + localePath(path, locale));
       },
     })
+    .on('link[rel="alternate"][type="application/atom+xml"]', {
+      element: (el) => {
+        el.setAttribute(
+          'href',
+          site + (locale === 'en' ? '/en/feed.xml' : '/feed.xml'),
+        );
+        el.setAttribute(
+          'title',
+          locale === 'en' ? 'Haomeile Atom Feed' : '号没了订阅源',
+        );
+      },
+    })
     .on('meta[property="og:site_name"]', {
       element: (el) => {
         el.setAttribute('content', locale === 'en' ? 'Haomeile' : '号没了');

@@ -8,6 +8,8 @@ import { adminRoutes } from './routes/admin';
 import { ApiError } from './lib/errors';
 import { cleanup } from './cleanup';
 import { sitemapResponse } from './sitemap';
+import { feedResponse } from './feed';
+import { llmsFullResponse } from './llms-full';
 import { basePath, localePath, requestLocale, tr } from '../shared/i18n';
 import type { ReadRadarOverview } from '../shared/radar';
 import type { RadarCapacityReport } from '../shared/radar-email-report';
@@ -19,11 +21,19 @@ export interface AppOptions {
   radarEmailRoutes?: Hono<AppEnv>;
   radarEmailReady?: boolean;
   readRadarEmailCapacity?: () => Promise<RadarCapacityReport>;
+  onPublishPaths?: (paths: string[]) => void;
 }
 /** Runtime-owned authentication strategy; Workers continue to require Access JWTs. */
 export function createApp(options: AppOptions = {}) {
   const app = new Hono<AppEnv>();
   app.use('*', security);
+  if (options.onPublishPaths) {
+    const notify = options.onPublishPaths;
+    app.use('*', async (c, next) => {
+      c.set('onPublishPaths', notify);
+      await next();
+    });
+  }
   app.onError(handleError);
   app.use('*', async (c, next) => {
     const path = basePath(c.req.path);
@@ -112,6 +122,19 @@ export function createApp(options: AppOptions = {}) {
         c.env.CF_VERSION_METADATA?.timestamp,
         c.env.SITE_ORIGIN,
       )) ?? servePage(c),
+  );
+  app.get('/feed.xml', (c) =>
+    feedResponse(c.env.DB, 'zh', c.env.SITE_ORIGIN, options.readRadarOverview),
+  );
+  app.get('/en/feed.xml', (c) =>
+    feedResponse(c.env.DB, 'en', c.env.SITE_ORIGIN, options.readRadarOverview),
+  );
+  app.get('/llms-full.txt', (c) =>
+    llmsFullResponse(
+      c.env.DB,
+      c.env.SITE_ORIGIN,
+      options.readRadarOverview,
+    ),
   );
   app.all('/api/*', (c) =>
     c.json(

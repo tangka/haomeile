@@ -101,7 +101,17 @@ def install_app(client, sftp, archive):
         if previous and previous != '/opt/haomeile/current':
             execute(client, 'ln -s ' + shlex.quote(previous) + ' /opt/haomeile/current.rollback; mv -Tf /opt/haomeile/current.rollback /opt/haomeile/current; systemctl restart haomeile.service')
         raise RuntimeError('Application health check failed; previous release restored when available')
-    return {'release': version, 'archiveSha256': digest, 'previousRelease': previous, 'healthy': True}
+    search_push = None
+    try:
+        push_out = execute(
+            client,
+            "set -a && . /etc/haomeile/haomeile.env && set +a && runuser -u haomeile -m -- /opt/haomeile/current/haomeile-server notify-search",
+        ).strip()
+        if push_out:
+            search_push = json.loads(push_out.splitlines()[-1])
+    except Exception:
+        search_push = {'skipped': True}
+    return {'release': version, 'archiveSha256': digest, 'previousRelease': previous, 'healthy': True, 'searchPush': search_push}
 
 
 def configure_caddy(client, sftp, phase):

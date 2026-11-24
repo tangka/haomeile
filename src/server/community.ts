@@ -123,12 +123,11 @@ function publicId(): string {
   ).join('');
 }
 
-/** Offline operator import: no HTTP endpoint, owner credential or test CAPTCHA. */
-export async function importCommunityCases(
+export async function importCommunityCasesDetailed(
   db: D1Database,
   value: unknown,
   now = new Date(),
-): Promise<{ inserted: number; skipped: number }> {
+): Promise<{ inserted: number; skipped: number; insertedPaths: string[] }> {
   const cases = validateCommunityCases(value, beijingDay(now));
   const timestamp = now.toISOString();
   // All validation and asynchronous hashing finish before the database transaction.
@@ -179,9 +178,33 @@ export async function importCommunityCases(
       .bind(fingerprint, timestamp, item.source_url),
   ]);
   const result = await db.batch(statements);
-  const inserted = records.reduce(
-    (sum, _record, index) => sum + Number(result[index * 3]?.meta.changes || 0),
-    0,
+  const insertedPaths: string[] = [];
+  const vendors = new Set<string>();
+  let inserted = 0;
+  records.forEach(({ record, id }, index) => {
+    if (Number(result[index * 3]?.meta.changes || 0) > 0) {
+      inserted++;
+      insertedPaths.push(`/t/${id}`);
+      vendors.add(record.vendor);
+    }
+  });
+  if (inserted > 0) {
+    insertedPaths.push('/', '/llms-full.txt');
+    for (const vendor of vendors) insertedPaths.push(`/v/${vendor}`);
+  }
+  return { inserted, skipped: cases.length - inserted, insertedPaths };
+}
+
+/** Offline operator import: no HTTP endpoint, owner credential or test CAPTCHA. */
+export async function importCommunityCases(
+  db: D1Database,
+  value: unknown,
+  now = new Date(),
+): Promise<{ inserted: number; skipped: number }> {
+  const { inserted, skipped } = await importCommunityCasesDetailed(
+    db,
+    value,
+    now,
   );
-  return { inserted, skipped: cases.length - inserted };
+  return { inserted, skipped };
 }

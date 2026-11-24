@@ -199,6 +199,9 @@ for (const action of ['approve', 'reject', 'hide', 'restore'] as const) {
         : action === 'reject'
           ? 'rejected'
           : 'hidden';
+    if (status === 'approved') {
+      c.get('onPublishPaths')?.(['/', `/v/${row.vendor}`, `/t/${id}`, '/llms-full.txt']);
+    }
     return c.json({ ok: true, data: { id, status } });
   });
 }
@@ -254,6 +257,9 @@ for (const action of ['approve', 'reject'] as const) {
       auditAfterUpdate(c.env.DB, id, `patch_${action}`, c.get('actor'), now),
     ]);
     changed(results);
+    if (action === 'approve' && status === 'approved') {
+      c.get('onPublishPaths')?.(['/', `/v/${row.vendor}`, `/t/${id}`, '/llms-full.txt']);
+    }
     return c.json({ ok: true, data: { id, status, pending_patch: null } });
   });
 }

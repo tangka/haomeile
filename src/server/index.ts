@@ -9,10 +9,16 @@ import { siteOrigin } from '../shared/site';
 import { createAssets } from './assets';
 import { openDatabase } from './database';
 import { createAdminVerifier, prepareRequest } from './auth';
-import { importCommunityCases } from './community';
+import { importCommunityCasesDetailed } from './community';
 import { createRadarOverview } from './radar';
 import { createRadarEmail } from './radar-email';
+import {
+  createRadarPushTracker,
+  notifySearchEngines,
+  shouldNotifyRadar,
+} from './search-push';
 import { radarCapacityReport } from '../shared/radar-email-report';
+import { TIP_PATHS } from '../shared/tips';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -56,6 +62,7 @@ export function serverConfig(
       CLOUDFLARE_WEB_ANALYTICS_TOKEN: values.CLOUDFLARE_WEB_ANALYTICS_TOKEN,
       GA4_MEASUREMENT_ID: values.GA4_MEASUREMENT_ID,
       RADAR_HUMAN_CHECK: values.RADAR_HUMAN_CHECK,
+      BAIDU_PUSH_TOKEN: values.BAIDU_PUSH_TOKEN,
       ACCESS_AUD: values.ACCESS_AUD || '',
       ACCESS_TEAM_DOMAIN: values.ACCESS_TEAM_DOMAIN || '',
       CF_VERSION_METADATA: {
@@ -88,12 +95,20 @@ export async function openRuntime(
       ASSETS: assets,
     } satisfies Bindings;
     const radarEmail = createRadarEmail(env, radar ? values : {});
+    const pushOptions = {
+      origin: config.origin,
+      environment: env.ENVIRONMENT,
+      baiduToken: env.BAIDU_PUSH_TOKEN,
+    };
     const app = createApp({
       radarEmailRoutes: radarEmail.routes,
       radarEmailReady: radarEmail.ready,
       readRadarEmailCapacity: async () =>
         radarCapacityReport(await radarEmail.capacity.snapshot()),
       readRadarOverview: radar?.read,
+      onPublishPaths: (paths) => {
+        void notifySearchEngines(paths, pushOptions).catch(() => {});
+      },
       ...(config.mode === 'basic' && {
         verifyAdministrator: createAdminVerifier(env, {
           username: config.username,
@@ -102,7 +117,7 @@ export async function openRuntime(
         basicChallenge: true,
       }),
     });
-    return { config, database, env, app, radar, radarEmail };
+    return { config, database, env, app, radar, radarEmail, pushOptions };
   } catch (error) {
     database.close();
     throw error;
@@ -112,17 +127,43 @@ export async function openRuntime(
 async function main() {
   const command = process.argv[2] || 'serve';
   if (
-    !['serve', 'migrate', 'cleanup', 'backup', 'import-community'].includes(
-      command,
-    )
+    ![
+      'serve',
+      'migrate',
+      'cleanup',
+      'backup',
+      'import-community',
+      'notify-search',
+    ].includes(command)
   )
     throw new Error('Unknown server command');
   const runtime = await openRuntime(process.env, {
     migrate: command === 'serve' || command === 'migrate',
   });
-  const { config, database, app, env, radar, radarEmail } = runtime;
+  const { config, database, app, env, radar, radarEmail, pushOptions } =
+    runtime;
   if (command !== 'serve') {
     try {
+      if (command === 'notify-search') {
+        const extra = process.argv.slice(3);
+        const targetPaths = extra.length
+          ? extra
+          : [
+              '/',
+              '/radar',
+              '/appeal',
+              '/tips',
+              '/v/claude',
+              '/v/codex',
+              '/v/antigravity',
+              '/llms.txt',
+              '/llms-full.txt',
+              ...TIP_PATHS,
+            ];
+        const summary = await notifySearchEngines(targetPaths, pushOptions);
+        console.log(JSON.stringify(summary));
+        return;
+      }
       if (command === 'import-community') {
         const source = process.argv[3];
         if (
@@ -141,8 +182,12 @@ async function main() {
               '.sqlite',
           ),
         );
-        const counts = await importCommunityCases(env.DB, input);
-        console.log(JSON.stringify(counts));
+        const { inserted, skipped, insertedPaths } =
+          await importCommunityCasesDetailed(env.DB, input);
+        if (inserted > 0) {
+          await notifySearchEngines(insertedPaths, pushOptions).catch(() => {});
+        }
+        console.log(JSON.stringify({ inserted, skipped }));
         return;
       }
       if (command === 'cleanup') await cleanup(env);
@@ -193,15 +238,22 @@ async function main() {
     },
   });
   let mailRun: Promise<void> | undefined;
-  radar?.start(
-    radarEmail.ready
-      ? () => {
-          mailRun = radarEmail.dispatch(radar.read()).catch(() => {
-            console.error('Radar email dispatch failed');
-          });
-        }
-      : undefined,
-  );
+  let searchPushRun: Promise<unknown> | undefined;
+  const radarPushTracker = createRadarPushTracker();
+  radar?.start(() => {
+    const overview = radar.read();
+    if (radarEmail.ready) {
+      mailRun = radarEmail.dispatch(overview).catch(() => {
+        console.error('Radar email dispatch failed');
+      });
+    }
+    if (shouldNotifyRadar(radarPushTracker, overview)) {
+      searchPushRun = notifySearchEngines(
+        ['/radar', '/llms-full.txt'],
+        pushOptions,
+      ).catch(() => {});
+    }
+  });
   console.log(`Haomeile listening on loopback port ${server.port}`);
   let stopping = false;
   const stop = async () => {
@@ -210,6 +262,7 @@ async function main() {
     radar?.stop();
     await server.stop();
     await mailRun;
+    await searchPushRun;
     database.close();
   };
   process.on('SIGTERM', () => void stop());

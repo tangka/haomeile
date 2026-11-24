@@ -35,18 +35,23 @@
 - [Antigravity 开通 Ultra 仍显示 Starter Quota 排查](https://haomeile.rip/tips/antigravity-paid-plan-starter-quota): 核对登录邮箱、年龄验证提示与重新登录步骤
 - [Claude 解封后 Max 仍显示 Free 恢复记录](https://haomeile.rip/tips/claude-max-google-play-recovery): 核对 Google Play 订单并联系 Claude 官方支持恢复权益
 - [Google AI Pro 领取 Google Cloud API 赠金](https://haomeile.rip/tips/google-ai-claim-cloud-credits): 在 AI Studio 兑换并在 Cloud Billing 核对赠金与预付余额
+- [Claude 组织停用与账号申诉实测](https://haomeile.rip/tips/claude-portal-suspension-review): 在 Claude 后台查看组织停用状态并提交申诉复核
 - [Claude 注册与结账弹出身份验证处理](https://haomeile.rip/tips/claude-sign-up-identity-verification): 核对支持地区、官方证件要求与付款状态
 - [Google AI Pro 与 Ultra 套餐对比评估](https://haomeile.rip/tips/google-ai-ultra-plan-evaluation): 对照模型表、实际用量与云盘/Colab 权益后再升级
 - [Apple App Store 订阅被拦截审核处理](https://haomeile.rip/tips/apple-in-app-purchase-review): 遇到 Purchase Not Completed 时提交审核与联系 Apple 支持
+- [Claude Pro 封号后通过 Apple 收据申请退款](https://haomeile.rip/tips/claude-pro-apple-receipt-refund): 核对 App Store 订阅收据并通过 Apple 官方渠道申请退款
 - [iPhone 开通 Google AI Ultra 核对步骤](https://haomeile.rip/tips/google-ai-ultra-iphone-subscription): 分别核对 Antigravity 地区、Google One 订阅与 Apple 内购账号
 - [iPhone 用 Apple 登录订阅 Claude Pro](https://haomeile.rip/tips/claude-pro-iphone-apple-sign-in): 查找 Apple 隐藏转发邮箱并在电脑端用同一账号登录 Claude Code
 - [Claude Pro 网页端银行卡订阅核对](https://haomeile.rip/tips/claude-pro-web-subscription): 核对支持地区、发卡行账单资料与扣款后账单状态
 - [iPhone 订阅 ChatGPT Plus 与 Codex 核对](https://haomeile.rip/tips/chatgpt-plus-iphone-subscription): 核对支持地区、Apple 礼品卡兑换、套餐到账与恢复购买
 - [安卓端通过 Google Play 订阅 Claude / ChatGPT](https://haomeile.rip/tips/android-subscriptions-google-play): 核对官方 App、付款 Google 账号与避免跨渠道重复续费
 
-## 可选
+## 可选与实时订阅源
 
+- [完整 AI 知识包（动态更新）](https://haomeile.rip/llms-full.txt): 汇总最新实时雷达概率、全部使用小技巧、产品案例统计与近期社区案例的纯 Markdown 文档
 - [站点地图](https://haomeile.rip/sitemap.xml): 可索引的中文与英文公开页面（含 hreflang 与 lastmod）
+- [中文 Atom 订阅源（支持 WebSub）](https://haomeile.rip/feed.xml): 实时更新最新案例、使用小技巧与重置雷达快照
+- [English Atom Feed (WebSub)](https://haomeile.rip/en/feed.xml): Real-time English feed of new cases, guides, and Reset Radar snapshots
 - [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器本地生成像素墓碑图片
 
 ## English
