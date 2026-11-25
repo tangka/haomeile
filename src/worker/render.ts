@@ -885,7 +885,7 @@ export async function servePage(
           .join('')}…`,
       ),
       localePath(path, locale),
-      isThinCommunity(tomb) && !similar.length
+      isThinCommunity(tomb)
         ? 'noindex,follow'
         : 'index,follow,noarchive,max-image-preview:large',
       jsonLd,

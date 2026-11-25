@@ -26,6 +26,8 @@ interface SitemapEntry {
 interface TombEntry {
   id: string;
   updated_at: string;
+  origin: string;
+  story: string | null;
 }
 
 export function escapeXml(value: string): string {
@@ -132,19 +134,12 @@ export async function sitemapResponse(
   if (part && page > Math.ceil(count / SITEMAP_PAGE_SIZE)) return null;
   const { results } = await db
     .prepare(
-      `SELECT id,updated_at FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} ORDER BY id LIMIT ? OFFSET ?`,
+      `SELECT id,updated_at,origin,story FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} ORDER BY id LIMIT ? OFFSET ?`,
     )
     .bind(SITEMAP_PAGE_SIZE, (page - 1) * SITEMAP_PAGE_SIZE)
     .all<TombEntry>();
-  // A product's only record has nothing similar beside it; see servePage.
-  const { results: lone } = await db
-    .prepare(
-      `SELECT id,origin,story FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} GROUP BY vendor HAVING COUNT(*)=1`,
-    )
-    .all<{ id: string; origin: string; story: string | null }>();
-  const thin = new Set(lone.filter(isThinCommunity).map((row) => row.id));
   const tombEntries = results
-    .filter((row) => !thin.has(row.id))
+    .filter((row) => !isThinCommunity(row))
     .map((row) => ({
       path: '/t/' + encodeURIComponent(row.id),
       modified: row.updated_at,

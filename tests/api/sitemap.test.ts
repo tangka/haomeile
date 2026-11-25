@@ -156,6 +156,26 @@ describe('dynamic sitemap', () => {
     );
     expect(xml.match(/<url>/g)).toHaveLength(staticUrls + 20);
   });
+  it('leaves out community summaries too short to index', async () => {
+    for (const [id, length] of [
+      ['THINSTORYA', 99],
+      ['LONGSTORYA', 100],
+    ] as const) {
+      await insert(id, 'approved', 'codex');
+      await env.DB.prepare(
+        `UPDATE tombstones SET origin='community',source_url=?,source_platform='GitHub',source_published_at='2026-06-10',codename_en='Title',story_en='An editor summary.',story=? WHERE id=?`,
+      )
+        .bind(
+          `https://github.com/openai/codex/issues/${length}`,
+          '字'.repeat(length),
+          id,
+        )
+        .run();
+    }
+    const xml = await (await map())!.text();
+    expectLanguagePair(xml, '/t/LONGSTORYA');
+    expect(xml).not.toContain('/t/THINSTORYA');
+  });
   it('removes a withdrawn address immediately from the next generated sitemap', async () => {
     const credential = await createCredentials(env.PEPPER);
     await insert(credential.id, 'approved', 'claude', credential.secret_hash);

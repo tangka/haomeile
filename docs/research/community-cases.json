@@ -11,10 +11,10 @@
     "source_published_at": "2026-06-10",
     "codename": "Max 账号显示组织停用",
     "codename_en": "Max account: organization disabled",
-    "story": "原帖作者说，自己用的是 Max 5x。6 月 7 日账号突然进不去了，Claude Code 命令行还提示组织已停用。作者想申诉，表单却跳回了聊天页，只好到代码仓库发帖求助。",
-    "story_en": "The original poster says they were on Max 5x. On June 7 they lost access, and the Claude Code CLI said their organization had been disabled. The appeal form sent them back to the chat page, so they opened an issue to ask for help.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original issue body and dated maintainer reply were visible. Account identifiers and the author's unverified cause speculation were omitted."
+    "story": "原帖作者说，自己人在中国，订的是 Max 5x，只用官方 Claude Code 命令行写代码、调试和查资料。6 月 7 日账号被停用，事先没有警告，提示是“This organization has been disabled”。帮助中心的申诉表会跳回进不去的聊天页，没法提交。作者给客服和安全邮箱写信，到 6 月 10 日发帖时都没有回音。6 月底到 7 月初，帖子里又有几个人说遇到同样的情况，其中一人说还能重新付费订阅，但一开始对话就提示组织已停用。8 月 17 日，仓库协作者回复：停用由 Anthropic 的信任与安全团队处理，代码仓库没法复查或恢复账号，申诉结果会发邮件，并提醒 Claude 只在支持的地区提供。帖子随后关闭，作者没有再更新。",
+    "story_en": "The original poster says they are in China, were on Max 5x and used only the official Claude Code CLI for coding, debugging and research. On June 7 the account was disabled without warning, with the message “This organization has been disabled.” The help center appeal form sent them back to the chat page they could not open, so it could not be submitted. Emails to support and user safety had no reply by June 10, when they opened the issue. In late June and early July several people reported the same thing; one could still pay for a new subscription but every conversation said the organization was disabled. On August 17 a repository collaborator replied that such decisions belong to Anthropic’s Trust & Safety team, that nobody there can review or restore an account, that replies come by email, and that Claude is only available in supported regions. The issue was closed with no further update from the poster.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original issue body and dated maintainer reply were visible. Account identifiers and the author's unverified cause speculation were omitted. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "claude-reddit-1vznu5c",
@@ -45,10 +45,10 @@
     "source_published_at": "2026-06-15",
     "codename": "Codex 401，支持端却显示活跃",
     "codename_en": "Codex 401; support sees active",
-    "story": "原帖作者说，从 6 月 7 日开始，在网页上登录只看到空白页，Codex CLI 也一直报 401。作者用的是 Pro，联系支持时，对方却说账号仍是活跃状态。作者提交了申诉。6 月 16 日，论坛支持回复会再看一下这张工单。",
-    "story_en": "The original poster says that since June 7, web sign-in showed a blank page and Codex CLI returned a 401. They were on Pro, and support told them the account still showed as active. They submitted an appeal. On June 16, forum support said they would look into the ticket.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Complete first-person post and support reply visible; private identifiers omitted.",
+    "story": "原帖作者说，自己订的是每月 200 美元的 ChatGPT Pro。6 月 7 日账号被停用，没收到停用邮件。网页能接受登录，打开却是空白页，没有聊天记录，也没有输入框；Codex CLI 报 401，提示账号已停用。作者当天提交了申诉，自动客服说已转给专人，几天内会答复。6 月 13 日到 14 日作者再去追问，支持说账号显示活跃，没看到问题。作者发去报错日志和截图，支持承认界面显示和访问报错对不上，但还是让作者用停用邮件里的链接申诉，而作者没收到过这封邮件。6 月 15 日发帖时已经一周多进不去。6 月 16 日，论坛支持回复会看一下这个案子，帖里没有后续结果。",
+    "story_en": "The original poster says they were on ChatGPT Pro at $200 a month. On June 7 the account was deactivated and no deactivation email arrived. The website accepted the sign-in but loaded a blank page with no history or input box, and Codex CLI returned a 401 saying the account was deactivated. They appealed the same day, and the automated assistant said it had been escalated and they could expect a response in the coming days. When they followed up on June 13 and 14, support said the account appeared active with no issues. After they sent logs and screenshots, support acknowledged the discrepancy but again told them to appeal through the link in the deactivation email they never received. They had been locked out for over a week when they posted on June 15. On June 16 forum support said they would look at the case. The thread shows no outcome.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Complete first-person post and support reply visible; private identifiers omitted. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-06-16"
   },
   {
@@ -63,10 +63,10 @@
     "source_published_at": "2026-06-09",
     "codename": "Pro 账号在夜间任务中停用",
     "codename_en": "Pro account lost during a task",
-    "story": "原帖作者说，6 月 9 日用 Codex 跑夜间任务时，Pro 账号被停用了。作者提交了申诉。6 月 14 日，论坛支持回复说账号有审核标记，申诉还在等专门团队处理。",
-    "story_en": "The original poster says their Pro account was disabled while running an overnight Codex task on June 9. They submitted an appeal. On June 14, forum support said the account had a moderation flag and the appeal was waiting for the specialist team.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Complete original timeline and dated support reply visible; private identifiers omitted.",
+    "story": "原帖作者说，6 月 9 日早上醒来发现 ChatGPT Pro 账号进不去了，停用时 Codex 正在通宵跑一个软件项目。项目是算法交易的研究和开发，包括策略研究、回测、模拟交易和对接交易所。停用邮件只说近期活动违反了条款和使用政策，没说是哪一项。收到邮件约四个半小时后，作者通过官方流程提交申诉，OpenAI 确认已收到。6 月 10 日，论坛支持让作者先联系客服拿工单号，作者随后补上。6 月 14 日，支持回复说账号因审核相关的标记处于停用状态，申诉已经在专门团队手里，等复查完会答复，为避免重复跟进关闭了帖子。帖里没有最后的申诉结果。",
+    "story_en": "The original poster says they woke up on June 9 to find their ChatGPT Pro account deactivated. Codex had been running overnight on a software project: algorithmic trading research and development, including strategy research, backtesting, paper trading and exchange connectivity. The email only said recent activity violated the terms and usage policies, without naming it. About four and a half hours after that email they appealed through the official process, and OpenAI acknowledged it. On June 10 forum support asked for a support case number, which they then provided. On June 14 support said the account was disabled due to a moderation-related flag and the appeal was already with the specialized appeals team, who would reply after their review. The thread was closed to avoid duplicate follow-ups and shows no final outcome.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Complete original timeline and dated support reply visible; private identifiers omitted. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-06-14"
   },
   {
@@ -81,10 +81,10 @@
     "source_published_at": "2026-06-26",
     "codename": "Pro 20x 恢复后套餐成免费版",
     "codename_en": "Pro 20x restored as Free",
-    "story": "原帖作者说，自己用的是 Pro 20x，平时在用 Codex CLI、app-server 和应用。6 月 25 日发现账号进不去了。7 月 3 日已经能重新访问，但套餐显示成了 Free。",
-    "story_en": "The original poster says they were on Pro 20x and used Codex CLI, app-server and the app. On June 25 they lost access. By July 3 they could get in again, but the plan showed Free.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original post and direct author follow-up visible; private email authenticity not independently verified.",
+    "story": "原帖作者说，自己通过了 Trusted Access for Cyber 审核，用 Pro 20x 做经过验证的独立网络安全工作，平时用 Codex CLI、app-server 和 Codex 应用。6 月 25 日账号和订阅突然被停用。作者说用途没有变过，只是停用前用掉了一次额度重置，用量可能比平时高。论坛支持回复说团队正在调查这批停用，还没有时间表。帖子里还有几个人说在同一时段被停用，其中有人申诉马上被拒。6 月 28 日作者追问时，还没收到任何联系。7 月 3 日，作者说账号恢复了，邮件承认之前停用有误并道歉，但套餐变成了 Free，停用期间发放的额度重置也没有补。作者打算先导出数据，不太想再订 Pro。",
+    "story_en": "The original poster says they were approved for Trusted Access for Cyber and used Pro 20x for verified independent security work through Codex CLI, app-server and the Codex app. On June 25 the account and subscription were suddenly deactivated. They said the use case had not changed, though they had just used one quota reset and usage may have been high. Forum support replied that the team was investigating the reported bans and had no timeframe. Several others in the thread said they were deactivated around the same time, and some had appeals rejected at once. On June 28 the poster still had not been contacted. On July 3 they said the account was restored with an email admitting it had been deactivated incorrectly and apologizing, but the plan had reverted to Free and resets given out during the downtime were not compensated. They planned to export their data and were reluctant to resubscribe to Pro.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original post and direct author follow-up visible; private email authenticity not independently verified. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-07-03"
   },
   {
@@ -99,10 +99,10 @@
     "source_published_at": "2026-10-26",
     "codename": "回归时发现停用",
     "codename_en": "Access disabled on return",
-    "story": "原帖作者说，自己订了 Google AI Pro，隔了差不多半年重新打开 Antigravity，才发现权限被停用了，不知道从什么时候开始，也不清楚原因。到 10 月 29 日，作者已经申诉过，也更新了应用、重新登录，还是用不了。",
-    "story_en": "The original poster says they had Google AI Pro and reopened Antigravity after about six months to find access disabled, without knowing when or why. By October 29 they had appealed, updated the app and signed back in, but still could not use it.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original post and author follow-ups were readable; no private records were checked."
+    "story": "原帖作者说，自己订了 Google AI Pro，大约半年没用 Antigravity，回来打开就看到因违反服务条款停用的提示。作者不知道是什么时候停的，没收到说明邮件，也说没用第三方工具访问或转卖过。作者记得前一周交过一次申诉表，10 月 21 日又交了一次，确认页写的是 24 到 72 小时内审核。10 月 26 日，论坛回复说复查是分批进行的，排队多时会更久，不用重复提交，恢复后下次登录自动生效；并建议清理旧的授权、安装最新版。作者照做，先后更新到 2.26.0 和 2.28.1，移除了旧的 Antigravity 授权。到 10 月 29 日重新登录仍是停用提示，申诉也没有回音，作者再次请对方查进度，帖里没有答复。",
+    "story_en": "The original poster says they had Google AI Pro and reopened Antigravity after about six months to find it disabled for a terms-of-service violation. They did not know when it happened, had received no email, and said they had not used third-party tools or resold access. They remembered filing the appeal form the week before and filed it again on October 21; the confirmation page said 24–72 hours. On October 26 a forum reply said reviews run in batches and can take longer when volume is high, that there was no need to resubmit, and that access would return at the next sign-in once reinstated. It suggested removing old permissions and installing the latest version. The poster updated to 2.26.0 and then 2.28.1 and removed the old Antigravity connection. On October 29 the notice was still there with no appeal response. They asked for a status check, and the thread shows no answer.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original post and author follow-ups were readable; no private records were checked. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "antigravity-github-19303",
@@ -116,10 +116,10 @@
     "source_published_at": "2026-11-14",
     "codename": "开发中途服务停用",
     "codename_en": "Service disabled during development",
-    "story": "原帖作者说，11 月 14 日正在开发时，Antigravity 官方客户端突然提示服务已停用，说违反了服务条款，手头的工作就断了。作者提交了申诉，到 11 月 15 日，官方客户端还是用不了。",
-    "story_en": "The original poster says that on November 14, in the middle of development, the official Antigravity client said the service had been disabled for a terms-of-service violation, which stopped their work. They filed an appeal, and on November 15 the official app was still unavailable.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original issue and author follow-up were readable; repository labels do not verify the account decision."
+    "story": "原帖作者说，11 月 13 日到 14 日，曾在第三方编程工具 Oh My Pi（OMP）里登录 Antigravity，调用 Gemini 模型。11 月 14 日正做一个个人内核项目时，Antigravity 官方客户端提示因违反服务条款停用，手头的工作中断。作者事后才知道 Google 不允许第三方编程工具使用 Antigravity 的登录授权，但没法确认停用到底是什么触发的。作者提交了申诉，停用这种登录，删掉了 Windows 和 WSL2 里的相关凭据，发帖是想提醒工具方：只在登录时弹警告，拦不住已经保存的登录。协作者当天回复，新版已停用这个入口，已保存的登录也不会再被使用，请求会提示改用 AI Studio 密钥或 Vertex。11 月 15 日，作者说官方客户端仍提示违反条款，还在等申诉答复。",
+    "story_en": "The original poster says that on November 13–14 they had used Antigravity-backed Gemini models through a third-party coding tool, OMP. On November 14, while they were working on a personal kernel project, the official Antigravity client said the service was disabled for a terms-of-service violation and the work stopped. They only learned afterwards that Google prohibits third-party coding tools from using Antigravity sign-in, and said they could not verify what triggered the suspension. They appealed, stopped using that sign-in and removed the credentials from Windows and WSL2. The issue asked the tool to protect saved logins too, since a warning at sign-in does not reach them. A collaborator replied the same day that a new release had paused the provider, that saved logins would no longer be used, and that requests now point to an AI Studio key or Vertex. On November 15 the poster said the official app still showed the violation message and the appeal was unanswered.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original issue and author follow-up were readable; repository labels do not verify the account decision. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "antigravity-forum-199388",
@@ -133,10 +133,10 @@
     "source_published_at": "2026-11-10",
     "codename": "能登录但模型仍不可用",
     "codename_en": "Signed in, models still disabled",
-    "story": "原帖作者说，之前连 Antigravity 都登不进去。申诉后终于能登录了，但一调用模型还是提示服务停用，连一条简单消息也发不出去。11 月 10 日，作者到论坛发帖问接下来怎么处理。",
-    "story_en": "The original poster says they could not sign in to Antigravity before. After an appeal they could sign in, but every model request, even a simple message, still said the service was disabled. On November 10 they asked on the forum what to do next.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original post and a November 11 general response were readable."
+    "story": "原帖作者说，Antigravity 原来连登录都不行，提交停用申诉表后能登录了，但一用模型就报错，发一条简单消息也提示因违反服务条款停用，报错里没有再给申诉链接。作者说没有把 Antigravity 登录接到第三方工具。11 月 10 日，作者发帖问申诉是不是也管这个限制，还是恢复还没做完。11 月 11 日，论坛回复说没法在论坛里复查、查进度或解除停用；没交过的用受影响的账号交一次官方表单，交过的不要重复提交，处理大约 48 到 72 小时，不发确认或进度邮件，获批后完全退出再登录会自动恢复。回复还说恢复只有一次，再次违规会永久停用；企业账号要找管理员。之后有别的用户在帖里报告类似提示，原帖作者没有再更新。",
+    "story_en": "The original poster says they could not even sign in to Antigravity at first. After filing the suspension appeal they could sign in, but any model request, even a simple message, said the service was disabled for a terms-of-service violation, with no appeal link in the error. They said they had not connected Antigravity to third-party tools. On November 10 they asked whether the appeal covered this restriction or the restoration was still in progress. On November 11 a forum reply said suspensions cannot be reviewed, checked or reversed there: file the official form once from the affected account and do not file duplicates. Processing takes about 48 to 72 hours with no confirmation or status email, and approved access returns after fully signing out and back in. It added that reinstatement is a one-time exception and that organization accounts should go to their administrator. Other users later reported similar errors; the original poster did not update.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original post and a November 11 general response were readable. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "claude-github-110572",
@@ -150,10 +150,10 @@
     "source_published_at": "2026-11-17",
     "codename": "账号恢复后，Pro 续订仍被拒",
     "codename_en": "Pro renewal declined after account reinstatement",
-    "story": "原帖作者说，申诉后账号恢复了，11 月 16 日也收到了按比例退回的 Pro 费用。作者想用原来的银行卡重新订阅，付款却一直被拒。发卡行告诉作者，他们没收到这笔交易的授权请求。",
-    "story_en": "The original poster says the account was restored after an appeal, and a prorated Pro refund arrived on November 16. Resubscribing with the same card kept failing. Their bank said it had not received an authorization request.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original issue describes reinstatement, refund and attempts to pay again."
+    "story": "原帖作者说，自己人在美国，用美国发的 Visa 卡，11 月 15 日付 20 美元订了 Claude Pro。不久账号被自动审核停用，理由是支持国家政策。申诉后，安全团队恢复了账号并道歉。11 月 16 日，作者收到 19.80 美元的按比例退款。之后用同一张卡重新订阅 Pro，每次都提示卡被拒。作者核对过账单地址，试过无痕窗口，关掉扩展；发卡行说没收到任何扣款或授权请求。AI 客服只建议检查地址、清缓存、联系银行，说没办法查看或解除限制。作者怀疑是停用时留下的付款限制没有清掉，到 GitHub 请人核对。11 月 20 日，帖子以看起来和 Claude Code 无关为由关闭，没有看到解决结果。",
+    "story_en": "The original poster says they are in the US and paid $20 for Claude Pro on November 15 with a US-issued Visa. Soon after, an automated review disabled the account citing the supported countries policy. After an appeal, the Safeguards team reinstated it and apologized. On November 16 they received a prorated refund of $19.80. Since then every attempt to resubscribe with the same card has been declined. They checked the billing address and tried incognito with no extensions; the bank said it saw no charge or authorization request. The AI support agent only suggested checking the address, clearing the cache and contacting the bank, and said it could not look up or lift a block. The poster suspected a payment restriction left over from the suspension and asked on GitHub for a check. On November 20 the issue was closed as not appearing to be about Claude Code, with no resolution shown.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original issue describes reinstatement, refund and attempts to pay again. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "claude-reddit-1xxvuv5",
@@ -221,10 +221,10 @@
     "source_published_at": "2026-11-18",
     "codename": "Plus 登录 Codex 卡在手机验证",
     "codename_en": "Plus user stuck at Codex phone verification",
-    "story": "原帖作者说，自己订了 ChatGPT Plus，登录 Codex 时卡在了手机验证。填的是自己的号码，却一直提示无效。11 月 20 日，论坛支持回复说做了调整，让作者退出后用同一个账号再试。",
-    "story_en": "The original poster says they were on ChatGPT Plus and got stuck at phone verification when signing in to Codex. Their own number kept being marked invalid. On November 20 Singapore time, forum support said they made an adjustment and asked the poster to sign out and retry with the same account.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original account report and dated forum support reply.",
+    "story": "原帖作者说，自己的 ChatGPT Plus 账号用 Codex 时卡在手机验证。自己的号码试了很多次，朋友的号码也试过，每次都提示号码无效。客服机器人没能解决，作者 11 月 18 日到论坛求助。同一天有几个人说遇到一样的提示：有人说朋友的号码在别的账号上能用，到出问题的账号上就不行，订阅和免费账号都有；也有人改过号码格式、把 WhatsApp 换成短信，还是失败。11 月 20 日，论坛支持回复说已经做了调整：先退出 Codex，再用同一个账号登录，用同一个号码重试，仍失败再反馈。原帖作者没有再回帖说结果，帖子在 11 月 24 日关闭。",
+    "story_en": "The original poster says their ChatGPT Plus account was stuck at phone verification for Codex. Their own number, tried several times, and friends’ numbers were all marked invalid. The support bot did not help, so they asked on the forum on November 18. Several people reported the same message that day: one said friends’ numbers worked on other accounts but not on the affected ones, on both paid and free plans; another had corrected the number format and switched from WhatsApp to SMS without success. On November 20 Singapore time, forum support said a change had been made: sign out of Codex, sign back in with the same account, retry the same number, and report back if it still fails. The original poster did not post a result, and the thread closed on November 24.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original account report and dated forum support reply. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-20"
   },
   {
@@ -292,10 +292,10 @@
     "source_published_at": "2026-11-20",
     "codename": "升到 Ultra，仍显示入门额度",
     "codename_en": "Upgraded to Ultra, still on Starter quota",
-    "story": "原帖作者说，自己还在试用 Google AI Pro，后来付费升到了 Ultra。款已经扣了，但 Antigravity 桌面端和 CLI 都还是显示 Starter 额度。作者更新了客户端，也重新登录过，额度显示没变。",
-    "story_en": "The original poster says they paid to upgrade from a Google AI Pro trial to Ultra. The charge went through, but the Antigravity desktop app and CLI both still showed Starter quota. Updating the client and signing back in did not change it.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original account report describes the plan change, charge and troubleshooting."
+    "story": "原帖作者说，在 Google AI Pro 试用期内付费升到 Ultra，11 月 18 日已经扣款，但 Antigravity 桌面端和命令行一直显示 Starter 额度，只能看到 Gemini 3.8 Flash 和 Claude 4.6。更新客户端、撤销授权、等 15 分钟以上再登录都没用，Google One 支持也开了工单。11 月 24 日，论坛回复列出剩下的检查：确认付费的 Ultra 就在登录用的个人账号上，核对年龄验证和条款地区；在设置的模型页点刷新，再开一个新对话；请 Google One 支持清掉可能残留的试用记录。作者当天逐项核对：是个人账号，已完成年龄验证，条款地区是台湾，刷新和新对话之后额度还是 Starter。Google One 的工单已经升级，在等二线清理试用记录，帖里还没有结果。",
+    "story_en": "The original poster says they paid to upgrade from a Google AI Pro trial to Ultra, settled on November 18, but the Antigravity app and CLI stayed on Starter quota with only Gemini 3.8 Flash and Claude 4.6 visible. Updating the clients, revoking OAuth, waiting over 15 minutes and signing back in did not help, and a Google One support case was open. On November 24 a forum reply listed the remaining checks: confirm the paid Ultra plan is on the exact personal account used in Antigravity, with age and terms region verified; click refresh on the models settings page and start a new conversation; ask Google One support to clear any leftover trial record. The poster went through them the same day: personal account, age verified, terms region Taiwan, and still Starter after the refresh and new chat. The Google One case had been escalated and was waiting for Tier 2 to clear the trial record. The thread shows no result yet.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original account report describes the plan change, charge and troubleshooting. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "antigravity-forum-202911",
@@ -309,10 +309,10 @@
     "source_published_at": "2026-11-20",
     "codename": "申诉恢复后，隔天又停用",
     "codename_en": "Access disabled again a day after reinstatement",
-    "story": "原帖作者说，第一次申诉后，等了一天就恢复了。隔天打开 Antigravity，客户端又提示服务停用，同一个表单没法再提交。作者发帖时已经连续三天用不了，当天回帖时，付费账号还是进不去。",
-    "story_en": "The original poster says Antigravity access came back a day after the first appeal. The next day the client showed the same service-disabled notice, and the form could not be submitted again. They had been locked out for three days when they posted, and the paid account was still inaccessible in a reply later that day.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Bilingual original post and same-day follow-up from the author.",
+    "story": "原帖作者说，第一次申诉后一天，Antigravity 就恢复了。之后只在官方应用里用，隔天又出现同样的停用提示。发帖时已经三天进不去，申诉表也没法再提交。11 月 20 日，论坛回复说论坛没法复查或解除停用，贴报错编号也不会进入排队；每个账号只有一次申诉恢复的机会，所以恢复过的账号不能再交表，恢复后再次违规会永久停用。回复还建议检查 Google 账号权限，撤掉可能在后台发请求的第三方授权。作者当天回帖说，恢复后那一整天只用过官方应用；再次停用后按 Gemini 的建议清了数据，还是进不去，个人付费账号也找不到别的联系渠道。11 月 21 日作者又追问一次，帖里没有新的答复，也没有恢复的消息。",
+    "story_en": "The original poster says Antigravity came back a day after their first appeal. They then used only the official app, and the same notice returned the next day. When they posted they had been locked out for three days and the appeal form could no longer be submitted. On November 20 a forum reply said suspensions cannot be reviewed or reversed there and an Error ID does not enter a queue. Each account gets a single appeal remediation, which is why the form cannot be sent again after a reinstatement, and repeat violations lead to a permanent suspension. It also suggested removing third-party permissions that could generate background requests. The poster replied that they had used only the official app for that whole day, had cleared their data on Gemini’s advice without success, and had no other channel as a personal paying user. They followed up on November 21; the thread shows no further answer or reinstatement.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Bilingual original post and same-day follow-up from the author. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-20"
   },
   {
@@ -327,10 +327,10 @@
     "source_published_at": "2026-11-08",
     "codename": "Pro 订阅有效，登录却提示地区受限",
     "codename_en": "Active Pro plan, region error at sign-in",
-    "story": "原帖作者说，在 Mac 上用自己的 Gmail 登录 Antigravity，Google AI Pro 订阅还有效，客户端却提示所在地区不可用。11 月 9 日，有人在论坛给了检查账号地区的步骤和订阅支持入口。",
-    "story_en": "The original poster says they signed in to Antigravity on a Mac with a personal Gmail account. Google AI Pro was still active, but the client said it was not available in their region. On November 9, someone on the forum replied with steps to check the account region and a link to subscription support.",
-    "reviewed_at": "2026-11-20",
-    "evidence": "Original sign-in report and dated troubleshooting reply."
+    "story": "原帖作者说，刚订了 Google AI Pro，想在 Mac 上用 Antigravity 2.29.0，用个人 Gmail 登录却提示账号不符合条件，所在地区不可用。作者问这是资格、地区、年龄验证还是技术问题，付费用户有什么选择。11 月 9 日，论坛回复说，可能是网络所在地不在支持列表，也可能是 Google 账号或付款资料的国家不受支持，或者 18 岁以上的年龄验证没完成；订阅有效也不能跳过地区检查。回复给出的核对项有：更新到 2.29.1，看自己所在地是否在支持国家页上，核对条款页的国家版本和付款资料的国家，完成年龄验证，用只登录一个账号的窗口再试。确实在不支持地区的，论坛没法放行，可以找 Google One 支持处理订阅或退款。原帖作者没有再回帖。",
+    "story_en": "The original poster says they had just subscribed to Google AI Pro to use Antigravity 2.29.0 on a Mac, but signing in with a personal Gmail said the account was ineligible because Antigravity was not available in their location. They asked whether this was eligibility, region, age verification or a technical fault, and what options paying users have. On November 9 a forum reply said the network location may be outside the supported list, the Google Account or payments profile country may be unsupported, or 18+ age verification may be incomplete; an active subscription does not bypass regional checks. It listed these checks: update to 2.29.1, see whether your physical location is on the supported countries page, check the country version on the terms page and the payments profile country, complete age verification, and retry in a window signed in to one account. Forum staff cannot override regional limits; those in unsupported regions can contact Google One Support about the subscription or a refund. The poster did not reply.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original sign-in report and dated troubleshooting reply. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted."
   },
   {
     "key": "claude-reddit-1y1chb9",
@@ -380,10 +380,10 @@
     "source_published_at": "2026-11-22",
     "codename": "第一条消息就提示停用，申诉等了三天",
     "codename_en": "Antigravity disabled on the first message, appeal pending after three days",
-    "story": "原帖作者说，11 月 18 日第一次安装并登录 Antigravity，发第一条消息就收到服务停用的提示，当天填了官方申诉表。到 11 月 22 日发帖时，已经等了超过 72 小时，还是不能用。",
-    "story_en": "The original poster says they installed Antigravity and signed in for the first time on November 18. The very first message returned a service suspension notice, and they filled out the official appeal form that day. By November 22, when they posted, more than 72 hours had passed without access.",
-    "reviewed_at": "2026-11-22",
-    "evidence": "Original forum post states the first use, appeal timing and access status.",
+    "story": "原帖作者说，11 月 18 日第一次下载并登录 Antigravity，发出的第一条消息就被告知服务因违反服务条款停用。作者说没有把这个 Google 账号接到第三方工具去访问 Antigravity，也没有故意滥用，当天填了官方申诉表。11 月 22 日发帖时已经超过 72 小时，还是不能用，作者问该怎么跟进。11 月 23 日，论坛回复说论坛没法复查、催办、查进度或解除停用，也没有私下的支持渠道；交过表就不要重复提交，自动处理大约 48 到 72 小时，排队多时会更久，不发确认或进度邮件，获批后下次登录自动恢复，每个账号只有一次申诉恢复机会。回复还建议重新登录前到 Google 账号权限页删掉不认识的第三方授权。帖里没有作者的后续。",
+    "story_en": "The original poster says they downloaded Antigravity and signed in for the first time on November 18, and the very first message returned a terms-of-service suspension. They said they had not connected the Google account to third-party tools for Antigravity or knowingly misused it, and filed the official form that day. By November 22, more than 72 hours later, access was still disabled and they asked how to follow up. On November 23 a forum reply said moderators cannot review, expedite, check or reverse suspensions and there is no private support channel. Do not file duplicates; automated processing takes about 48 to 72 hours, sometimes longer, with no confirmation or status email. If approved, access returns at the next sign-in, and each account gets one appeal remediation. It also suggested removing unrecognized third-party access from Google Account permissions before signing back in. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original forum post states the first use, appeal timing and access status. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-22"
   },
   {
@@ -470,10 +470,10 @@
     "source_published_at": "2026-11-22",
     "codename": "Pro 仍有效，Antigravity 命令行提示停用",
     "codename_en": "Antigravity CLI disabled with an active Pro subscription",
-    "story": "原帖作者说，自己的 Google AI Pro 订阅还有效，但在 Linux 上打开官方 Antigravity 命令行就报 403，提示服务因条款限制停用。作者填过一次官方申诉表，Google One 客服让作者来论坛反馈，说后台团队还在调查。发帖时，命令行仍然用不了。",
-    "story_en": "The original poster says Google AI Pro was still active, but the official Antigravity CLI on Linux returned a 403 saying access was disabled under the terms of service. They submitted the official appeal form once. Google One support asked them to post on the forum while the team investigated. The CLI was still unavailable when they posted.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "The original forum post identifies the official Linux CLI, active Google AI Pro plan, appeal already sent, and support referral. The forum's original post timestamp is 2026-11-22T11:38:10Z.",
+    "story": "原帖作者说，Google AI Pro 订阅还有效，但在 Linux 上用官方 Antigravity 命令行 agy 报 403，提示因服务条款停用。官方申诉表交过一次，Google One 客服让作者到论坛反馈，说后台团队还在查。作者清掉了 ~/.antigravity 和 ~/.gemini 两个本地缓存目录，说本机没装第三方封装或代理。11 月 23 日，论坛回复说论坛没法复查账号、查申诉进度或解除停用，贴报错编号或 Google One 工单号也不会加快；不用重复提交，自动复查一般 48 到 72 小时，排队多时会延长，不发确认或进度邮件；符合一次性申诉规定并获批的，下次登录 agy 会自动恢复。回复还建议检查 Google 账号里的第三方授权，账单和订阅问题继续找 Google One。帖里没有恢复的消息。",
+    "story_en": "The original poster says Google AI Pro was still active, but the official Antigravity CLI (agy) on Linux returned a 403 terms-of-service suspension. They had filed the official form once, and Google One support advised posting on the forum while the backend team investigated. They cleared the ~/.antigravity and ~/.gemini caches and said no third-party wrappers or proxies were installed. On November 23 a forum reply said accounts cannot be reviewed there, appeal status cannot be checked, and an Error ID or Google One case number does not speed things up. Do not resubmit; automated review typically takes 48 to 72 hours, longer when the queue is high, with no confirmation or status email. If approved under the one-time policy, access returns at the next agy sign-in. It suggested checking third-party OAuth access and taking billing questions to Google One. The thread shows no reinstatement.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The original forum post identifies the official Linux CLI, active Google AI Pro plan, appeal already sent, and support referral. The forum's original post timestamp is 2026-11-22T11:38:10Z. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-22"
   },
   {
@@ -506,10 +506,10 @@
     "source_published_at": "2026-11-22",
     "codename": "Claude 申诉被拒，客服邮件又指回申诉表",
     "codename_en": "Claude appeal rejected, support pointed back to the same form",
-    "story": "原帖作者说，平时用 Claude Code 做自己的开发项目。账号停用后填了官方申诉表，收到的拒绝回复没说具体原因。作者又发邮件联系支持，自动回复又指回同一张表。客服对话随后关闭，作者就到 GitHub 发帖请求人工复核。",
-    "story_en": "The original poster says they used Claude Code for their own development projects. After the suspension they submitted the official appeal form and got a rejection without a specific reason. An automated reply to their support email pointed back to the same form. The support conversation was then closed, so they asked for a human review on GitHub.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "The GitHub issue's first-person account records the official appeal rejection, automated redirection, and support conversation closure. GitHub lists the original publication at 2026-11-22T02:58:03Z.",
+    "story": "原帖作者说，平时在 Ubuntu/Debian 上的 VS Code 终端里用 Claude Code 做自己的开发项目。账号被自动系统停用，作者认为是误判。官方申诉表被自动拒绝，没说具体原因；给安全和隐私邮箱写信，自动回复又指回同一张表；AI 客服关掉工单，说这个对话不再有人看。作者说愿意配合任何验证，证明自己是真人，11 月 22 日到 GitHub 请求人工复核。11 月 25 日，另一位用户在帖里补充：自己的账号在一段技术对话发出第二条消息后马上被停用，申诉页会跳回新对话，唯一一次提交成功的申诉也被自动拒绝，没有理由；这位用户说不清楚是什么触发的。到 11 月 25 日整理时，帖子仍开着，没有官方回复。",
+    "story_en": "The original poster says they used Claude Code for their own projects in the VS Code terminal on Ubuntu/Debian. An automated system suspended the account, which they believe was a false positive. The official form auto-rejected the appeal without a specific reason, emails to the safety and privacy addresses returned automated replies pointing to the same form, and the AI agent closed the ticket saying the conversation was no longer monitored. They offered any verification to prove they are human and asked on GitHub on November 22 for a human review. On November 25 another user added that their account was suspended right after the second message of a technical conversation, that the appeal page redirected to a new chat, and that the one appeal they managed to file was auto-rejected without a reason; they did not know the trigger. As of November 25 the issue was open with no official reply.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The GitHub issue's first-person account records the official appeal rejection, automated redirection, and support conversation closure. GitHub lists the original publication at 2026-11-22T02:58:03Z. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-22"
   },
   {
@@ -524,10 +524,10 @@
     "source_published_at": "2026-11-23",
     "codename": "Antigravity 两次申诉后仍未恢复",
     "codename_en": "Antigravity still disabled after two appeals",
-    "story": "原帖作者说，用 Antigravity 官方桌面版做日常开发，付费订阅还有效。11 月 17 日，客户端提示账号已无法使用 Antigravity。作者在 18 日用受影响的账号提交申诉，没收到回复，21 日又提交了一次。到 23 日发帖时还是用不了，也没有收到回复。",
-    "story_en": "The original poster says they used the official Antigravity desktop app for everyday development with an active paid subscription. On November 17, the app said Antigravity had been disabled for the account. They appealed from the affected account on November 18 and followed up on November 21 after hearing nothing. When they posted on November 23, there was still no access or reply.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "The original forum post lists the suspension and both appeal dates, an active paid subscription without naming its tier, and no response at the time of publication. The forum timestamps the original post at 2026-11-23T01:28:16Z.",
+    "story": "原帖作者说，只用官方 Antigravity 桌面版做日常开发，付费订阅有效，从没用过第三方客户端、封装、代理、额度监控或自动脚本。11 月 17 日客户端提示因违反服务条款停用。作者 18 日用受影响的账号申诉，没有回音，21 日又交了一次；也查过 Google 账号权限，没有第三方工具拿着 Antigravity 的授权。11 月 23 日发帖时是停用的第六天。当天论坛回复说没法查申诉记录、催办或解除停用，请不要再重复提交；自动复查一般 48 到 72 小时，积压时会更久，不发确认或结果邮件，批准了退出再登录就能用，没批准则一直是 403。回复还说每个账号只有一次申诉恢复机会，订阅问题找 Google One。帖里没有作者的后续。",
+    "story_en": "The original poster says they used only the official Antigravity desktop app for everyday development with an active paid subscription, and never third-party clients, wrappers, proxies, quota monitors or scripts. On November 17 the app said the service was disabled for a terms-of-service violation. They appealed from the affected account on November 18, heard nothing and appealed again on November 21. Google Account permissions showed no third-party tool with Antigravity access. They posted on November 23, day six. A forum reply that day said appeal records cannot be checked or expedited there and asked them not to submit more duplicates. Automated reviews typically take 48 to 72 hours, longer with backlogs, with no confirmation or decision email. If approved, access returns after signing out and back in; otherwise the 403 stays. Each account gets one appeal remediation, and subscription questions go to Google One. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The original forum post lists the suspension and both appeal dates, an active paid subscription without naming its tier, and no response at the time of publication. The forum timestamps the original post at 2026-11-23T01:28:16Z. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -560,10 +560,10 @@
     "source_published_at": "2026-11-23",
     "codename": "Antigravity 恢复后没再用，账号又停用",
     "codename_en": "Antigravity access disabled again before it was used",
-    "story": "原帖作者说，Antigravity 账号第一次停用后，申诉成功了。恢复后还没用过 Antigravity，就发现这个账号再次提示服务停用。作者不知道这次是怎么回事，11 月 23 日用另一个账号发帖，请求人工复查。",
-    "story_en": "The original poster says Antigravity access came back after a first appeal. Before using Antigravity again, they found the same account disabled a second time. They did not know why, and posted from another account on November 23 to request a manual review.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "The author's original forum post confirms the prior reinstatement, no use before discovering the second suspension, and a request for manual review. It gives no incident date or tier and does not report filing a second appeal through the form. The post was published at 2026-11-23T04:47:29Z.",
+    "story": "原帖作者说，名下另一个 Google 账号的 Antigravity 曾被停用，申诉后恢复。恢复以后还没再用过 Antigravity，就发现第二次被停用，不知道原因。受影响的账号注册论坛时提示同一网络的注册数已到上限，作者只好用现有账号在 11 月 23 日发帖，请人工复查，并问能走什么私下渠道证明账号归属。当天论坛回复说，论坛不能复查账号、查报错编号，也不处理归属验证和申诉；每个个人账号只有一次申诉恢复机会，恢复后第二次停用就是永久的。回复还提到，就算没有手动打开 Antigravity，没清掉的第三方工具、代理或授权也可能在后台发请求，触发再次违规；个人套餐也不支持自动轮换账号。帖里没有作者的后续。",
+    "story_en": "The original poster says another Google account they own had been suspended from Antigravity and restored after an appeal. Before using Antigravity again they found it suspended a second time and did not know why. They could not register a forum profile for that account because registrations from their IP had reached the limit, so they posted from an existing profile on November 23, asking for a manual review and a private way to verify ownership. A forum reply that day said accounts cannot be reviewed, Error IDs looked up, or ownership and appeals handled there. Each personal account gets one appeal reinstatement, and a second suspension after that is permanent. It added that leftover third-party tools, proxies or authorizations can send background traffic even without opening Antigravity, and that automated account rotation is not supported on consumer plans. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The author's original forum post confirms the prior reinstatement, no use before discovering the second suspension, and a request for manual review. It gives no incident date or tier and does not report filing a second appeal through the form. The post was published at 2026-11-23T04:47:29Z. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -578,10 +578,10 @@
     "source_published_at": "2026-11-23",
     "codename": "刚买 Ultra，Antigravity 第一次就打不开",
     "codename_en": "Antigravity disabled before a new Ultra subscriber could use it",
-    "story": "原帖作者说，刚订了 Google AI Ultra，在 Mac 上打开 Antigravity 就看到服务已停用的提示，一次也没用上。11 月 20 日填了官方申诉表。后来作者撤销了第三方应用的授权，清掉本地缓存。过了 72 小时再登录官方客户端，还是同一个提示。11 月 23 日，作者去论坛请求人工复查。",
-    "story_en": "The original poster says they had just subscribed to Google AI Ultra when Antigravity on a Mac said access was disabled, and they never got to use it. They filed an appeal on November 20, then revoked third-party app permissions and cleared the local cache. More than 72 hours later, the official client still showed the same message. On November 23 they asked for a manual review on the forum.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "Topic created at 2026-11-23T07:10:52Z. The original post gives the tier, appeal date and unsuccessful sign-in after 72 hours. It does not date the initial disabling. No follow-up from the author was present at review.",
+    "story": "原帖作者说，刚订 Google AI Ultra，在苹果芯片的 Mac 上打开 Antigravity 就看到服务停用的提示，一次也没用上，也没收到说明原因的邮件。11 月 20 日填了官方申诉表，只交了一次。之后撤销了第三方授权，清掉两个本地缓存目录，只用官方客户端验证；等过 72 小时重新登录，还是同一个提示。11 月 23 日作者去论坛请求转交复查团队。当天论坛回复说没法通过私信查账号、查排队、催办或解除限制；处理一般 48 到 72 小时，排队多时更久，确认、进度和拒绝都不发邮件，获批后退出再登录会自动恢复，账单和订阅问题找 Google One。11 月 24 日，作者回帖说仍然打不开，提示没有变。",
+    "story_en": "The original poster says they had just subscribed to Google AI Ultra when Antigravity on an Apple silicon Mac said the service was disabled. They never got to use it and received no email with a reason. They filed the official form once on November 20, then revoked third-party permissions, cleared two local cache directories and tested only the official client. After 72 hours the same message appeared. On November 23 they asked the forum to escalate. A reply that day said accounts cannot be looked up by direct message, and queue status, expediting and lifting restrictions are not available there. Processing typically takes 48 to 72 hours, sometimes longer, and no confirmation, status or denial email is sent. If approved, access returns after signing out and back in; billing questions go to Google One. On November 24 the poster replied that it still did not work and the message was unchanged.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Topic created at 2026-11-23T07:10:52Z. The original post gives the tier, appeal date and unsuccessful sign-in after 72 hours. It does not date the initial disabling. No follow-up from the author was present at review. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -596,10 +596,10 @@
     "source_published_at": "2026-11-23",
     "codename": "Antigravity 停用，Gemini 桌面端仍能用",
     "codename_en": "Gemini Desktop still worked after Antigravity was disabled on a Pro account",
-    "story": "原帖作者说，Google AI Pro 订阅还有效，Gemini 桌面端也能用，可用同一个账号打开 Antigravity，看到的却是违反条款、服务已停用的提示。作者平时用官方桌面客户端学东西、做机器人开发，已经填了官方申诉表，11 月 23 日又到论坛请人复查。",
-    "story_en": "The original poster says Google AI Pro was active and Gemini Desktop still worked, but Antigravity on the same account said the service was disabled for a terms violation. They used the official desktop client for personal learning and robotics projects, submitted the appeal form, and asked for a review on the forum on November 23.",
-    "reviewed_at": "2026-11-23",
-    "evidence": "Topic created at 2026-11-23T12:57:07Z. The original post distinguishes working Gemini Desktop from disabled Antigravity access and confirms a formal appeal. The incident date was not disclosed; no subsequent posts were present at review.",
+    "story": "原帖作者说，Google AI Pro 订阅还有效，同一个 Google 账号用 Gemini 桌面端没有问题，打开 Antigravity 却提示违反服务条款、服务已停用。作者平时只用官方 Antigravity 桌面客户端学东西、做机器人开发，说没有滥用，也没用自动脚本或第三方封装，认为是误判。官方申诉表已经提交，11 月 23 日又到论坛请求复查。到 11 月 25 日整理时，帖子下面没有回复。",
+    "story_en": "The original poster says Google AI Pro was active and Gemini Desktop worked on the same Google account, but Antigravity said the service was disabled for a terms-of-service violation. They used only the official Antigravity desktop client for personal learning and robotics development, with no abuse, automated scripts or third-party wrappers, and believed it was a false positive. They had submitted the official appeal form and asked the forum for a review on November 23. As of November 25 the thread had no replies.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Topic created at 2026-11-23T12:57:07Z. The original post distinguishes working Gemini Desktop from disabled Antigravity access and confirms a formal appeal. The incident date was not disclosed; no subsequent posts were present at review. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -632,10 +632,10 @@
     "source_published_at": "2026-11-24",
     "codename": "先碰到额度限制，几天后 Antigravity 提示停用",
     "codename_en": "Antigravity hit a quota limit, then showed a suspension days later",
-    "story": "原帖作者说，11 月 9 日 Google 账号两次停用，两次都恢复了。15 日到 18 日还能用 Antigravity，遇到的是额度用完的 429 提示。到了 23 日，提示变成了 403，说账号因违反条款被停用。作者撤掉了本地代理配置，填了官方申诉表，又去论坛请求人工复查。",
-    "story_en": "The original poster says their Google account was disabled twice on November 9 and restored both times. From November 15 to 18 they could still use Antigravity and got a 429 when quota ran out. On November 23 the message became a 403 saying access was disabled for a terms violation. They removed a local proxy setup, submitted the appeal form and asked for a manual review on the forum.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "The original topic was published at 2026-11-23T16:07:47Z (November 24 in Singapore). The author explicitly dates the earlier Google account restorations, the quota-only period and the new Antigravity suspension on November 23. They report filing the official appeal; no later decision or plan was disclosed.",
+    "story": "原帖作者说，11 月 9 日 Google 账号被停用两次，每次两个多小时后恢复：一次是 05:27 到 07:43，一次是 08:48 到 11:06。15 日到 18 日 Antigravity 正常，只遇到过额度用完的 429。23 日没有预先通知，突然变成 403，提示因违反服务条款停用。作者说清楚用第三方软件或代理访问 Antigravity、Gemini CLI 违反条款，已经停用并删掉本地代理配置，以后只用官方客户端，需要自动化就用 AI Studio 的 API 密钥。官方申诉表已经提交，又到论坛请求人工复查。到 11 月 25 日整理时，帖子下面没有回复。",
+    "story_en": "The original poster says their Google account was disabled twice on November 9 and restored a little over two hours later each time: 05:27–07:43 and 08:48–11:06. From November 15 to 18 Antigravity worked, with only a 429 when quota ran out. On November 23, without notice, it became a 403 saying access was disabled for a terms-of-service violation. They said they understand that accessing Antigravity or Gemini CLI through third-party software or proxies violates the terms, had removed their local proxy setups, and would use the official client or an AI Studio API key for automation. They submitted the official appeal form and asked for a manual review. As of November 25 the thread had no replies.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The original topic was published at 2026-11-23T16:07:47Z (November 24 in Singapore). The author explicitly dates the earlier Google account restorations, the quota-only period and the new Antigravity suspension on November 23. They report filing the official appeal; no later decision or plan was disclosed. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-24"
   },
   {
@@ -686,10 +686,10 @@
     "source_published_at": "2026-11-24",
     "codename": "Antigravity 停用，申诉约五次还没收到答复",
     "codename_en": "About five Antigravity appeals without a reply",
-    "story": "原帖作者说，偶尔用 Antigravity 做自己的项目。后来账号上出现了违反条款、服务已停用的提示。作者提交过大约五次申诉，一直没收到答复，停用了第三方工具，到论坛请求人工复查，发帖时还没能恢复访问。",
-    "story_en": "The original poster says they used Antigravity occasionally for personal projects, then got a message that access had been disabled for a terms violation. They sent about five appeals without a reply, stopped using third-party tools and asked for a manual review on the forum. Access had not returned when they posted.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "Original topic posted at 2026-11-23T21:37:49Z (November 24 in Singapore). The author reports a disablement, about five appeals, no response and a request for manual review. No tier or incident date given. At review the topic contained only the original post.",
+    "story": "原帖作者说，偶尔用 Antigravity 做自己的项目，没有滥用或大量自动操作，后来账号提示因违反服务条款停用。作者交了大约五次申诉，没收到任何答复；说如果自己的设置有不合条款的地方，也不是故意的，已经停用第三方工具，以后只用官方应用。11 月 24 日，论坛回复说没法复查、催办、查进度或解除停用，贴报错编号也不会进入排队；不要重复提交申诉，重复提交不会加快，处理大约 48 到 72 小时，不发邮件，符合条件并获批的下次登录自动恢复。回复还说每个账号只有一次申诉恢复机会；想在第三方编程工具里用 Gemini，应该用 AI Studio 或 Vertex AI 的 API 密钥，不要用 Antigravity 登录。帖里没有作者的后续。",
+    "story_en": "The original poster says they used Antigravity sporadically for personal projects, without abuse or heavy automation, and then saw a terms-of-service suspension. They had submitted about five appeals without any response. They said any non-compliant setup was unintentional, that they had stopped using third-party tools and would use only the official app. On November 24 a forum reply said suspensions cannot be reviewed, expedited, checked or reversed there and an Error ID does not enter a queue. Duplicate forms do not speed up review; processing takes about 48 to 72 hours with no email, and approved access returns at the next sign-in. Each account gets one appeal remediation. To use Gemini in third-party coding agents, use an AI Studio or Vertex AI API key rather than an Antigravity login. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original topic posted at 2026-11-23T21:37:49Z (November 24 in Singapore). The author reports a disablement, about five appeals, no response and a request for manual review. No tier or incident date given. At review the topic contained only the original post. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-24"
   },
   {
@@ -704,10 +704,10 @@
     "source_published_at": "2026-11-24",
     "codename": "Antigravity 首次停用，申诉一周后重新登录仍报错",
     "codename_en": "A week after a first Antigravity appeal, signing in again still didn’t work",
-    "story": "原帖作者说，自己订的是 Google AI Pro，第一次遇到 Antigravity 提示服务已停用。作者之前用过命令行的非交互模式，看到提示后停了这些任务，检查了本机的后台脚本和 Google 账号权限。通过官方表单提交了一次申诉，等了超过一周，又试了几次退出再登录，每次还是同一个停用提示，只好到论坛请工作人员帮忙查一下进度。",
-    "story_en": "The original poster says they have Google AI Pro and this was the first time Antigravity said access had been disabled. They had used the CLI in non-interactive mode, stopped those jobs, and checked background scripts and Google Account permissions. They sent one appeal through the official form. More than a week later, signing out and back in several times still showed the same message, so they asked on the forum whether someone could check the appeal.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "Original post published at 2026-11-24T02:55:44Z (10:55 in Singapore). Subscriber describes a first suspension, one official appeal and repeat sign-in attempts with the restriction still in place. Precise incident date and the platform’s reason for the restriction are unknown. No later posts in the topic at review.",
+    "story": "原帖作者说，自己订的是 Google AI Pro，第一次遇到 Antigravity 因违反服务条款停用。作者认为是用了命令行的非交互模式 agy -p 引起的，于是停掉这些任务，检查了本机环境和 Google 账号权限，以后只用官方客户端交互使用。官方申诉表只交了一次，等了一周多，多次退出再登录都没恢复，11 月 24 日发帖请人查进度。当天论坛回复说没法查进度、催办或解除停用；自动复查一般 48 到 72 小时，不发确认或结果邮件，Google One 也查不了 Antigravity 的停用状态；获批会在重新登录后恢复，过了复查时间仍不能用，就是没有恢复。回复还说，直接用 agy -p 写脚本是支持的，个人套餐不支持的是用第三方工具包装 agy 或自动轮换账号。帖里没有作者的后续。",
+    "story_en": "The original poster says they have Google AI Pro and this was their first Antigravity suspension. They believed it followed their use of agy -p, the headless CLI mode, so they stopped those jobs, checked their environment and Google Account permissions, and planned to use the official clients interactively. They filed the official form once, waited over a week and signed out and in several times without recovery, then posted on November 24. A forum reply that day said status cannot be checked or suspensions lifted there. Automated review typically takes 48 to 72 hours with no confirmation or decision email, and Google One cannot check Antigravity suspensions. Approved appeals restore access after signing back in; if access is still disabled past the review window, the account has not been reinstated. It added that direct agy -p scripting is supported, while wrapping agy in third-party agents or automating account rotation is not supported on consumer plans. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original post published at 2026-11-24T02:55:44Z (10:55 in Singapore). Subscriber describes a first suspension, one official appeal and repeat sign-in attempts with the restriction still in place. Precise incident date and the platform’s reason for the restriction are unknown. No later posts in the topic at review. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-24"
   },
   {
@@ -740,10 +740,10 @@
     "source_published_at": "2026-11-24",
     "codename": "用 Claude Code 写雨景渲染器时被停用",
     "codename_en": "Account suspended while building a rain renderer with Claude Code",
-    "story": "原帖作者说，正用 Claude Code 写一个 C++ 和 CUDA 的雨景渲染器，写到一半账号被停用了。作者在 10 月 25 日提交申诉，到 11 月 23 日还在等，换了一个编程助手继续做，也想给原申诉补一段项目说明，但一直没找到入口。",
-    "story_en": "The original poster says the account was suspended while they were building a rain renderer in C++ and CUDA with Claude Code. They filed an appeal on October 25 and were still waiting on November 23. They switched to another coding assistant to keep working, and could not find a way to add an explanation of the project to the existing appeal.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "Original GitHub issue published 2026-11-23T20:18:20Z (November 24 in Singapore). The feature request includes a firsthand suspension, appeal date and dated status. No incident date or subscription tier stated; no comments at review.",
+    "story": "原帖作者说，在 Windows 11 上用 Claude Code 写一个 C++20 和 CUDA 的雨景特效渲染器，写的过程中账号被停用。10 月 25 日提交的申诉，到 11 月 23 日还没有结果；其间换了另一个编程助手继续做，但没法给原来的申诉补充技术说明。作者在 GitHub 提了一条功能建议：会话涉及物理或渲染计算时，经用户同意附上项目背景，供安全审核和误判复查参考；已经提交的申诉也能补一段项目说明或删去敏感内容的片段，并确认已收到。作者还请维护者把自己的申诉转给安全团队。到 11 月 25 日整理时，帖子仍开着，没有回复。",
+    "story_en": "The original poster says their account was suspended while they were using Claude Code on Windows 11 to build a rain effects renderer in C++20 and CUDA. The appeal they filed on October 25 was still pending on November 23. They continued with another coding agent, but had no way to add technical context to the existing appeal. Their GitHub feature request suggests letting user-approved project context accompany safeguard reviews when a session involves physics or rendering math, and letting people add a short description or redacted excerpt to an existing appeal and confirm it was received. They also asked a maintainer to route their appeal to the Safeguards team. As of November 25 the issue was open with no replies.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Original GitHub issue published 2026-11-23T20:18:20Z (November 24 in Singapore). The feature request includes a firsthand suspension, appeal date and dated status. No incident date or subscription tier stated; no comments at review. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-24"
   },
   {
@@ -794,10 +794,10 @@
     "source_published_at": "2026-11-19",
     "codename": "申诉约 66 小时后恢复使用",
     "codename_en": "Access restored about 66 hours after appeal",
-    "story": "原帖作者说，11 月 19 日到论坛求助时，Antigravity 已停用，提交申诉也已超过 48 小时。11 月 20 日，作者回到同一帖子确认，申诉约 66 小时后已恢复使用。",
-    "story_en": "The original poster says that by November 19 they had waited over 48 hours for an appeal about suspended Antigravity access. On November 20 they returned to the thread and confirmed that access had been restored about 66 hours after they appealed.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "Recovery reported by the original poster: https://discuss.ai.google.dev/t/202508/2 . Exact suspension date and plan not stated.",
+    "story": "原帖作者说，Antigravity 提示因违反服务条款停用。作者说自己没用过未授权的代理、封装或自动化工具，认为是受以前家庭群组里另一名成员牵连，已经解散了家庭群组。申诉表里没有地方说明这种情况，11 月 19 日发帖时提交申诉已超过 48 小时，作者请求转人工复查。11 月 20 日，作者回帖说申诉约 66 小时后恢复。随后论坛回复补充：自动处理一般 48 到 72 小时，不发确认或进度邮件，符合条件的账号登录时自动恢复，不需要在论坛催办；每个账号只有一次申诉恢复机会，再次违规会永久停用；建议再检查一遍 Google 账号里的第三方授权，第三方编程工具改用 API 密钥。",
+    "story_en": "The original poster says Antigravity was disabled for a terms-of-service violation. They said they had never used unauthorized proxies, wrappers or automation, believed they were affected by another member of a former family group, and had dissolved that group. The appeal form has no place to explain this. On November 19, more than 48 hours after appealing, they asked for a manual review. On November 20 they replied that access was restored about 66 hours after the appeal. A forum reply then added that automated processing typically takes 48 to 72 hours with no confirmation or status email, that eligible accounts are restored at sign-in, and that forum escalation is not needed. Each account gets one appeal remediation and repeat violations lead to a permanent suspension. It suggested rechecking third-party OAuth connections and using an API key for third-party coding agents.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Recovery reported by the original poster: https://discuss.ai.google.dev/t/202508/2 . Exact suspension date and plan not stated. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-20"
   },
   {
@@ -812,10 +812,10 @@
     "source_published_at": "2026-11-23",
     "codename": "两次提交申诉，登录仍提示 403",
     "codename_en": "Two appeals submitted, sign-in still returns 403",
-    "story": "原帖作者说，从 11 月 16 日起，打开 Antigravity 就遇到 403 错误，提示服务因违反条款而停用。作者在 17 日和 20 日各提交了一次申诉，两次都看到将在 24 到 72 小时内审核的提示。到 23 日发帖时，仍未收到结果邮件，也没能恢复使用。",
-    "story_en": "The original poster says Antigravity started returning a 403 terms-of-service error on November 16. They submitted the appeal form on November 17 and again on November 20. Both times the form indicated a 24-to-72-hour review. As of their November 23 post, they still had no decision email and could not access the service.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "Dates and two confirmation messages reported in the first post. No official decision in the source.",
+    "story": "原帖作者说，从 11 月 16 日起打开 Antigravity 就是 403，提示违反服务条款。作者说只用官方 IDE 和命令行，用自己的登录，没有第三方工具或代理。17 日和 20 日各交了一次申诉，两次的确认页都写 24 到 72 小时内审核。到 23 日发帖时没有恢复，也没有邮件，作者想知道申诉到底有没有在排队。当天论坛回复说论坛查不了申诉进度和排队记录，发帖或贴报错编号不会排进复查；没有查询页面，也不发确认或结果邮件，自动处理一般 48 到 72 小时，积压时会更久，请不要重复提交。批准了退出再登录就能用，没批准则一直是 403；每个账号只有一次申诉恢复机会。帖里没有作者的后续。",
+    "story_en": "The original poster says Antigravity had returned a 403 terms-of-service error since November 16. They said they used only the official IDE and CLI with their own login, with no third-party tools or proxies. They appealed on November 17 and again on November 20, and both confirmation pages said review within 24–72 hours. By November 23 there was no restoration or email, and they asked whether the appeal was actually in the queue. A forum reply that day said appeal status and queue records cannot be looked up, and posting or sharing an Error ID does not queue a review. There is no status portal and no confirmation or decision email; processing typically takes 48 to 72 hours, longer with backlogs, and duplicates should be avoided. If approved, access returns after signing out and in; otherwise the 403 stays. Each account gets one appeal remediation. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "Dates and two confirmation messages reported in the first post. No official decision in the source. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -830,10 +830,10 @@
     "source_published_at": "2026-11-24",
     "codename": "AI Pro 仍有效，Antigravity 登录报停用",
     "codename_en": "Active AI Pro subscription, Antigravity sign-in disabled",
-    "story": "原帖作者说，Google AI Pro 订阅仍然有效，但每次登录 Antigravity 都遇到 403 错误，提示服务已停用。作者在 11 月 24 日提交了申诉，也清除了本地会话，重新登录时依然报错。发帖时还没收到申诉回执。",
-    "story_en": "The original poster says their Google AI Pro subscription was active, but each attempt to sign in to Antigravity returned a 403 saying the service had been disabled. They appealed on November 24. Clearing the local session and signing back in produced the same error. They had received no acknowledgment when they posted.",
-    "reviewed_at": "2026-11-24",
-    "evidence": "The later forum reply is not an update from the account holder. Suspension date and outcome not specified.",
+    "story": "原帖作者说，Google AI Pro 订阅有效，也是 Google Developer Program 成员，用官方客户端做个人编程，但每次登录 Antigravity 都是 403，提示因违反服务条款停用。作者说没有滥用自动化，猜测是网络或代理路由造成的误判。最近一次申诉在 11 月 24 日提交，没收到确认或进度；还开了两步验证，检查了第三方授权，清掉本地会话再登录，都没用。作者说申诉表不给工单号，也查不到进度，问能不能请人工复查。当天论坛回复说不能查进度、转人工，也不收私信里的账号资料；申诉当天刚提交，请等待，不要重复提交，自动复查一般 48 到 72 小时，获批后退出再登录会自动恢复。帖里没有作者的后续。",
+    "story_en": "The original poster says they are an active Google AI Pro subscriber and Google Developer Program member using the official client for personal coding, but every Antigravity sign-in returned a 403 saying the service was disabled for a terms-of-service violation. They said there was no abusive automation and suspected a false positive from network or proxy routing. Their latest appeal was filed on November 24 with no confirmation or status. They enabled 2-Step Verification, reviewed third-party connections and cleared local sessions, without success. Since the form gives no ticket number or tracking, they asked for a manual review. A forum reply that day said status cannot be checked, reviews cannot be escalated and account details are not accepted by message. With the latest appeal filed that day, they should wait and avoid duplicates; review typically takes 48 to 72 hours and approved access returns after signing out and in. The poster has not updated the thread.",
+    "reviewed_at": "2026-11-25",
+    "evidence": "The later forum reply is not an update from the account holder. Suspension date and outcome not specified. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-24"
   },
   {
@@ -866,10 +866,10 @@
     "source_published_at": "2026-11-23",
     "codename": "升级 Ultra 20x 后发现 Antigravity 已停用",
     "codename_en": "Antigravity access blocked on first check after an Ultra 20x upgrade",
-    "story": "原帖作者说，为了提高 Antigravity 额度，付费升级到 Google AI Ultra 20x。付款后打开 Antigravity，服务提示账号因违反条款已被停用。此前没有收到停用通知。作者随即申诉，11 月 23 日发帖时，已等了超过 48 小时，仍没有答复。同日作者回帖补充，家庭群组成员也用不了 Antigravity。",
-    "story_en": "The original poster says they upgraded to Google AI Ultra 20x for higher Antigravity limits. On opening Antigravity after paying, they saw a terms-of-service suspension notice. They had received no warning and appealed immediately. More than 48 hours later, when they posted on November 23, they were still waiting for a reply. They added that members of their family group could not use Antigravity either.",
+    "story": "原帖作者说，两天多前付费升到 Google AI Ultra 20x，就是为了更高的 Antigravity 额度。付款后打开 Antigravity，马上看到因违反服务条款停用的提示。付费前没收到过任何警告或停用邮件，不知道账号受限。作者是计算机专业研究生，说只做正当的软件开发和学术研究。作者立即提交申诉，11 月 23 日发帖时超过 48 小时没有答复；随后补充，家庭群组成员也用不了 Antigravity，又不能因此停掉和他们共享的其他 Gemini 权益。当天论坛回复说没法查账号、查排队或解除限制，请不要重复提交，处理一般 48 到 72 小时，排队多时更久，不发邮件，获批后重新登录自动恢复；账单、家庭共享和订阅的问题找 Google One 支持。帖里没有恢复的消息。",
+    "story_en": "The original poster says they paid to upgrade to Google AI Ultra 20x over two days earlier for higher Antigravity limits. On opening Antigravity right after paying, they saw a terms-of-service suspension. They had received no warning or suspension email and did not know the account was restricted before subscribing. They are a computer science graduate student and said they only do legitimate software engineering and research. They appealed immediately; more than 48 hours later, on November 23, there was no reply. They added that family group members could not use Antigravity either, yet they could not stop sharing the other Gemini benefits. A forum reply that day said accounts and queue status cannot be looked up or restrictions lifted there, and asked them not to file duplicates. Processing generally takes 48 to 72 hours, sometimes longer, with no email, and approved access returns after signing back in. Billing, family sharing and subscription questions go to Google One Support. The thread shows no reinstatement.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First post 2026-11-23T07:01:31Z and same-author follow-up https://discuss.ai.google.dev/t/204134/2 at 07:03:43Z. The upgrade establishes when the restriction was discovered, not when it was imposed. Family access is reported by the original poster.",
+    "evidence": "First post 2026-11-23T07:01:31Z and same-author follow-up https://discuss.ai.google.dev/t/204134/2 at 07:03:43Z. The upgrade establishes when the restriction was discovered, not when it was imposed. Family access is reported by the original poster. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-23"
   },
   {
@@ -956,10 +956,10 @@
     "source_published_at": "2026-11-25",
     "codename": "Antigravity 再次停用，已申请人工复核",
     "codename_en": "Antigravity suspended again, user asks for a manual review",
-    "story": "原帖作者说，11 月 25 日，Antigravity 账号再次被停用，通知称违反了服务条款。作者平时用 T3 Code 开发，想知道这次具体是哪项操作触发了停用。提交官方申诉表后，作者在开发者论坛请求人工调查，并希望在确认误判后恢复访问。",
-    "story_en": "The original poster says their Antigravity account was suspended again on November 25. The notice cited a terms-of-service violation. The author used T3 Code for development and wanted to know which activity triggered the decision. After submitting the official appeal form, they asked for a manual investigation and for access to be restored if the suspension was an error.",
+    "story": "原帖作者说，11 月 25 日 Antigravity 账号再次被停用，通知称违反服务条款。作者说没用过反向代理或未授权的接口转发，一直按 Google 公开的说法用 T3 Code 开发；据作者转述，论坛工作人员以前说明过，通过官方 Antigravity ACP 运行环境和原生授权使用 T3 Code，在一定条件下是允许的。作者问了几件事：为什么又停用，自动检测会不会误判 T3 Code 用户，T3 Code 现在还允不允许，按规定使用的人怎样避免反复停用。官方申诉表已经提交，作者担心反复停用会变成永久限制，请求人工调查并说明原因。到 11 月 25 日整理时，帖子下面没有回复。",
+    "story_en": "The original poster says their Antigravity account was suspended again on November 25 for an alleged terms-of-service violation. They said they had not used a reverse proxy or unauthorized API forwarding, and had used T3 Code based on Google’s public guidance. According to the poster, Google staff had said on the forum that T3 Code through the official Antigravity ACP runtime with native OAuth is permitted under certain conditions. They asked why the account was suspended again, whether automated detection wrongly flags T3 Code users, whether T3 Code is still permitted, and how users who follow the guidance can avoid repeated suspensions. They had filed the official appeal form, were worried that repeated suspensions could become permanent, and asked for a manual investigation and an explanation. As of November 25 the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "Google forum topic opened at 2026-11-24T21:04:43Z. The writer explicitly gives November 25 as the suspension date. No cause, plan or reinstatement was established.",
+    "evidence": "Google forum topic opened at 2026-11-24T21:04:43Z. The writer explicitly gives November 25 as the suspension date. No cause, plan or reinstatement was established. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1046,10 +1046,10 @@
     "source_published_at": "2026-11-25",
     "codename": "家庭共享账号只有 Antigravity 停用，申诉已等约两周",
     "codename_en": "Family-sharing account loses only Antigravity access, appeal pending about two weeks",
-    "story": "原帖作者说，通过家庭共享使用 Google 付费订阅，Antigravity 显示服务已停用，其他 Google 服务仍可用。此前作者把 Pi 编程工具连到了 Antigravity，后来撤销了第三方授权，也清除了 Pi 保存的登录信息。11 月 25 日发帖查询进度时，距离提交申诉已约两周，仍未收到回复。",
-    "story_en": "The original poster says they had a paid Google subscription through family sharing. Antigravity displayed a service-disabled notice while other Google services still worked. They had connected the Pi coding tool, then revoked its access and removed its saved login data. On November 25 they asked about an appeal filed around two weeks earlier that had received no reply.",
+    "story": "原帖作者说，自己通过家庭共享使用 Google 付费订阅，Antigravity 提示因违反服务条款停用，其他 Google 服务仍可用，前后出现过两个报错编号。此前作者用 Google 账号把 Pi 编程工具接到了 Antigravity，说当时不知道这不允许。停用后，作者撤销了 Google 账号里的第三方授权，删掉 Pi 保存的登录信息，不再让第三方工具使用 Antigravity，以后只用官方应用，第三方工具改用 API 密钥。申诉是约两周前提交的，没有收到答复，11 月 25 日发帖请人查进度或转给对应团队。到当天整理时，帖子下面没有回复。",
+    "story_en": "The original poster says they have a paid Google subscription through family sharing. Antigravity said the service was disabled for a terms-of-service violation while other Google services still worked, and two Error IDs had appeared over time. They had connected the Pi coding agent to Antigravity with their Google account and said they did not realize this was prohibited. Afterwards they revoked third-party access in Google Account permissions, removed the login data stored by Pi, stopped using third-party tools with Antigravity, and planned to use only the official app and an API key for other tools. The appeal was filed about two weeks earlier with no response. On November 25 they asked for a status check or routing to the right team. As of that day the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First-person forum post at 2026-11-25T01:51:10Z. Tier and date of disabling unspecified. Author distinguishes product access from Google account-wide status. Error identifiers omitted.",
+    "evidence": "First-person forum post at 2026-11-25T01:51:10Z. Tier and date of disabling unspecified. Author distinguishes product access from Google account-wide status. Error identifiers omitted. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1100,10 +1100,10 @@
     "source_published_at": "2026-11-25",
     "codename": "Google 账号停用，申诉被拒后表单锁定",
     "codename_en": "Google account disabled and the appeal form locked after rejection",
-    "story": "原帖作者说，10 月在开发用的虚拟机里登录 Antigravity 后不久，整个 Google 账号被停用。通知提到多个账号和疑似自动注册。作者说常规申诉遭拒，表单随后被锁定。11 月 25 日，作者到开发者论坛请求人工复核。",
-    "story_en": "The original poster says their entire Google account was disabled in October shortly after they signed in to Antigravity from a development virtual machine. The notice mentioned multiple accounts and possible automated account creation. The author said their appeals were denied and the form was now locked. On November 25 they asked the developer forum for a human review.",
+    "story": "原帖作者说，2026 年 10 月在虚拟机开发环境里登录试用 Antigravity，不久整个 Google 账号被停用。通知说账号看起来是和多个其他账号一起创建或使用的，可能由程序或机器人创建。作者说这是自己手动注册的个人账号，猜测是虚拟机环境和网络代理在登录授权时触发了误判。常规申诉被自动拒绝，申诉表也锁定了。作者已经删掉虚拟机，清空本地 Antigravity 缓存，11 月 25 日到开发者论坛请求转给人工复查。到当天整理时，帖子下面没有回复。",
+    "story_en": "The original poster says their entire Google account was disabled in October 2026 shortly after they signed in to try Antigravity inside a virtual machine. The notice said the account looked like it was created or used with multiple other accounts and might have been created by a computer program or bot. They said it is a personal account they created manually, and guessed that the virtual machine and network proxy triggered a false flag during sign-in. Their standard appeals were declined automatically and the form is now locked. They removed the virtual machine, cleared local Antigravity caches and asked the developer forum on November 25 for a human review. As of that day the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First-person Google forum post at 2026-11-25T04:58:33Z. The author dates the disabling to October without naming a day. The notice and the sequence of actions are reported separately; no causal finding or later decision is established.",
+    "evidence": "First-person Google forum post at 2026-11-25T04:58:33Z. The author dates the disabling to October without naming a day. The notice and the sequence of actions are reported separately; no causal finding or later decision is established. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1118,10 +1118,10 @@
     "source_published_at": "2026-11-25",
     "codename": "停用提示里的申诉链接被截断，只能先发反馈",
     "codename_en": "A clipped appeal link led an Antigravity user to in-app feedback",
-    "story": "原帖作者说，11 月 25 日，给一个企业管理系统做收入看板和收款跟踪界面时，Antigravity 突然提示服务已停用。提示末尾的申诉入口被截断，也点不开。作者通过「设置 → 发送反馈」报告了问题，又到开发者论坛索要可以打开的申诉链接。",
-    "story_en": "The original poster says Antigravity was disabled on November 25 while they were working on income dashboards and payment tracking for a business application. The suspension message cut off the appeal link and they could not click it. They sent a report through Settings → Give Feedback, then asked the developer forum for a working appeal URL.",
+    "story": "原帖作者说，11 月 25 日 Antigravity 突然提示因违反服务条款停用。停用前正在做一个多租户的企业管理网页应用，只让助手加载入时的占位效果、周收入和月收入看板，以及客户欠款和付款跟踪。提示末尾的申诉链接被截断成“to c…”，在界面里点不开，作者没法打开申诉表。作者说没有故意违规，通过「设置 → 发送反馈」提交了报告，又到开发者论坛请求人工复查，或者直接给出申诉链接。到当天整理时，帖子下面没有回复。",
+    "story_en": "The original poster says Antigravity suddenly said the service was disabled for a terms-of-service violation on November 25. They had been building a multi-tenant business web application and had just asked the assistant for loading skeletons, weekly and monthly income dashboards, and customer due and payment tracking. The appeal link at the end of the message was cut off as “to c…” and could not be clicked, so they could not open the form. They said there was no intentional violation, sent a report through Settings → Give Feedback, and asked the forum for a manual review or the direct appeal URL. As of that day the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First-person Google forum post at 2026-11-25T06:30:51Z. In-app feedback was submitted; the author was seeking access to the separate appeal form. No formal appeal submission or outcome is confirmed.",
+    "evidence": "First-person Google forum post at 2026-11-25T06:30:51Z. In-app feedback was submitted; the author was seeking access to the separate appeal form. No formal appeal submission or outcome is confirmed. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1172,10 +1172,10 @@
     "source_published_at": "2026-11-25",
     "codename": "Claude Code 申诉被拒，运维材料无处补交",
     "codename_en": "Claude Code appeal denied, with no way to submit technical evidence",
-    "story": "原帖作者说，平时用官方 Claude Code CLI 处理 Kubernetes、Helm 和 Argo CD 的部署与排障。账号被停用后，作者提交申诉，收到拒绝答复，却没得知具体是哪项活动违反了政策。作者再联系多个支持渠道，有的给出自动回复，有的引回已填过的申诉表，始终没能把技术材料交给人工复核。",
-    "story_en": "The original poster says they used the official Claude Code CLI for infrastructure work involving Kubernetes, Helm and Argo CD. Their account was suspended and their appeal denied without identifying the activity at issue. They tried several support channels, received automated responses or referrals back to the completed appeal, and could not submit technical evidence for a human review.",
+    "story": "原帖作者说，平时用官方 Claude Code CLI 做运维和基础设施工作，包括 Kubernetes、Helm、ArgoCD、配置管理和排障。日常用量增加以后，账号突然被停用。申诉被拒，没说明是哪项活动违反了使用政策。作者试过官方申诉、给安全团队发邮件、联系支持、请 AI 客服转人工，也找过反馈和透明度团队，得到的是相同的自动回复，或者被引回已经填过的申诉流程，有的对话直接被关闭。11 月 25 日，作者在 GitHub 建议设一个人工复查渠道：有新证据时能申请调查，安全地提交诊断日志，在允许的范围内得知触发停用的活动类别，并能查进度。整理时帖子仍开着，有一位用户回帖说遇到同样的问题，没有官方回复。",
+    "story_en": "The original poster says they used the official Claude Code CLI for DevOps and infrastructure work, including Kubernetes, Helm, ArgoCD, configuration management and troubleshooting. After their daily usage increased, the account was unexpectedly suspended. The appeal was rejected without identifying the activity that violated the policy. They tried the official appeal, email to the Safeguards team, support, asking the AI agent for a human, and the feedback and transparency teams. They received identical automated responses, were sent back to the completed appeal process, or had conversations closed. On November 25 they suggested on GitHub a human review channel: request an investigation when there is new evidence, submit diagnostic logs securely, learn the category of activity where disclosure is permitted, and track status. At review the issue was open, one user had replied with the same problem, and there was no official reply.",
     "reviewed_at": "2026-11-25",
-    "evidence": "GitHub issue opened at 2026-11-25T08:11:06Z. Summary uses the author’s problem statement and attempts to contact support, not the hypothetical workflow they proposed. The plan and incident date are not given.",
+    "evidence": "GitHub issue opened at 2026-11-25T08:11:06Z. Summary uses the author’s problem statement and attempts to contact support, not the hypothetical workflow they proposed. The plan and incident date are not given. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1190,10 +1190,10 @@
     "source_published_at": "2026-11-25",
     "codename": "申诉表没有说明栏，Pro 家庭组用户到论坛补充经过",
     "codename_en": "AI Pro family member used the forum to add context missing from the appeal form",
-    "story": "原帖作者说，自己是 Google AI Pro 家庭组成员，平时通过 Antigravity 桌面应用和 Android Studio 里的 Agents 集成使用服务。收到停用提示后，作者提交了官方申诉表。表单没有可以填写经过的文本框，作者便到开发者论坛补充了自己用过哪些客户端。",
-    "story_en": "The original poster says they belonged to a Google AI Pro family group and used Antigravity in its desktop app and through the Agents integration in Android Studio. After seeing the suspension notice they submitted the official appeal form. It had no text field for their account of events, so they described the clients they used in a developer forum post.",
+    "story": "原帖作者说，自己是 Google AI Pro 家庭组成员，最近 Antigravity 提示因违反服务条款停用。作者只用过官方 Antigravity 桌面应用，以及 Android Studio 里官方的 Agents 集成，从没用过未授权的第三方封装、代理、路由工具或自动化脚本。官方申诉表已经提交，但表单没有可以说明经过的文本框，作者便在 11 月 25 日到开发者论坛补充用过哪些客户端。到当天整理时，帖子下面没有回复。",
+    "story_en": "The original poster says they are a member of a Google AI Pro family group and Antigravity was recently disabled for a terms-of-service violation. They had only used the official Antigravity desktop app and the official Agents integration in Android Studio, and never unauthorized third-party wrappers, proxies, routers or automation scripts. They had submitted the official appeal form, but it has no text field to explain the context, so they described the clients they used on the developer forum on November 25. As of that day the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First-person forum post at 2026-11-25T08:51:51Z. The author confirms filing a formal appeal. Neither a decision nor an incident date is reported.",
+    "evidence": "First-person forum post at 2026-11-25T08:51:51Z. The author confirms filing a formal appeal. Neither a decision nor an incident date is reported. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   },
   {
@@ -1208,10 +1208,10 @@
     "source_published_at": "2026-11-25",
     "codename": "Google 账号已恢复，桌面端仍要求验证",
     "codename_en": "Google account restored on appeal, Antigravity desktop still asked for verification",
-    "story": "原帖作者说，11 月 25 日，Google 账号经申诉恢复，Gmail 能正常使用，年龄验证页面也已显示通过。但在 Windows 上，浏览器登录成功后，Antigravity 桌面应用还是要求验证。作者重启应用、用同一账号重新登录，还撤销并重新授予了 Antigravity 访问权限，提示依然存在。",
-    "story_en": "The original poster says their Google account was restored on appeal on November 25. Gmail worked and the age-verification page showed a successful check. Browser sign-in succeeded on Windows, but the Antigravity desktop app still requested verification. Restarting it, signing in again with the same account and revoking and reauthorizing Antigravity access did not clear the prompt.",
+    "story": "原帖作者说，11 月 25 日 Google 账号经申诉恢复，Gmail 能正常使用，但 Windows 上的 Antigravity 桌面应用一直停在 “Further action is required to use Antigravity”。浏览器里登录成功，桌面应用还是要求验证账号。作者当天完成了 Google 年龄验证，页面也显示通过；又完全退出并重开应用，用同一个账号登录，撤销 Antigravity 的授权再重新授权，提示都没有消失。此前的验证流程要求用短信发送验证，但短信发送失败。作者到论坛问还差哪一项验证或资格条件、接下来该怎么做。到当天整理时，帖子下面没有回复。",
+    "story_en": "The original poster says their Google account was restored after an appeal on November 25 and Gmail works, but the Antigravity desktop app on Windows stays on “Further action is required to use Antigravity.” Sign-in succeeds in the browser, yet the app still asks them to verify the account. They completed Google age verification that day and the page confirms it, fully closed and reopened the app, signed in with the same account, and revoked and reauthorized Antigravity access, without clearing the prompt. Earlier, the verify flow asked them to send an SMS, but delivery failed. They asked the forum which verification or eligibility requirement is still blocking access and what to do next. As of that day the thread had no replies.",
     "reviewed_at": "2026-11-25",
-    "evidence": "Google forum post at 2026-11-25T08:44:43Z. The reported appeal restored the Google account; Antigravity desktop access remained blocked at verification. The initial date of the restriction and the subscription tier are unknown. No separate Antigravity appeal was reported.",
+    "evidence": "Google forum post at 2026-11-25T08:44:43Z. The reported appeal restored the Google account; Antigravity desktop access remained blocked at verification. The initial date of the restriction and the subscription tier are unknown. No separate Antigravity appeal was reported. Thread re-read in full on 2026-11-25 and the summary expanded; replies are reported as replies, and account, case and error identifiers are omitted.",
     "status_as_of": "2026-11-25"
   }
 ]
