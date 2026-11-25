@@ -11,29 +11,29 @@ test('public release information has no configuration placeholders', async ({
       await expect(page.locator('body')).not.toContainText(/TODO(?:_[A-Z]+)*/);
       if (route === '/appeal') {
         await expect(page.locator('.vendor h2')).toHaveText([
+          'Antigravity',
           'Claude',
           'Codex',
-          'Antigravity',
         ]);
         const links = page.locator('.vendor a.btn-primary');
         await expect(links).toHaveText(
           prefix
             ? [
+                'Antigravity appeal form',
                 'Appeal a Claude restriction',
                 'OpenAI appeal form',
-                'Antigravity appeal form',
               ]
-            : ['Claude 账号申诉', 'OpenAI 申诉表单', 'Antigravity 申诉表单'],
-        );
-        await expect(links.nth(0)).toHaveAttribute(
-          'href',
-          'https://claude.ai/restricted',
+            : ['Antigravity 申诉表单', 'Claude 账号申诉', 'OpenAI 申诉表单'],
         );
         await expect(links.nth(1)).toHaveAttribute(
           'href',
-          'https://openai.com/form/appeal/',
+          'https://claude.ai/restricted',
         );
         await expect(links.nth(2)).toHaveAttribute(
+          'href',
+          'https://openai.com/form/appeal/',
+        );
+        await expect(links.nth(0)).toHaveAttribute(
           'href',
           'https://forms.gle/hGzM9MEUv2azZsrb9',
         );

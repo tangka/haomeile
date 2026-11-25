@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { TIP_ARTICLES } from '../../src/shared/tips';
+import { TIP_ARTICLES, tipNext } from '../../src/shared/tips';
 
 describe('guides compiled from other people’s posts', () => {
   it.each(TIP_ARTICLES.map((tip) => [tip.slug, tip] as const))(
@@ -41,6 +41,14 @@ describe('guides compiled from other people’s posts', () => {
       expect(Date.parse(tip.modifiedAt)).toBeGreaterThanOrEqual(
         Date.parse(tip.publishedAt),
       );
+    }
+  });
+
+  it('sends every guide on to three other guides', () => {
+    for (const { slug } of TIP_ARTICLES) {
+      const next = tipNext(slug).map((tip) => tip.slug);
+      expect(new Set(next).size, slug).toBe(3);
+      expect(next, slug).not.toContain(slug);
     }
   });
 });

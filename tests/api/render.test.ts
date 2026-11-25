@@ -195,6 +195,22 @@ describe('Worker renders Astro templates on the server', () => {
     expect(en).toContain('href="/en/t/TIMELINEAA"');
     expect(en).toContain('href="/en/tips/antigravity-paid-plan-starter-quota"');
     expect(en).not.toContain('别人等了多久');
+    // One post is not enough to summarise.
+    expect(zh).not.toContain('最后可见时仍未恢复');
+
+    for (const [index, post] of [
+      'https://discuss.ai.google.dev/t/202508',
+      'https://discuss.ai.google.dev/t/202911',
+      'https://discuss.ai.google.dev/t/204136',
+      'https://discuss.ai.google.dev/t/205018',
+    ].entries())
+      await add('TIMELINEC' + 'DEFG'[index], 'approved', post);
+    expect(await page('/v/antigravity')).toContain(
+      '截至 2026-11-25，下面 5 条里：1 条恢复访问（含只恢复部分账号），1 条恢复后又停用，3 条最后可见时仍未恢复。',
+    );
+    expect(await page('/en/v/antigravity')).toContain(
+      'As of 2026-11-25, of the 5 posts below: 1 regained access',
+    );
 
     const claude = await page('/v/claude');
     expect(claude).toContain('ANTHROPIC_API_KEY');

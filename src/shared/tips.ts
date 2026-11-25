@@ -1169,6 +1169,106 @@ export function tipVendors(slug: string): TipVendor[] {
   return TIP_VENDOR_MAP[slug] ?? [];
 }
 
+/** What a reader of each guide is likely to need next, most relevant first. */
+const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-colab-check-units-stop-session': [
+    'google-ai-claim-cloud-credits',
+    'antigravity-ultra-check-credit-usage',
+    'google-ai-pro-switch-to-annual',
+  ],
+  'antigravity-ultra-check-credit-usage': [
+    'antigravity-paid-plan-starter-quota',
+    'google-ai-pro-change-credit-billing-account',
+    'google-ai-ultra-plan-evaluation',
+  ],
+  'google-ai-pro-change-credit-billing-account': [
+    'google-ai-claim-cloud-credits',
+    'antigravity-ultra-check-credit-usage',
+    'google-ai-pro-switch-to-annual',
+  ],
+  'antigravity-first-install-google-ai-pro': [
+    'antigravity-paid-plan-starter-quota',
+    'google-ai-pro-switch-to-annual',
+    'google-ai-claim-cloud-credits',
+  ],
+  'google-ai-pro-switch-to-annual': [
+    'google-ai-claim-cloud-credits',
+    'antigravity-first-install-google-ai-pro',
+    'google-ai-ultra-plan-evaluation',
+  ],
+  'antigravity-paid-plan-starter-quota': [
+    'antigravity-ultra-check-credit-usage',
+    'antigravity-first-install-google-ai-pro',
+    'google-ai-ultra-plan-evaluation',
+  ],
+  'claude-max-google-play-recovery': [
+    'claude-portal-suspension-review',
+    'android-subscriptions-google-play',
+    'claude-pro-web-subscription',
+  ],
+  'google-ai-claim-cloud-credits': [
+    'google-ai-pro-change-credit-billing-account',
+    'google-ai-colab-check-units-stop-session',
+    'google-ai-pro-switch-to-annual',
+  ],
+  'claude-portal-suspension-review': [
+    'claude-max-google-play-recovery',
+    'claude-sign-up-identity-verification',
+    'claude-pro-apple-receipt-refund',
+  ],
+  'claude-sign-up-identity-verification': [
+    'claude-pro-web-subscription',
+    'claude-pro-iphone-apple-sign-in',
+    'claude-portal-suspension-review',
+  ],
+  'google-ai-ultra-plan-evaluation': [
+    'antigravity-ultra-check-credit-usage',
+    'google-ai-ultra-iphone-subscription',
+    'google-ai-pro-switch-to-annual',
+  ],
+  'apple-in-app-purchase-review': [
+    'google-ai-ultra-iphone-subscription',
+    'claude-pro-apple-receipt-refund',
+    'chatgpt-plus-iphone-subscription',
+  ],
+  'claude-pro-apple-receipt-refund': [
+    'claude-pro-iphone-apple-sign-in',
+    'claude-max-google-play-recovery',
+    'apple-in-app-purchase-review',
+  ],
+  'google-ai-ultra-iphone-subscription': [
+    'google-ai-ultra-plan-evaluation',
+    'antigravity-ultra-check-credit-usage',
+    'apple-in-app-purchase-review',
+  ],
+  'claude-pro-iphone-apple-sign-in': [
+    'claude-pro-web-subscription',
+    'claude-sign-up-identity-verification',
+    'claude-pro-apple-receipt-refund',
+  ],
+  'claude-pro-web-subscription': [
+    'claude-sign-up-identity-verification',
+    'claude-pro-iphone-apple-sign-in',
+    'android-subscriptions-google-play',
+  ],
+  'chatgpt-plus-iphone-subscription': [
+    'android-subscriptions-google-play',
+    'apple-in-app-purchase-review',
+    'claude-pro-iphone-apple-sign-in',
+  ],
+  'android-subscriptions-google-play': [
+    'claude-max-google-play-recovery',
+    'chatgpt-plus-iphone-subscription',
+    'claude-pro-web-subscription',
+  ],
+};
+
+export function tipNext(slug: string): TipArticle[] {
+  return (TIP_NEXT[slug] ?? []).flatMap(
+    (next) => TIP_ARTICLES.find((tip) => tip.slug === next) ?? [],
+  );
+}
+
 export const TIP_PATHS = TIP_ARTICLES.map(({ slug }) => '/tips/' + slug);
 
 export const TIP_TRANSLATIONS = Object.fromEntries(

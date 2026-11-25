@@ -6,43 +6,84 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 
 const channels = [
   {
+    id: 'antigravity',
+    name: 'Antigravity',
+    guidance:
+      '个人账号遇到 Antigravity 服务停用或 403 权限拒绝时，用受影响的 Google 账号登录并提交申诉。',
+    facts: [
+      [
+        '等多久',
+        '带 Google 标识的论坛回复说，自动处理大约 48 到 72 小时，有时更久，不会发邮件通知。',
+      ],
+      [
+        '提交几次',
+        '一次。论坛回复说，重复提交不会加快，每个账号只有一次通过申诉恢复的机会。',
+      ],
+      ['怎么看结果', '退出客户端再登录。通过后，下次登录时自动恢复。'],
+    ],
+    appeal: 'https://forms.gle/hGzM9MEUv2azZsrb9',
+    action: 'Antigravity 申诉表单',
+    help: 'https://support.google.com/accounts/answer/40695',
+    helpLabel: 'Google 账号停用说明',
+    links: [
+      ['/v/antigravity#answer', 'Antigravity 申诉处理步骤'],
+      ['/v/antigravity#wait', '看别人等了多久'],
+      ['/v/antigravity', '查看 Antigravity 停用案例'],
+    ],
+  },
+  {
     id: 'claude',
     name: 'Claude',
     guidance: '用受限的 Claude 账号登录，在账号限制页提交申诉。',
+    facts: [
+      [
+        '先排除',
+        'Claude Code 提示“This organization has been disabled”时，先查是不是用了旧的 ANTHROPIC_API_KEY，别急着申诉。',
+      ],
+      [
+        '怎么进表单',
+        '要用被停用的账号登录才能打开。组织被暂停时，点它旁边的“Request a review”。',
+      ],
+    ],
     appeal: 'https://claude.ai/restricted',
     action: 'Claude 账号申诉',
     help: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
     helpLabel: 'Claude 申诉说明',
-    casesHref: '/v/claude',
-    casesLabel: '查看 Claude 停用案例',
+    links: [
+      ['/v/claude#answer', 'Claude 停用处理步骤'],
+      ['/v/claude', '查看 Claude 停用案例'],
+    ],
   },
   {
     id: 'codex',
     name: 'Codex',
     guidance:
       '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。',
+    facts: [
+      [
+        '写什么',
+        '用户 ID 和组织 ID（有的话）、账号平时怎么用、为什么认为是误判。不要填完整卡号或安全码。',
+      ],
+      ['结果', 'OpenAI 说明，申请复核不保证账号会恢复。'],
+    ],
     appeal: 'https://openai.com/form/appeal/',
     action: 'OpenAI 申诉表单',
     help: 'https://help.openai.com/',
     helpLabel: 'OpenAI 帮助中心',
-    casesHref: '/v/codex',
-    casesLabel: '查看 Codex 停用案例',
-  },
-  {
-    id: 'antigravity',
-    name: 'Antigravity',
-    guidance:
-      '个人账号遇到 Antigravity 服务停用或 403 权限拒绝时，用受影响的 Google 账号登录并提交申诉。',
-    appeal: 'https://forms.gle/hGzM9MEUv2azZsrb9',
-    action: 'Antigravity 申诉表单',
-    help: 'https://support.google.com/accounts/answer/40695',
-    helpLabel: 'Google 账号停用说明',
-    casesHref: '/v/antigravity',
-    casesLabel: '查看 Antigravity 停用案例',
+    links: [
+      ['/v/codex#answer', 'Codex 停用处理步骤'],
+      ['/v/codex#wait', '看别人等到了什么结果'],
+      ['/v/codex', '查看 Codex 停用案例'],
+    ],
   },
 ];
 
 const faqs = [
+  {
+    question: 'Antigravity 申诉要等多久？没收到邮件怎么办？',
+    answer:
+      '带 Google 标识的论坛回复说，自动处理大约 48 到 72 小时，有时更久，不会发邮件通知；通过后，下次登录时自动恢复。本站收录的公开帖里，有人申诉约 66 小时后恢复，也有人等了一周以上仍未恢复。这些是作者自述，未经本站核实，不能当作成功率。',
+  },
   {
     question: 'Claude 封号或组织停用后怎么申诉？解封后仍显示 Free 怎么办？',
     answer:
@@ -95,8 +136,8 @@ const jsonLd = [
 ---
 
 <SiteLayout
-  title="Claude、Codex、Antigravity 封号后怎么申诉 · 号没了"
-  description="Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。"
+  title="Antigravity、Claude、Codex 申诉：官方表单与等待时间 · 号没了"
+  description="Antigravity、Claude、Codex 账号停用或 403 时的官方申诉表单、用哪个账号提交、要等多久、能提交几次，以及申诉时写什么。"
   path="/appeal"
   current="/appeal"
   jsonLd={jsonLd}
@@ -104,7 +145,7 @@ const jsonLd = [
   <main class="page">
     <div class="wrap">
       <div class="page-head">
-        <h1>官方申诉入口</h1>
+        <h1>Antigravity、Claude、Codex 官方申诉入口</h1>
         <p>
           汇总 Claude、Codex 与 Antigravity 的官方申诉渠道、常见报错区分和排查入口。所有链接均指向对应厂商官网或官方表单。
         </p>
@@ -116,29 +157,39 @@ const jsonLd = [
             id,
             name,
             guidance,
+            facts,
             appeal,
             action,
             help,
             helpLabel,
-            casesHref,
-            casesLabel,
+            links,
           }) => (
             <article class="vendor" id={id}>
               <h2>{name}</h2>
               <p>{guidance}</p>
+              <a
+                class="btn btn-primary"
+                href={appeal}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {action}
+              </a>
+              <dl class="appeal-facts">
+                {facts.map(([term, text]) => (
+                  <>
+                    <dt>{term}</dt>
+                    <dd>{text}</dd>
+                  </>
+                ))}
+              </dl>
               <div class="appeal-links">
-                <a
-                  class="btn btn-primary"
-                  href={appeal}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {action}
-                </a>
                 <a href={help} target="_blank" rel="noopener noreferrer">
                   {helpLabel}
                 </a>
-                <a href={casesHref}>{casesLabel}</a>
+                {links.map(([href, label]) => (
+                  <a href={href}>{label}</a>
+                ))}
               </div>
             </article>
           ),
@@ -197,7 +248,24 @@ const jsonLd = [
 
 <style>
   .vendor {
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+  .vendor .btn-primary {
+    justify-self: start;
+  }
+  .appeal-facts {
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    margin: 0;
+    font-size: var(--fs-s);
+    line-height: 1.6;
+  }
+  .appeal-facts dt {
+    font-weight: 700;
+  }
+  .appeal-facts dd {
+    margin: 0 0 8px;
   }
   .appeal-links {
     display: flex;

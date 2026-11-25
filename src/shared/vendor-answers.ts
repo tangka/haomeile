@@ -20,6 +20,7 @@ export interface AppealTimelineRow {
   appealed: string | null;
   seen: string;
   status: Copy;
+  outcome: 'restored' | 'disabled-again' | 'waiting';
 }
 export interface VendorAnswer {
   question: Copy;
@@ -190,6 +191,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: '2026-11-17',
           appealed: null,
           seen: '2026-11-18',
+          outcome: 'restored',
           status: {
             zh: '重新登录后可用，原帖未说明是否两个账号都恢复',
             en: 'Usable after signing in again; the post does not say whether both accounts recovered',
@@ -200,6 +202,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: null,
           appealed: null,
           seen: '2026-11-20',
+          outcome: 'disabled-again',
           status: {
             zh: '第一次申诉一天后恢复，隔天再次停用，未恢复',
             en: 'Restored a day after the first appeal, disabled again the next day, not restored',
@@ -210,6 +213,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: '2026-11-18',
           appealed: '2026-11-18',
           seen: '2026-11-22',
+          outcome: 'waiting',
           status: { zh: '未恢复', en: 'Not restored' },
         },
         {
@@ -217,6 +221,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: '2026-11-17',
           appealed: '2026-11-18',
           seen: '2026-11-23',
+          outcome: 'waiting',
           status: { zh: '未恢复', en: 'Not restored' },
         },
         {
@@ -224,6 +229,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: null,
           appealed: '2026-11-20',
           seen: '2026-11-24',
+          outcome: 'waiting',
           status: { zh: '未恢复', en: 'Not restored' },
         },
         {
@@ -231,7 +237,107 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: null,
           appealed: '2026-10-21',
           seen: '2026-10-29',
+          outcome: 'waiting',
           status: { zh: '未恢复', en: 'Not restored' },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/202508',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-20',
+          outcome: 'restored',
+          status: {
+            zh: '申诉约 66 小时后恢复',
+            en: 'Restored about 66 hours after the appeal',
+          },
+        },
+        {
+          source: 'https://x.com/i/status/2125225496237789512',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-24',
+          outcome: 'restored',
+          status: {
+            zh: '两个账号里恢复了一个',
+            en: 'One of two accounts restored',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/204089',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-23',
+          outcome: 'disabled-again',
+          status: {
+            zh: '申诉恢复后还没使用，又再次停用',
+            en: 'Restored on appeal, then disabled again before use',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/203910',
+          suspended: '2026-11-16',
+          appealed: '2026-11-17',
+          seen: '2026-11-23',
+          outcome: 'waiting',
+          status: {
+            zh: '20 日又申诉一次，未恢复',
+            en: 'Appealed again on the 20th, not restored',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/205018',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-25',
+          outcome: 'waiting',
+          status: {
+            zh: '申诉约两周，未收到回复',
+            en: 'No reply about two weeks after the appeal',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/204485',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-24',
+          outcome: 'waiting',
+          status: {
+            zh: '申诉超过一周，未恢复',
+            en: 'Not restored over a week after the appeal',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/204423',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-24',
+          outcome: 'waiting',
+          status: {
+            zh: '约五次申诉，未收到答复',
+            en: 'About five appeals, no reply',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/204134',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-23',
+          outcome: 'waiting',
+          status: {
+            zh: '申诉超过 48 小时，没有答复',
+            en: 'No reply over 48 hours after the appeal',
+          },
+        },
+        {
+          source: 'https://discuss.ai.google.dev/t/199388',
+          suspended: null,
+          appealed: null,
+          seen: '2026-11-10',
+          outcome: 'waiting',
+          status: {
+            zh: '申诉后能登录，调用模型仍提示停用',
+            en: 'Could sign in after the appeal, but models still showed the service as disabled',
+          },
         },
       ],
     },
@@ -344,6 +450,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: '2026-06-25',
           appealed: null,
           seen: '2026-07-03',
+          outcome: 'restored',
           status: {
             zh: '可以重新访问，但套餐显示 Free',
             en: 'Access returned, but the plan showed Free',
@@ -354,6 +461,7 @@ export const VENDOR_ANSWERS: Partial<Record<Vendor, VendorAnswer>> = {
           suspended: '2026-06-09',
           appealed: null,
           seen: '2026-06-14',
+          outcome: 'waiting',
           status: {
             zh: '论坛支持回复：申诉在等专门团队处理',
             en: 'Forum support: the appeal was with a specialist team',

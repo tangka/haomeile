@@ -318,8 +318,8 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
   },
   antigravity: {
     title: () => ({
-      zh: 'Antigravity 403、服务停用怎么办：申诉步骤与等待时间 · 号没了',
-      en: 'Antigravity 403 or service disabled: appeal steps & wait times · Haomeile',
+      zh: 'Antigravity 申诉：403、服务停用处理步骤与等待时间 · 号没了',
+      en: 'Antigravity appeal: 403 steps, official form & wait times · Haomeile',
     }),
     description: (total, date) => ({
       zh: `Antigravity 提示 403 或服务停用怎么处理：先查第三方授权，再提交一次官方申诉。分清地区限制、429 与 Starter Quota，附 ${total} 条公开记录（截至 ${date}）。`,

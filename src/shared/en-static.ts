@@ -288,12 +288,56 @@ export const EN_STATIC: Record<string, string> = {
   操作: 'Action',
   操作人: 'Moderator',
 
-  'Claude、Codex、Antigravity 封号后怎么申诉 · 号没了':
-    'How to appeal a Claude, Codex or Antigravity suspension · Haomeile',
-  'Claude、Codex 或 Antigravity 账号停用后，查看对应的官方申诉入口和填写时需要准备的信息。':
-    'Find the official appeal channel for a Claude, Codex or Antigravity suspension and get the details you need to file an appeal.',
-  'Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。':
-    'Official appeal channels, checklists and troubleshooting guides for Claude, Codex and Antigravity account suspensions, 403 errors, ID verification, Starter Quota and billing recovery.',
+  'Antigravity、Claude、Codex 申诉：官方表单与等待时间 · 号没了':
+    'Antigravity, Claude & Codex appeal forms and wait times · Haomeile',
+  'Antigravity、Claude、Codex 账号停用或 403 时的官方申诉表单、用哪个账号提交、要等多久、能提交几次，以及申诉时写什么。':
+    'Official appeal forms for a suspended Antigravity, Claude or Codex account or a 403: which account to use, how long it takes, how many times you can submit, and what to write.',
+  'Antigravity、Claude、Codex 官方申诉入口':
+    'Antigravity, Claude and Codex appeal forms',
+  '等多久':
+    'How long it takes',
+  '带 Google 标识的论坛回复说，自动处理大约 48 到 72 小时，有时更久，不会发邮件通知。':
+    'A forum reply from a user labelled Google says automated processing takes about 48 to 72 hours, sometimes longer, and that no email is sent.',
+  '提交几次':
+    'How many times to submit',
+  '一次。论坛回复说，重复提交不会加快，每个账号只有一次通过申诉恢复的机会。':
+    'Once. The forum reply says duplicates do not speed up review and each account is eligible for one appeal reinstatement.',
+  '怎么看结果':
+    'How to see the result',
+  '退出客户端再登录。通过后，下次登录时自动恢复。':
+    'Sign out of the client and back in. If approved, access returns the next time you sign in.',
+  'Antigravity 申诉处理步骤':
+    'Antigravity appeal steps',
+  '看别人等了多久':
+    'See how long others waited',
+  '先排除':
+    'Rule this out first',
+  'Claude Code 提示“This organization has been disabled”时，先查是不是用了旧的 ANTHROPIC_API_KEY，别急着申诉。':
+    'If Claude Code says “This organization has been disabled”, check for a stale ANTHROPIC_API_KEY before you appeal.',
+  '怎么进表单':
+    'How to open the form',
+  '要用被停用的账号登录才能打开。组织被暂停时，点它旁边的“Request a review”。':
+    'You must be signed in with the banned account to open it. If an organization is on hold, select “Request a review” next to it.',
+  'Claude 停用处理步骤':
+    'Claude suspension steps',
+  '写什么':
+    'What to write',
+  '用户 ID 和组织 ID（有的话）、账号平时怎么用、为什么认为是误判。不要填完整卡号或安全码。':
+    'Your user ID and organization ID if you have them, how the account was used, and why you think it was a mistake. Do not include a full card number or security code.',
+  '结果':
+    'Outcome',
+  'OpenAI 说明，申请复核不保证账号会恢复。':
+    'OpenAI says requesting a review does not guarantee the account will be restored.',
+  'Codex 停用处理步骤':
+    'Codex suspension steps',
+  '看别人等到了什么结果':
+    'See what others reported',
+  'Antigravity 申诉要等多久？没收到邮件怎么办？':
+    'How long does an Antigravity appeal take, and what if I get no email?',
+  '带 Google 标识的论坛回复说，自动处理大约 48 到 72 小时，有时更久，不会发邮件通知；通过后，下次登录时自动恢复。本站收录的公开帖里，有人申诉约 66 小时后恢复，也有人等了一周以上仍未恢复。这些是作者自述，未经本站核实，不能当作成功率。':
+    'A forum reply from a user labelled Google says automated processing takes about 48 to 72 hours, sometimes longer, and that no email is sent. If approved, access returns the next time you sign in. Among the public posts collected here, one author regained access about 66 hours after appealing, and others were still waiting after more than a week. These are unverified personal accounts, not a success rate.',
+  '接着看':
+    'Read next',
   '汇总 Claude、Codex 与 Antigravity 的官方申诉渠道、常见报错区分和排查入口。所有链接均指向对应厂商官网或官方表单。':
     'Official appeal channels, common error distinctions and troubleshooting guides for Claude, Codex and Antigravity. Every external link points to the provider’s official site or form.',
   'Claude 解封后还是 Free？查看 Google Play 的 Max 订阅排查步骤':

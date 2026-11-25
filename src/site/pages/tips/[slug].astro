@@ -3,6 +3,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
   TIP_ARTICLES,
   tipLinkHref,
+  tipNext,
   tipPageTitle,
   tipPublishedTime,
   tipVendors,
@@ -25,6 +26,7 @@ const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
 const { tip } = Astro.props;
 const pageUrl = `${SITE}/tips/${tip.slug}`;
 const relatedVendors = tipVendors(tip.slug);
+const nextTips = tipNext(tip.slug);
 const heading = tip.heading.zh;
 const sourceDate = tipPublishedTime(tip.sourcePublishedAt).slice(0, 10);
 
@@ -38,6 +40,7 @@ const vendorMeta: Record<
     appealLabel: 'Claude 官方申诉入口',
   },
   codex: {
+    answer: 'Codex 或 ChatGPT 账号被停用',
     label: '查看 Codex 停用案例',
     appealLabel: 'Codex / OpenAI 官方申诉入口',
   },
@@ -163,6 +166,19 @@ const jsonLd = [
             </li>
           ))}
         </ol>
+        <section class="tip-next" aria-labelledby="tip-next-title">
+          <h2 id="tip-next-title">接着看</h2>
+          <ul>
+            {nextTips.map((next) => (
+              <li>
+                <a href={'/tips/' + next.slug}>{next.heading.zh}</a>
+              </li>
+            ))}
+            <li>
+              <a href="/radar">额度什么时候可能重置</a>
+            </li>
+          </ul>
+        </section>
         <p class="tip-source">
           <a href={tip.source} target="_blank" rel="noopener noreferrer">
             阅读 X 长文
@@ -221,6 +237,29 @@ const jsonLd = [
     border-block-start: 1px solid var(--stone-shade);
     padding-block-start: 14px;
     font-size: var(--fs-s);
+  }
+  .tip-next ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .tip-next li + li {
+    margin-block-start: 0;
+  }
+  .tip-next a {
+    display: block;
+    height: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--ink);
+    font-size: var(--fs-s);
+    text-decoration: none;
+  }
+  .tip-next a:hover,
+  .tip-next a:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
   }
   .tip-related {
     display: flex;

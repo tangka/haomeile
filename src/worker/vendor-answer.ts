@@ -38,9 +38,23 @@ export function renderVendorAnswer(
     value
       ? `<time datetime="${e(value)}">${e(value)}</time>`
       : e(text('未写明', 'Not stated'));
+  const count = (outcome: (typeof rows)[number]['outcome']) =>
+    rows.filter((row) => row.outcome === outcome).length;
+  const asOf = rows.reduce(
+    (last, row) => (row.seen > last ? row.seen : last),
+    '',
+  );
+  // Too few posts would make a tally look like a success rate.
+  const tally =
+    rows.length >= 5
+      ? `<p><strong>${text(
+          `截至 ${asOf}，下面 ${rows.length} 条里：${count('restored')} 条恢复访问（含只恢复部分账号），${count('disabled-again')} 条恢复后又停用，${count('waiting')} 条最后可见时仍未恢复。`,
+          `As of ${asOf}, of the ${rows.length} posts below: ${count('restored')} regained access (including partly), ${count('disabled-again')} were restored and then disabled again, and ${count('waiting')} were not restored when last seen.`,
+        )}</strong></p>`
+      : '';
   const timeline =
     answer.timeline && rows.length
-      ? `<h2 id="wait">${e(answer.timeline.title[locale])}</h2><p>${e(answer.timeline.intro[locale])}</p><div class="answer-table"><table><thead><tr><th scope="col">${text('停用', 'Disabled')}</th><th scope="col">${text('申诉', 'Appealed')}</th><th scope="col">${text('最后可见', 'Last seen')}</th><th scope="col">${text('状态', 'Status')}</th><th scope="col">${text('出处', 'Source')}</th></tr></thead><tbody>${rows
+      ? `<h2 id="wait">${e(answer.timeline.title[locale])}</h2><p>${e(answer.timeline.intro[locale])}</p>${tally}<div class="answer-table"><table><thead><tr><th scope="col">${text('停用', 'Disabled')}</th><th scope="col">${text('申诉', 'Appealed')}</th><th scope="col">${text('最后可见', 'Last seen')}</th><th scope="col">${text('状态', 'Status')}</th><th scope="col">${text('出处', 'Source')}</th></tr></thead><tbody>${rows
           .map(
             (row) =>
               `<tr><td>${date(row.suspended)}</td><td>${date(row.appealed)}</td><td>${date(row.seen)}</td><td>${e(row.status[locale])}</td><td><a href="${e(localePath('/t/' + recordIds.get(row.source)!, locale))}">${text('记录', 'Record')}</a> <a href="${e(row.source)}" target="_blank" rel="noopener noreferrer nofollow">${text('原帖', 'Post')}</a></td></tr>`,
