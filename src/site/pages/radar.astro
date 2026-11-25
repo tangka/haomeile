@@ -27,7 +27,7 @@ const faqs = [
 const jsonLd = [
   {
     '@context': 'https://schema.org',
-    '@type': 'Dataset',
+    '@type': 'WebPage',
     name: '重置雷达：Codex、Claude Code、Antigravity 24 小时额外重置概率',
     description,
     url: SITE + '/radar',
@@ -37,11 +37,11 @@ const jsonLd = [
       name: 'Haomeile',
       url: SITE + '/',
     },
-    variableMeasured: [
+    about: [
       'Codex 24-hour extra quota reset probability',
       'Claude Code 24-hour extra quota reset probability',
       'Antigravity 24-hour extra quota reset probability',
-    ],
+    ].map((name) => ({ '@type': 'Thing', name })),
   },
   {
     '@context': 'https://schema.org',

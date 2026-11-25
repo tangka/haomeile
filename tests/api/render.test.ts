@@ -66,7 +66,9 @@ describe('Worker renders Astro templates on the server', () => {
     expect(structured.author).toEqual({
       '@type': 'Organization',
       name: 'Haomeile',
+      url: 'https://haomeile.rip/',
     });
+    expect(english).not.toContain('id="author"');
     expect(structured.citation).toBe(
       'https://github.com/anthropics/claude-code/issues/67069',
     );

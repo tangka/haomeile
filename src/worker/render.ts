@@ -109,7 +109,7 @@ export function renderTomb(
         )}</p>`
       : '';
   const facts = detail
-    ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
+    ? `<dl class="facts"><dt>${view.community ? text('整理', 'Summary by') : text('署名', 'Posted by')}</dt><dd${view.community ? '' : ' id="author"'}>${view.community ? text('号没了', 'Haomeile') : e(t.nickname || text('匿名', 'Anonymous'))}</dd><dt>${text('套餐', 'Plan')}</dt><dd>${view.community && t.plan === 'unknown' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.plan, t.plan))}</dd><dt>${view.community ? text('原帖申诉状态', 'Appeal status in source') : text('申诉', 'Appeal')}</dt><dd>${view.community && t.appeal_status === 'none' ? text('原帖未说明', 'Not stated in the source') : e(label(labels.appeal_status, t.appeal_status))}</dd><dt>${view.community ? text('收录', 'Collected') : text('立碑', 'Published')}</dt><dd>${e(fmtDate(t.approved_at?.slice(0, 10), locale))}</dd></dl>`
     : '';
   const flower = flowerPresentation(t.flowers, locale);
   return `<article class="tomb" data-id="${e(t.id)}">${decorations}<div class="tomb-body stone-shape"><div class="tomb-face stone-shape">${number}${name}${lifeDetails}${metadata}${t.epitaph ? `<p class="tomb-epitaph">${e(t.epitaph)}</p>` : ''}${compiled}<p class="tomb-story">${e(view.story)}</p>${provenance}${facts}<div class="tomb-foot"><button type="button" class="flower-btn" data-flower-id="${e(t.id)}" data-count="${e(t.flowers)}" aria-pressed="false" aria-label="${e(flower.ariaLabel)}"><img src="/assets/flower.svg" width="14" height="14" alt=""><span>${e(flower.label)}</span></button></div></div></div></article>`;
@@ -820,6 +820,11 @@ export async function servePage(
           name: view.community
             ? text('号没了', 'Haomeile')
             : tomb.nickname || text('匿名用户', 'Anonymous user'),
+          // Submitters have no profile pages; the byline on their own record is
+          // the only place that identifies them.
+          url: view.community
+            ? site + '/'
+            : `${site}${localePath(path, locale)}#author`,
         },
         publisher: {
           '@type': 'Organization',

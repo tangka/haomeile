@@ -209,6 +209,14 @@ describe('Chinese and English pages', () => {
       /application\/ld\+json">(.*?)<\/script>/.exec(detail)![1],
     );
     expect(json[0].text).toBe('这里什么也没有。');
+    expect(json[0]['@type']).toBe('DiscussionForumPosting');
+    expect(json[0].author).toEqual({
+      '@type': 'Person',
+      name: '匿名小橘',
+      url: 'https://haomeile.rip/en/t/I2NAAAAAAA#author',
+    });
+    expect(detail.match(/id="author"/g)).toHaveLength(1);
+    expect(html).not.toContain('id="author"');
     expect(json[0]).not.toHaveProperty('inLanguage');
   });
   it('keeps the Chinese default and localizes English error pages', async () => {
