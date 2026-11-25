@@ -1026,12 +1026,12 @@
     "source_url": "https://discuss.ai.google.dev/t/205010",
     "source_platform": "Google AI Developers Forum",
     "source_published_at": "2026-11-25",
-    "codename": "Ultra 开发账号被停用，提交申诉后没有工单号",
-    "codename_en": "Ultra developer account disabled, appeal form returned no case number",
-    "story": "原帖作者说，11 月 24 日晚，订阅 Google AI Ultra 的开发账号被整体停用。通知提到了多个账号。作者曾在自己的三台云服务器上使用 Antigravity 命令行，随后停止了并发会话。作者当晚填写 Google 账号申诉表，没有拿到工单号，第二天到论坛请求人工复核。",
-    "story_en": "The original poster says their Google developer account, which had an AI Ultra subscription, was disabled on the evening of November 24. The notice mentioned multiple accounts. They had run the Antigravity CLI on three cloud servers they owned and stopped the concurrent sessions. They submitted the Google Account appeal form that day, received no case number and requested a human review the next morning.",
+    "codename": "Ultra 开发账号申诉后恢复，表单未给工单号",
+    "codename_en": "Ultra developer account restored after an appeal without a case number",
+    "story": "原帖作者说，11 月 24 日晚，订阅 Google AI Ultra 的开发账号被整体停用。通知提到了多个账号。作者曾在自己的三台云服务器上使用 Antigravity 命令行，随后停止了并发会话。作者当晚填写 Google 账号申诉表，没有拿到工单号，第二天到论坛请求人工复核。 11 月 25 日 12:40（新加坡时间），作者回到原帖更新：先前提交的常规申诉已获批，账号访问已恢复。",
+    "story_en": "The original poster says their Google developer account, which had an AI Ultra subscription, was disabled on the evening of November 24. The notice mentioned multiple accounts. They had run the Antigravity CLI on three cloud servers they owned and stopped the concurrent sessions. They submitted the Google Account appeal form that day, received no case number and requested a human review the next morning. At 12:40 p.m. Singapore time on November 25, the author returned to the thread to confirm that the standard appeal had been approved and account access restored.",
     "reviewed_at": "2026-11-25",
-    "evidence": "First-person forum post at 2026-11-25T01:31:49Z. Account-wide Google restriction and date are explicit. No finding links the use of multiple servers to the restriction. The author reported an appeal submission but no decision.",
+    "evidence": "First-person forum post at 2026-11-25T01:31:49Z. Account-wide Google restriction and date are explicit. No finding links the use of multiple servers to the restriction. The author reported an appeal submission but no decision. Same-author update https://discuss.ai.google.dev/t/205010/2 at 2026-11-25T04:40:15Z confirms restoration. The structured appeal status is the status reported in the opening post at 01:31Z; the title and summary include the later outcome.",
     "status_as_of": "2026-11-25"
   },
   {
