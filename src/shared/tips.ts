@@ -28,6 +28,62 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-colab-cli-invalid-grant',
+    heading: {
+      zh: 'Colab CLI 授权后报 invalid_grant，怎么用订阅账号重新登录',
+      en: 'Reconnect your subscription account after a Colab CLI invalid_grant error',
+    },
+    sourceTitle:
+      'Google One 会员 × Antigravity 避坑指南：三台机器踩出来的网络、额度和出片经验',
+    summary: {
+      zh: '浏览器已完成授权，Colab CLI 却报 invalid_grant 时，可以改用 Google Cloud 的应用默认凭据（ADC）登录，再用一条只读命令核对订阅账号的算力余额。',
+      en: 'If browser authorization finishes but Colab CLI reports invalid_grant, you can sign in using Google Cloud Application Default Credentials (ADC) and check your subscription’s compute-unit balance with a read-only command.',
+    },
+    experience: {
+      zh: '原文作者 @goqjqN0rxrI5dla 在浏览器完成授权，把授权码复制回终端，约 9 秒后就遇到 invalid_grant。作者在自己的电脑上改用 gcloud 登录，再让 Colab CLI 读取这组凭据，成功查到了算力余额。',
+      en: 'In the original article, @goqjqN0rxrI5dla authorized Colab in the browser, copied the code back to the terminal and saw invalid_grant about nine seconds later. After signing in through gcloud on the same computer and telling Colab CLI to use those credentials, the author could read the compute-unit balance.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在运行 Colab CLI 的电脑上执行 gcloud --version。如果找不到命令，先安装 Google Cloud CLI。接下来的登录会替换这台电脑上先前用 gcloud 创建的本地 ADC，其他使用这份凭据的程序也会改用新账号。',
+          en: 'Run gcloud --version on the computer where you use Colab CLI. If the command is missing, install the Google Cloud CLI. The next sign-in replaces local ADC previously created with gcloud. Other programs that use those credentials will use the account you select.',
+        },
+        link: {
+          href: 'https://cloud.google.com/sdk/docs/install',
+          label: {
+            zh: '安装 Google Cloud CLI',
+            en: 'Install the Google Cloud CLI',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '打开 Colab CLI 官方文档的 Global Options，复制整条 gcloud auth application-default login 命令，保留 --scopes 后的权限列表。在终端执行后，从浏览器选择开通订阅的 Google 账号，核对邮箱并完成授权。',
+          en: 'Under Global Options in the Colab CLI guide, copy the full gcloud auth application-default login command, including the list after --scopes. Run it in your terminal. In the browser, check the email address and authorize the Google Account that holds the subscription.',
+        },
+        link: {
+          href: 'https://github.com/googlecolab/google-colab-cli#global-options',
+          label: {
+            zh: '复制含 Colab 权限的登录命令',
+            en: 'Get the sign-in command with Colab permissions',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '回到终端运行 colab --auth adc usage。看到计算单元余额和当前消耗速率，就说明 Colab 已经能读取这个账号的额度。下次查询继续带上 --auth adc。',
+          en: 'Back in the terminal, run colab --auth adc usage. A compute-unit balance and usage rate confirm Colab can read that account’s quota. Keep --auth adc in subsequent queries.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2124523438723518464',
+    sourceAuthor: '@goqjqN0rxrI5dla',
+    sourcePublishedAt: '2026-11-22T15:22:31Z',
+    publishedAt: '2026-11-25T11:17:53Z',
+    modifiedAt: '2026-11-25T11:17:53Z',
+  },
+  {
     slug: 'google-ai-ultra-cloud-budget-before-credits',
     heading: {
       zh: 'Google AI Ultra 赠金抵扣后账单是零，怎么按实际用量设提醒',
@@ -1198,6 +1254,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-colab-cli-invalid-grant': ['antigravity'],
   'google-ai-ultra-cloud-budget-before-credits': ['antigravity'],
   'google-ai-colab-check-units-stop-session': ['antigravity'],
   'antigravity-ultra-check-credit-usage': ['antigravity'],
@@ -1225,15 +1282,20 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-colab-cli-invalid-grant': [
+    'google-ai-colab-check-units-stop-session',
+    'antigravity-first-install-google-ai-pro',
+    'antigravity-paid-plan-starter-quota',
+  ],
   'google-ai-ultra-cloud-budget-before-credits': [
     'google-ai-pro-change-credit-billing-account',
     'google-ai-claim-cloud-credits',
     'google-ai-colab-check-units-stop-session',
   ],
   'google-ai-colab-check-units-stop-session': [
+    'google-ai-colab-cli-invalid-grant',
     'google-ai-claim-cloud-credits',
     'antigravity-ultra-check-credit-usage',
-    'google-ai-pro-switch-to-annual',
   ],
   'antigravity-ultra-check-credit-usage': [
     'antigravity-paid-plan-starter-quota',
