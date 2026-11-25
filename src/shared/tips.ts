@@ -28,6 +28,59 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-ultra-cloud-budget-before-credits',
+    heading: {
+      zh: 'Google AI Ultra 赠金抵扣后账单是零，怎么按实际用量设提醒',
+      en: 'Set a Google Cloud budget alert before Google AI Ultra credits are applied',
+    },
+    sourceTitle:
+      '别让 Google 白送的 300 美元烂在账上：零成本开台湾服务器保姆级教程（一分钱不扣）',
+    summary: {
+      zh: 'Cloud 账单显示 0 元时，运行中的服务可能仍在消耗赠金。建一个按抵扣前费用计算的预算，就能在用量达到自己设定的金额时收到邮件。',
+      en: 'A Cloud bill of zero can mean credits are covering running services. A budget based on costs before credits lets you get an email when usage reaches an amount you choose.',
+    },
+    experience: {
+      zh: '原文作者 @linlin454136 在自己的结算账号看到两笔赠金：40 美元来自 Google AI Ultra 5x 订阅，另有 300 美元来自 Google Cloud 新用户试用。作者把 340 美元设为预算，并在截图里演示了怎样排除抵扣项、设置邮件提醒。',
+      en: 'In the original article, @linlin454136 found two credits in one billing account. The Google AI Ultra 5x subscription provided $40, and a separate Google Cloud trial for new customers provided $300. The author set a $340 budget and showed how to exclude savings and configure email alerts.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '打开 Cloud Billing，选接收赠金的结算账号。在「抵用金」里分别核对每笔余额和到期日，再打开「预算和提醒」新建预算。选「仅提醒」，指定要监控的时段和项目。',
+          en: 'Open Cloud Billing and select the account that received the credits. Under Credits, check each balance and expiry date. Open Budgets & alerts, create an alerts-only budget and choose the period and projects to track.',
+        },
+        link: {
+          href: 'https://console.cloud.google.com/billing',
+          label: { zh: '打开 Cloud Billing', en: 'Open Cloud Billing' },
+        },
+      },
+      {
+        text: {
+          zh: '在「范围」找到「节省的费用」，取消勾选其中的所有项目，包括「其他节省」。这样，预算会按折扣和赠金抵扣前的费用累计。例如服务用掉 8 美元、赠金抵了 8 美元，预算里仍会记入这 8 美元。',
+          en: 'Under Scope, clear every option in Savings, including Other savings. The budget will count charges before discounts and credits. For example, if a service costs $8 and credits cover all $8, the budget still counts $8.',
+        },
+      },
+      {
+        text: {
+          zh: '填入自己想监控的金额。提醒条件选「实际支出」，可以保留默认的 50%、90%、100% 三档。勾选向结算账号管理员和用户发送邮件，保存预算。「仅提醒」会发邮件，达到阈值后服务仍会运行。',
+          en: 'Enter the amount you want to monitor. Choose Actual spend and keep the default 50%, 90% and 100% thresholds, or adjust them. Select email notifications for billing account administrators and users, then save. With an alerts-only budget, services keep running after a threshold is reached.',
+        },
+        link: {
+          href: 'https://docs.cloud.google.com/billing/docs/how-to/budgets',
+          label: {
+            zh: '查看 Google 的预算与提醒说明',
+            en: 'Read Google’s budget and alert guide',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2124151886303363072',
+    sourceAuthor: '@linlin454136',
+    sourcePublishedAt: '2026-11-21T15:02:42Z',
+    publishedAt: '2026-11-25T07:09:53Z',
+    modifiedAt: '2026-11-25T07:09:53Z',
+  },
+  {
     slug: 'google-ai-colab-check-units-stop-session',
     heading: {
       zh: 'Google AI 订阅里的 Colab 算力怎么查，任务结束怎么关掉 GPU',
@@ -1145,6 +1198,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-ultra-cloud-budget-before-credits': ['antigravity'],
   'google-ai-colab-check-units-stop-session': ['antigravity'],
   'antigravity-ultra-check-credit-usage': ['antigravity'],
   'google-ai-pro-change-credit-billing-account': ['antigravity'],
@@ -1171,6 +1225,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-ultra-cloud-budget-before-credits': [
+    'google-ai-pro-change-credit-billing-account',
+    'google-ai-claim-cloud-credits',
+    'google-ai-colab-check-units-stop-session',
+  ],
   'google-ai-colab-check-units-stop-session': [
     'google-ai-claim-cloud-credits',
     'antigravity-ultra-check-credit-usage',
@@ -1183,8 +1242,8 @@ const TIP_NEXT: Record<string, string[]> = {
   ],
   'google-ai-pro-change-credit-billing-account': [
     'google-ai-claim-cloud-credits',
+    'google-ai-ultra-cloud-budget-before-credits',
     'antigravity-ultra-check-credit-usage',
-    'google-ai-pro-switch-to-annual',
   ],
   'antigravity-first-install-google-ai-pro': [
     'antigravity-paid-plan-starter-quota',
