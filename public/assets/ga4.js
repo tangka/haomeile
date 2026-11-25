@@ -13,16 +13,17 @@
     ad_user_data: 'denied',
     ad_personalization: 'denied',
   });
-  gtag('js', new Date());
-  gtag('config', id, {
-    send_page_view: false,
+  // The tag sends its own page_view when it starts, and ignores page settings
+  // given later in config. They must be set first, and no second page_view sent.
+  gtag('set', {
     allow_google_signals: false,
     allow_ad_personalization_signals: false,
     page_location: location.origin + location.pathname,
     page_referrer: document.referrer ? new URL(document.referrer).origin : '',
     page_title: location.pathname,
   });
-  gtag('event', 'page_view');
+  gtag('js', new Date());
+  gtag('config', id);
 
   const tag = document.createElement('script');
   tag.async = true;

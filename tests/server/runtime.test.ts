@@ -1029,7 +1029,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
     );
   });
 
-  test('queues one GA4 page view with sanitized URL, referrer, and title', async () => {
+  test('sets a sanitized GA4 URL, referrer, and title before the tag sends its one page view', async () => {
     const { opened } = await runtime(undefined, MEASUREMENT_ID);
     const response = await request(opened, '/assets/ga4.js');
     expect(response.ok).toBe(true);
@@ -1057,11 +1057,16 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
         ad_personalization: 'denied',
       },
     ]);
-    expect(commands[2]).toEqual([
+    // The tag starts on `js` and then sends page_view itself.
+    expect(commands.map(([command]) => command)).toEqual([
+      'consent',
+      'set',
+      'js',
       'config',
-      MEASUREMENT_ID,
+    ]);
+    expect(commands[1]).toEqual([
+      'set',
       {
-        send_page_view: false,
         allow_google_signals: false,
         allow_ad_personalization_signals: false,
         page_location: `${SITE}/t/ABC`,
@@ -1069,9 +1074,7 @@ describe('production Bun runtime with real assets, HTMLRewriter and SQLite', () 
         page_title: '/t/ABC',
       },
     ]);
-    expect(commands.filter(([command]) => command === 'event')).toEqual([
-      ['event', 'page_view'],
-    ]);
+    expect(commands[3]).toEqual(['config', MEASUREMENT_ID]);
     expect(scripts.map(({ src }) => src)).toEqual([
       `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`,
     ]);

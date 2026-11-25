@@ -98,4 +98,4 @@ curl -fsS https://haomeile.rip/ads.txt | cmp - public/ads.txt
 - 没有新的数据库迁移。
 - 合并 `codex/implement-haomeile` 后 e2e 75 项通过；第二批技巧后再次 75 项通过。之后只改了发布脚本和文档。
 - 待站长：Search Console 给改过的页面请求重抓，并确认网站纳入生成式 AI 功能；GA4 渠道组和时区；关于页的处理时限、复查周期、最近一次更正日期；是否不显示三篇技巧的原标题。
-- GA4 的浏览次数疑似重复计数，原因未查明，浏览量先看 Cloudflare。
+- GA4 的浏览次数曾重复计数：Google 代码启动时自己发一条 page_view，`ga4.js` 又手动发了一条；写在 `config` 里的去参数地址也不生效。11 月 25 日改为在 `js` 之前 `set`，不再手动发。此前的 GA4 浏览量仍偏高，浏览量先看 Cloudflare。
