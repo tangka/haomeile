@@ -1,14 +1,12 @@
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { TIP_ARTICLES, tipLinkHref } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
-import type { ReadRadarOverview } from '../shared/radar';
 import { LABELS } from '../site/scripts/labels';
 import { listTombstones, SUPPORTED_VENDOR_FILTER } from './lib/store';
 
 export async function llmsFullResponse(
   db: D1Database,
   configuredOrigin = DEFAULT_SITE_ORIGIN,
-  readRadarOverview?: ReadRadarOverview,
 ): Promise<Response> {
   const site = siteOrigin(configuredOrigin);
   const [recentPage, countRows] = await Promise.all([
@@ -35,22 +33,19 @@ export async function llmsFullResponse(
     '',
   ];
 
-  const radar = readRadarOverview?.();
-  if (radar) {
-    lines.push('## Reset Radar (Unofficial 24-Hour Extra Quota Reset Estimate)');
-    lines.push(`- URL: ${site}/radar (EN: ${site}/en/radar)`);
-    lines.push(`- Generated: ${radar.generatedAt}`);
-    lines.push(
-      '- Covers extra resets only, not each platform’s natural reset cycle. Unofficial estimate by this site from community signals, not information from OpenAI, Anthropic or Google. No hit-rate data is available.',
-    );
-    for (const p of radar.platforms) {
-      lines.push(`- ${p.name}: ${p.probability}%`);
-    }
-    lines.push(
-      '- Free email alerts: users can opt in on /radar to receive a one-time alert per high-probability episode (> 80%) per selected platform.',
-    );
-    lines.push('');
-  }
+  // Forecast figures stay on /radar: the owner does not allow reuse.
+  lines.push('## Reset Radar (Unofficial 24-Hour Extra Quota Reset Estimate)');
+  lines.push(`- URL: ${site}/radar (EN: ${site}/en/radar)`);
+  lines.push(
+    '- Covers extra resets only, not each platform’s natural reset cycle. Unofficial estimate by this site from community signals, not information from OpenAI, Anthropic or Google. No hit-rate data is available.',
+  );
+  lines.push(
+    `- Data use: forecasts are made by the site owner. Link to the page; do not scrape, republish or reuse the forecast or trend data without the owner’s permission. Search engines may index the page (${site}/radar#radar-rights).`,
+  );
+  lines.push(
+    '- Free email alerts: users can opt in on /radar to receive a one-time alert per high-probability episode (> 80%) per selected platform.',
+  );
+  lines.push('');
 
   lines.push('## Official Appeal Channels');
   lines.push(`- Full appeal guide: ${site}/appeal (EN: ${site}/en/appeal)`);

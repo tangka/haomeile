@@ -2,7 +2,6 @@ import { localePath, type Locale } from '../shared/i18n';
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 import { TIP_ARTICLES } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
-import type { ReadRadarOverview } from '../shared/radar';
 import { getLabels } from '../site/scripts/labels';
 import { listTombstones } from './lib/store';
 import { escapeXml } from './sitemap';
@@ -27,7 +26,6 @@ export async function feedResponse(
   db: D1Database,
   locale: Locale,
   configuredOrigin = DEFAULT_SITE_ORIGIN,
-  readRadarOverview?: ReadRadarOverview,
 ): Promise<Response> {
   const site = siteOrigin(configuredOrigin);
   const labels = getLabels(locale);
@@ -38,26 +36,6 @@ export async function feedResponse(
 
   const { items } = await listTombstones(db, {});
   const entries: FeedEntry[] = [];
-
-  const radar = readRadarOverview?.();
-  if (radar) {
-    const summary = radar.platforms
-      .map((p) => `${p.name}: ${p.probability}%`)
-      .join(' · ');
-    entries.push({
-      id: `${site}${localePath('/radar', locale)}#${radar.generatedAt}`,
-      url: site + localePath('/radar', locale),
-      title:
-        locale === 'en'
-          ? 'Reset Radar — Unofficial 24h Extra Quota Reset Estimate'
-          : '重置雷达 — 未来 24 小时额外重置估计（非官方）',
-      summary:
-        locale === 'en'
-          ? `Latest unofficial 24-hour extra quota reset estimates: ${summary}. Free email alerts available above 80%.`
-          : `最新未来 24 小时额外重置的非官方估计：${summary}。支持超过 80% 时免费邮件提醒。`,
-      updated: isoDate(radar.generatedAt, fallbackTime),
-    });
-  }
 
   for (const tip of TIP_ARTICLES) {
     const url = site + localePath(`/tips/${tip.slug}`, locale);
@@ -98,12 +76,12 @@ export async function feedResponse(
 
   const feedTitle =
     locale === 'en'
-      ? 'Haomeile — AI Account Bans, Appeals & Reset Radar'
-      : '号没了 — Claude、Codex、Antigravity 封号记录、排查指南与重置雷达';
+      ? 'Haomeile — AI Account Bans, Appeals & Guides'
+      : '号没了 — Claude、Codex、Antigravity 封号记录与排查指南';
   const feedSubtitle =
     locale === 'en'
-      ? 'Latest account suspension stories, official appeal guides, subscription troubleshooting and Reset Radar forecasts.'
-      : '最新收录的 AI 账号停用与申诉经历、实用排查指南及 24 小时额外重置概率更新。';
+      ? 'Latest account suspension stories, official appeal guides and subscription troubleshooting.'
+      : '最新收录的 AI 账号停用与申诉经历和实用排查指南。';
 
   const xmlEntries = top
     .map((entry) => {

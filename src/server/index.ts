@@ -262,10 +262,9 @@ async function main() {
       });
     }
     if (shouldNotifyRadar(radarPushTracker, overview)) {
-      searchPushRun = notifySearchEngines(
-        ['/radar', '/llms-full.txt'],
-        pushOptions,
-      ).catch(() => {});
+      searchPushRun = notifySearchEngines(['/radar'], pushOptions).catch(
+        () => {},
+      );
     }
   });
   console.log(`Haomeile listening on loopback port ${server.port}`);

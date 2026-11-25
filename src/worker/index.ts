@@ -124,17 +124,13 @@ export function createApp(options: AppOptions = {}) {
       )) ?? servePage(c),
   );
   app.get('/feed.xml', (c) =>
-    feedResponse(c.env.DB, 'zh', c.env.SITE_ORIGIN, options.readRadarOverview),
+    feedResponse(c.env.DB, 'zh', c.env.SITE_ORIGIN),
   );
   app.get('/en/feed.xml', (c) =>
-    feedResponse(c.env.DB, 'en', c.env.SITE_ORIGIN, options.readRadarOverview),
+    feedResponse(c.env.DB, 'en', c.env.SITE_ORIGIN),
   );
   app.get('/llms-full.txt', (c) =>
-    llmsFullResponse(
-      c.env.DB,
-      c.env.SITE_ORIGIN,
-      options.readRadarOverview,
-    ),
+    llmsFullResponse(c.env.DB, c.env.SITE_ORIGIN),
   );
   app.all('/api/*', (c) =>
     c.json(

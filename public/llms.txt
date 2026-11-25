@@ -23,7 +23,7 @@
 - [Codex 账号停用记录](https://haomeile.rip/v/codex): OpenAI Codex 与关联 ChatGPT 账号停用、401 与恢复案例
 - [Antigravity 服务停用与 403 记录](https://haomeile.rip/v/antigravity): Google Antigravity 服务停用、403、地区限制与申诉案例
 - [官方申诉入口与常见排查](https://haomeile.rip/appeal): 三家官方申诉链接、填写清单与分产品问答
-- [重置雷达（24 小时额外重置估计，非官方）](https://haomeile.rip/radar): Codex、Claude Code 与 Antigravity 未来 24 小时额外重置的非官方估计与近 24 小时趋势，不计自然周期内的恢复，基于社区观测信号，尚无命中率数据，支持超过 80% 时发送免费邮件提醒
+- [重置雷达（24 小时额外重置估计，非官方）](https://haomeile.rip/radar): Codex、Claude Code 与 Antigravity 未来 24 小时额外重置的非官方估计与近 24 小时趋势，不计自然周期内的恢复，基于社区观测信号，尚无命中率数据，支持超过 80% 时发送免费邮件提醒；预测由站长制作，未经许可不得抓取、转载或用于其他网站、应用和服务（https://haomeile.rip/radar#radar-rights）
 - [使用小技巧目录](https://haomeile.rip/tips): Claude、ChatGPT/Codex 与 Google AI / Antigravity 的开通、付款、续费与套餐异常处理步骤
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
@@ -49,10 +49,10 @@
 
 ## 可选与实时订阅源
 
-- [完整 AI 知识包（动态更新）](https://haomeile.rip/llms-full.txt): 汇总带生成时间的雷达非官方估计、全部使用小技巧、产品案例统计与近期社区案例的纯 Markdown 文档
+- [完整 AI 知识包（动态更新）](https://haomeile.rip/llms-full.txt): 汇总全部使用小技巧、产品案例统计与近期社区案例的纯 Markdown 文档
 - [站点地图](https://haomeile.rip/sitemap.xml): 可索引的中文与英文公开页面（含 hreflang 与 lastmod）
-- [中文 Atom 订阅源（支持 WebSub）](https://haomeile.rip/feed.xml): 实时更新最新案例、使用小技巧与重置雷达快照
-- [English Atom Feed (WebSub)](https://haomeile.rip/en/feed.xml): Real-time English feed of new cases, guides, and Reset Radar snapshots
+- [中文 Atom 订阅源（支持 WebSub）](https://haomeile.rip/feed.xml): 实时更新最新案例与使用小技巧
+- [English Atom Feed (WebSub)](https://haomeile.rip/en/feed.xml): Real-time English feed of new cases and guides
 - [墓志铭卡片生成器](https://haomeile.rip/epitaph): 在浏览器本地生成像素墓碑图片
 
 ## English
@@ -64,7 +64,7 @@ Haomeile (https://haomeile.rip/en/) is a bilingual independent community documen
 - [Codex account deactivations & appeals (EN)](https://haomeile.rip/en/v/codex)
 - [Antigravity 403 & service suspensions (EN)](https://haomeile.rip/en/v/antigravity)
 - [Official appeal channels & FAQ (EN)](https://haomeile.rip/en/appeal)
-- [Reset Radar — unofficial 24h extra quota reset estimate & free email alerts above 80% (EN)](https://haomeile.rip/en/radar)
+- [Reset Radar — unofficial 24h extra quota reset estimate & free email alerts above 80% (EN)](https://haomeile.rip/en/radar): no scraping, republishing or reuse of the data without the owner’s permission
 - [Tips & troubleshooting guides (EN)](https://haomeile.rip/en/tips)
 - [Claude Max still Free after reinstatement (EN)](https://haomeile.rip/en/tips/claude-max-google-play-recovery)
 - [Antigravity paid plan still showing Starter Quota (EN)](https://haomeile.rip/en/tips/antigravity-paid-plan-starter-quota)
