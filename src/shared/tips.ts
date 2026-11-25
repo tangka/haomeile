@@ -621,6 +621,69 @@ export const TIP_ARTICLES: TipArticle[] = [
     modifiedAt: '2026-11-24T07:32:00Z',
   },
   {
+    slug: 'claude-pro-web-invoice-refund',
+    heading: {
+      zh: 'Claude Pro 已关续费，怎样凭网页订单申请退款',
+      en: 'Request a refund for a Claude web purchase after turning off renewal',
+    },
+    sourceTitle:
+      '刚充完钱就被 Claude 强行弹 KYC 锁死？教你一招“防御性订阅”，24 小时逼官方全额退钱！（附实操截图）',
+    summary: {
+      zh: 'Claude 网页订阅已经扣款，客服却查不到有效套餐？从付款邮件找出那笔订单的发票，再通过帮助中心申请核对。',
+      en: 'If Claude charged you on the web but support cannot find an active plan, locate the invoice for that specific charge and ask billing support to check it.',
+    },
+    experience: {
+      zh: '原文作者 @ruofeng_x 在订阅第二天关了自动续费，第四天遇到身份验证。邮件客服查不到有效套餐，作者便把付款发票交给网页客服，确认愿意终止当期订阅后，第二天早上收到了 21.80 美元的退款收据。',
+      en: 'The original author, @ruofeng_x, turned off renewal on day two and encountered an identity check on day four. When email support could not find an active plan, the author provided the invoice in the support chat, agreed to end the current plan and received a refund receipt for $21.80 the next morning.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '打开购买 Pro 时收到的付款邮件，查看收款方、扣款日期和金额。如果收款方是 Anthropic，保存发票 PDF 和订单号。如果收据由 Apple 开具，改到 Apple 的「报告问题」页面申请退款。',
+          en: 'Open the receipt from your Pro purchase and check the merchant, date and amount. For a charge from Anthropic, keep the invoice PDF and invoice number. If Apple issued the receipt, use Apple’s Report a Problem page to request the refund.',
+        },
+        link: {
+          href: 'https://reportaproblem.apple.com/',
+          label: {
+            zh: '打开 Apple「报告问题」',
+            en: 'Open Apple Report a Problem',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '处理网页订单时，点 Claude 左下角的账号菜单，选 Get help，进入 Send us a message → Accept → Claude Refund Request。如果登录受阻，点 Claude 帮助中心右下角的消息图标，选择无法登录的选项，说明需要查询一笔订阅扣款。',
+          en: 'For a web charge, open your account menu in Claude, choose Get help, then Send us a message → Accept → Claude Refund Request. If sign-in is blocked, use the message icon at the bottom right of the Claude Help Center, choose the sign-in problem option, and ask about the subscription charge.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9015913-how-to-get-support',
+          label: {
+            zh: '打开 Claude 帮助中心',
+            en: 'Open the Claude Help Center',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在客服对话里说明付款日期、关闭续费的日期和实际遇到的问题。需要核对交易时提供发票。按提示查询退款资格。如果客服询问是否立即终止当期权益，先看清生效时间，再决定是否确认。收到退款收据后，可用收据金额核对原支付账户的入账记录。',
+          en: 'Give support the payment date, the date you turned off renewal and the problem you encountered. Supply the invoice if needed to locate the charge. Follow the eligibility check and review when access would end before agreeing to a cancellation. If a refund receipt arrives, match the amount against your original payment account.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/12386328-request-a-refund-for-a-paid-claude-plan',
+          label: {
+            zh: '查看 Claude 网页订阅退款流程',
+            en: 'Read the Claude refund instructions',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122555459978555392',
+    sourceAuthor: '@ruofeng_x',
+    sourcePublishedAt: '2026-11-17T10:02:48Z',
+    publishedAt: '2026-11-25T15:18:30Z',
+    modifiedAt: '2026-11-25T15:18:30Z',
+  },
+  {
     slug: 'claude-portal-suspension-review',
     heading: {
       zh: 'Claude 验证身份后组织被停用：怎么用 Request a review 申请复核',
@@ -1254,6 +1317,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'claude-pro-web-invoice-refund': ['claude'],
   'google-ai-colab-cli-invalid-grant': ['antigravity'],
   'google-ai-ultra-cloud-budget-before-credits': ['antigravity'],
   'google-ai-colab-check-units-stop-session': ['antigravity'],
@@ -1282,6 +1346,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'claude-pro-web-invoice-refund': [
+    'claude-pro-apple-receipt-refund',
+    'claude-portal-suspension-review',
+    'claude-max-google-play-recovery',
+  ],
   'google-ai-colab-cli-invalid-grant': [
     'google-ai-colab-check-units-stop-session',
     'antigravity-first-install-google-ai-pro',
