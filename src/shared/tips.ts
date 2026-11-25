@@ -855,6 +855,68 @@ export const TIP_ARTICLES: TipArticle[] = [
     modifiedAt: '2026-11-24T07:32:00Z',
   },
   {
+    slug: 'claude-export-download-manifest',
+    heading: {
+      zh: 'Claude 数据导出只有一个小 JSON，聊天记录怎么下载？',
+      en: 'How to download your chats when a Claude export starts with a small JSON file',
+    },
+    sourceTitle:
+      'Claude 老号一年多，再次护照验证通过后，没逃过还是封了！全新开辟新路！',
+    summary: {
+      zh: '先用文本编辑器打开下载的 JSON。如果里面列着 ZIP 文件名和 export_url，就按清单下载，再解压检查聊天记录。',
+      en: 'Open the JSON in a text editor. If it lists ZIP filenames alongside export_url entries, download the archives and check the conversations inside.',
+    },
+    experience: {
+      zh: '原文作者 @GULINGLE 的 Claude Pro 工作区被停用，申诉后仍无法使用。导出时先拿到一个约 2 KB 的文件。作者打开后找到七个下载链接，逐个保存了对应的 ZIP，取回了资料。',
+      en: 'The original author, @GULINGLE, lost access to a Claude Pro workspace and remained locked out after an appeal. The first export file was about 2 KB. Inside were seven download links, which the author used to retrieve the archives.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用原账号登录 Claude 网页版。在账号受限页面找「导出数据」。如果还能进入设置，从「设置 → 隐私 → 导出数据」发起请求，然后查看注册邮箱。',
+          en: 'Sign in to Claude on the web with the original account and look for the data export option on the restriction screen. If Settings is accessible, go to Settings → Privacy → Export data and check the email tied to the account.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
+          label: {
+            zh: '查看受限账号的导出入口',
+            en: 'Find the export option for restricted accounts',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在已登录原账号的浏览器打开导出邮件里的下载链接。链接生成 24 小时后会过期，也可能只能用一次，打开时就把文件保存到电脑。',
+          en: 'Open the emailed download link in a browser signed in to the same account and save the file to your computer. The link expires 24 hours after creation and may work only once.',
+        },
+        link: {
+          href: 'https://support.claude.com/en/articles/9450526-export-your-claude-data',
+          label: {
+            zh: '查看数据导出说明',
+            en: 'Read the data export instructions',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果拿到的是 manifest 开头的 JSON，把它放进单独的文件夹，在本地用文本编辑器打开。找到 conversations 开头的 ZIP 文件名，在同一项里复制 export_url，用原浏览器打开并保存。对清单里的其他文件逐个重复，按自己的清单核对数量。',
+          en: 'If the download is a JSON file whose name starts with manifest, put it in its own folder and open it in a local text editor. Find the ZIP whose name starts with conversations. Copy the export_url from that entry, open it in the same browser and save the file. Repeat for the other entries and match the downloads against your own list.',
+        },
+      },
+      {
+        text: {
+          zh: '解压聊天记录包，用一段记得的对话原句搜索，确认能读到内容。以前上传的 PDF、图片和源码原件要另行保存。',
+          en: 'Unzip the conversation archive and search for a phrase you remember to check that the chat is readable. Keep separate copies of PDFs, images and source files you originally uploaded.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2120213452824412160',
+    sourceAuthor: '@GULINGLE',
+    sourcePublishedAt: '2026-11-10T18:09:52Z',
+    publishedAt: '2026-11-25T19:12:02Z',
+    modifiedAt: '2026-11-25T19:12:02Z',
+  },
+  {
     slug: 'apple-in-app-purchase-review',
     heading: {
       zh: 'Apple 内购订阅提示 Purchase Not Completed 审核与客服处理',
@@ -1329,6 +1391,7 @@ const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
   'claude-max-google-play-recovery': ['claude'],
   'google-ai-claim-cloud-credits': ['antigravity'],
   'claude-portal-suspension-review': ['claude'],
+  'claude-export-download-manifest': ['claude'],
   'claude-sign-up-identity-verification': ['claude'],
   'google-ai-ultra-plan-evaluation': ['antigravity'],
   'apple-in-app-purchase-review': ['antigravity'],
@@ -1401,8 +1464,13 @@ const TIP_NEXT: Record<string, string[]> = {
     'google-ai-colab-check-units-stop-session',
     'google-ai-pro-switch-to-annual',
   ],
-  'claude-portal-suspension-review': [
+  'claude-export-download-manifest': [
+    'claude-portal-suspension-review',
+    'claude-pro-web-invoice-refund',
     'claude-max-google-play-recovery',
+  ],
+  'claude-portal-suspension-review': [
+    'claude-export-download-manifest',
     'claude-sign-up-identity-verification',
     'claude-pro-apple-receipt-refund',
   ],
