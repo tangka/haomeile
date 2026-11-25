@@ -1062,12 +1062,12 @@
     "source_url": "https://x.com/plotarmordev/status/2125413366105780547",
     "source_platform": "X",
     "source_published_at": "2026-11-25",
-    "codename": "旅行中 Claude 账号停用，通知引用地区政策",
-    "codename_en": "Claude access revoked while traveling, notice cited regional policy",
-    "story": "原帖作者说，在亚洲旅行时，此前已完成身份验证的 Claude 账号被停用。作者公开的通知邮件引用了支持国家和地区政策，并列出了申诉入口。作者随后补充，旅途中去过香港和中国内地。11 月 25 日稍晚，作者说还在等回复，也不知道剩余订阅费用能否退回。",
-    "story_en": "The original poster says they lost Claude access while traveling in Asia, although they had already verified their identity. The notice they shared cited the supported countries policy and listed a way to appeal. They later said they had visited Hong Kong and mainland China. Later that morning they were still waiting for a reply and did not know whether they would get a refund for the unused subscription time.",
-    "reviewed_at": "2026-11-25",
-    "evidence": "Original post published 2026-11-25T02:16:49Z with the notice. Same-author replies https://x.com/plotarmordev/status/2125416469714604119 and https://x.com/plotarmordev/status/2125424129671348628 add travel locations and the absence of a response. They do not explicitly confirm a formal appeal or refund request. The tier and exact suspension date are unknown.",
+    "codename": "旅行中 Claude 账号停用，作者更新称申诉被拒",
+    "codename_en": "Claude account suspended while traveling, appeal later denied",
+    "story": "原帖作者说，在亚洲旅行时，此前已完成身份验证的 Claude 账号被停用。通知邮件引用了支持国家和地区政策，并列出了申诉入口。作者随后补充，旅途中去过香港和中国内地。11 月 25 日上午，作者还在等回复，也不清楚剩余订阅费能否退回。当天 15:54（新加坡时间），作者引用原帖更新说，申诉已被拒绝，收到的是最终决定。作者说对方没有解释拒绝的具体原因。",
+    "story_en": "The original poster says their previously verified Claude account was suspended while they were traveling in Asia. The notice cited the supported countries and regions policy and linked to an appeal. They later said they had visited Hong Kong and mainland China. On the morning of November 25, they were waiting for a reply and did not know whether the unused portion of the subscription would be refunded. At 15:54 Singapore time that day, they quoted the original post to report that their appeal had been denied and the decision was final. They said they were given no specific reason for the denial.",
+    "reviewed_at": "2026-11-26",
+    "evidence": "Original post at 2026-11-25T02:16:49Z with a regional-policy notice. Same-author replies https://x.com/plotarmordev/status/2125416469714604119 and https://x.com/plotarmordev/status/2125424129671348628 add travel locations and the wait for a reply. Same-author update https://x.com/plotarmordev/status/2125498274698457507 at 2026-11-25T07:54:13Z quotes the original and explicitly calls the denial final. The original post gives no appeal outcome; the later decision is attributed separately. The tier, exact suspension date and refund outcome remain unconfirmed.",
     "status_as_of": "2026-11-25"
   },
   {
