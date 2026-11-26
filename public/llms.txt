@@ -23,6 +23,9 @@
 - [Codex 账号停用记录](https://haomeile.rip/v/codex): OpenAI Codex 与关联 ChatGPT 账号停用、401 与恢复案例
 - [Antigravity 服务停用与 403 记录](https://haomeile.rip/v/antigravity): Google Antigravity 服务停用、403、地区限制与申诉案例
 - [官方申诉入口与常见排查](https://haomeile.rip/appeal): 三家官方申诉链接、填写清单与分产品问答
+- [Antigravity 官方申诉与 403 排查指南](https://haomeile.rip/appeal/antigravity): Antigravity 服务停用与 403 官方表单、地区核对、Starter Quota 区分与常见问答
+- [Claude 封号与组织停用官方申诉指南](https://haomeile.rip/appeal/claude): Claude / Claude Code 账号受限、Portal 组织停用复核、解封后 Max 恢复与退款排查
+- [Codex / OpenAI 账号停用官方申诉指南](https://haomeile.rip/appeal/codex): OpenAI 邮件申诉链接、永久停用表单、帮助中心与客户端 401 排查
 - [重置雷达（24 小时额度重置概率）](https://haomeile.rip/radar): Codex、Claude Code 与 Antigravity 未来 24 小时额度重置概率实时预测与近 24 小时趋势，支持超过 80% 时发送免费邮件提醒
 - [使用小技巧目录](https://haomeile.rip/tips): Claude、ChatGPT/Codex 与 Google AI / Antigravity 的开通、付款、续费与套餐异常处理步骤
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
@@ -30,6 +33,7 @@
 
 ## 使用小技巧与排查指南
 
+- [Google AI Pro 每月 $10 Cloud 赠金换绑结算账号](https://haomeile.rip/tips/google-ai-pro-change-credit-billing-account): 旧结算账号失效时新建 Cloud Billing 账号领取每月赠金并设置预算提醒
 - [Antigravity 桌面端登录与 Google AI Pro 开通](https://haomeile.rip/tips/antigravity-first-install-google-ai-pro): 下载登录、订阅 Pro 与查看模型及用量入口
 - [Google AI Pro 月付切换年付实测](https://haomeile.rip/tips/google-ai-pro-switch-to-annual): 在 Google One 切年付并在 Google Play 核对收据与续费
 - [Antigravity 开通 Ultra 仍显示 Starter Quota 排查](https://haomeile.rip/tips/antigravity-paid-plan-starter-quota): 核对登录邮箱、年龄验证提示与重新登录步骤
@@ -63,6 +67,9 @@ Haomeile (https://haomeile.rip/en/) is a bilingual independent community documen
 - [Codex account deactivations & appeals (EN)](https://haomeile.rip/en/v/codex)
 - [Antigravity 403 & service suspensions (EN)](https://haomeile.rip/en/v/antigravity)
 - [Official appeal channels & FAQ (EN)](https://haomeile.rip/en/appeal)
+- [How to submit an Antigravity appeal & 403 fix (EN)](https://haomeile.rip/en/appeal/antigravity)
+- [How to appeal a Claude ban or org suspension (EN)](https://haomeile.rip/en/appeal/claude)
+- [How to appeal a Codex or ChatGPT deactivation (EN)](https://haomeile.rip/en/appeal/codex)
 - [Reset Radar — 24h quota reset forecast & free email alerts above 80% (EN)](https://haomeile.rip/en/radar)
 - [Tips & troubleshooting guides (EN)](https://haomeile.rip/en/tips)
 - [Claude Max still Free after reinstatement (EN)](https://haomeile.rip/en/tips/claude-max-google-play-recovery)

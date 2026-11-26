@@ -169,7 +169,7 @@ const jsonLd = [
           {relatedVendors.map((vendor) => (
             <>
               <a href={'/v/' + vendor}>{vendorMeta[vendor].label}</a>
-              <a href={'/appeal#' + vendor}>{vendorMeta[vendor].appealLabel}</a>
+              <a href={'/appeal/' + vendor}>{vendorMeta[vendor].appealLabel}</a>
             </>
           ))}
           {relatedVendors.length === 0 && <a href="/appeal">官方申诉入口</a>}

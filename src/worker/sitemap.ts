@@ -1,6 +1,7 @@
 import { VENDORS } from './types';
 import { SUPPORTED_VENDOR_FILTER } from './lib/store';
 import { localePath } from '../shared/i18n';
+import { APPEAL_GUIDE_PATHS } from '../shared/appeals';
 import { TIP_PATHS } from '../shared/tips';
 
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
@@ -12,6 +13,7 @@ const STATIC_PATHS = [
   '/',
   '/epitaph',
   '/appeal',
+  ...APPEAL_GUIDE_PATHS,
   '/tips',
   '/radar',
   '/privacy',

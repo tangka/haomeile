@@ -1,4 +1,5 @@
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
+import { APPEAL_GUIDES } from '../shared/appeals';
 import { TIP_ARTICLES, tipLinkHref, tipSeoTitle } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
 import type { ReadRadarOverview } from '../shared/radar';
@@ -49,17 +50,18 @@ export async function llmsFullResponse(
     lines.push('');
   }
 
-  lines.push('## Official Appeal Channels');
-  lines.push(`- Full appeal guide: ${site}/appeal (EN: ${site}/en/appeal)`);
-  lines.push(
-    '- Claude: sign in with the affected account at https://claude.ai/restricted ; official guidance at https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
-  );
-  lines.push(
-    '- Codex / OpenAI: start with the appeal link in OpenAI’s email notice; for permanent closures without email access use https://openai.com/form/appeal/ ; otherwise https://help.openai.com/',
-  );
-  lines.push(
-    '- Antigravity: for personal Google Account suspensions or 403 permission errors, sign in with the affected Google Account and submit https://forms.gle/hGzM9MEUv2azZsrb9 ; Google disabled account help at https://support.google.com/accounts/answer/40695',
-  );
+  lines.push('## Official Appeal Channels & Product Appeal Guides');
+  lines.push(`- Overview: ${site}/appeal (EN: ${site}/en/appeal)`);
+  for (const guide of APPEAL_GUIDES) {
+    lines.push(
+      `- ${guide.name} appeal guide: ${site}${guide.path} (EN: ${site}/en${guide.path})`,
+    );
+    lines.push(
+      `  - Official appeal URL: ${guide.appealUrl} | Official help: ${guide.helpUrl}`,
+    );
+    lines.push(`  - Summary (ZH): ${guide.lead.zh}`);
+    lines.push(`  - Summary (EN): ${guide.lead.en}`);
+  }
   lines.push('');
 
   lines.push('## Public Case Counts by Product');

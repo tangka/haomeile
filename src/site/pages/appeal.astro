@@ -11,6 +11,8 @@ const channels = [
     guidance: '用受限的 Claude 账号登录，在账号限制页提交申诉。',
     appeal: 'https://claude.ai/restricted',
     action: 'Claude 账号申诉',
+    guideHref: '/appeal/claude',
+    guideLabel: '详细申诉与排查步骤',
     help: 'https://support.claude.com/en/articles/8241253-safeguards-warnings-and-appeals',
     helpLabel: 'Claude 申诉说明',
     casesHref: '/v/claude',
@@ -23,6 +25,8 @@ const channels = [
       '优先使用 OpenAI 通知邮件里的申诉链接。账号永久停用且无法查看通知时，可用下方表单。没收到通知，可联系帮助中心。',
     appeal: 'https://openai.com/form/appeal/',
     action: 'OpenAI 申诉表单',
+    guideHref: '/appeal/codex',
+    guideLabel: '详细申诉与排查步骤',
     help: 'https://help.openai.com/',
     helpLabel: 'OpenAI 帮助中心',
     casesHref: '/v/codex',
@@ -35,6 +39,8 @@ const channels = [
       '个人账号遇到 Antigravity 服务停用或 403 权限拒绝时，用受影响的 Google 账号登录并提交申诉。',
     appeal: 'https://forms.gle/hGzM9MEUv2azZsrb9',
     action: 'Antigravity 申诉表单',
+    guideHref: '/appeal/antigravity',
+    guideLabel: '详细申诉与排查步骤',
     help: 'https://support.google.com/accounts/answer/40695',
     helpLabel: 'Google 账号停用说明',
     casesHref: '/v/antigravity',
@@ -95,7 +101,7 @@ const jsonLd = [
 ---
 
 <SiteLayout
-  title="Claude、Codex、Antigravity 封号后怎么申诉 · 号没了"
+  title="Claude、Codex、Antigravity 官方申诉入口与 403/封号申诉表单 · 号没了"
   description="Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。"
   path="/appeal"
   current="/appeal"
@@ -118,6 +124,8 @@ const jsonLd = [
             guidance,
             appeal,
             action,
+            guideHref,
+            guideLabel,
             help,
             helpLabel,
             casesHref,
@@ -135,6 +143,7 @@ const jsonLd = [
                 >
                   {action}
                 </a>
+                <a href={guideHref}>{guideLabel}</a>
                 <a href={help} target="_blank" rel="noopener noreferrer">
                   {helpLabel}
                 </a>

@@ -215,7 +215,7 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     },
     links: [
       {
-        href: '/appeal#claude',
+        href: '/appeal/claude',
         label: { zh: 'Claude 官方申诉入口', en: 'Official Claude appeal' },
       },
       {
@@ -256,7 +256,7 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     },
     links: [
       {
-        href: '/appeal#codex',
+        href: '/appeal/codex',
         label: {
           zh: 'Codex / OpenAI 官方申诉入口',
           en: 'Official OpenAI appeal',
@@ -293,7 +293,7 @@ const VENDOR_SEO: Record<string, VendorSeoConfig> = {
     },
     links: [
       {
-        href: '/appeal#antigravity',
+        href: '/appeal/antigravity',
         label: {
           zh: 'Antigravity 官方申诉与 403 说明',
           en: 'Antigravity official appeal & 403 help',
@@ -372,6 +372,7 @@ export async function servePage(
       '/about',
       '/admin',
     ].includes(path) ||
+    /^\/appeal\/(?:claude|codex|antigravity)$/.test(path) ||
     /^\/tips\/[a-z0-9-]+$/.test(path)
   )
     assetPath = path + '/';
@@ -659,7 +660,7 @@ export async function servePage(
       element: (el) => {
         const vendorHref = escapeHtml(localePath(`/v/${tomb.vendor}`, locale));
         const appealHref = escapeHtml(
-          localePath(`/appeal#${tomb.vendor}`, locale),
+          localePath(`/appeal/${tomb.vendor}`, locale),
         );
         const tipsHref = escapeHtml(localePath('/tips', locale));
         el.setInnerContent(
@@ -780,7 +781,7 @@ export async function servePage(
     site === DEFAULT_SITE_ORIGIN &&
     ((path === '/radar' && radarAccessible) ||
       /^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
-      /^\/(?:v|t|tips)\/[^/]+$/.test(path));
+      /^\/(?:v|t|tips|appeal)\/[^/]+$/.test(path));
   const analyticsToken = publicAnalyticsPage
     ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
     : undefined;

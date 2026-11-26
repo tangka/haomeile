@@ -8,11 +8,12 @@ import {
 import { createCredentials } from '../../src/worker/lib/crypto';
 import { publicRoutes } from '../../src/worker/routes/public';
 import type { Bindings, TombStatus } from '../../src/worker/types';
+import { APPEAL_GUIDE_PATHS } from '../../src/shared/appeals';
 import { TIP_PATHS } from '../../src/shared/tips';
 
 const deployedAt = '2026-11-19T12:34:56.000Z';
 const updatedAt = '2026-11-20T01:02:03.000Z';
-const staticUrls = (7 + TIP_PATHS.length) * 2;
+const staticUrls = (7 + APPEAL_GUIDE_PATHS.length + TIP_PATHS.length) * 2;
 function expectLanguagePair(xml: string, path: string): void {
   const zh = `https://haomeile.rip${path}`;
   const en = `https://haomeile.rip/en${path}`;
@@ -96,6 +97,7 @@ describe('dynamic sitemap', () => {
       '/',
       '/epitaph',
       '/appeal',
+      ...APPEAL_GUIDE_PATHS,
       '/tips',
       '/radar',
       '/privacy',

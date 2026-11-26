@@ -969,6 +969,10 @@ export function tipVendors(slug: string): TipVendor[] {
 }
 
 const TIP_SEO_TITLES: Record<string, TipCopy> = {
+  'google-ai-pro-change-credit-billing-account': {
+    zh: 'Google AI Pro 每月 $10 Cloud 赠金领取与旧结算账号换绑指南',
+    en: 'Claim Google AI Pro $10 Monthly Cloud Credit & Switch Billing Account',
+  },
   'antigravity-first-install-google-ai-pro': {
     zh: 'Antigravity 桌面端登录与 Google AI Pro 订阅核对指南',
     en: 'Antigravity Desktop Sign-In & Google AI Pro Setup Guide',
@@ -989,6 +993,10 @@ const TIP_SEO_TITLES: Record<string, TipCopy> = {
     zh: 'Google AI Pro 领取 Google Cloud API 赠金与预付余额排查',
     en: 'How to Claim Google AI Pro Cloud API Credits & Fix Prepaid Balance',
   },
+  'claude-portal-suspension-review': {
+    zh: 'Claude Portal 身份验证后组织停用怎么申诉复核（解封实录）',
+    en: 'Claude Organization Suspended After Portal KYC: How to Request a Review',
+  },
   'claude-sign-up-identity-verification': {
     zh: 'Claude 注册或结账弹出身份验证怎么办（支持地区与证件核对）',
     en: 'Claude Identity Verification at Sign-Up or Checkout: What to Check',
@@ -996,6 +1004,10 @@ const TIP_SEO_TITLES: Record<string, TipCopy> = {
   'apple-in-app-purchase-review': {
     zh: 'Apple 内购订阅提示 Purchase Not Completed 审核与客服处理',
     en: 'App Store Purchase Not Completed: Review & Apple Support Steps',
+  },
+  'claude-pro-apple-receipt-refund': {
+    zh: 'Claude Pro 扣费后仍显示 Free 怎么核对 Apple 收据与申请退款',
+    en: 'Paid for Claude Pro via Apple but Still Free: Receipt Check & Refund Appeal',
   },
   'google-ai-ultra-iphone-subscription': {
     zh: 'iPhone 开通 Google AI Ultra 核对地区与 Antigravity 生效步骤',

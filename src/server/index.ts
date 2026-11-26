@@ -18,6 +18,7 @@ import {
   shouldNotifyRadar,
 } from './search-push';
 import { radarCapacityReport } from '../shared/radar-email-report';
+import { APPEAL_GUIDE_PATHS } from '../shared/appeals';
 import { TIP_PATHS } from '../shared/tips';
 
 export function serverConfig(
@@ -152,6 +153,7 @@ async function main() {
               '/',
               '/radar',
               '/appeal',
+              ...APPEAL_GUIDE_PATHS,
               '/tips',
               '/v/claude',
               '/v/codex',

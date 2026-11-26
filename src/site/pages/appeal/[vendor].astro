@@ -1,0 +1,280 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { APPEAL_GUIDES, type AppealGuide } from '../../../shared/appeals';
+import { siteOrigin } from '../../../shared/site';
+
+export function getStaticPaths() {
+  return APPEAL_GUIDES.map((guide) => ({
+    params: { vendor: guide.vendor },
+    props: { guide },
+  }));
+}
+
+interface Props {
+  guide: AppealGuide;
+}
+
+const SITE = siteOrigin(import.meta.env.PUBLIC_SITE_ORIGIN);
+const { guide } = Astro.props;
+const pageUrl = `${SITE}${guide.path}`;
+const citations = Array.from(
+  new Set([
+    guide.appealUrl,
+    guide.helpUrl,
+    ...guide.steps
+      .map((step) =>
+        step.link
+          ? typeof step.link.href === 'string'
+            ? step.link.href
+            : step.link.href.zh
+          : null,
+      )
+      .filter((href): href is string => Boolean(href)),
+  ]),
+);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: guide.heading.zh,
+    description: guide.description.zh,
+    inLanguage: 'zh-CN',
+    url: pageUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Haomeile',
+      url: SITE + '/',
+    },
+    citation: citations,
+    step: guide.steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.title.zh,
+      text: step.text.zh,
+      ...(step.link
+        ? {
+            url:
+              typeof step.link.href === 'string'
+                ? step.link.href
+                : step.link.href.zh,
+          }
+        : {}),
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: 'zh-CN',
+    mainEntity: guide.faqs.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question.zh,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer.zh,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '纪念墙',
+        item: SITE + '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '官方申诉入口',
+        item: SITE + '/appeal',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: guide.name,
+      },
+    ],
+  },
+];
+---
+
+<SiteLayout
+  title={guide.seoTitle.zh}
+  description={guide.description.zh}
+  path={guide.path}
+  current="/appeal"
+  jsonLd={jsonLd}
+>
+  <main class="page">
+    <div class="wrap">
+      <article class="doc appeal-guide">
+        <nav class="guide-crumbs" aria-label="申诉指南导航">
+          <a href="/appeal">返回全部官方申诉入口</a>
+        </nav>
+
+        <div class="page-head">
+          <h1>{guide.heading.zh}</h1>
+          <p>{guide.lead.zh}</p>
+        </div>
+
+        <section class="guide-cta">
+          <div class="guide-actions">
+            <a
+              class="btn btn-primary"
+              href={guide.appealUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {guide.appealAction.zh}
+            </a>
+            <a href={guide.helpUrl} target="_blank" rel="noopener noreferrer">
+              {guide.helpLabel.zh}
+            </a>
+            <a href={guide.casesHref}>{guide.casesLabel.zh}</a>
+            <a href="/radar">24 小时额度重置雷达</a>
+          </div>
+        </section>
+
+        <h2>先区分常见情况</h2>
+        <p>{guide.checklistIntro.zh}</p>
+        <ul class="scenario-list">
+          {guide.scenarios.map(({ label, detail }) => (
+            <li>
+              <strong>{label.zh}</strong>
+              <p>{detail.zh}</p>
+            </li>
+          ))}
+        </ul>
+
+        <h2>申诉与排查步骤</h2>
+        <ol class="step-list">
+          {guide.steps.map(({ title, text, link }) => (
+            <li>
+              <h3>{title.zh}</h3>
+              <p>
+                <span>{text.zh}</span>
+                {link && (
+                  <>
+                    {' '}
+                    <a
+                      href={
+                        typeof link.href === 'string' ? link.href : link.href.zh
+                      }
+                      data-en-href={
+                        typeof link.href === 'string' ? undefined : link.href.en
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label.zh}
+                    </a>
+                  </>
+                )}
+              </p>
+            </li>
+          ))}
+        </ol>
+
+        <h2>申诉表单建议填写的内容</h2>
+        <ul>
+          {guide.draftChecklist.map((item) => (
+            <li>{item.zh}</li>
+          ))}
+        </ul>
+
+        <h2>常见问题</h2>
+        {guide.faqs.map(({ question, answer }) => (
+          <section class="faq-item">
+            <h3>{question.zh}</h3>
+            <p>{answer.zh}</p>
+          </section>
+        ))}
+
+        <h2>相关实操指南</h2>
+        <ul>
+          {guide.relatedTips.map(({ slug, label }) => (
+            <li>
+              <a href={'/tips/' + slug}>{label.zh}</a>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .appeal-guide {
+    margin-inline: auto;
+  }
+  .guide-crumbs {
+    margin-block-end: 20px;
+    font-size: var(--fs-s);
+  }
+  .guide-cta {
+    margin-block: 24px 28px;
+    padding: 18px 20px;
+    border: 1px solid var(--stone-shade);
+    border-radius: 10px;
+    background: var(--stone-soft, rgba(127, 127, 127, 0.05));
+  }
+  .guide-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+  }
+  .guide-actions a {
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+  .scenario-list {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .scenario-list li {
+    padding: 14px 16px;
+    border: 1px solid var(--stone-shade);
+    border-radius: 8px;
+  }
+  .scenario-list strong {
+    display: block;
+    margin-block-end: 6px;
+  }
+  .scenario-list p {
+    margin: 0;
+    line-height: 1.65;
+  }
+  .step-list li + li {
+    margin-block-start: 16px;
+  }
+  .step-list h3 {
+    margin: 0 0 6px;
+    font-size: var(--fs-m);
+    line-height: 1.4;
+  }
+  .step-list p {
+    margin: 0;
+    line-height: 1.7;
+  }
+  .faq-item {
+    margin-block-start: 16px;
+    padding-block-start: 16px;
+    border-block-start: 1px solid var(--stone-shade);
+  }
+  .faq-item h3 {
+    margin-block: 0 8px;
+    font-size: var(--fs-m);
+    line-height: 1.4;
+  }
+  .faq-item p {
+    margin-block: 0;
+    line-height: 1.7;
+  }
+</style>

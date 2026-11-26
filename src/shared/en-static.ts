@@ -1,3 +1,4 @@
+import { APPEAL_GUIDE_TRANSLATIONS } from './appeals';
 import { TIP_TRANSLATIONS } from './tips';
 
 /** Static, first-party interface copy. User-written memorials are never translated. */
@@ -229,8 +230,19 @@ export const EN_STATIC: Record<string, string> = {
   操作: 'Action',
   操作人: 'Moderator',
 
+  'Claude、Codex、Antigravity 官方申诉入口与 403/封号申诉表单 · 号没了':
+    'Claude, Codex & Antigravity Official Appeal Forms (403 & Ban Guide) · Haomeile',
   'Claude、Codex、Antigravity 封号后怎么申诉 · 号没了':
     'How to appeal a Claude, Codex or Antigravity suspension · Haomeile',
+  详细申诉与排查步骤: 'Full appeal & troubleshooting guide',
+  申诉指南导航: 'Appeal guide navigation',
+  返回全部官方申诉入口: 'All official appeal channels',
+  '24 小时额度重置雷达': '24h Reset Radar',
+  先区分常见情况: 'Identify your situation first',
+  申诉与排查步骤: 'Appeal & troubleshooting steps',
+  申诉表单建议填写的内容: 'What to include in your appeal',
+  常见问题: 'Frequently asked questions',
+  ...APPEAL_GUIDE_TRANSLATIONS,
   'Claude、Codex 或 Antigravity 账号停用后，查看对应的官方申诉入口和填写时需要准备的信息。':
     'Find the official appeal channel for a Claude, Codex or Antigravity suspension and get the details you need to file an appeal.',
   'Claude、Codex、Antigravity 账号停用与 403 报错的官方申诉入口、填写清单，以及身份验证、Starter Quota 和解封后订阅异常排查指南。':
