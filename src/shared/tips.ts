@@ -28,6 +28,69 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-ultra-zero-dollar-refund',
+    heading: {
+      zh: 'Google Play 发来 0 美元退款邮件，怎么查 Google AI Ultra 还能用多久？',
+      en: 'How to check Google AI Ultra after a $0 Google Play refund notice',
+    },
+    sourceTitle:
+      '0 元领的会员可能被退掉收回：11 月 26 日前，先看你能不能用上 Carbon',
+    summary: {
+      zh: '免费领取的 Ultra 被收回时，退款金额也可能是 0。先用收件邮箱找到对应的 Google Play 订单，再看订阅的到期日和 Google One 当前显示的套餐。',
+      en: 'When a free Ultra offer is withdrawn, the refund notice can show $0. Use the account that received the email to find the Play order, check the subscription dates and see which plan Google One lists now.',
+    },
+    experience: {
+      zh: '原文作者 @theNightFerry 免费领过 Google AI Ultra，几天后报告会员已失效。作者贴出的 Google Play 邮件写着退款 0.00 美元，商品名称里有「Google AI Ultra (20 TB)」。这笔订单当初实付为零。',
+      en: 'After claiming Google AI Ultra at no cost, @theNightFerry reported losing access a few days later. The Google Play email in the article shows a $0.00 refund and names Google AI Ultra (20 TB) in the item description. The original purchase cost $0.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在 Google Play 网页切换到收到邮件的账号。点头像，进入「付款和订阅」里的订单记录，按邮件中的商品名称找到那笔购买，核对金额和订单日期。',
+          en: 'On the Google Play website, switch to the account that received the notice. Open the profile menu, choose Payments & subscriptions, then Budget & order history. Match the item in the email to the order and check its amount and date.',
+        },
+        link: {
+          href: 'https://support.google.com/googleplay/answer/2850369',
+          label: {
+            zh: '查看 Google Play 订单记录',
+            en: 'Find a Google Play order',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在 Google Play 的「订阅」里打开这项会员。如果页面列出下一次扣款日期，记下日期和金额。如果已取消续订并列出到期日，已付费的时段通常可以用到那一天。退款邮件里的 0 美元本身无法说明有效期。',
+          en: 'Open the membership under Google Play subscriptions. If a next charge is listed, note its amount and date. If renewal was canceled and an end date is shown, access normally continues through the paid period. The $0 amount in the refund notice alone does not tell you when access ends.',
+        },
+        link: {
+          href: 'https://play.google.com/store/account/subscriptions',
+          label: {
+            zh: '打开 Google Play 订阅',
+            en: 'Open Google Play subscriptions',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '用同一个账号打开 Google One，进入「管理会员资格」，查当前套餐名称。需要继续用 Ultra 时，先看账号里是否仍有这项权益，再决定是否重新订阅。',
+          en: 'Open Google One with the same account and go to Manage membership to check the current plan. Before starting another Ultra subscription, see whether this account still has Ultra access.',
+        },
+        link: {
+          href: 'https://one.google.com/',
+          label: {
+            zh: '查看 Google One 会员资格',
+            en: 'Check your Google One membership',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2125201847640055808',
+    sourceAuthor: '@theNightFerry',
+    sourcePublishedAt: '2026-11-24T12:19:15Z',
+    publishedAt: '2026-11-26T19:14:06Z',
+    modifiedAt: '2026-11-26T19:14:06Z',
+  },
+  {
     slug: 'google-payments-cloud-prepay-closed-account',
     heading: {
       zh: 'Google Cloud 结算账户已关闭，为什么付款资料还显示有服务？',
@@ -1502,6 +1565,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-ultra-zero-dollar-refund': ['antigravity'],
   'google-payments-cloud-prepay-closed-account': ['antigravity'],
   'google-ai-pro-gemini-antigravity-usage': ['antigravity'],
   'claude-pro-web-invoice-refund': ['claude'],
@@ -1534,6 +1598,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-ultra-zero-dollar-refund': [
+    'google-ai-ultra-plan-evaluation',
+    'antigravity-paid-plan-starter-quota',
+    'android-subscriptions-google-play',
+  ],
   'google-payments-cloud-prepay-closed-account': [
     'google-ai-pro-change-credit-billing-account',
     'google-ai-ultra-cloud-budget-before-credits',
@@ -1617,7 +1686,7 @@ const TIP_NEXT: Record<string, string[]> = {
   'google-ai-ultra-plan-evaluation': [
     'antigravity-ultra-check-credit-usage',
     'google-ai-ultra-iphone-subscription',
-    'google-ai-pro-switch-to-annual',
+    'google-ai-ultra-zero-dollar-refund',
   ],
   'apple-in-app-purchase-review': [
     'google-ai-ultra-iphone-subscription',
