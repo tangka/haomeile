@@ -25,20 +25,27 @@
 - [官方申诉入口与常见排查](https://haomeile.rip/appeal): 三家官方申诉链接、填写清单与分产品问答
 - [重置雷达（24 小时额外重置估计，非官方）](https://haomeile.rip/radar): Codex、Claude Code 与 Antigravity 未来 24 小时额外重置的非官方估计与近 24 小时趋势，不计自然周期内的恢复，基于社区观测信号，尚无命中率数据，支持超过 80% 时发送免费邮件提醒；预测由站长制作，未经许可不得抓取、转载或用于其他网站、应用和服务（https://haomeile.rip/radar#radar-rights）
 - [使用小技巧目录](https://haomeile.rip/tips): Claude、ChatGPT/Codex 与 Google AI / Antigravity 的开通、付款、续费与套餐异常处理步骤
+- [2026 年 11 月月度数据报告](https://haomeile.rip/report/2026-11): 按月汇总的 Claude、Codex 与 Antigravity 公开收录条数、事件分布、申诉提及与统计口径
 - [数据说明](https://haomeile.rip/privacy): 内容来源、数据保存方式、统计定义与撤回流程
 - [关于](https://haomeile.rip/about): 社区介绍与更正删除渠道
 
 ## 使用小技巧与排查指南
 
+- [Colab CLI 授权后报 invalid_grant，怎么用订阅账号重新登录](https://haomeile.rip/tips/google-ai-colab-cli-invalid-grant): 改用 gcloud ADC 授权登录并核对 Colab 计算单元余额
+- [Google AI Ultra 赠金抵扣后账单是零，怎么按实际用量设提醒](https://haomeile.rip/tips/google-ai-ultra-cloud-budget-before-credits): 在 Cloud Billing 排除抵扣项按实际用量设置预算邮件提醒
+- [Google AI 订阅里的 Colab 算力怎么查，任务结束怎么关掉 GPU](https://haomeile.rip/tips/google-ai-colab-check-units-stop-session): 用 Colab CLI 查询余额、停止运行中的 GPU 会话并核对实际消耗
+- [Google AI Ultra 怎么查 Flow 扣点和 Antigravity 剩余额度](https://haomeile.rip/tips/antigravity-ultra-check-credit-usage): 在 Google One 与 Flow 核对点数活动，在 Antigravity 查看模型组余量
 - [Google AI Pro 每月赠金与结算账号更换](https://haomeile.rip/tips/google-ai-pro-change-credit-billing-account): 在开发者福利页领取赠金并更换失效的结算账号
 - [Antigravity 桌面端登录与 Google AI Pro 开通](https://haomeile.rip/tips/antigravity-first-install-google-ai-pro): 下载登录、订阅 Pro 与查看模型及用量入口
 - [Google AI Pro 月付切换年付实测](https://haomeile.rip/tips/google-ai-pro-switch-to-annual): 在 Google One 切年付并在 Google Play 核对收据与续费
 - [Antigravity 开通 Ultra 仍显示 Starter Quota 排查](https://haomeile.rip/tips/antigravity-paid-plan-starter-quota): 核对登录邮箱、年龄验证提示与重新登录步骤
 - [Claude 解封后 Max 仍显示 Free 恢复记录](https://haomeile.rip/tips/claude-max-google-play-recovery): 核对 Google Play 订单并联系 Claude 官方支持恢复权益
 - [Google AI Pro 领取 Google Cloud API 赠金](https://haomeile.rip/tips/google-ai-claim-cloud-credits): 在 AI Studio 兑换并在 Cloud Billing 核对赠金与预付余额
+- [Claude Pro 已关续费，怎样凭网页订单申请退款](https://haomeile.rip/tips/claude-pro-web-invoice-refund): 用付款邮件发票在 Claude 帮助中心核对订单并申请网页订阅退款
 - [Claude 组织停用与账号申诉实测](https://haomeile.rip/tips/claude-portal-suspension-review): 在 Claude 后台查看组织停用状态并提交申诉复核
 - [Claude 注册与结账弹出身份验证处理](https://haomeile.rip/tips/claude-sign-up-identity-verification): 核对支持地区、官方证件要求与付款状态
 - [Google AI Pro 与 Ultra 套餐对比评估](https://haomeile.rip/tips/google-ai-ultra-plan-evaluation): 对照模型表、实际用量与云盘/Colab 权益后再升级
+- [Claude 数据导出只有一个小 JSON，聊天记录怎么下载？](https://haomeile.rip/tips/claude-export-download-manifest): 打开 manifest JSON 清单逐个下载 conversations ZIP 压缩包
 - [Apple App Store 订阅被拦截审核处理](https://haomeile.rip/tips/apple-in-app-purchase-review): 遇到 Purchase Not Completed 时提交审核与联系 Apple 支持
 - [Claude Pro 封号后通过 Apple 收据申请退款](https://haomeile.rip/tips/claude-pro-apple-receipt-refund): 核对 App Store 订阅收据并通过 Apple 官方渠道申请退款
 - [iPhone 开通 Google AI Ultra 核对步骤](https://haomeile.rip/tips/google-ai-ultra-iphone-subscription): 分别核对 Antigravity 地区、Google One 订阅与 Apple 内购账号
@@ -66,6 +73,7 @@ Haomeile (https://haomeile.rip/en/) is a bilingual independent community documen
 - [Official appeal channels & FAQ (EN)](https://haomeile.rip/en/appeal)
 - [Reset Radar — unofficial 24h extra quota reset estimate & free email alerts above 80% (EN)](https://haomeile.rip/en/radar): no scraping, republishing or reuse of the data without the owner’s permission
 - [Tips & troubleshooting guides (EN)](https://haomeile.rip/en/tips)
+- [November 2026 monthly data report (EN)](https://haomeile.rip/en/report/2026-11)
 - [Claude Max still Free after reinstatement (EN)](https://haomeile.rip/en/tips/claude-max-google-play-recovery)
 - [Antigravity paid plan still showing Starter Quota (EN)](https://haomeile.rip/en/tips/antigravity-paid-plan-starter-quota)
 - [Data & privacy (EN)](https://haomeile.rip/en/privacy)

@@ -22,6 +22,7 @@ import {
 } from './search-push';
 import { radarCapacityReport } from '../shared/radar-email-report';
 import { TIP_PATHS } from '../shared/tips';
+import { listReportMonths } from '../worker/report';
 
 export function serverConfig(
   values: Record<string, string | undefined> = process.env,
@@ -150,6 +151,9 @@ async function main() {
     try {
       if (command === 'notify-search') {
         const extra = process.argv.slice(3);
+        const reportPaths = (await listReportMonths(env.DB)).map(
+          ({ month }) => `/report/${month}`,
+        );
         const targetPaths = extra.length
           ? extra
           : [
@@ -160,6 +164,7 @@ async function main() {
               '/v/claude',
               '/v/codex',
               '/v/antigravity',
+              ...reportPaths,
               '/llms.txt',
               '/llms-full.txt',
               ...TIP_PATHS,

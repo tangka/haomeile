@@ -65,6 +65,7 @@ describe('Worker renders Astro templates on the server', () => {
     expect(structured['@type']).toBe('Article');
     expect(structured.author).toEqual({
       '@type': 'Organization',
+      '@id': 'https://haomeile.rip/#org',
       name: 'Haomeile',
       url: 'https://haomeile.rip/',
     });

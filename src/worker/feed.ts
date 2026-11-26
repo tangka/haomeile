@@ -4,6 +4,7 @@ import { TIP_ARTICLES } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
 import { getLabels } from '../site/scripts/labels';
 import { listTombstones } from './lib/store';
+import { formatMonthLabel, listReportMonths } from './report';
 import { escapeXml } from './sitemap';
 import { WEBSUB_HUB } from '../shared/indexnow';
 
@@ -34,8 +35,31 @@ export async function feedResponse(
   const homeUrl = site + localePath('/', locale);
   const fallbackTime = new Date().toISOString();
 
-  const { items } = await listTombstones(db, {});
+  const [{ items }, reportMonths] = await Promise.all([
+    listTombstones(db, {}),
+    listReportMonths(db),
+  ]);
   const entries: FeedEntry[] = [];
+
+  for (const report of reportMonths) {
+    const url = site + localePath(`/report/${report.month}`, locale);
+    const label = formatMonthLabel(report.month, locale);
+    const updated = isoDate(report.updatedAt, fallbackTime);
+    entries.push({
+      id: url,
+      url,
+      title:
+        locale === 'en'
+          ? `${label} Monthly Data Report (${report.total} records)`
+          : `${label}月度数据报告（收录 ${report.total} 条）`,
+      summary:
+        locale === 'en'
+          ? `Monthly breakdown of ${report.total} public Claude, Codex and Antigravity records compiled on Haomeile in ${label}, with methodology and limitations.`
+          : `号没了 ${label}公开收录的 ${report.total} 条 Claude、Codex 与 Antigravity 账号记录月度汇总、事件分布与统计口径。`,
+      updated,
+      published: updated,
+    });
+  }
 
   for (const tip of TIP_ARTICLES) {
     const url = site + localePath(`/tips/${tip.slug}`, locale);

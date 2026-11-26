@@ -3,6 +3,7 @@ import { SUPPORTED_VENDOR_FILTER } from './lib/store';
 import { isThinCommunity } from '../shared/community';
 import { localePath } from '../shared/i18n';
 import { TIP_PATHS } from '../shared/tips';
+import { isValidReportMonth, REPORT_MIN_RECORDS } from './report';
 
 import { DEFAULT_SITE_ORIGIN, siteOrigin } from '../shared/site';
 const NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
@@ -96,6 +97,7 @@ export async function sitemapResponse(
   const metadata = await db.batch<{
     total?: number;
     vendor?: string;
+    month?: string;
     n?: number;
     modified?: string;
   }>([
@@ -105,16 +107,27 @@ export async function sitemapResponse(
     db.prepare(
       `SELECT vendor,COUNT(*) n,MAX(updated_at) modified FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} GROUP BY vendor HAVING COUNT(*)>=5`,
     ),
+    db.prepare(
+      `SELECT strftime('%Y-%m', datetime(approved_at, '+8 hours')) month,COUNT(*) n,MAX(updated_at) modified FROM tombstones WHERE status='approved' AND approved_at IS NOT NULL AND ${SUPPORTED_VENDOR_FILTER} GROUP BY month HAVING COUNT(*)>=${REPORT_MIN_RECORDS} ORDER BY month DESC`,
+    ),
   ]);
   const count = Number(metadata[0]!.results[0]?.total || 0);
   const vendors = new Map(
     metadata[1]!.results.map((row) => [row.vendor, row.modified]),
+  );
+  const reportMonths = (metadata[2]?.results ?? []).filter(
+    (row): row is { month: string; modified?: string } =>
+      typeof row.month === 'string' && isValidReportMonth(row.month),
   );
   const staticEntries: SitemapEntry[] = [
     ...STATIC_PATHS.map((path) => ({ path, modified: deployedAt })),
     ...VENDORS.filter((vendor) => vendors.has(vendor)).map((vendor) => ({
       path: '/v/' + vendor,
       modified: vendors.get(vendor),
+    })),
+    ...reportMonths.map(({ month, modified }) => ({
+      path: '/report/' + month,
+      modified,
     })),
   ];
   if (staticMap) return xmlResponse(urlset(staticEntries, site));

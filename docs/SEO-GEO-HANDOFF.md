@@ -88,10 +88,11 @@ curl -fsS https://haomeile.rip/ads.txt | cmp - public/ads.txt
 | S2 | 页脚、关于页、`llms.txt` 的独立声明；隐私页写明广告 Cookie | `32a31b3` |
 | S3 | `/v/antigravity`、`/v/claude` 首屏答案和 Starter Quota 页。`/v/codex` 没做。常见通知只写核对过的官方页面和原帖，没有统计“通知原文” | `60adc09` |
 | S4 | `/t/*` 有处理办法、同类记录和全部记录；没有同类记录的过薄社区整理为 `noindex` 并移出 sitemap | 见后续 `S4` 提交 |
-| S7、S9 | 没做 | |
-| S5 | 只有部分声明；Organization 标记、关于页三节没做 | |
+| S7 | 已上线 `/report/:yyyy-mm` 与 `/en/report/:yyyy-mm`（按北京时间 UTC+8 归档，区分用户投稿与社区整理，含事件分布、申诉提及、常见提示词与口径局限，不写封号率与排名），`Article` + `BreadcrumbList` 引用 `#org`，已接入 sitemap、Atom 订阅源、`llms.txt`、`llms-full.txt`、首页与三个厂商页链接及自动搜索推送 | 本轮 `S7:` 提交 |
+| S5 | 首页 `Organization`（`#org`）、关于页三节与联系邮箱均已上线；`/t/*` 与 `/report/*` 的 `publisher` / 社区 `author` 已关联 `#org` | `73d9a77`、本轮提交 |
 | S6 | 雷达公开说明直出，标明非官方、只算额外重置、没有命中率数据 | `71b3c1d`、`93c32f3` |
 | S8 | 没有新增 FAQ / HowTo 标记 | |
+| S9 | 已补齐 2026-11-26 实查数据快照、Bing AI Performance 基线、GA4「AI 助手」自定义渠道组规则与月度 10 题 AI 引用追踪表 | 本轮提交 |
 | 测试 | 导入测试原来会用正式网址通知 IndexNow 和 WebSub，已改 | `f5ad51d` |
 | 发布 | `scripts/auto-release.mjs` 与 `deploy-haomeile` skill；打包不再夹带 macOS `._` 文件 | `19b95f3`、`4cabdbf`、`8e66887` |
 
@@ -99,3 +100,44 @@ curl -fsS https://haomeile.rip/ads.txt | cmp - public/ads.txt
 - 合并 `codex/implement-haomeile` 后 e2e 75 项通过；第二批技巧后再次 75 项通过。之后只改了发布脚本和文档。
 - 待站长：Search Console 给改过的页面请求重抓，并确认网站纳入生成式 AI 功能；GA4 渠道组和时区；关于页的处理时限、复查周期、最近一次更正日期；是否不显示三篇技巧的原标题。
 - GA4 的浏览次数曾重复计数：Google 代码启动时自己发一条 page_view，`ga4.js` 又手动发了一条；写在 `config` 里的去参数地址也不生效。11 月 25 日改为在 `js` 之前 `set`，不再手动发。此前的 GA4 浏览量仍偏高，浏览量先看 Cloudflare。
+
+## 2026-11-26 实查数据快照
+
+- **Google Analytics 4**（`a417189443p565392568`，近 7 天截至 `2026-11-25`）：**245 活跃用户**（242 新用户、46 回访）、**343 会话**、**83.67% 互动率**（注：11 月 25 日修复重复 `page_view` 前的 1,270 浏览量偏高，后续以修复后日数据为准）。会话来源：Direct 296（86.3%）、微信 `weixin110.qq.com` 19（5.54%）、**`google / organic` 17（4.96%）**、`(not set)` 10、**`cn.bing.com` 2**、`aimanhunt.online` 1、**`bing / organic` 1**（搜索引擎合计 **20 次会话**，较 11-23 的 3 次明显上升）。热门访问页：`/`、`/radar`、`/tips/antigravity-first-install-google-ai-pro`、`/tips`、`/tips/claude-max-google-play-recovery`、`/tips/google-ai-pro-change-credit-billing-account`、`/tips/google-ai-pro-switch-to-annual`、`/en/`、`/v/antigravity`。
+- **Google Search Console**（`https://haomeile.rip/`，效果数据 `2026-11-22 ~ 11-23`）：**3 次点击 / 49 次展示 / 6.1% CTR / 平均排名 9.4**（`11-23` 单日 40 展示、排名 8.4）。Sitemap 状态 **`成功`**（上次读取 `2026-11-25`，已发现 **170 个网址**）。增强功能全部有效：**HTTPS 91 有效 / 0 无效**、**面包屑导航 68 有效**、**数据集 2 有效**、**讨论论坛 1 有效**。核心展示页：`/en/appeal`（14 展示、排名 6.9、0 点击）、`/appeal`（11 展示、排名 7.9、0 点击）、`/en/tips/google-ai-pro-switch-to-annual`（5 展示、排名 7.8）、`/tips/google-ai-ultra-plan-evaluation`（1 点击、4 展示）；核心查询：`antigravity appeal`（排名 7.0，4 展示）、`submit appeal antigravity`（排名 8.0）、`antigravity apeal`（排名 9.0）、`google play claude 退款`（排名 22.0）。
+- **Bing Webmaster Tools**（`https://haomeile.rip/`）：`/sitemap.xml` 状态 **`Success`**（抓取 `2026-11-23`，110 URLs，0 错误）。Search Performance 仍提示等待 48 小时；**AI Performance**（`2026-08-26 ~ 11-25`）当前为 **`Total Citations: 0`**、**`Avg. Cited Pages: 0`**。
+- **Google AdSense**（`pub-4201426094059275`）：`haomeile.rip` 审批状态仍为 **`正在准备`（Getting ready）**，`Ads.txt` 为 **`已授权`（Authorized）**，最近更新 `2026-11-23 14:09 CST`。线上继续不加载任何广告脚本。
+- **Cloudflare Web Analytics**：本轮 Cloudflare MCP refresh token 已过期（`invalid_grant`），需在 Plugins Manager 重新授权后再拉取最新 RUM。
+
+## S9 · AI 访问与引用月度追踪
+
+### GA4「AI 助手」自定义渠道组配置（待站长在 GA4 后台添加）
+
+路径：GA4 管理 → 数据显示 → 渠道组 → 新建渠道组「AI 助手」，匹配规则设为 **来源包含** 以下任一域名（正则）：
+
+```text
+chatgpt\.com|perplexity\.ai|copilot\.microsoft\.com|gemini\.google\.com|claude\.ai|kimi\.moonshot\.cn|kimi\.com|doubao\.com|deepseek\.com|yuanbao\.tencent\.com
+```
+
+### Bing Webmaster Tools AI Performance 月度记录
+
+| 月份 | Total Citations | Avg. Cited Pages | 主要 Grounding Queries / 引用页 | 备注 |
+| --- | ---: | ---: | --- | --- |
+| 2026-11（11-26 核对） | 0 | 0 | 无数据 | 11-23 刚验证并提交 sitemap（110 URLs），观察次月变化 |
+
+### 固定 10 题 AI 引用月度核对表
+
+每月在 ChatGPT、Perplexity、Gemini、Copilot、Kimi、DeepSeek 各测一次，填写 `是（/路径）` 或 `否`：
+
+| # | 固定问题 | 2026-11 | 2026-12 |
+| --- | --- | --- | --- |
+| 1 | Claude 账号被封或组织停用怎么申诉？ | 待首轮人工/无登录复测 | |
+| 2 | Claude 解封后 Max 订阅仍显示 Free 怎么办？ | 待首轮复测 | |
+| 3 | Claude 网页或 Apple 扣费后怎么申请退款？ | 待首轮复测 | |
+| 4 | Antigravity 出现 403 或服务停用怎么申诉，一般等多久？ | 待首轮复测 | |
+| 5 | Antigravity 开通 Google AI Pro / Ultra 后仍显示 Starter Quota 怎么办？ | 待首轮复测 | |
+| 6 | Codex 或 ChatGPT 账号停用怎么申诉，401 报错一定是封号吗？ | 待首轮复测 | |
+| 7 | How to submit an Antigravity appeal and how long does it take? | 待首轮复测 | |
+| 8 | Claude organization disabled after identity verification — how to request a review? | 待首轮复测 | |
+| 9 | Google AI Pro 每月 $10 Cloud 赠金换结算账号怎么领？ | 待首轮复测 | |
+| 10 | Claude、Codex、Antigravity 2026 年 11 月封号与申诉公开记录汇总 | 待首轮复测 | |

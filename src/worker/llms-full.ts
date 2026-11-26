@@ -3,19 +3,21 @@ import { TIP_ARTICLES, tipLinkHref } from '../shared/tips';
 import { tombPresentation } from '../shared/tomb-presentation';
 import { LABELS } from '../site/scripts/labels';
 import { listTombstones, SUPPORTED_VENDOR_FILTER } from './lib/store';
+import { listReportMonths } from './report';
 
 export async function llmsFullResponse(
   db: D1Database,
   configuredOrigin = DEFAULT_SITE_ORIGIN,
 ): Promise<Response> {
   const site = siteOrigin(configuredOrigin);
-  const [recentPage, countRows] = await Promise.all([
+  const [recentPage, countRows, reportMonths] = await Promise.all([
     listTombstones(db, {}),
     db.batch<{ vendor: string; event_type: string; appeal_status: string; n: number }>([
       db.prepare(
         `SELECT vendor, event_type, appeal_status, COUNT(*) n FROM tombstones WHERE status='approved' AND ${SUPPORTED_VENDOR_FILTER} GROUP BY vendor, event_type, appeal_status`,
       ),
     ]),
+    listReportMonths(db),
   ]);
 
   const byVendor = new Map<string, number>();
@@ -69,6 +71,16 @@ export async function llmsFullResponse(
     );
   }
   lines.push('');
+
+  if (reportMonths.length) {
+    lines.push('## Monthly Data Reports');
+    for (const report of reportMonths) {
+      lines.push(
+        `- ${report.month} (${report.total} public records; ${report.community} community summaries, ${report.total - report.community} user submissions): ${site}/report/${report.month} (EN: ${site}/en/report/${report.month})`,
+      );
+    }
+    lines.push('');
+  }
 
   lines.push('## Practical Troubleshooting & Subscription Guides');
   const sortedTips = [...TIP_ARTICLES].sort((a, b) =>

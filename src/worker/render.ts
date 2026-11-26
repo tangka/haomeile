@@ -23,6 +23,17 @@ import { VENDOR_ANSWERS } from '../shared/vendor-answers';
 import { isThinCommunity } from '../shared/community';
 import { TIP_ARTICLES } from '../shared/tips';
 import { renderVendorAnswer } from './vendor-answer';
+import {
+  buildMonthlyReport,
+  formatMonthLabel,
+  latestReportMonth,
+  renderMonthlyReportBody,
+  reportDescription,
+  reportHeading,
+  reportLead,
+  reportTitle,
+  REPORT_MIN_RECORDS,
+} from './report';
 import { RADAR_PLATFORM_NAMES, type ReadRadarOverview } from '../shared/radar';
 import { hasRadarPass } from './lib/radar-gate';
 import { renderRadarDots } from './radar-dots';
@@ -510,13 +521,14 @@ export async function servePage(
       : url.searchParams.get('vendor') || undefined;
     if (vendor && !Object.hasOwn(LABELS.vendor, vendor))
       return serveMissing(c, 404);
-    const [page, stats] = await Promise.all([
+    const [page, stats, latestMonth] = await Promise.all([
       listTombstones(c.env.DB, {
         vendor,
         event: url.searchParams.get('event') || undefined,
         cursor: url.searchParams.get('cursor') || undefined,
       }),
       getStats(c.env.DB, vendor),
+      latestReportMonth(c.env.DB),
     ]);
     assetPath = path.startsWith('/v/') ? '/_templates/vendor/' : '/';
     const tally = renderTally(
@@ -525,6 +537,10 @@ export async function servePage(
       locale,
     );
     if (tally) {
+      const reportInline =
+        !vendor && latestMonth
+          ? ` <a href="${escapeHtml(localePath(`/report/${latestMonth}`, locale))}">${escapeHtml(text(`${formatMonthLabel(latestMonth, 'zh')}月度数据报告`, `${formatMonthLabel(latestMonth, 'en')} monthly report`))}</a>`
+          : '';
       rewriter.on('[data-ssr="tally-section"]', {
         element: (el) => {
           el.removeAttribute('hidden');
@@ -532,7 +548,7 @@ export async function servePage(
       });
       rewriter.on('[data-ssr="tally"]', {
         element: (el) => {
-          el.setInnerContent(tally, { html: true });
+          el.setInnerContent(tally + reportInline, { html: true });
         },
       });
     }
@@ -669,8 +685,22 @@ export async function servePage(
         });
         rewriter.on('[data-ssr="vendor-links"]', {
           element: (el) => {
+            const links = [
+              ...seo.links,
+              ...(latestMonth
+                ? [
+                    {
+                      href: `/report/${latestMonth}`,
+                      label: {
+                        zh: `${formatMonthLabel(latestMonth, 'zh')}月度数据报告`,
+                        en: `${formatMonthLabel(latestMonth, 'en')} monthly report`,
+                      },
+                    },
+                  ]
+                : []),
+            ];
             el.setInnerContent(
-              seo.links
+              links
                 .map(
                   (item) =>
                     `<a href="${escapeHtml(localePath(item.href, locale))}">${escapeHtml(item.label[locale])}</a>`,
@@ -815,19 +845,23 @@ export async function servePage(
           : {}),
         datePublished: tomb.approved_at,
         dateModified: tomb.updated_at,
-        author: {
-          '@type': view.community ? 'Organization' : 'Person',
-          name: view.community
-            ? text('号没了', 'Haomeile')
-            : tomb.nickname || text('匿名用户', 'Anonymous user'),
-          // Submitters have no profile pages; the byline on their own record is
-          // the only place that identifies them.
-          url: view.community
-            ? site + '/'
-            : `${site}${localePath(path, locale)}#author`,
-        },
+        author: view.community
+          ? {
+              '@type': 'Organization',
+              '@id': site + '/#org',
+              name: text('号没了', 'Haomeile'),
+              url: site + '/',
+            }
+          : {
+              '@type': 'Person',
+              name: tomb.nickname || text('匿名用户', 'Anonymous user'),
+              // Submitters have no profile pages; the byline on their own record is
+              // the only place that identifies them.
+              url: `${site}${localePath(path, locale)}#author`,
+            },
         publisher: {
           '@type': 'Organization',
+          '@id': site + '/#org',
           name: 'Haomeile',
           url: site + '/',
         },
@@ -904,6 +938,98 @@ export async function servePage(
         );
       },
     });
+  } else if (path.startsWith('/report/')) {
+    const month = path.slice('/report/'.length);
+    const report = await buildMonthlyReport(c.env.DB, month);
+    if (!report) return serveMissing(c, 404);
+    assetPath = '/_templates/report/';
+    const title = reportTitle(report.month, locale);
+    const description = reportDescription(report, locale);
+    const heading = reportHeading(report.month, locale);
+    const lead = reportLead(report, locale);
+    const bodyHtml = renderMonthlyReportBody(report, locale, escapeHtml);
+    rewriter.on('[data-ssr="report-title"]', {
+      element: (el) => {
+        el.setInnerContent(heading);
+      },
+    });
+    rewriter.on('[data-ssr="report-lead"]', {
+      element: (el) => {
+        el.setInnerContent(lead);
+      },
+    });
+    rewriter.on('[data-ssr="report-body"]', {
+      element: (el) => {
+        el.setInnerContent(bodyHtml, { html: true });
+      },
+    });
+    const canonical = site + localePath(`/report/${report.month}`, locale);
+    const jsonLd = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: heading,
+        description,
+        url: canonical,
+        mainEntityOfPage: canonical,
+        inLanguage: locale === 'en' ? 'en' : 'zh-CN',
+        datePublished: report.publishedAt,
+        dateModified: report.updatedAt,
+        author: {
+          '@type': 'Organization',
+          '@id': site + '/#org',
+          name: text('号没了', 'Haomeile'),
+          url: site + '/',
+        },
+        publisher: {
+          '@type': 'Organization',
+          '@id': site + '/#org',
+          name: text('号没了', 'Haomeile'),
+          url: site + '/',
+        },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: text('纪念墙', 'Memorial wall'),
+            item: site + localePath('/', locale),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: heading,
+          },
+        ],
+      },
+    ];
+    metadata(
+      rewriter,
+      title,
+      description,
+      localePath(`/report/${report.month}`, locale),
+      report.total >= REPORT_MIN_RECORDS
+        ? 'index,follow,max-image-preview:large'
+        : 'noindex,follow',
+      jsonLd,
+      site,
+    );
+    rewriter.on('meta[property="og:type"]', {
+      element: (el) => {
+        el.setAttribute('content', 'article');
+      },
+    });
+    rewriter.on('head', {
+      element: (el) => {
+        el.append(
+          `<meta property="article:published_time" content="${escapeHtml(report.publishedAt)}"><meta property="article:modified_time" content="${escapeHtml(report.updatedAt)}">`,
+          { html: true },
+        );
+      },
+    });
   } else if (path.startsWith('/_templates')) return serveMissing(c, 404);
   const assetUrl = new URL(url);
   assetUrl.pathname = assetPath;
@@ -918,7 +1044,7 @@ export async function servePage(
     site === DEFAULT_SITE_ORIGIN &&
     ((path === '/radar' && radarAccessible) ||
       /^\/(?:appeal|privacy|about|tips)?$/.test(path) ||
-      /^\/(?:v|t|tips)\/[^/]+$/.test(path));
+      /^\/(?:v|t|tips|report)\/[^/]+$/.test(path));
   const analyticsToken = publicAnalyticsPage
     ? c.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
     : undefined;

@@ -141,6 +141,7 @@ describe('dynamic sitemap', () => {
     const xml = await (await map('/sitemap.xml', deployedAt))!.text();
     expect(xml).toContain('<loc>https://haomeile.rip/v/claude</loc>');
     expectLanguagePair(xml, '/v/claude');
+    expectLanguagePair(xml, '/report/2026-11');
     expect(xml).not.toContain('/v/antigravity');
     expect(xml).toContain(
       `<loc>https://haomeile.rip/t/AAAAAAAAAA</loc><lastmod>${updatedAt}</lastmod>`,
@@ -154,7 +155,7 @@ describe('dynamic sitemap', () => {
     expect(xml).not.toMatch(
       /secret_hash|站点地图测试示例|这段示例自述|not-a-usable-credential/,
     );
-    expect(xml.match(/<url>/g)).toHaveLength(staticUrls + 20);
+    expect(xml.match(/<url>/g)).toHaveLength(staticUrls + 22);
   });
   it('leaves out community summaries too short to index', async () => {
     for (const [id, length] of [
