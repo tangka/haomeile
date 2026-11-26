@@ -28,6 +28,66 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-payments-cloud-prepay-closed-account',
+    heading: {
+      zh: 'Google Cloud 结算账户已关闭，为什么付款资料还显示有服务？',
+      en: 'Why does Google Payments still list a service after Cloud Billing is closed?',
+    },
+    sourceTitle:
+      '为了订阅日区 Google One Pro，我想关闭美区 Google Payments 支付资料，结果被 Google Cloud 卡住了🤣',
+    summary: {
+      zh: '如果关闭付款资料时提示 Google Cloud 仍在使用，先核对 Cloud Prepay 的结算账号 ID。两处记录相符，就能带着具体的账户和余额信息向 Cloud 结算支持求助。',
+      en: 'If Google Cloud appears as an active service when you try to close a payments profile, compare the billing account ID in Cloud Prepay with the one in Cloud Billing. A match gives billing support a specific account to investigate.',
+    },
+    experience: {
+      zh: '原文作者 @xzjianyu 准备订阅 Google One 时，在旧付款资料里找到了 Cloud Prepay。对应的 Cloud 结算账户已关闭，关联项目为零，预付余额也是零。Google Play 客服确认仍有关联，随后 Cloud 结算客服提交了移除请求，约定在 24 个工作小时内发邮件跟进。发文时，作者仍在等结果。',
+      en: 'While preparing to subscribe to Google One, @xzjianyu found a Cloud Prepay entry on an old payments profile. The matching Cloud Billing account was closed, with no linked projects and a zero prepaid balance. Google Play support confirmed the link. Cloud Billing support filed a removal request and promised an email update within 24 business hours. The case was still open when the author published.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '打开 Google 付款中心，有多个付款资料时先选出现提示的那一个。在「订阅和服务」里找到 Cloud Prepay，记下结算账号 ID、预付余额和自动充值状态。',
+          en: 'Open Google Payments and select the profile that showed the warning. Under Subscriptions & services, open Cloud Prepay and note the billing account ID, the prepaid balance and whether automatic top-ups are on.',
+        },
+        link: {
+          href: 'https://payments.google.com/',
+          label: { zh: '打开 Google 付款中心', en: 'Open Google Payments' },
+        },
+      },
+      {
+        text: {
+          zh: '在 Google Cloud 控制台打开结算账号列表，移除「状态：有效」筛选。按刚才记下的 ID 找到账户，查看是否标为「已关闭」，再打开「账号管理」核对关联项目。把这些结果和付款中心的提示放在一起。',
+          en: 'In the Cloud console, open the billing accounts list and remove the Active status filter. Find the matching ID, check whether the account is marked Closed, then open Account management to see its linked projects. Keep these details with the warning from Google Payments.',
+        },
+        link: {
+          href: 'https://docs.cloud.google.com/billing/docs/how-to/find-billing-account-id',
+          label: {
+            zh: '查找已关闭的结算账号',
+            en: 'Find a closed billing account',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果同一个 ID 在两处显示的状态不一致，用有结算管理权限的账号进入 Google Cloud「结算支持」，点「获取结算支持」。提供 ID、账户状态和付款中心提示，请客服核查 Cloud Prepay 的关联。保留工单号，后续邮件可以接着这张工单追踪。',
+          en: 'If the same ID appears active in Payments and closed in Cloud Billing, sign in as a billing administrator. Open Billing support in Google Cloud and choose Get billing support. Share the ID, account status and warning, and ask support to investigate the Cloud Prepay link. Save the case number for follow-up.',
+        },
+        link: {
+          href: 'https://docs.cloud.google.com/support/docs/get-billing-support',
+          label: {
+            zh: '联系 Google Cloud 结算支持',
+            en: 'Contact Cloud Billing support',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2125847581809078272',
+    sourceAuthor: '@xzjianyu',
+    sourcePublishedAt: '2026-11-26T07:25:13Z',
+    publishedAt: '2026-11-26T11:12:06Z',
+    modifiedAt: '2026-11-26T11:12:06Z',
+  },
+  {
     slug: 'google-ai-pro-gemini-antigravity-usage',
     heading: {
       zh: 'Google AI Pro 怎么看 Gemini 网页和 Antigravity 各自还剩多少额度',
@@ -1442,6 +1502,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-payments-cloud-prepay-closed-account': ['antigravity'],
   'google-ai-pro-gemini-antigravity-usage': ['antigravity'],
   'claude-pro-web-invoice-refund': ['claude'],
   'google-ai-colab-cli-invalid-grant': ['antigravity'],
@@ -1473,6 +1534,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-payments-cloud-prepay-closed-account': [
+    'google-ai-pro-change-credit-billing-account',
+    'google-ai-ultra-cloud-budget-before-credits',
+    'google-ai-pro-switch-to-annual',
+  ],
   'google-ai-pro-gemini-antigravity-usage': [
     'antigravity-ultra-check-credit-usage',
     'antigravity-paid-plan-starter-quota',
@@ -1506,7 +1572,7 @@ const TIP_NEXT: Record<string, string[]> = {
   'google-ai-pro-change-credit-billing-account': [
     'google-ai-claim-cloud-credits',
     'google-ai-ultra-cloud-budget-before-credits',
-    'antigravity-ultra-check-credit-usage',
+    'google-payments-cloud-prepay-closed-account',
   ],
   'antigravity-first-install-google-ai-pro': [
     'antigravity-paid-plan-starter-quota',
