@@ -28,6 +28,69 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-pro-gemini-antigravity-usage',
+    heading: {
+      zh: 'Google AI Pro 怎么看 Gemini 网页和 Antigravity 各自还剩多少额度',
+      en: 'Check how much Google AI Pro quota is left in Gemini and Antigravity',
+    },
+    sourceTitle:
+      '想用 Gemini 的闲置额度白嫖一个编程 Agent，折腾了一下午，结果有点鸡肋',
+    summary: {
+      zh: 'Gemini 网页显示已用百分比，Antigravity 按模型组显示剩余百分比。两边都能查到重置时间，Gemini 还能设置额度用完后是否动用 AI 积分。',
+      en: 'Gemini on the web shows the percentage used. Antigravity shows the percentage left for each model group. Both show reset times. In Gemini, you can also choose whether to spend AI credits when your quota runs out.',
+    },
+    experience: {
+      zh: '原文作者 @yonggeb1yj 把同一个活动赠送的 Google AI Pro 账号的两张用量截图放在了一起。Gemini 网页显示当前已用 12%、本周已用 3%，额外用量已关闭。Antigravity 的 Gemini 模型组两项都还剩 100%，Claude 和 GPT 模型组的 5 小时额度剩 62%、每周额度剩 81%。',
+      en: 'Using a promotional Google AI Pro subscription, @yonggeb1yj captured both usage screens. Gemini showed 12% used in the current window and 3% used for the week, with extra usage off. In Antigravity, the Gemini group had 100% left in both windows. The Claude and GPT group had 62% left for five hours and 81% left for the week.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用开通 Pro 的个人账号登录 Gemini 网页，点左下角「设置」，打开「用量限额」。分别看「当前用量」和「每周限额」旁的百分比和重置时间。比如当前已用 12%，这个时段就还剩 88%。',
+          en: 'Sign in to Gemini on the web with the personal account that holds Pro. Open Settings at the bottom left, then Usage limits. Read the percentage and reset time for the current window and the week. If the current window shows 12% used, 88% remains.',
+        },
+        link: {
+          href: 'https://support.google.com/gemini/answer/16275805',
+          label: {
+            zh: '查看 Gemini 用量限额说明',
+            en: 'See how Gemini usage limits work',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '用同一账号打开 Antigravity，在对话输入框下方点模型选择器，再点「View Usage」。找到这次要用的模型组，分别看「5h limit」和「Weekly limit」。带有「left」的数字就是剩余额度。',
+          en: 'Open Antigravity with the same account. In the model selector beneath the prompt, choose View Usage. Find the group for the model you want and check its five-hour and weekly limits. A value marked “left” is the amount still available.',
+        },
+        link: {
+          href: 'https://antigravity.google/docs/models',
+          label: {
+            zh: '查看 Antigravity 模型用量面板',
+            en: 'See the Antigravity usage panel',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '如果只想用套餐内的额度，回到 Gemini 网页的「用量限额 → 额外用量」，确认开关为关闭。这样用完基础额度时，页面会提示已达上限。开启后，Gemini 可以自动消耗账号里的 AI 积分。',
+          en: 'To stick to the included quota in Gemini, return to Usage limits and check that Extra usage is off. Gemini will show a limit notice when the base quota runs out. Turning extra usage on lets Gemini automatically spend available AI credits.',
+        },
+        link: {
+          href: 'https://support.google.com/gemini/answer/14517446',
+          label: {
+            zh: '查看 Gemini 额外用量设置',
+            en: 'Check the extra usage settings in Gemini',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2125160369001738240',
+    sourceAuthor: '@yonggeb1yj',
+    sourcePublishedAt: '2026-11-24T09:35:28Z',
+    publishedAt: '2026-11-26T07:19:38Z',
+    modifiedAt: '2026-11-26T07:19:38Z',
+  },
+  {
     slug: 'google-ai-colab-cli-invalid-grant',
     heading: {
       zh: 'Colab CLI 授权后报 invalid_grant，怎么用订阅账号重新登录',
@@ -1379,6 +1442,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-pro-gemini-antigravity-usage': ['antigravity'],
   'claude-pro-web-invoice-refund': ['claude'],
   'google-ai-colab-cli-invalid-grant': ['antigravity'],
   'google-ai-ultra-cloud-budget-before-credits': ['antigravity'],
@@ -1409,6 +1473,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-pro-gemini-antigravity-usage': [
+    'antigravity-ultra-check-credit-usage',
+    'antigravity-paid-plan-starter-quota',
+    'google-ai-ultra-plan-evaluation',
+  ],
   'claude-pro-web-invoice-refund': [
     'claude-pro-apple-receipt-refund',
     'claude-portal-suspension-review',
@@ -1430,9 +1499,9 @@ const TIP_NEXT: Record<string, string[]> = {
     'antigravity-ultra-check-credit-usage',
   ],
   'antigravity-ultra-check-credit-usage': [
+    'google-ai-pro-gemini-antigravity-usage',
     'antigravity-paid-plan-starter-quota',
     'google-ai-pro-change-credit-billing-account',
-    'google-ai-ultra-plan-evaluation',
   ],
   'google-ai-pro-change-credit-billing-account': [
     'google-ai-claim-cloud-credits',
