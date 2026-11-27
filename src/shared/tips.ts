@@ -28,6 +28,62 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'chatgpt-pro-link-api-credits',
+    heading: {
+      zh: '每月 200 美元的 ChatGPT Pro，为什么首次只领到 25 美元 API 额度？',
+      en: 'Why did a $200 ChatGPT Pro plan grant only $25 in API credits?',
+    },
+    sourceTitle: '订了 ChatGPT Pro 的先去领钱：每月送的 API 额度，4步就能领！',
+    summary: {
+      zh: '在账期中途首次领取，API 额度按距离续费日还有多久折算。领取时需要选定接收额度的 API 组织，到账金额可以去这个组织的账单里查。',
+      en: 'The first API credit grant is prorated for the time left before renewal. Choose the API organization that should receive it, then check the amount in that organization’s billing records.',
+    },
+    experience: {
+      zh: '原文作者 @followhongyun6 的 Pro 月费是 200 美元，每月 2 日续费。10 月底打开领取窗口时，距 11 月 2 日只剩几天，页面显示本次可领 25 美元。作者关联了自己的 Personal API Organization，随后在开发者平台的 Credit grants 页面查到了这笔额度。',
+      en: 'In late October, @followhongyun6 opened the claim dialog for a $200 Pro plan that renewed on the second of each month. With only a few days left before November 2, the dialog offered $25. The author linked their Personal API Organization and found the grant in its billing records.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用订阅 Pro 的账号打开 ChatGPT「设置 → 账单」，找到 API 额度权益。符合条件的付费订阅需已生效至少 7 天。先看页面给出的完整账期额度，再点「关联组织」。',
+          en: 'Open Settings → Billing in the ChatGPT account that owns the Pro subscription. The eligible paid subscription must have been active for at least seven days. Find the API credit benefit, check the full-cycle allowance and select Link organization.',
+        },
+        link: {
+          href: 'https://chatgpt.com/settings/billing',
+          label: { zh: '打开 ChatGPT 账单', en: 'Open ChatGPT billing' },
+        },
+      },
+      {
+        text: {
+          zh: '核对领取窗口里的本次金额和组织名称。用同一邮箱登录开发者平台，确认自己是目标组织的所有者。如果同时有个人和工作组织，选实际运行项目的那个，再确认领取。',
+          en: 'Check the amount and organization name shown in the claim dialog. Sign in to the API platform with the same email and confirm that you own the intended organization. If you have both a personal and a work organization, choose the one that runs your project before confirming.',
+        },
+        link: {
+          href: 'https://help.openai.com/en/articles/20001626-api-credits-benefit-for-eligible-chatgpt-subscriptions',
+          label: {
+            zh: '核对领取条件',
+            en: 'Check the eligibility requirements',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '在开发者平台切到刚关联的组织，进入「Billing → Credit grants」，查看此次发放的金额和到期日。月度额度在本账期结束时到期。符合条件的订阅续费后，下一期额度会自动发放到同一组织。',
+          en: 'On the API platform, select the organization you linked and open Billing → Credit grants to check the grant amount and expiration date. Monthly credits expire at the end of the billing cycle. When the eligible subscription renews, the next grant goes to the same organization automatically.',
+        },
+        link: {
+          href: 'https://platform.openai.com/settings/organization/billing/credit-grants',
+          label: { zh: '查看已发放的 API 额度', en: 'View API credit grants' },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2115679085397712897',
+    sourceAuthor: '@followhongyun6',
+    sourcePublishedAt: '2026-10-29T07:22:02Z',
+    publishedAt: '2026-11-27T10:26:51Z',
+    modifiedAt: '2026-11-27T10:26:51Z',
+  },
+  {
     slug: 'google-ai-ultra-zero-dollar-refund',
     heading: {
       zh: 'Google Play 发来 0 美元退款邮件，怎么查 Google AI Ultra 还能用多久？',
@@ -1565,6 +1621,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'chatgpt-pro-link-api-credits': ['codex'],
   'google-ai-ultra-zero-dollar-refund': ['antigravity'],
   'google-payments-cloud-prepay-closed-account': ['antigravity'],
   'google-ai-pro-gemini-antigravity-usage': ['antigravity'],
@@ -1598,6 +1655,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'chatgpt-pro-link-api-credits': [
+    'chatgpt-plus-iphone-subscription',
+    'android-subscriptions-google-play',
+    'google-ai-claim-cloud-credits',
+  ],
   'google-ai-ultra-zero-dollar-refund': [
     'google-ai-ultra-plan-evaluation',
     'antigravity-paid-plan-starter-quota',
@@ -1716,7 +1778,7 @@ const TIP_NEXT: Record<string, string[]> = {
   'chatgpt-plus-iphone-subscription': [
     'android-subscriptions-google-play',
     'apple-in-app-purchase-review',
-    'claude-pro-iphone-apple-sign-in',
+    'chatgpt-pro-link-api-credits',
   ],
   'android-subscriptions-google-play': [
     'claude-max-google-play-recovery',
