@@ -28,6 +28,58 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-takeout-mail-drive',
+    heading: {
+      zh: '怎么用 Google Takeout 备份 AI Ultra 主账号里的邮件和网盘文件？',
+      en: 'How to back up Gmail and Drive from your Google AI Ultra account',
+    },
+    sourceTitle: '你的数据非常宝贵！Google 账号断尾保命实操指南',
+    summary: {
+      zh: 'Google Takeout 会把选中的邮件和网盘文件打包。收到归档就绪邮件后，先看下载页列了几个部分，再把每个部分存到自己的电脑。',
+      en: 'Google Takeout packages the Gmail and Drive data you select. When the archive is ready, check how many parts are listed and download each one to your computer.',
+    },
+    experience: {
+      zh: '原文作者 @cgnot996 在常用 Google 账号开通 AI Ultra 5x 后，趁还能登录时申请了一份备份。截图里「邮件」和「云端硬盘」都已勾选。作者说，提交后约一小时收到归档就绪邮件。下载页显示这次导出共 1.86 GB，分成了 4 个文件。',
+      en: 'After activating AI Ultra 5x on their main Google account, @cgnot996 requested a backup while they still had access. Their screenshot shows both Mail and Drive selected. The author says the archive-ready email came about an hour later. The download page listed four files totaling 1.86 GB.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '在电脑上用存放文件的 Google 账号打开 Takeout。只想留邮件和网盘时，先取消全选，再勾选「邮件」和「云端硬盘」。要保留两项的全部数据，检查它们是否分别显示「已包含所有邮件数据」和「已包含所有云端硬盘数据」，然后点「下一步」。',
+          en: 'On a computer, open Takeout with the Google account that holds the files. For a mail-and-drive backup, deselect all products, then select Mail and Drive. For a complete copy of both, check that the selections show all Mail data and all Drive data included, then choose Next step.',
+        },
+        link: {
+          href: 'https://takeout.google.com/',
+          label: { zh: '打开 Google Takeout', en: 'Open Google Takeout' },
+        },
+      },
+      {
+        text: {
+          zh: '选「通过邮件发送下载链接」「导出一次」和 ZIP 格式，再选单个归档文件的大小上限。比如 50 GB 指每个分卷最多 50 GB，一次导出仍可能分成多个文件。点「创建导出作业」后，Google 会先发邮件确认收到请求。',
+          en: 'Choose an emailed download link, a one-time export and ZIP format. Set the maximum size per archive file. Choosing 50 GB allows up to 50 GB per part, and one export can still contain several files. After you create the export, Google emails a confirmation of the request.',
+        },
+      },
+      {
+        text: {
+          zh: '等到主题写着「您的 Google 数据已可供下载」的邮件，再打开「管理 Google 导出请求」。核对截止日期和文件数量，逐个点击「下载」。下载后解压，在归档里的 archive_browser.html 查目录，再打开需要保留的文件核对内容。',
+          en: 'Wait for the email saying your Google data is ready to download, then open Manage your Google Takeout request. Check the deadline and file count and download each part. Unzip the archives, open archive_browser.html for the index and check the files you wanted to keep.',
+        },
+        link: {
+          href: 'https://support.google.com/accounts/answer/3024190',
+          label: {
+            zh: '查看归档下载和打开方法',
+            en: 'How to download and open an archive',
+          },
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2122928210568716288',
+    sourceAuthor: '@cgnot996',
+    sourcePublishedAt: '2026-11-18T08:06:07Z',
+    publishedAt: '2026-11-27T14:23:10Z',
+    modifiedAt: '2026-11-27T14:23:10Z',
+  },
+  {
     slug: 'chatgpt-pro-link-api-credits',
     heading: {
       zh: '每月 200 美元的 ChatGPT Pro，为什么首次只领到 25 美元 API 额度？',
@@ -1621,6 +1673,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-takeout-mail-drive': ['antigravity'],
   'chatgpt-pro-link-api-credits': ['codex'],
   'google-ai-ultra-zero-dollar-refund': ['antigravity'],
   'google-payments-cloud-prepay-closed-account': ['antigravity'],
@@ -1655,6 +1708,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-takeout-mail-drive': [
+    'google-ai-ultra-zero-dollar-refund',
+    'claude-export-download-manifest',
+    'google-ai-ultra-plan-evaluation',
+  ],
   'chatgpt-pro-link-api-credits': [
     'chatgpt-plus-iphone-subscription',
     'android-subscriptions-google-play',
@@ -1663,7 +1721,7 @@ const TIP_NEXT: Record<string, string[]> = {
   'google-ai-ultra-zero-dollar-refund': [
     'google-ai-ultra-plan-evaluation',
     'antigravity-paid-plan-starter-quota',
-    'android-subscriptions-google-play',
+    'google-ai-takeout-mail-drive',
   ],
   'google-payments-cloud-prepay-closed-account': [
     'google-ai-pro-change-credit-billing-account',
