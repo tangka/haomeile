@@ -28,6 +28,62 @@ interface TipArticle {
 
 export const TIP_ARTICLES: TipArticle[] = [
   {
+    slug: 'google-ai-colab-compare-gpu-compute-units',
+    heading: {
+      zh: 'Google AI Pro 的 Colab 额度，选 T4 还是 L4 更省？',
+      en: 'Which uses fewer Colab compute units on Google AI Pro, a T4 or an L4?',
+    },
+    sourceTitle:
+      '超详细 Google Colab 教程｜8 种玩法、4 个实测，Google 会员费直接回本',
+    summary: {
+      zh: '用同一个小任务在两张 GPU 上各跑一次。把每次完成任务的耗时和所用计算单元记下来，再决定剩下的活用哪张卡。',
+      en: 'Run the same small job on each GPU. Compare how long it takes and how many compute units it uses before choosing a card for the rest of the work.',
+    },
+    experience: {
+      zh: '原文作者 @leaf_sanren 用自己的 Google AI Pro 额度，在 Blender 里渲染同一个 144 帧的香港航拍镜头。当时 T4 和 L4 的费率分别是每小时 1.24 和 2.33 个计算单元。按作者记录，T4 跑了约 1 小时，用了 1.24 个单元。L4 约 10 分钟就渲完，只用了 0.40 个。',
+      en: '@leaf_sanren used a Google AI Pro subscription to render the same 144-frame aerial shot of Hong Kong in Blender. The T4 and L4 rates shown at the time were 1.24 and 2.33 compute units per hour. The author reported that the T4 took about an hour and used 1.24 units. The L4 finished in about 10 minutes and used 0.40.',
+    },
+    steps: [
+      {
+        text: {
+          zh: '用订阅账号打开 Colab，挑一段能代表后续任务的素材。打开「运行时 → 更改运行时类型」，从当前可用的 GPU 里选第一张。两次测试用同一份文件、相同的帧数、分辨率和渲染设置。',
+          en: 'Open Colab with your subscribed account and pick a sample that represents the full job. Under Runtime → Change runtime type, select the first available GPU you want to test. Use the same file, frame count, resolution and render settings on both cards.',
+        },
+        link: {
+          href: 'https://research.google.com/colaboratory/faq.html',
+          label: {
+            zh: '查看 Colab 的 GPU 类型与可用性说明',
+            en: 'Check Colab GPU types and availability',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '开机前先记下计算单元余额。连接 GPU 后，点「连接」旁的箭头，选「查看资源」，记下每小时消耗。也可以在 Colab CLI 运行 colab usage 查余额和费率。测试期间只运行这一台，方便核对本次扣量。',
+          en: 'Note your balance before you start the GPU. Once connected, use the arrow next to Connect and select View resources to see the hourly rate. In the Colab CLI, colab usage shows both the balance and the rate. Run one session at a time so you can attribute the charge to that GPU.',
+        },
+        link: {
+          href: 'https://github.com/googlecolab/google-colab-cli#command-index',
+          label: {
+            zh: '查看 colab usage 命令说明',
+            en: 'Look up the colab usage command',
+          },
+        },
+      },
+      {
+        text: {
+          zh: '记下完成时间，保存输出并结束会话。等余额更新，用开始前的余额减去结束后的余额。换另一张卡重复一次，确认两次输出达到相同要求，再用总耗量较低的卡跑余下任务。',
+          en: 'Record the elapsed time, save the output and end the session. Once the balance updates, subtract it from the starting balance. Repeat with the other GPU. If both outputs meet the same requirements, use the card that consumed fewer units for the remaining work.',
+        },
+      },
+    ],
+    source: 'https://x.com/i/article/2126650179738882049',
+    sourceAuthor: '@leaf_sanren',
+    sourcePublishedAt: '2026-11-28T12:55:53Z',
+    publishedAt: '2026-11-28T14:32:00Z',
+    modifiedAt: '2026-11-28T14:32:00Z',
+  },
+  {
     slug: 'google-ai-takeout-mail-drive',
     heading: {
       zh: '怎么用 Google Takeout 备份 AI Ultra 主账号里的邮件和网盘文件？',
@@ -1673,6 +1729,7 @@ export function tipLinkHref(
 }
 
 const TIP_VENDOR_MAP: Record<string, TipVendor[]> = {
+  'google-ai-colab-compare-gpu-compute-units': ['antigravity'],
   'google-ai-takeout-mail-drive': ['antigravity'],
   'chatgpt-pro-link-api-credits': ['codex'],
   'google-ai-ultra-zero-dollar-refund': ['antigravity'],
@@ -1708,6 +1765,11 @@ export function tipVendors(slug: string): TipVendor[] {
 
 /** What a reader of each guide is likely to need next, most relevant first. */
 const TIP_NEXT: Record<string, string[]> = {
+  'google-ai-colab-compare-gpu-compute-units': [
+    'google-ai-colab-check-units-stop-session',
+    'google-ai-colab-cli-invalid-grant',
+    'antigravity-ultra-check-credit-usage',
+  ],
   'google-ai-takeout-mail-drive': [
     'google-ai-ultra-zero-dollar-refund',
     'claude-export-download-manifest',
@@ -1749,9 +1811,9 @@ const TIP_NEXT: Record<string, string[]> = {
     'google-ai-colab-check-units-stop-session',
   ],
   'google-ai-colab-check-units-stop-session': [
+    'google-ai-colab-compare-gpu-compute-units',
     'google-ai-colab-cli-invalid-grant',
     'google-ai-claim-cloud-credits',
-    'antigravity-ultra-check-credit-usage',
   ],
   'antigravity-ultra-check-credit-usage': [
     'google-ai-pro-gemini-antigravity-usage',
